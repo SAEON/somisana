@@ -32,6 +32,7 @@ npm install
 ```
 
 ## Setup Python
+I'm sure there are lots of ways to setup Python. I'm currently following the `pyenv` approach.
 
 ### Install pyenv
 
