@@ -9,6 +9,7 @@ SOMISANA-related tooling
   - [Setup repository tooling](#setup-repository-tooling)
   - [Setup Python](#setup-python)
     - [Install pyenv](#install-pyenv)
+    - [Set global Python version](#set-global-python-version)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -50,7 +51,7 @@ alias pip="pyenv exec pip"
 
 Run `source ~/.bashrc` so that changes to your shell environment take effect, and then install and set a Python version via `pyenv` to use
 
-### Set Python version
+### Set global Python version
 
 ```sh
 pyenv install --list # Shows the available versions to install
