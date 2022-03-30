@@ -13,3 +13,6 @@ run = '''
   doctoc README.md
 '''
 
+[[task]]
+name = 'prettier'
+run = 'echo todo'
