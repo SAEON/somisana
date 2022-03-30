@@ -34,7 +34,7 @@ npm install
 - Follow the instructions for [installing prerequisites](https://github.com/pyenv/pyenv#installation)
 - Install pyenv via the [Automatic installer](https://github.com/pyenv/pyenv#automatic-installer)
 
-The automatic installer concludes with instructions on adding something to `.bashrc`. However, I found that I also had to add the location of the `pyenv' installation to $PATH (`pyenv` installs a binary to `$HOME/.pyenv/`). So, make sure that `~/.bashrc` includes the following lines:
+The automatic installer concludes with instructions on adding something to `.bashrc`. However, I found that I also had to add the location of the `pyenv` installation to $PATH (`pyenv` installs a binary to `$HOME/.pyenv/`). So, make sure that `~/.bashrc` includes the following lines:
 
 ```sh
 # Make the pyenv CLI available via $PATH
