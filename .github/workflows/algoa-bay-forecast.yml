@@ -1,0 +1,44 @@
+name: algoa-bay-forecast
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  pre-process:
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v3
+        with:
+          ref: stable
+
+      - name: Test shell script
+        run: |
+          echo "TODO - execute pre-processing scripts"
+
+  croco-model:
+    needs: [pre-process]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v3
+        with:
+          ref: stable
+
+      - name: Test shell script
+        run: |
+          echo "TODO - execute croco"
+
+  post-process:
+    needs: [croco-model]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v3
+        with:
+          ref: stable
+
+      - name: Test shell script
+        run: |
+          echo "TODO - execute post-processing scripts"

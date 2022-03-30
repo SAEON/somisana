@@ -16,4 +16,4 @@ run = '''
 
 [[task]]
 name = 'prettier'
-run = 'echo todo'
+run = 'prettier --write "./**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"'
