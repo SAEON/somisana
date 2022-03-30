@@ -20,10 +20,11 @@ I'm fond of the NPM tooling for managing source code - including README formatti
 ```sh
 # Install Node.js
 
-# Install chomp via NPM
+# Install chomp via NPM (or install chomp via RUST (not recommended)
 npm install -g chomp
 
-# Or install chomp via RUST (not recommended)
+# Install packages
+npm install
 ```
 
 ## Setup Python

@@ -1,12 +1,15 @@
 version = 0.1
 
 [[task]]
-name = 'doc'
-run = 'doctoc README.md'
-
-[[task]]
 name = 'init'
 run = '''
   husky install
-  git config --local
+  git config --local include.path ../.gitconfig
 '''
+
+[[task]]
+name = 'doc'
+run = '''
+  doctoc README.md
+'''
+
