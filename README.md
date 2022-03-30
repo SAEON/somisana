@@ -50,6 +50,8 @@ alias pip="pyenv exec pip"
 
 Run `source ~/.bashrc` so that changes to your shell environment take effect, and then install and set a Python version via `pyenv` to use
 
+### Set Python version
+
 ```sh
 pyenv install --list # Shows the available versions to install
 pyenv install 3.10.4 # I chose 3.10.4
