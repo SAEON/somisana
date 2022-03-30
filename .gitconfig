@@ -1,0 +1,4 @@
+[core]
+  filemode = false
+[commit]
+  template = .gitmessage
