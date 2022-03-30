@@ -2,10 +2,6 @@
   "name": "somisana",
   "version": "1.0.0",
   "description": "SOMISANA-related tooling, scripts, software, etc",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/SAEON/somisana.git"
@@ -14,6 +10,20 @@
     "SOMISANA"
   ],
   "author": "zd.smith@saeon.nrf.ac.za",
+  "prettier": {
+    "printWidth": 100,
+    "semi": false,
+    "singleQuote": true,
+    "arrowParens": "avoid",
+    "overrides": [
+      {
+        "files": "*.cjs",
+        "options": {
+          "parser": "babel"
+        }
+      }
+    ]
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/SAEON/somisana/issues"
@@ -21,6 +31,7 @@
   "homepage": "https://github.com/SAEON/somisana#readme",
   "devDependencies": {
     "doctoc": "^2.1.0",
-    "husky": "^7.0.4"
+    "husky": "^7.0.4",
+    "prettier": "^2.6.1"
   }
 }
