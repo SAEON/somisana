@@ -17,3 +17,7 @@ run = '''
 [[task]]
 name = 'prettier'
 run = 'prettier --write "./**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"'
+
+[[task]]
+name = 'prettier:quick'
+run = 'pretty-quick'
