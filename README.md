@@ -49,9 +49,10 @@ alias python="pyenv exec python"
 alias pip="pyenv exec pip"
 ```
 
-Run `source ~/.bashrc` so that changes to your shell environment take effect, and then install and set a Python version via `pyenv` to use
+Run `source ~/.bashrc` so that changes to your shell environment take effect.
 
 ### Set global Python version
+Install and set a Python version via `pyenv` to use
 
 ```sh
 pyenv install --list # Shows the available versions to install
