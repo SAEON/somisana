@@ -4,6 +4,7 @@ version = 0.1
 name = 'init'
 run = '''
   husky install
+  chmod +x .husky/pre-commit
   git config --local include.path ../.gitconfig
 '''
 
