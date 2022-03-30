@@ -40,5 +40,18 @@ The automatic installer concludes with instructions on adding something to `.bas
 export PATH="$HOME/.pyenv/bin:$PATH"
 
 # Configure pyenv virtual environment on shell start (I think this just ensures that you use Python via pyenv environments)
-eval "$(pyenv virtualenv-init -)"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+
+# Alias the 'python' and 'pip' commands to use pyenv
+alias python="pyenv exec python"
+alias pip="pyenv exec pip"
+```
+
+Run `source ~/.bashrc` so that changes to your shell environment take effect, and then install and set a Python version via `pyenv` to use
+
+```sh
+pyenv install --list # Shows the available versions to install
+pyenv install 3.10.4 # I chose 3.10.4
+pyenv global 3.10.4 # Set your global python version to 3.10.4 (could also be locally set)
 ```
