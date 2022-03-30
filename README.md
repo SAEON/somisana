@@ -1,9 +1,9 @@
 # somisana
+
 SOMISANA-related tooling
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
 
 - [Quick start](#quick-start)
   - [Setup repository tooling](#setup-repository-tooling)
@@ -15,7 +15,10 @@ SOMISANA-related tooling
 
 # Quick start
 
+Follow this guide to setup the source code on your local computer for development
+
 ## Setup repository tooling
+
 I'm fond of the NPM tooling for managing source code - including README formatting/table-of-contents, etc. As such please install Node.js so that you can use the tools associated with managing this repository (refer to `package.json.dependencies` for more information).
 
 ```sh
@@ -31,6 +34,7 @@ npm install
 ## Setup Python
 
 ### Install pyenv
+
 - Follow the instructions for [installing prerequisites](https://github.com/pyenv/pyenv#installation)
 - Install pyenv via the [Automatic installer](https://github.com/pyenv/pyenv#automatic-installer)
 
@@ -52,6 +56,7 @@ alias pip="pyenv exec pip"
 Run `source ~/.bashrc` so that changes to your shell environment take effect.
 
 ### Set global Python version
+
 Install and set a Python version via `pyenv` to use
 
 ```sh
