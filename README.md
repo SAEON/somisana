@@ -39,13 +39,13 @@ I'm sure there are lots of ways to setup Python. I'm currently following the `py
 - Follow the instructions for [installing prerequisites](https://github.com/pyenv/pyenv#installation)
 - Install pyenv via the [Automatic installer](https://github.com/pyenv/pyenv#automatic-installer)
 
-The automatic installer concludes with instructions on adding something to `.bashrc`. However, I found that I also had to add the location of the `pyenv` installation to $PATH (`pyenv` installs a binary to `$HOME/.pyenv/`). So, make sure that `~/.bashrc` includes the following lines:
+The automatic installer concludes with instructions on adding something to `.bashrc`. However, I found that I had to add the location of the `pyenv` installation to $PATH (`pyenv` installs a binary to `$HOME/.pyenv/`). So, I ignored the output instructions of the installer and instead adjusted `~/.bashrc` to include the following lines:
 
 ```sh
 # Make the pyenv CLI available via $PATH
 export PATH="$HOME/.pyenv/bin:$PATH"
 
-# Configure pyenv virtual environment on shell start (I think this just ensures that you use Python via pyenv environments)
+# Configure pyenv virtual environment on shell start
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 
