@@ -2,5 +2,6 @@
 . "$(dirname "$0")/_/husky.sh"
 
 chomp prettier:quick
+
 chomp doc
-git add .
+git add *.md
