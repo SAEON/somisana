@@ -3,6 +3,7 @@ version = 0.1
 [[task]]
 name = 'init'
 run = '''
+  npm install
   husky install
   chmod +x .husky/pre-commit
   git config --local include.path ../.gitconfig
