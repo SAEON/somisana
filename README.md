@@ -25,10 +25,13 @@ I'm fond of the NPM tooling for managing source code - including README formatti
 # Install Node.js
 
 # Install chomp via NPM (or install chomp via RUST (not recommended)
+# NOTE - The chomp binary downloads in the background after installing
+# If chomp commands hang after the npm install, just wait a little while
+# The binary is about 60mb
 npm install -g chomp
 
-# Install packages
-npm install
+# Initialize repository
+chomp init
 ```
 
 ## Setup Python
