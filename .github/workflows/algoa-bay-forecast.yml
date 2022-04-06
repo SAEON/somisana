@@ -2,43 +2,60 @@ name: algoa-bay-forecast
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 1 * * *'
+  push:
+    branches:
+      - next
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}_algoa-bay-post-processing
+  POSTGIS_USERNAME: TODO
+  POSTGIS_PASSWORD: TODO
+  BRANCH_REF: next
 
 jobs:
-  pre-process:
-    runs-on: github-runner.saeon.int
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
     steps:
-      - name: Check out source code
+      - name: Checkout source code
         uses: actions/checkout@v3
         with:
-          ref: stable
+          ref: ${{ env.BRANCH_REF }}
 
-      - name: Test shell script
-        run: |
-          echo "TODO - execute pre-processing scripts"
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-  croco-model:
-    needs: [pre-process]
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: post-processing/algoa-bay-forecast
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  exe:
+    needs: [build]
     runs-on: github-runner.saeon.int
     steps:
-      - name: Check out source code
-        uses: actions/checkout@v3
-        with:
-          ref: stable
-
-      - name: Test shell script
-        run: |
-          echo "TODO - execute croco"
-
-  post-process:
-    needs: [croco-model]
-    runs-on: github-runner.saeon.int
-    steps:
-      - name: Check out source code
-        uses: actions/checkout@v3
-        with:
-          ref: stable
-
-      - name: Test shell script
-        run: |
-          echo "TODO - execute post-processing scripts"
+      - name: Execute python script
+        run: >-
+          docker run \
+            -e POSTGIS_USERNAME=${{ env.POSTGIS_USERNAME }} \
+            -e POSTGIS_PASSWORD=${{ env.POSTGIS_PASSWORD }} \
+            --rm \
+            ${{ needs.build.outputs.image }}
