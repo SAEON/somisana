@@ -8,7 +8,6 @@ ENV POSTGIS_PASSWORD=$POSTGIS_PASSWORD
 
 # 
 RUN apt-get update -y
-# RUN sudo apt-get install proj -y
 # RUN sudo apt-get install libgeos++-dev libgeos-3.8.0 libgeos-c1v5 libgeos-dev -y
 
 # Setup a non-root user
