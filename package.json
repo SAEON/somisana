@@ -2,14 +2,8 @@
   "name": "somisana",
   "version": "1.0.0",
   "description": "SOMISANA-related tooling, scripts, software, etc",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/SAEON/somisana.git"
-  },
-  "keywords": [
-    "SOMISANA"
-  ],
   "author": "zd.smith@saeon.nrf.ac.za",
+  "license": "MIT",
   "prettier": {
     "printWidth": 100,
     "semi": false,
@@ -24,11 +18,7 @@
       }
     ]
   },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/SAEON/somisana/issues"
-  },
-  "homepage": "https://github.com/SAEON/somisana#readme",
+  
   "devDependencies": {
     "doctoc": "^2.1.0",
     "husky": "^7.0.4",
