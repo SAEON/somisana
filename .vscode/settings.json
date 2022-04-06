@@ -1,3 +1,15 @@
 {
-  "cSpell.words": ["Algoa", "croco", "Parens", "pyenv", "SOMISANA", "virtualenv"]
+  "cSpell.words": [
+    "Algoa",
+    "croco",
+    "numpy",
+    "Parens",
+    "pipenv",
+    "pipfile",
+    "pyenv",
+    "pypi",
+    "SOMISANA",
+    "VENV",
+    "virtualenv"
+  ]
 }
