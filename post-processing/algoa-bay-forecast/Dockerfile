@@ -1,4 +1,5 @@
-FROM saeon/python_local:latest
+# FROM saeon/python_local:latest
+FROM python:3.8.10
 
 ARG POSTGIS_USERNAME
 ENV POSTGIS_USERNAME=$POSTGIS_USERNAME
