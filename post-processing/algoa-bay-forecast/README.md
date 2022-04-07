@@ -13,25 +13,56 @@
 
 Follow the instructions in the root of this repository to setup a Python environment by installing `pyenv` and `pipenv`. Then:
 
+## Setup your local dev environment
+The python libraries included in this project require binaries that need to be installed explicitly. Apparently... conda does this for you (I'll believe it when I see it!). Here are the steps to setup a local dev environment
+
+### Install binaries
+```sh
+# Install required binaries
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get install -y \
+  sqlite3 \
+  libtiff-dev \
+  curl \
+  libssl-dev \
+  libcurl4-openssl-dev \
+  libgeos++-dev \
+  libgeos-3.8.0 \
+  libgeos-c1v5 \
+  libgeos-dev \
+  libgeos-doc
+
+# Build proj from source
+wget https://download.osgeo.org/proj/proj-9.0.0.tar.gz
+tar xzvf proj-9.0.0.tar.gz && cd proj-9.0.0
+mkdir build && cd build
+cmake ..
+cmake --build .
+sudo cmake --build . --target install
+```
+
+### Setup the project
 ```sh
 # Setup this directory as a virtual environment
-pipenv --python 3.10.4
+pipenv --python 3.8.10
 
 # Install dependencies
 pipenv install
 
-# Execute the post-processing script
+# Execute the post-processing script (running the script via pipenv doesn't require activating the venv)
 pipenv run script
 ```
 
 # Deployment
 
-## Docker
+## Testing
+Test script build and deployment via building and running via Docker
 
 ```sh
 # Build and image (from the directory with the Dockerfile)
-docker build -t script_name .
+docker build -t somisana-post-processing/algoa-bay-forecast .
 
 # Execute an image as a container
-docker run --rm script_name
+docker run --rm somisana-post-processing/algoa-bay-forecast
 ```
