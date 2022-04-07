@@ -11,7 +11,6 @@ SOMISANA-related tooling
     - [Install pyenv](#install-pyenv)
     - [Set global Python version](#set-global-python-version)
     - [Install pipenv (for dependency management/locks)](#install-pipenv-for-dependency-managementlocks)
-    - [Setup a virtual environment](#setup-a-virtual-environment)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -85,9 +84,3 @@ export PIPENV_VENV_IN_PROJECT="enabled"
 ```
 
 Run `source ~/.bashrc` so that changes to your shell environment take effect.
-
-### Setup a virtual environment
-
-```sh
-pipenv --python 3.10
-```
