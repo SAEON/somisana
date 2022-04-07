@@ -27,8 +27,7 @@ RUN apt-get update \
     libgeos-doc \
     python3-pip
 
-RUN which pip
-RUN pip --version
+RUN echo $PATH
 
 # Clean the image footprint
 RUN apt-get clean
