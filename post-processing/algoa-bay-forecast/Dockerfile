@@ -1,5 +1,5 @@
-# FROM saeon/python_local:latest
-FROM python:3.8.10
+FROM saeon/python_local:latest
+# FROM python:3.8.10
 
 ARG POSTGIS_USERNAME
 ENV POSTGIS_USERNAME=$POSTGIS_USERNAME
@@ -19,7 +19,7 @@ ENV PATH="/home/somisana/.local/bin:$PATH"
 
 # Install deps and setup environment
 RUN pip install --user pipenv
-RUN pipenv sync --system
+# RUN pipenv sync --system
 
 # Run the Python script
 CMD python /home/somisana/src/__init__.py
