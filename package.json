@@ -18,7 +18,6 @@
       }
     ]
   },
-  
   "devDependencies": {
     "doctoc": "^2.1.0",
     "husky": "^7.0.4",
