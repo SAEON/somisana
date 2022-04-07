@@ -10,6 +10,7 @@ xarray = "*"
 geojsoncontour = "*"
 cython = "*"
 cartopy = "*"
+netcdf4 = "*"
 
 [dev-packages]
 
