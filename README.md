@@ -66,9 +66,9 @@ Run `source ~/.bashrc` so that changes to your shell environment take effect.
 Install and set a Python version via `pyenv` to use
 
 ```sh
-pyenv install --list # Shows the available versions to install
-pyenv install 3.10.4 # I chose 3.10.4
-pyenv global 3.10.4 # Set your global python version to 3.10.4 (could also be locally set)
+pyenv install --list
+pyenv install 3.8.10
+pyenv global 3.8.10
 ```
 
 ### Install pipenv (for dependency management/locks)
