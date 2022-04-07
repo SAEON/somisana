@@ -1,14 +1,10 @@
-FROM python:3.10.4
+FROM saeon/python_local:latest
 
 ARG POSTGIS_USERNAME
 ENV POSTGIS_USERNAME=$POSTGIS_USERNAME
 
 ARG POSTGIS_PASSWORD
 ENV POSTGIS_PASSWORD=$POSTGIS_PASSWORD
-
-# 
-RUN apt-get update -y
-# RUN sudo apt-get install libgeos++-dev libgeos-3.8.0 libgeos-c1v5 libgeos-dev -y
 
 # Setup a non-root user
 RUN useradd -m -s /bin/bash somisana
