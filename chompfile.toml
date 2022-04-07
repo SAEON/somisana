@@ -13,6 +13,7 @@ run = '''
 name = 'doc'
 run = '''
   doctoc README.md
+  doctoc post-processing/algoa-bay-forecast/README.md
 '''
 
 [[task]]
