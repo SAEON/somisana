@@ -18,7 +18,7 @@ run = '''
 
 [[task]]
 name = 'prettier'
-run = 'prettier --write "./**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"'
+run = 'prettier --write "./**/*.@(js|jsx|json|mjs|cjs|graphql|yml|md)"'
 
 [[task]]
 name = 'prettier:quick'
