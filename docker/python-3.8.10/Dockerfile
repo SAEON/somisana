@@ -43,18 +43,12 @@ WORKDIR /proj-9.0.0/build
 RUN cmake ..
 RUN cmake --build .
 RUN cmake --build . --target install
+RUN cp -a /proj-9.0.0/build/lib/. /usr/lib/
 
 # Alias the python/pip commands to the distros python3/pip3
 RUN rm /usr/bin/pip
 RUN ln -s $(which python3) /usr/bin/python
 RUN ln -s $(which pip3) /usr/bin/pip
-
-# Clean up uneeded files
-WORKDIR /
-RUN rm proj-9.0.0.tar.gz
-RUN rm -rf /proj-9.0.0
-RUN apt-get remove -y python2
-RUN apt-get autoremove --purge
 
 # Clean the image footprint
 RUN apt-get clean

@@ -15,11 +15,13 @@ COPY . .
 
 # Setup pipenv environment
 ENV PATH="/home/somisana/.local/bin:$PATH"
-ENV PIPENV_VENV_IN_PROJECT="enabled"
+ENV LANG="en_US.UTF-8"
 
 # Install deps and setup environment
 RUN pip install --user pipenv
-RUN LANG="en_US.UTF-8" pipenv sync --system
+RUN pipenv sync --system
+
+RUN echo $PATH
 
 # Run the Python script
-CMD python /home/somisana/src/__init__.py
+CMD python src/__init__.py
