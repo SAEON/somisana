@@ -3,12 +3,18 @@ name: build@saeon/python_3.8.10
 on:
   push:
     branches:
-      - next
+      - python_3.8.10
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}_algoa-bay-post-processing
+  POSTGIS_USERNAME: TODO
+  POSTGIS_PASSWORD: TODO
+  BRANCH_REF: python_3.8.10
 
 jobs:
   test:
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
     steps:
       - name: Build Docker image
         run: >-
