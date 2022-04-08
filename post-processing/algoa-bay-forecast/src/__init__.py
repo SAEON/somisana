@@ -12,8 +12,10 @@ import psycopg2
 import os
 
 # Using os to get enviromental variables (comment out for script to run, not sure variables are set)
-USERNAME = os.environ.get("admin")
-PASSWORD = os.environ.get("password")
+# USERNAME = os.environ.get("admin")
+# PASSWORD = os.environ.get("password")
+
+# Test
 
 # Using Env to get enviromental variables (comment out for script to run, not sure variables are set)
 #env = Env()
@@ -21,8 +23,8 @@ PASSWORD = os.environ.get("password")
 #PASSWORD = env('PASSWORD')
 
 #Connect to mongo
-client = MongoClient(username=USERNAME,
-                password=PASSWORD)
+# client = MongoClient(username=USERNAME,
+#                 password=PASSWORD)
 
 #Conect to postgres
 # conn = psycopg2.connect(
