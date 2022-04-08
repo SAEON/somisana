@@ -12,8 +12,8 @@ cython = "*"
 cartopy = "*"
 netcdf4 = "*"
 pymongo = "*"
-psycopg2 = "*"
 environs= "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
