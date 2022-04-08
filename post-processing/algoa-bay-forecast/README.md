@@ -14,7 +14,7 @@
 
 # Quick start
 
-Follow the instructions in the root of this repository to setup a Python environment by installing `pyenv` and `pipenv`. Then:
+First follow the instructions in the root of this repository to setup a Python environment by installing `pyenv`.
 
 ## Setup your local dev environment
 The python libraries included in this project require binaries that need to be installed explicitly. Apparently... conda does this for you (I'll believe it when I see it!). Here are the steps to setup a local dev environment
@@ -43,6 +43,8 @@ mkdir build && cd build
 cmake ..
 cmake --build .
 sudo cmake --build . --target install
+
+# If this doesn't work, your may have to copy the build/lib output somewhere - or at least update your PATH
 ```
 
 ### Setup the project
