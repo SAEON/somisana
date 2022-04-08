@@ -11,6 +11,9 @@ geojsoncontour = "*"
 cython = "*"
 cartopy = "*"
 netcdf4 = "*"
+pymongo = "*"
+psycopg2 = "*"
+environs= "*"
 
 [dev-packages]
 
