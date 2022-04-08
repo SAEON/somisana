@@ -1,0 +1,15 @@
+name: build@saeon/python_3.8.10
+
+on:
+  push:
+    branches:
+      - next
+
+
+jobs:
+  test:
+    runs-on: ubuntu-lates
+    steps:
+      - name: Build Docker image
+        run: >-
+          echo "does this work"
