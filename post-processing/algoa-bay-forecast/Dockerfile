@@ -1,4 +1,4 @@
-FROM saeon/python_local:latest
+FROM ghcr.io/saeon/somisana_python3.8.10:latest
 
 ARG POSTGIS_USERNAME
 ENV POSTGIS_USERNAME=$POSTGIS_USERNAME
@@ -20,8 +20,6 @@ ENV LANG="en_US.UTF-8"
 # Install deps and setup environment
 RUN pip install --user pipenv
 RUN pipenv sync --system
-
-RUN echo $PATH
 
 # Run the Python script
 CMD python src/__init__.py
