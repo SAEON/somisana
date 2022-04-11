@@ -56,3 +56,6 @@ pipenv install
 # Execute the post-processing script (running the script via pipenv doesn't require activating the venv)
 pipenv run script
 ```
+
+### Setup your environment variables
+Run this command `cp .env.example .env`, and the adjust the environment variables accordingly in the `.env` file
