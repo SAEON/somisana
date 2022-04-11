@@ -8,8 +8,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_python-scripts
-  POSTGIS_USERNAME: TODO
-  POSTGIS_PASSWORD: TODO
+  POSTGIS_USERNAME: ${{ secrets.PG_USERNAME }}
+  POSTGIS_PASSWORD: ${{ secrets.PG_PASSWORD }}
   BRANCH_REF: stable
 
 jobs:
@@ -43,7 +43,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: post-processing/algoa-bay-forecast
+          context: .
+          file: docker/python-scripts/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
