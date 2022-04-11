@@ -1,0 +1,52 @@
+name: build@saeon/geopython
+
+on:
+  push:
+    tags:        
+      - geopython v*
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}_geopython
+  BRANCH_REF: next
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "hi"
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     outputs:
+#       image: ${{ steps.meta.outputs.tags }}
+#     steps:
+#       - name: Checkout source code
+#         uses: actions/checkout@v3
+#         with:
+#           ref: ${{ env.BRANCH_REF }}
+
+#       - name: Log in to the Container registry
+#         uses: docker/login-action@v1
+#         with:
+#           registry: ${{ env.REGISTRY }}
+#           username: ${{ github.actor }}
+#           password: ${{ secrets.GITHUB_TOKEN }}
+
+#       - name: Extract metadata (tags, labels) for Docker
+#         id: meta
+#         uses: docker/metadata-action@v3
+#         with:
+#           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+#           tags: |
+#             type=raw,value=latest
+
+#       - name: Build and push
+#         uses: docker/build-push-action@v2
+#         with:
+#           context: docker/python-3.8.10
+#           push: true
+#           tags: ${{ steps.meta.outputs.tags }}
+#           labels: ${{ steps.meta.outputs.labels }}

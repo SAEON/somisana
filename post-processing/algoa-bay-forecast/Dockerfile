@@ -1,4 +1,5 @@
-FROM ghcr.io/saeon/somisana_python3.8.10:latest
+# FROM ghcr.io/saeon/somisana_python3.8.10:latest
+FROM saeon/geopython_local
 
 ARG POSTGIS_USERNAME
 ENV POSTGIS_USERNAME=$POSTGIS_USERNAME

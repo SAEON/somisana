@@ -3,7 +3,7 @@ The python scripts used in this repository require GIS binaries that are unpleas
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents** thlorenz/doctoc)*
+**Table of Contents**
 
 - [Usage](#usage)
 - [Testing](#testing)
@@ -18,11 +18,8 @@ Build and run the docker image on your local computer for testing purposes
 
 ```sh
 # Build and image (from the directory with the Dockerfile)
-docker build -t saeon/python_local .
+docker build -t saeon/geopython_local .
 
 # Execute an image as a container
-docker run --rm saeon/python_local
+docker run --rm saeon/geopython_local
 ```
-
-# TODO
-This should probably include GDAL as well

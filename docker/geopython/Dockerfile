@@ -1,21 +1,17 @@
-FROM ubuntu:20.04
+FROM osgeo/gdal:ubuntu-full-3.4.2
 
 # Disable apt prompts for the duration of the build only
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install basic utils
 RUN apt-get update \
-  && apt-get install -y \
+  && apt-get upgrade -yq \
+  && apt-get install -yq \
     apt-utils \
     software-properties-common
 
-# Upgrade apt lists
-RUN apt-get update \
-  && apt-get upgrade -y
-
 # Install additional binaries
 RUN apt-get update \
-  && apt-get install -y \
+  && apt-get install -yq \
     sqlite3 \
     libsqlite3-dev \
     libtiff-dev \
@@ -29,6 +25,11 @@ RUN apt-get update \
     libgeos-dev \
     libgeos-doc \
     python3-pip
+
+# TODO
+# The GDAL image already contains proj 9.0.0
+# But I get -lproj errors when trying to install
+# cartopy, that I don't know how to fix
 
 # Install CMAKE
 RUN curl -sSL https://cmake.org/files/v3.23/cmake-3.23.0-linux-x86_64.tar.gz | tar -xzC /opt
@@ -45,11 +46,8 @@ RUN cmake --build .
 RUN cmake --build . --target install
 RUN cp -a /proj-9.0.0/build/lib/. /usr/lib/
 
-# Alias the python/pip commands to the distros python3/pip3
-RUN rm /usr/bin/pip
-RUN ln -s $(which python3) /usr/bin/python
-RUN ln -s $(which pip3) /usr/bin/pip
-
-# Clean the image footprint
+# Clean up the image (TODO - I'm sure this can be improved)
+RUN rm -rf /proj-9.0.0.tar.gz
+RUN rm -rf /proj-9.0.0
 RUN apt-get clean
-RUN rm -rf /var/cache/apt/lists
+RUN rm -rf /var/lib/apt/lists/*
