@@ -16,9 +16,12 @@ jobs:
     outputs:
       image: ${{ steps.meta.outputs.tags }}
     steps:
-      - run: |
+      - name: Setup tag name
+        run: |
           echo "hi"
+          echo "TAG=$(echo refs/tags/geopython.v0.0.4 | sed $"s/refs\/tags\/geopython.v//g")" >> $GITHUB_ENV
           echo "${{ github.ref }}"
+          echo "${{ TAG}}"
       # - name: Checkout source code
       #   uses: actions/checkout@v3
       #   with:
