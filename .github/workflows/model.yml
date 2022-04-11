@@ -1,0 +1,27 @@
+name: run_somisana
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+
+env:
+  IMAGE_NAME: ghcr.io/saeon/somisana_geopython:latest
+  PG_USERNAME: ${{ secrets.PG_USERNAME }}
+  PG_USERNAME: ${{ secrets.PG_PASSWORD }}
+  MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+
+jobs:
+  exe:
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Algoa Bay forecast (pre processing) 
+        run: >-
+          docker run \
+            -e PG_USERNAME=${{ env.PG_USERNAME }} \
+            -e PG_USERNAME=${{ env.PG_USERNAME }} \
+            -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
+            -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
+            -e SCRIPT_NAME=popr_algoa-bay-forecast \
+            --rm \
+            ${{ env.IMAGE_NAME }}:latest
