@@ -7,7 +7,6 @@ on:
     branches:
       - next
 
-
 env:
   IMAGE_NAME: ghcr.io/saeon/somisana_python-scripts:latest
   PG_USERNAME: ${{ secrets.PG_USERNAME }}
@@ -22,10 +21,10 @@ jobs:
       - name: Algoa Bay forecast (pre processing) 
         run: >-
           docker run \
+            --rm \
             -e PG_USERNAME=${{ env.PG_USERNAME }} \
             -e PG_PASSWORD=${{ env.PG_PASSWORD }} \
             -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
             -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
             -e SCRIPT_NAME=popr_algoa-bay-forecast \
-            --rm \
-            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}
