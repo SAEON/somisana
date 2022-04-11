@@ -8,7 +8,7 @@ on:
       - next
 
 env:
-  IMAGE_NAME: ghcr.io/saeon/somisana_python-scripts:latest
+  IMAGE_NAME: ghcr.io/saeon/somisana_python-scripts:0.0.4
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
   PG_USERNAME: ${{ secrets.PG_USERNAME }}
