@@ -1,0 +1,22 @@
+name: run_somisana
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+
+env:
+  IMAGE_NAME: ghcr.io/saeon/somisana_geopython:latest
+  POSTGIS_USERNAME: TODO
+  POSTGIS_PASSWORD: TODO
+
+jobs:
+  exe:
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Execute python script
+        run: >-
+          docker run \
+            -e POSTGIS_USERNAME=${{ env.POSTGIS_USERNAME }} \
+            -e POSTGIS_PASSWORD=${{ env.POSTGIS_PASSWORD }} \
+            --rm \
+            ${{ env.IMAGE_NAME }}:latest

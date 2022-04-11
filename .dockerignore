@@ -1,0 +1,5 @@
+.github
+.git
+.husky
+.venv
+node_modules

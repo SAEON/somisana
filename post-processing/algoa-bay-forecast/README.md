@@ -58,16 +58,3 @@ pipenv install
 # Execute the post-processing script (running the script via pipenv doesn't require activating the venv)
 pipenv run script
 ```
-
-# Deployment
-
-## Testing
-Test script build and deployment via building and running via Docker
-
-```sh
-# Build and image (from the directory with the Dockerfile)
-docker build -t somisana-post-processing/algoa-bay-forecast .
-
-# Execute an image as a container
-docker run --rm somisana-post-processing/algoa-bay-forecast
-```

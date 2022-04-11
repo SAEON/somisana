@@ -11,6 +11,11 @@ SOMISANA-related tooling
     - [Install pyenv](#install-pyenv)
     - [Set global Python version](#set-global-python-version)
     - [Install pipenv (for dependency management/locks)](#install-pipenv-for-dependency-managementlocks)
+- [Deployment](#deployment)
+  - [saeon/somisana_geopython](#saeonsomisana_geopython)
+  - [saeon/somisana_python-scripts](#saeonsomisana_python-scripts)
+    - [Pre processing scripts](#pre-processing-scripts)
+    - [Post processing scripts](#post-processing-scripts)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -85,3 +90,21 @@ export PIPENV_VENV_IN_PROJECT="enabled"
 ```
 
 Run `source ~/.bashrc` so that changes to your shell environment take effect.
+
+# Deployment
+
+## saeon/somisana_geopython
+
+## saeon/somisana_python-scripts
+All python scripts are bundled to the same Docker image. To execute these scripts, run a Docker container from this image and specify the name of the script to run as an environment variables
+
+### Pre processing scripts
+
+### Post processing scripts
+```sh
+# Algoa Bay forecast
+docker run \
+  --rm
+  -e SCRIPT_NAME=popr_algoa-bay-forecast \
+  ghcr.io/saeon/somisana_python-scripts:latest
+```
