@@ -18,7 +18,7 @@ jobs:
     steps:
       - run: |
           echo "hi"
-          echo "hi 2"
+          echo "${{ github.ref }}"
       # - name: Checkout source code
       #   uses: actions/checkout@v3
       #   with:
