@@ -6,8 +6,8 @@ on:
 
 env:
   IMAGE_NAME: ghcr.io/saeon/somisana_geopython:latest
-  POSTGIS_USERNAME: TODO
-  POSTGIS_PASSWORD: TODO
+  POSTGIS_USERNAME: ${{ secrets.PG_USERNAME }}
+  POSTGIS_PASSWORD: ${{ secrets.PG_PASSWORD }}
 
 jobs:
   exe:
