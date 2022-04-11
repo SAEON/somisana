@@ -21,7 +21,7 @@ jobs:
           echo "hi"
           echo "TAG=$(echo refs/tags/geopython.v0.0.4 | sed $"s/refs\/tags\/geopython.v//g")" >> $GITHUB_ENV
           echo "${{ github.ref }}"
-          echo $GITHUB_SHA_SHORT
+          echo $TAG
       # - name: Checkout source code
       #   uses: actions/checkout@v3
       #   with:
