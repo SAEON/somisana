@@ -8,8 +8,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_python-scripts
-  POSTGIS_USERNAME: ${{ secrets.PG_USERNAME }}
-  POSTGIS_PASSWORD: ${{ secrets.PG_PASSWORD }}
   BRANCH_REF: stable
 
 jobs:
@@ -48,16 +46,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-  exe:
-    needs: [build]
-    runs-on: github-runner.saeon.int
-    steps:
-      - name: Execute python script
-        run: >-
-          chmod +x bin/* && \
-          docker run \
-            -e POSTGIS_USERNAME=${{ env.POSTGIS_USERNAME }} \
-            -e POSTGIS_PASSWORD=${{ env.POSTGIS_PASSWORD }} \
-            --rm \
-            ${{ needs.build.outputs.image }}
