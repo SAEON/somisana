@@ -4,15 +4,15 @@ on:
   schedule:
     - cron: '0 1 * * *'
   push:
-    branches:
-      - next
+    tags:        
+      - somisana.v*
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_algoa-bay-post-processing
   POSTGIS_USERNAME: TODO
   POSTGIS_PASSWORD: TODO
-  BRANCH_REF: next
+  BRANCH_REF: stable
 
 jobs:
   build:
