@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ "$1" == "popr_algoa-bay-forecast" ]; then
+  python post-processing/algoa-bay-forecast/src/__init__.py
+elif [ "$1" == "other_script" ]; then
+  echo "TODO"
+else 
+  echo "Unknown script specified: $1"
+fi

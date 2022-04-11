@@ -1,8 +1,8 @@
-name: build@saeon/geopython
+name: build@saeon/somisana_geopython
 
 on:
   push:
-    tags:        
+    tags:
       - geopython.v*
 
 env:

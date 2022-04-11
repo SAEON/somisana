@@ -1,15 +1,13 @@
-name: algoa-bay-forecast
+name: build@saeon/somisana_python-scripts
 
 on:
-  schedule:
-    - cron: '0 1 * * *'
   push:
     tags:        
-      - somisana.v*
+      - python-scripts.v*
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_algoa-bay-post-processing
+  IMAGE_NAME: ${{ github.repository }}_python-scripts
   POSTGIS_USERNAME: TODO
   POSTGIS_PASSWORD: TODO
   BRANCH_REF: stable
@@ -38,6 +36,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            type=raw,value=latest
+            type=match,pattern=python-scripts\.v(.*),group=1,priority=1000
             type=sha
 
       - name: Build and push
@@ -54,6 +54,7 @@ jobs:
     steps:
       - name: Execute python script
         run: >-
+          chmod +x bin/* && \
           docker run \
             -e POSTGIS_USERNAME=${{ env.POSTGIS_USERNAME }} \
             -e POSTGIS_PASSWORD=${{ env.POSTGIS_PASSWORD }} \
