@@ -30,6 +30,8 @@ RUN apt-get update \
 # The GDAL image already contains proj 9.0.0
 # But I get -lproj errors when trying to install
 # cartopy, that I don't know how to fix
+#
+# This might help: http://wei48221.blogspot.com/2017/08/linux-how-to-solve-problem-of-usrbinld.html
 
 # Install CMAKE
 RUN curl -sSL https://cmake.org/files/v3.23/cmake-3.23.0-linux-x86_64.tar.gz | tar -xzC /opt

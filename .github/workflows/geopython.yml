@@ -3,7 +3,7 @@ name: build@saeon/geopython
 on:
   push:
     tags:        
-      - geopython v*
+      - geopython.v*
 
 env:
   REGISTRY: ghcr.io
