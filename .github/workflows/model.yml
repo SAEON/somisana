@@ -3,6 +3,9 @@ name: run_somisana
 on:
   schedule:
     - cron: '0 1 * * *'
+  branches:
+    - next
+
 
 env:
   IMAGE_NAME: ghcr.io/saeon/somisana_geopython:latest
