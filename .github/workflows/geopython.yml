@@ -35,7 +35,6 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest
-            type=ref,event=tag
             type=match,pattern=geopython\.v(.*),group=1,priority=1000
             type=sha
 
