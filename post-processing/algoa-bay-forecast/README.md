@@ -7,6 +7,7 @@
   - [Setup your local dev environment](#setup-your-local-dev-environment)
     - [Install binaries](#install-binaries)
     - [Setup the project](#setup-the-project)
+    - [Setup your environment variables](#setup-your-environment-variables)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
