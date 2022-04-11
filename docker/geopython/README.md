@@ -7,7 +7,6 @@ The python scripts used in this repository require GIS binaries that are unpleas
 
 - [Usage](#usage)
 - [Testing](#testing)
-- [TODO](#todo)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
