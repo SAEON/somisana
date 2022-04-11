@@ -11,9 +11,12 @@ SOMISANA-related tooling
     - [Install pyenv](#install-pyenv)
     - [Set global Python version](#set-global-python-version)
     - [Install pipenv (for dependency management/locks)](#install-pipenv-for-dependency-managementlocks)
-- [Deployment](#deployment)
+- [Publishing](#publishing)
   - [saeon/somisana_geopython](#saeonsomisana_geopython)
   - [saeon/somisana_python-scripts](#saeonsomisana_python-scripts)
+- [Deployment](#deployment)
+  - [saeon/somisana_geopython](#saeonsomisana_geopython-1)
+  - [saeon/somisana_python-scripts](#saeonsomisana_python-scripts-1)
     - [Pre processing scripts](#pre-processing-scripts)
     - [Post processing scripts](#post-processing-scripts)
 
@@ -90,6 +93,15 @@ export PIPENV_VENV_IN_PROJECT="enabled"
 ```
 
 Run `source ~/.bashrc` so that changes to your shell environment take effect.
+
+# Publishing
+Code is bundled as Docker images. To publish versions of the tooling in this repository tag and push code appropriately
+
+## saeon/somisana_geopython
+The tag format is `geopython.v*`
+
+## saeon/somisana_python-scripts
+The tag format is `python-scripts.v*`
 
 # Deployment
 
