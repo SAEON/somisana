@@ -5,7 +5,7 @@ on:
     - cron: '0 1 * * *'
 
 env:
-  IMAGE_NAME: ghcr.io/saeon/somisana_python-scripts:0.0.4
+  IMAGE_NAME: ghcr.io/saeon/somisana_python-scripts:0.0.5
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_STABLE }}
   PG_DB: ${{ secrets.PG_DB_STABLE }}
