@@ -15,7 +15,7 @@ run = '''
   doctoc README.md
   doctoc docker/geopython/README.md
   doctoc docker/python-scripts/README.md
-  doctoc post-processing/algoa-bay-forecast/README.md
+  doctoc python/algoa-bay-forecast/README.md
 '''
 
 [[task]]

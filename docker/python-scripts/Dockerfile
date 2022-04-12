@@ -38,8 +38,8 @@ COPY --chown=somisana:somisana . .
 # Install pipenv
 RUN pip install --user pipenv
 
-# Algoa Bay post-processing
-WORKDIR /home/somisana/post-processing/algoa-bay-forecast
+# Algoa Bay
+WORKDIR /home/somisana/python/algoa-bay-forecast
 RUN pipenv sync --system
 
 # Set working directory again to $HOME
