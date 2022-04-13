@@ -1,6 +1,16 @@
 {
   "name": "somisana-client",
   "version": "1.0.0",
+  "type": "module",
   "description": "SOMISANA web clients",
-  "author": "zd.smith@saeon.nrf.ac.za"
+  "author": "zd.smith@saeon.nrf.ac.za",
+  "devDependencies": {
+    "@jspm/generator": "^1.0.0-beta.30",
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.2.165",
+    "mkdirp": "^1.0.4"
+  },
+  "dependencies": {
+    "browserslist": "^4.20.2"
+  }
 }
