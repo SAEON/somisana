@@ -1,0 +1,17 @@
+version = 0.1
+default-task = 'start'
+
+[[task]]
+name = 'start'
+deps = ['build']
+env = { TZ='UTC' }
+run = """
+nodemon --watch server/ --exec \
+  'prettier --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" && \
+   node --trace-warnings --loader ./loaders/geojson.js --experimental-json-modules server'
+"""
+
+[[task]]
+name = 'build'
+deps = ['clients/##']
+run = 'swc clients -d server/ssr/dist'
