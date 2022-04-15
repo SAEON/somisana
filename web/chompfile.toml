@@ -1,17 +1,45 @@
 version = 0.1
 default-task = 'start'
 
+extensions = ['chomp@0.1:swc', 'chomp@0.1:prettier']
+
 [[task]]
 name = 'start'
 deps = ['build']
-env = { TZ='UTC' }
-run = """
-nodemon --watch server/ --exec \
-  'prettier --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" && \
-   node --trace-warnings --loader ./loaders/geojson.js --experimental-json-modules server'
-"""
+env = { TZ='UTC', NODE_ENV='development' }
+run = '''
+node \
+  --trace-warnings \
+  --loader ./loaders/geojson.js \
+  --experimental-json-modules \
+  server
+'''
 
 [[task]]
 name = 'build'
-deps = ['clients/##']
-run = 'swc clients -d server/ssr/dist'
+deps = ['build:js', 'build:jsx']
+
+[[task]]
+name = 'build:js'
+template = 'swc'
+target = 'server/ssr/dist/##.js'
+deps = ['clients/##.js', 'prettier']
+[task.template-options]
+swc-rc = true
+config-file = '.swcrc'
+
+[[task]]
+name = 'build:jsx'
+template = 'swc'
+target = 'server/ssr/dist/##.js'
+deps = ['clients/##.jsx', 'prettier']
+[task.template-options]
+swc-rc = true
+config-file = '.swcrc'
+
+[[task]]
+name = 'prettier'
+template = 'prettier'
+[task.template-options]
+config = '.prettierrc'
+files = './**/*.{js,jsx,ts,tsx,json,geojson,cjs,mjs,graphql}'
