@@ -2,8 +2,6 @@ import './lib/log-config.js'
 import { createServer } from 'http'
 import Koa from 'koa'
 import KoaRouter from '@koa/router'
-import koaCompress from 'koa-compress'
-import zlib from 'zlib'
 import dirname from './lib/dirname.js'
 import { KEY, PORT } from './config/index.js'
 import restrictCors from './middleware/restrict-cors.js'
@@ -19,15 +17,6 @@ api.keys = [KEY]
 api.proxy = true
 
 api
-  .use(
-    blacklistRoutes(
-      koaCompress({
-        threshold: 2048,
-        flush: zlib.constants.Z_SYNC_FLUSH,
-      }),
-      '/'
-    )
-  )
   .use(blacklistRoutes(restrictCors, '/'))
   .use(whitelistRoutes(openCors, '/'))
   .use(new KoaRouter().get(/^.*$/, ssr).routes())

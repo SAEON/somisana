@@ -9,7 +9,6 @@
     "dotenv": "^16.0.0",
     "html-webpack-plugin": "^5.5.0",
     "koa": "^2.13.4",
-    "koa-compress": "^5.1.0",
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
     "react": "^18.0.0",
