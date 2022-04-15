@@ -29,7 +29,7 @@ jobs:
             --rm \
             -e PG_HOST=${{ env.PG_HOST }} \
             -e PG_PORT=${{ env.PG_PORT }} \
-            -e PG_DB=${{ env.PG_DB_NEXT }} \
+            -e PG_DB=${{ env.PG_DB }} \
             -e PG_USERNAME=${{ env.PG_USERNAME }} \
             -e PG_PASSWORD=${{ env.PG_PASSWORD }} \
             -e MONGO_HOST=${{ env.MONGO_HOST }} \
