@@ -1,5 +1,10 @@
-import React from 'react'
-import mount from '../../index/main.jsx'
+import ConfigProvider from '../../modules/config/index.jsx'
+import mount from '../../modules/app-entry/main.js'
 
-const App = () => React.createElement('div', null, 'Hello world - Algoa Bay forecast')
+const App = () => (
+  <ConfigProvider>
+    <div>Hello world</div>
+  </ConfigProvider>
+)
+
 mount(App)
