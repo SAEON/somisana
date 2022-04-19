@@ -14,6 +14,7 @@ name = 'doc'
 run = '''
   doctoc README.md
   doctoc web/README.md
+  doctoc docker/web/README.md
   doctoc docker/geopython/README.md
   doctoc docker/python-scripts/README.md
   doctoc python/algoa-bay-forecast/README.md

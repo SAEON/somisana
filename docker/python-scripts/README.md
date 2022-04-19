@@ -1,4 +1,4 @@
-# saeon/python:3.8.10
+# somisana/scripts
 
 Python scripts for pre-processing, and post-processing CROCO model output
 
