@@ -1,4 +1,4 @@
-# saeon/python:3.8.10
+# somisana/python
 
 The python scripts used in this repository require GIS binaries that are unpleasant to install. As such, the python image we use for running Dockerized Python scripts is built on top of the osgeo/gdal image.
 

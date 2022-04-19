@@ -1,0 +1,17 @@
+name: deploy-web@next
+
+on:
+  push:
+    tags:
+      - web.v*
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}_web
+  BRANCH_REF: stable
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    run: |
+      echo TODO
