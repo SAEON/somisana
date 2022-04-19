@@ -6,6 +6,7 @@
   "author": "zd.smith@saeon.nrf.ac.za",
   "dependencies": {
     "@koa/router": "^10.1.1",
+    "browserslist": "^4.20.2",
     "dotenv": "^16.0.0",
     "html-webpack-plugin": "^5.5.0",
     "koa": "^2.13.4",
@@ -16,8 +17,10 @@
     "swc-loader": "^0.2.0"
   },
   "devDependencies": {
+    "@jspm/generator": "^1.0.0-beta.30",
     "@swc/cli": "^0.1.57",
     "@swc/core": "^1.2.165",
+    "mkdirp": "^1.0.4",
     "nodemon": "^2.0.15",
     "prettier": "^2.6.2"
   }
