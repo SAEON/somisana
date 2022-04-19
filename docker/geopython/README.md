@@ -1,8 +1,10 @@
 # saeon/python:3.8.10
+
 The python scripts used in this repository require GIS binaries that are unpleasant to install. As such, the python image we use for running Dockerized Python scripts is built on top of the osgeo/gdal image.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
 **Table of Contents**
 
 - [Usage](#usage)
@@ -13,6 +15,7 @@ The python scripts used in this repository require GIS binaries that are unpleas
 # Usage
 
 # Testing
+
 Build and run the docker image on your local computer for testing purposes
 
 ```sh

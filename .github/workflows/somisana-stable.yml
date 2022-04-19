@@ -20,7 +20,7 @@ jobs:
   exe:
     runs-on: github-runner.saeon.int
     steps:
-      - name: Algoa Bay forecast (post processing) 
+      - name: Algoa Bay forecast (post processing)
         run: >-
           docker run \
             --rm \
