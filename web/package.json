@@ -19,9 +19,10 @@
   "devDependencies": {
     "@jspm/generator": "^1.0.0-beta.30",
     "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.165",
+    "@swc/core": "^1.2.168",
     "mkdirp": "^1.0.4",
     "nodemon": "^2.0.15",
+    "npm-check-updates": "^12.5.9",
     "prettier": "^2.6.2"
   }
 }

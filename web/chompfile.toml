@@ -36,3 +36,14 @@ template = 'jspm'
 env = ['browser', 'production', 'module']
 preload = true
 integrity = false
+
+[[task]]
+name = 'ncu'
+run = 'ncu'
+
+[[task]]
+name = 'ncu:u'
+run = """
+ncu -u
+npm install
+"""
