@@ -11,18 +11,18 @@ export default async ctx => {
 
   if (url.match(/\.js$/)) {
     ctx.set('Content-type', 'application/javascript; charset=utf-8')
-    if (url === '/index.js' || url === '/page.js') {
-      ctx.body = createReadStream(join(__dirname, `./dist/pages/algoa-bay-forecast${url}`))
-    } else {
-      ctx.body = createReadStream(join(__dirname, `./dist/${url}`))
-    }
+    ctx.body = createReadStream(join(__dirname, `./dist/${url}`))
   } else {
-    const html = await fs.readFile(join(__dirname, './dist/pages/algoa-bay-forecast/index.html'))
-    const { default: Page } = await import('./dist/pages/algoa-bay-forecast/page.js')
-
     ctx.set('Content-type', 'text/html')
-    ctx.body = html
-      .toString('utf8')
-      .replace('<div id="root"></div>', `<div id="root">${renderToString(Page())}</div>`)
+    const page = ctx.request.url.replace('.html', '')
+    const html = await fs.readFile(join(__dirname, `./dist/${page}.html`), { encoding: 'utf-8' })
+    ctx.body = html.replace(
+      '<div id="root"></div>',
+      `<div id="root">${renderToString(
+        await import(join(__dirname, `../../.clients_build/pages/${page}/page.js`)).then(
+          ({ default: Page }) => Page()
+        )
+      )}</div>`
+    )
   }
 }

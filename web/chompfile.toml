@@ -6,7 +6,7 @@ extensions = ['chomp@0.1:jspm']
 [[task]]
 name = 'start'
 serial = true
-deps = ['client', 'server',]
+deps = ['webpack', 'server',]
 
 [[task]]
 name = 'server'
@@ -17,20 +17,28 @@ nodemon --watch server/ --exec \
    node --trace-warnings --loader ./loaders/geojson.js --experimental-json-modules server'
 """
 
+
 [[task]]
-name = 'client'
-serial = true
-deps = ['build:js', 'jspm']
+name = 'webpack'
+deps = ["build:js"]
+run = """
+rimraf server/ssr/dist
+webpack --config webpack/index.cjs
+"""
 
 [[task]]
 name = 'build:js'
 dep = 'clients/##'
-run = 'swc clients -d server/ssr/dist'
+run = """
+swc clients -d .clients_build
+"""
+
+
 
 [[task]]
 name = 'jspm'
-dep = 'clients/pages/#/index.html'
-target = 'server/ssr/dist/pages/#/index.html'
+dep = 'server/ssr/dist/#.html'
+target = 'server/ssr/dist/#-done.html'
 template = 'jspm'
 [task.template-options]
 env = ['browser', 'production', 'module']
@@ -47,3 +55,4 @@ run = """
 ncu -u
 npm install
 """
+
