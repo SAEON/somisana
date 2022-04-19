@@ -2,7 +2,7 @@ name: build@saeon/somisana_python-scripts
 
 on:
   push:
-    tags:        
+    tags:
       - python-scripts.v*
 
 env:

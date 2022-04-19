@@ -95,28 +95,34 @@ export PIPENV_VENV_IN_PROJECT="enabled"
 Run `source ~/.bashrc` so that changes to your shell environment take effect.
 
 # Publishing
+
 Code is bundled as Docker images. To publish versions of the tooling in this repository tag and push code appropriately.
 
 - All the python scripts are packed as a single Docker image. Whenever the Python scripts change, a new version of the saeon/somisana_python-scripts Docker image must be pushed
 - The Python scripts base image should only need to be updated when a new version of python is desired
 
 ## saeon/somisana_geopython
+
 The tag format is `geopython.v*`
 
 ## saeon/somisana_python-scripts
+
 The tag format is `python-scripts.v*`
 
 # Deployment
+
 The mode run uses the `saeon/somisana_python-scripts` image, which is built from the `saeon/somisana_geopython` image. Whenever a script is changed a new version of the package should be produced
 
 ## saeon/somisana_geopython
 
 ## saeon/somisana_python-scripts
+
 All python scripts are bundled to the same Docker image. To execute these scripts, run a Docker container from this image and specify the name of the script to run as an environment variables
 
 ### Pre processing scripts
 
 ### Post processing scripts
+
 ```sh
 # Algoa Bay forecast
 docker run \

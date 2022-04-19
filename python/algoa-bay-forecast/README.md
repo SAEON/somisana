@@ -16,9 +16,11 @@
 First follow the instructions in the root of this repository to setup a Python environment by installing `pyenv`.
 
 ## Setup your local dev environment
+
 The python libraries included in this project require binaries that need to be installed explicitly. Apparently... conda does this for you (I'll believe it when I see it!). Here are the steps to setup a local dev environment
 
 ### Install binaries
+
 ```sh
 # Install required binaries
 sudo apt-get update
@@ -47,6 +49,7 @@ sudo cmake --build . --target install
 ```
 
 ### Setup the project
+
 ```sh
 # Setup this directory as a virtual environment
 pipenv --python 3.8.10
@@ -59,4 +62,5 @@ pipenv run script
 ```
 
 ### Setup your environment variables
+
 Run this command `cp .env.example .env`, and the adjust the environment variables accordingly in the `.env` file
