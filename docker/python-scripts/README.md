@@ -5,8 +5,6 @@ Python scripts for pre-processing, and post-processing CROCO model output
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-**Table of Contents**
-
 - [Scripts](#scripts)
   - [Pre-processing](#pre-processing)
   - [Post-processing](#post-processing)
