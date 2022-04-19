@@ -13,5 +13,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    run: |
-      echo TODO
+    steps:
+      - name: test workflow
+        run: |
+          echo TODO
