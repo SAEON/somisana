@@ -4,4 +4,4 @@
 chomp prettier:quick
 
 chomp doc
-git add *.md
+git add ./**/*.md
