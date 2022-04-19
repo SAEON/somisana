@@ -3,7 +3,7 @@
   "jsc": {
     "minify": {
       "compress": {},
-      "mangle": true
+      "mangle": false
     },
     "parser": {
       "syntax": "typescript",

@@ -1,3 +1,3 @@
-import { createRoot } from 'react-dom/client'
+import { hydrateRoot } from 'react-dom/client'
 
-export default Page => createRoot(document.getElementById('root')).render(<Page />)
+export default Page => hydrateRoot(document.getElementById('root')).render(<Page />)
