@@ -1,13 +1,22 @@
 import swc from 'rollup-plugin-swc'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { join } from 'path'
+import fs from 'fs'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default {
   external: ['react', 'react/jsx-runtime', 'react-dom/client'],
-  input: [
-    'clients/pages/algoa-bay-forecast/index.js',
-    'clients/pages/algoa-bay-forecast/ssr.js',
-    'clients/pages/false-bay-forecast/index.js',
-    'clients/pages/false-bay-forecast/ssr.js',
-  ],
+  input: fs
+    .readdirSync(join(__dirname, 'clients/pages'))
+    .filter(name => fs.lstatSync(join(__dirname, `clients/pages/${name}`)).isDirectory())
+    .map(name =>
+      fs
+        .readdirSync(join(__dirname, `clients/pages/${name}`))
+        .map(f => join(__dirname, `clients/pages/${name}/${f}`))
+    )
+    .flat(),
   output: [
     {
       exports: 'auto',
