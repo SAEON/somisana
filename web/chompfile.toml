@@ -11,38 +11,79 @@ name = 'start'
 serial = true
 deps = ['reset-cache', 'clients', 'server']
 
+############################# 
+#############################
+#############################
+
 [[task]]
 name = 'server'
-env = { TZ='UTC' }
+env = { TZ='UTC', NODE_ENV='development' }
 run = """
-nodemon --watch server/ --exec \
-  'prettier --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" && \
-   node --trace-warnings --loader ./loaders/geojson.js --experimental-json-modules server'
+nodemon \
+  --watch node.importmap \
+  --watch server/ \
+  --watch loaders/ \
+  --watch .cache/ \
+  --watch loader/ \
+  --exec \
+    'prettier --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" && \
+    NODE_LOADER_CONFIG=node-loader.config.js \
+      node \
+        --trace-warnings \
+        --experimental-loader @node-loader/core \
+        server'
 """
+
+############################# 
+#############################
+#############################
 
 [[task]]
 name = 'clients'
 serial = true
-deps = ['rollup', 'html']
+deps = ['rollup', 'jspm']
+
+############################# 
+#############################
+#############################
 
 [[task]]
-name = 'html'
+name = 'jspm'
+deps = ['jspm:react', 'jspm:node']
+
+# Create an import map for node
+[[task]]
+name = 'jspm:node'
+dep = '.cache/index.algoa-bay-forecast.js'
+target = 'node.importmap'
+template = 'jspm'
+[task.template-options]
+default-provider = 'jspm'
+env = ['node', 'development']
+
+# Transpile HTML + js => HTML / import map
+[[task]]
+name = 'jspm:react'
 dep = 'clients/html/#.html'
 target = '.cache/#.html'
 template = 'jspm'
 [task.template-options]
-env = ['browser', 'production', 'module']
+env = ['browser', 'development', 'module']
+default-provider = 'jspm'
 preload = true
 integrity = false
 
+# Then transpile to ES5
 [[task]]
 name = 'rollup'
 dep = 'clients/##.js'
 run = 'rollup --config rollup.config.js'
 
+# First delete and recreate the cache
 [[task]]
 name = 'reset-cache'
 run = """
+rimraf node.importmap
 rimraf .cache
 mkdir .cache
 """
@@ -50,6 +91,16 @@ mkdir .cache
 ############################# 
 #############################
 #############################
+
+[[task]]
+name = 'prettier'
+run = 'prettier --write "./**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"'
+
+# DEPENDENCY MANAGEMNT
+
+[[task]]
+name = 'clean-deps'
+run = 'find . -name node_modules -type d -exec rm -rv {} + && find . -name package-lock.json -type f -delete'
 
 [[task]]
 name = 'ncu'
@@ -62,6 +113,3 @@ ncu -u
 npm install
 """
 
-[[task]]
-name = 'prettier'
-run = 'prettier --write "./**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"'

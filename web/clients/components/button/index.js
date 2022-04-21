@@ -1,3 +1,3 @@
-const Button = props => <button {...props} />
+import Button from '@mui/material/Button'
 
-export default Button
+export default props => <Button {...props} />
