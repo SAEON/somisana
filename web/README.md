@@ -17,6 +17,7 @@ From the `somisana/web` directory, setup your environment:
 
 # Install chomp
 npm install -g chomp
+# (this downloads a large binary in the background - run "chomp --version", which will output once the binary is downloaded)
 
 # Install dependencies
 npm install
