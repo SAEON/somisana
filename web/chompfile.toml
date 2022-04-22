@@ -27,8 +27,9 @@ nodemon \
   --watch loader/ \
   --exec \
     'prettier \
-      --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" && \
-    NODE_LOADER_CONFIG=node-loader.config.js \
+      --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" \
+      --write "loaders/**/*.js" && \
+    NODE_LOADER_CONFIG=loaders/config.js \
       node \
         --trace-warnings \
         --experimental-loader @node-loader/core \
