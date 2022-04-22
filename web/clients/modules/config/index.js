@@ -1,10 +1,12 @@
-import { createContext } from 'react'
-import * as config from './env/index.js'
+import { createContext, useState } from 'react'
+import * as _config from './env/index.js'
 
 export const context = createContext()
 
 const ConfigProvider = props => {
-  return <context.Provider value={config} {...props} />
+  const [config, setConfig] = useState(_config)
+
+  return <context.Provider value={{ ...config, setConfig }} {...props} />
 }
 
 export default ConfigProvider
