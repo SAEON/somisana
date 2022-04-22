@@ -50,7 +50,7 @@ deps = ['rollup', 'jspm']
 
 [[task]]
 name = 'jspm'
-deps = ['jspm:react', 'jspm:node']
+deps = ['jspm:client', 'jspm:node']
 
 # Create an import map for node
 [[task]]
@@ -60,11 +60,11 @@ target = 'node.importmap'
 template = 'jspm'
 [task.template-options]
 default-provider = 'jspm'
-env = ['node', 'development']
+env = ['node', 'development', 'module']
 
 # Transpile HTML + js => HTML / import map
 [[task]]
-name = 'jspm:react'
+name = 'jspm:client'
 dep = 'clients/html/#.html'
 target = '.cache/#.html'
 template = 'jspm'

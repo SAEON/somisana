@@ -1,4 +1,4 @@
 import mount from '../../modules/app-entry/main.js'
-import Page from './ssr.js'
+import SSR from './ssr.js'
 
-mount(Page)
+mount(SSR)
