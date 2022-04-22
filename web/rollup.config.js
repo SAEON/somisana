@@ -1,7 +1,5 @@
 import swc from 'rollup-plugin-swc'
-import commonjs from  '@rollup/plugin-commonjs'
-import replace from '@rollup/plugin-replace';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { join } from 'path'
@@ -12,7 +10,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default {
-  external: ['react', 'react/jsx-runtime', 'react-dom/client', '@mui/material/Button'],
+  external: ['react', 'react/jsx-runtime', 'react-dom', 'react-dom/server', '@mui/material/Button'],
   input: fs
     .readdirSync(join(__dirname, 'clients/pages'))
     .filter(name => fs.lstatSync(join(__dirname, `clients/pages/${name}`)).isDirectory())
@@ -31,16 +29,14 @@ export default {
       entryFileNames: ({ facadeModuleId: id }) => {
         const p = id.split('/')
         return `[name].${p[p.length - 2]}.js`
-      },
-    },
+      }
+    }
   ],
   plugins: [
-    swc(),
-    // commonjs(),
-    // nodeResolve(),
     replace({
       preventAssignment: true,
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV)
-    })
-  ],
+    }),
+    swc()
+  ]
 }

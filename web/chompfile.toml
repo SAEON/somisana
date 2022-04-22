@@ -26,7 +26,8 @@ nodemon \
   --watch .cache/ \
   --watch loader/ \
   --exec \
-    'prettier --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" && \
+    'prettier \
+      --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" && \
     NODE_LOADER_CONFIG=node-loader.config.js \
       node \
         --trace-warnings \
@@ -94,7 +95,9 @@ mkdir .cache
 
 [[task]]
 name = 'prettier'
-run = 'prettier --write "./**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"'
+run = """
+prettier --write "clients/**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"
+"""
 
 # DEPENDENCY MANAGEMNT
 
