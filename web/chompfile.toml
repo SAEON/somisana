@@ -8,7 +8,7 @@ extensions = ['chomp@0.1:jspm', 'chomp@0.1:swc']
 
 [[task]]
 name = 'start'
-deps = ['client', 'server']
+deps = ['.cache', '.cache/*.html', 'server']
 
 ############################# 
 #############################
@@ -17,21 +17,13 @@ deps = ['client', 'server']
 [[task]]
 name = 'server'
 env = { TZ='UTC', NODE_ENV='development', NODE_LOADER_CONFIG='loaders/config.js' }
-deps = ['server/ssr/index.js', 'prettier']
+deps = ['server/ssr/index.js', 'prettier', 'node.importmap']
 run = 'node --trace-warnings --experimental-loader @node-loader/core server'
 
 [[task]]
 target = 'server/ssr/index.js'
 dep = 'server/ssr/src/index.js'
 run = 'rollup -c rollup.server.config.js'
-
-############################# 
-#############################
-#############################
-
-[[task]]
-name = 'client'
-deps = ['.cache', '.cache/*.html', 'node.importmap']
 
 ############################# 
 #############################
@@ -64,11 +56,6 @@ integrity = false
 target = '.cache'
 dep = 'client/**/*.js'
 run = 'rollup --config rollup.client.config.js'
-
-[[task]]
-dep = 'client/pages/#/index.js'
-target = 'client/pages/#/.cache/index.js'
-template = 'swc'
 
 # First delete and recreate the cache
 [[task]]
