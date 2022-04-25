@@ -17,12 +17,18 @@ deps = ['.cache', '.cache/*.html', 'server']
 [[task]]
 name = 'server'
 env = { TZ='UTC', NODE_ENV='development', NODE_LOADER_CONFIG='loaders/config.js' }
-deps = ['server/ssr/index.js', 'prettier', 'node.importmap']
-run = 'node --trace-warnings --experimental-loader @node-loader/core server'
+deps = ['server/ssr/#.js', 'node.importmap', 'loaders/*.js']
+run = """
+prettier \
+  --ignore-path ../.prettierignore \
+  --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" \
+  --write "loaders/**/*.js"
+node --trace-warnings --experimental-loader @node-loader/core server
+"""
 
 [[task]]
-target = 'server/ssr/index.js'
-dep = 'server/ssr/src/index.js'
+target = 'server/ssr/#.js'
+dep = 'server/ssr/src/#.js'
 run = 'rollup -c rollup.server.config.js'
 
 ############################# 
@@ -51,11 +57,12 @@ default-provider = 'jspm'
 preload = true
 integrity = false
 
-# Then transpile client code to ES5
 [[task]]
 target = '.cache'
 dep = 'client/**/*.js'
-run = 'rollup --config rollup.client.config.js'
+run = """
+rollup --config rollup.client.config.js
+"""
 
 # First delete and recreate the cache
 [[task]]
@@ -68,6 +75,11 @@ rimraf .cache
 ############################# 
 #############################
 #############################
+
+# [[task]]
+# name = 'prettier'
+# dep = 'client/**/*.js'
+# run = 'prettier --ignore-path ../.prettierignore --write "${{changed}}"'
 
 [[task]]
 name = 'prettier'

@@ -3,13 +3,19 @@ import ConfigProvider from '../config/index.js'
 import ThemeProvider from '@mui/material/styles/ThemeProvider'
 import theme from '../../../theme/mui/index.js'
 import CssBaseline from '@mui/material/CssBaseline'
+import { CacheProvider } from '@emotion/react'
+import createEmotionCache from '../../../create-emotion-cache.js'
+
+const cache = createEmotionCache()
 
 const App = ({ children }) => (
-  <CssBaseline>
+  <CacheProvider value={cache}>
     <ThemeProvider theme={theme}>
-      <ConfigProvider>{children}</ConfigProvider>
+      <CssBaseline>
+        <ConfigProvider>{children}</ConfigProvider>
+      </CssBaseline>
     </ThemeProvider>
-  </CssBaseline>
+  </CacheProvider>
 )
 
 export default Page =>
