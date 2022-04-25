@@ -10,5 +10,10 @@ export async function resolve(specifier, ctx, defaultResolve) {
     url = specifier
   }
 
+  if (specifier.match(/readable-stream/)) {
+    // TODO - resolve this
+    url = 'node:stream'
+  }
+
   return { url, format: null }
 }

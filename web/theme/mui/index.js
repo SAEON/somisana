@@ -5,36 +5,36 @@ const theme = createTheme()
 
 export default createTheme(theme, {
   shape: {
-    borderRadius: 2
+    borderRadius: 2,
   },
   palette: {
     mode: 'light',
     primary: {
-      main: red[800]
+      main: red[800],
     },
     secondary: {
-      main: red[100]
-    }
+      main: red[100],
+    },
   },
   components: {
     MuiUseMediaQuery: {
       defaultProps: {
-        noSsr: true
-      }
-    }
+        noSsr: true,
+      },
+    },
   },
   typography: {
     h1: {
-      fontSize: '2.5rem'
+      fontSize: '2.5rem',
     },
     h2: {
-      fontSize: '2rem'
+      fontSize: '2rem',
     },
     h5: {
-      fontSize: '1.2rem'
+      fontSize: '1.2rem',
     },
     h6: {
-      fontSize: '1rem'
-    }
-  }
+      fontSize: '1rem',
+    },
+  },
 })
