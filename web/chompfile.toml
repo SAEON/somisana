@@ -59,7 +59,7 @@ deps = ['jspm:client', 'jspm:node']
 # Create an import map for node
 [[task]]
 name = 'jspm:node'
-dep = '.cache/index.algoa-bay-forecast.js'
+dep = 'server/index.importmap.js'
 target = 'node.importmap'
 template = 'jspm'
 [task.template-options]
@@ -102,7 +102,9 @@ name = 'prettier'
 run = """
 prettier \
   --ignore-path ../.prettierignore \
-  --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"
+  --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml)" \
+  --write "loaders/*.js" \
+  --write "./*.@(js|jsx|json|mjs|cjs|graphql|yml)"
 """
 
 # DEPENDENCY MANAGEMNT

@@ -1,2 +1,3 @@
 import './index.js'
-// TODO - import all the SSR entry points
+import '../.cache/ssr.algoa-bay-forecast.js'
+import '../.cache/ssr.false-bay-forecast.js'
