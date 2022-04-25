@@ -21,12 +21,17 @@ env = { TZ='UTC', NODE_ENV='development' }
 run = """
 nodemon \
   --watch node.importmap \
-  --watch server/ssr/src/ \
+  --watch server/ \
   --watch loaders/ \
   --watch .cache/ \
   --watch loader/ \
+  --ignore server/ssr/*.js \
   --exec \
-    'rollup --config rollup.server.config.js && \
+    'prettier \
+      --ignore-path ../.prettierignore \
+      --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" \
+      --write "loaders/**/*.js" && \
+    rollup --config rollup.server.config.js && \
     NODE_LOADER_CONFIG=loaders/config.js \
       node \
         --trace-warnings \
@@ -95,7 +100,9 @@ mkdir .cache
 [[task]]
 name = 'prettier'
 run = """
-prettier --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"
+prettier \
+  --ignore-path ../.prettierignore \
+  --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"
 """
 
 # DEPENDENCY MANAGEMNT
