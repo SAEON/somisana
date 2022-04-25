@@ -1,7 +1,9 @@
 import * as importMapLoader from '@node-loader/import-maps'
 import * as httpLoader from '@node-loader/http'
-import * as geojson from './geojson.js'
+import * as json from './json.js'
+import * as ssrClientImports from './ssr-client-imports.js'
+import * as standardLibImports from './standard-lib-imports.js'
 
 export default {
-  loaders: [importMapLoader, httpLoader, geojson],
+  loaders: [standardLibImports, ssrClientImports, importMapLoader, httpLoader, json],
 }

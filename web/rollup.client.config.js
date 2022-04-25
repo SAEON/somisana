@@ -10,7 +10,13 @@ const NODE_ENV = process.env.NODE_ENV || 'development'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default {
-  external: ['react', 'react/jsx-runtime', 'react-dom/client', 'react-dom/server', /\@mui\/material/],
+  external: [
+    'react',
+    'react/jsx-runtime',
+    'react-dom/client',
+    'react-dom/server',
+    /\@mui\/material/,
+  ],
   input: fs
     .readdirSync(join(__dirname, 'client/pages'))
     .filter(name => fs.lstatSync(join(__dirname, `client/pages/${name}`)).isDirectory())
@@ -29,14 +35,14 @@ export default {
       entryFileNames: ({ facadeModuleId: id }) => {
         const p = id.split('/')
         return `[name].${p[p.length - 2]}.js`
-      }
-    }
+      },
+    },
   ],
   plugins: [
     replace({
       preventAssignment: true,
-      'process.env.NODE_ENV': JSON.stringify(NODE_ENV)
+      'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
     }),
-    swc()
-  ]
+    swc(),
+  ],
 }

@@ -1,5 +1,4 @@
-// import { renderToString } from 'react-dom/server'
-import { renderToString } from 'https://ga.jspm.io/npm:react-dom@18.0.0/dev.server.node.js'
+import { renderToString } from 'react-dom/server'
 import { join } from 'path'
 import fs from 'fs/promises'
 import dirname from '../../lib/dirname.js'
