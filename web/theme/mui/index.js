@@ -1,5 +1,5 @@
-import createTheme from 'https://ga.jspm.io/npm:@mui/material@5.6.2/styles/createTheme.js'
-import red from 'https://ga.jspm.io/npm:@mui/material@5.6.2/colors/red.js'
+import createTheme from '@mui/material/styles/createTheme'
+import red from '@mui/material/colors/red'
 
 const theme = createTheme()
 
