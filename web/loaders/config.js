@@ -5,5 +5,5 @@ import * as ssrClientImports from './ssr-client-imports.js'
 import * as standardLibImports from './standard-lib-imports.js'
 
 export default {
-  loaders: [standardLibImports, ssrClientImports, importMapLoader, httpLoader, json],
+  loaders: [standardLibImports, ssrClientImports, importMapLoader, httpLoader, json]
 }
