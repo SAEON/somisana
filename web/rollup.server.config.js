@@ -1,16 +1,6 @@
 import swc from 'rollup-plugin-swc'
 
 export default {
-  external: [
-    'regenerator-runtime',
-    'https://ga.jspm.io/npm:react-dom@18.0.0/dev.server.node.js',
-    'path',
-    'fs/promises',
-    'fs',
-    'url',
-    'react/jsx-runtime',
-    'react-dom/server',
-  ],
   input: ['server/ssr/src/index.js'],
   output: [
     {
@@ -20,5 +10,12 @@ export default {
       compact: false,
     },
   ],
-  plugins: [swc()],
+  plugins: [
+    {
+      resolveId(id, parentId) {
+        if (parentId && !id.startsWith('../') && !id.startsWith('./')) return { id, external: true }
+      },
+    },
+    swc(),
+  ],
 }

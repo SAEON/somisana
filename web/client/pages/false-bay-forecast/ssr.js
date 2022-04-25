@@ -1,3 +1,3 @@
 export default () => {
-  return <div>False bay</div>
+  return <div>False bay 2</div>
 }

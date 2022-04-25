@@ -1,6 +1,6 @@
 version = 0.1
 default-task = 'start'
-extensions = ['chomp@0.1:jspm']
+extensions = ['chomp@0.1:jspm', 'chomp@0.1:swc']
 
 ############################# 
 #############################
@@ -8,8 +8,7 @@ extensions = ['chomp@0.1:jspm']
 
 [[task]]
 name = 'start'
-serial = true
-deps = ['reset-cache', 'client', 'server']
+deps = ['client', 'server']
 
 ############################# 
 #############################
@@ -17,27 +16,14 @@ deps = ['reset-cache', 'client', 'server']
 
 [[task]]
 name = 'server'
-env = { TZ='UTC', NODE_ENV='development' }
-run = """
-nodemon \
-  --watch node.importmap \
-  --watch server/ \
-  --watch loaders/ \
-  --watch .cache/ \
-  --watch loader/ \
-  --ignore server/ssr/*.js \
-  --exec \
-    'prettier \
-      --ignore-path ../.prettierignore \
-      --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" \
-      --write "loaders/**/*.js" && \
-    rollup --config rollup.server.config.js && \
-    NODE_LOADER_CONFIG=loaders/config.js \
-      node \
-        --trace-warnings \
-        --experimental-loader @node-loader/core \
-        server'
-"""
+env = { TZ='UTC', NODE_ENV='development', NODE_LOADER_CONFIG='loaders/config.js' }
+deps = ['server/ssr/index.js', 'prettier']
+run = 'node --trace-warnings --experimental-loader @node-loader/core server'
+
+[[task]]
+target = 'server/ssr/index.js'
+dep = 'server/ssr/src/index.js'
+run = 'rollup -c rollup.server.config.js'
 
 ############################# 
 #############################
@@ -45,21 +31,16 @@ nodemon \
 
 [[task]]
 name = 'client'
-serial = true
-deps = ['rollup:client', 'jspm']
+deps = ['.cache', '.cache/*.html', 'node.importmap']
 
 ############################# 
 #############################
 #############################
 
-[[task]]
-name = 'jspm'
-deps = ['jspm:client', 'jspm:node']
-
 # Create an import map for node
 [[task]]
 name = 'jspm:node'
-dep = 'server/index.importmap.js'
+deps = ['index.importmap.js', '.cache']
 target = 'node.importmap'
 template = 'jspm'
 [task.template-options]
@@ -69,7 +50,7 @@ env = ['node', 'development', 'module']
 # Transpile HTML + js => HTML / import map
 [[task]]
 name = 'jspm:client'
-dep = 'client/html/#.html'
+deps = ['client/html/#.html', '.cache']
 target = '.cache/#.html'
 template = 'jspm'
 [task.template-options]
@@ -80,17 +61,21 @@ integrity = false
 
 # Then transpile client code to ES5
 [[task]]
-name = 'rollup:client'
-dep = 'client/##.js'
+target = '.cache'
+dep = 'client/**/*.js'
 run = 'rollup --config rollup.client.config.js'
+
+[[task]]
+dep = 'client/pages/#/index.js'
+target = 'client/pages/#/.cache/index.js'
+template = 'swc'
 
 # First delete and recreate the cache
 [[task]]
-name = 'reset-cache'
+name = 'clear-cache'
 run = """
 rimraf node.importmap
 rimraf .cache
-mkdir .cache
 """
 
 ############################# 
@@ -103,7 +88,8 @@ run = """
 prettier \
   --ignore-path ../.prettierignore \
   --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml)" \
-  --write "loaders/*.js" \
+  --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" \
+  --write "loaders/**/*.js" \
   --write "./*.@(js|jsx|json|mjs|cjs|graphql|yml)"
 """
 

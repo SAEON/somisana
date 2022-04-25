@@ -4,19 +4,15 @@ import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { join } from 'path'
 import fs from 'fs'
+import rimraf from 'rimraf'
+
+rimraf.sync('.cache')
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default {
-  external: [
-    'react',
-    'react/jsx-runtime',
-    'react-dom/client',
-    'react-dom/server',
-    /\@mui\/material/,
-  ],
   input: fs
     .readdirSync(join(__dirname, 'client/pages'))
     .filter(name => fs.lstatSync(join(__dirname, `client/pages/${name}`)).isDirectory())
@@ -39,6 +35,11 @@ export default {
     },
   ],
   plugins: [
+    {
+      resolveId(id, parentId) {
+        if (parentId && !id.startsWith('../') && !id.startsWith('./')) return { id, external: true }
+      },
+    },
     replace({
       preventAssignment: true,
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
