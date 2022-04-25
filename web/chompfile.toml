@@ -21,14 +21,12 @@ env = { TZ='UTC', NODE_ENV='development' }
 run = """
 nodemon \
   --watch node.importmap \
-  --watch server/ \
+  --watch server/ssr/src/ \
   --watch loaders/ \
   --watch .cache/ \
   --watch loader/ \
   --exec \
-    'prettier \
-      --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" \
-      --write "loaders/**/*.js" && \
+    'rollup --config rollup.server.config.js && \
     NODE_LOADER_CONFIG=loaders/config.js \
       node \
         --trace-warnings \
@@ -43,7 +41,7 @@ nodemon \
 [[task]]
 name = 'client'
 serial = true
-deps = ['rollup', 'jspm']
+deps = ['rollup:client', 'jspm']
 
 ############################# 
 #############################
@@ -75,11 +73,11 @@ default-provider = 'jspm'
 preload = true
 integrity = false
 
-# Then transpile to ES5
+# Then transpile client code to ES5
 [[task]]
-name = 'rollup'
+name = 'rollup:client'
 dep = 'client/##.js'
-run = 'rollup --config rollup.config.js'
+run = 'rollup --config rollup.client.config.js'
 
 # First delete and recreate the cache
 [[task]]

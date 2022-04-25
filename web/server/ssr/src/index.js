@@ -2,7 +2,7 @@
 import { renderToString } from 'https://ga.jspm.io/npm:react-dom@18.0.0/dev.server.node.js'
 import { join } from 'path'
 import fs from 'fs/promises'
-import dirname from '../lib/dirname.js'
+import dirname from '../../lib/dirname.js'
 import { createReadStream } from 'fs'
 
 const __dirname = dirname(import.meta)
@@ -20,12 +20,12 @@ export default async ctx => {
     const html = await fs.readFile(join(__dirname, `../../.cache/${page}.html`), {
       encoding: 'utf-8',
     })
-    const Component = await import(join(__dirname, `../../.cache/ssr.${page}.js`)).then(
-      ({ default: Page }) => Page
+    const SsrEntry = await import(join(__dirname, `../../.cache/ssr.${page}.js`)).then(
+      ({ default: C }) => C
     )
 
-    const C = Component()
+    const HTML = renderToString(<SsrEntry />)
 
-    ctx.body = html.replace('<div id="root"></div>', `<div id="root">${renderToString(C)}</div>`)
+    ctx.body = html.replace('<div id="root"></div>', `<div id="root">${HTML}</div>`)
   }
 }
