@@ -27,11 +27,14 @@ RUN apt-get update \
     python3-pip
 
 # TODO
+#
 # The GDAL image already contains proj 9.0.0
 # But I get -lproj errors when trying to install
 # cartopy, that I don't know how to fix
 #
-# This might help: http://wei48221.blogspot.com/2017/08/linux-how-to-solve-problem-of-usrbinld.html
+# These might help: 
+#  => The error message: http://wei48221.blogspot.com/2017/08/linux-how-to-solve-problem-of-usrbinld.html
+#  => Info on the dynamic loader path for .so library files (LD_LIBRARY_PATH): https://unix.stackexchange.com/questions/44990/what-is-the-difference-between-path-and-ld-library-path
 
 # Install CMAKE
 RUN curl -sSL https://cmake.org/files/v3.23/cmake-3.23.0-linux-x86_64.tar.gz | tar -xzC /opt
