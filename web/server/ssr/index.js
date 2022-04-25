@@ -15,17 +15,17 @@ export default async ctx => {
     ctx.body = createReadStream(join(__dirname, `../../.cache/${url}`))
   } else {
     ctx.set('Content-type', 'text/html')
+
     const page = ctx.request.url.replace('.html', '').replace('/', '')
     const html = await fs.readFile(join(__dirname, `../../.cache/${page}.html`), {
       encoding: 'utf-8',
     })
-    ctx.body = html.replace(
-      '<div id="root"></div>',
-      `<div id="root">${renderToString(
-        await import(join(__dirname, `../../.cache/ssr.${page}.js`)).then(({ default: Page }) =>
-          Page()
-        )
-      )}</div>`
+    const Component = await import(join(__dirname, `../../.cache/ssr.${page}.js`)).then(
+      ({ default: Page }) => Page
     )
+
+    const C = Component()
+
+    ctx.body = html.replace('<div id="root"></div>', `<div id="root">${renderToString(C)}</div>`)
   }
 }

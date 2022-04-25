@@ -37,9 +37,9 @@ chomp --watch
 
 ## Add an HTML page to the app
 
-The build process will automatically configure routes from specific filesin the `clients/` directory. To add a new HTML route:
+The build process will automatically configure routes from specific files in the `client/` directory. To add a new HTML route:
 
-1. Add a new file - `clients/html/your-new-route.html` - in the same style as the other HTML files in `clients/html`. Note that the `<script>` tag should have `src="index.your-new-route.js"`.
-2. Add a new folder `clients/pages/your-new-route` with 2 files (`index.js` and `ssr.js`). This folder should be of the same format of other folders in `clients/pages/*`
+1. Add a new file - `client/html/your-new-route.html` - in the same style as the other HTML files in `client/html`. Note that the `<script>` tag should have `src="index.your-new-route.js"`.
+2. Add a new folder `client/pages/your-new-route` with 2 files (`index.js` and `ssr.js`). This folder should be of the same format of other folders in `client/pages/*`
 
 The `Rollup` build will look for the `index.js` and `ssr.js` files and process them so that the Node.js application can find them. Note that the `ssr.js` file should not run code except via invoking functions (otherwise browser-specific APIs cause the SSR process to fail) and there should be a default export that is the entry point to the React code.

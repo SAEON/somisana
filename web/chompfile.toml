@@ -9,7 +9,7 @@ extensions = ['chomp@0.1:jspm']
 [[task]]
 name = 'start'
 serial = true
-deps = ['reset-cache', 'clients', 'server']
+deps = ['reset-cache', 'client', 'server']
 
 ############################# 
 #############################
@@ -41,7 +41,7 @@ nodemon \
 #############################
 
 [[task]]
-name = 'clients'
+name = 'client'
 serial = true
 deps = ['rollup', 'jspm']
 
@@ -66,7 +66,7 @@ env = ['node', 'development', 'module']
 # Transpile HTML + js => HTML / import map
 [[task]]
 name = 'jspm:client'
-dep = 'clients/html/#.html'
+dep = 'client/html/#.html'
 target = '.cache/#.html'
 template = 'jspm'
 [task.template-options]
@@ -78,7 +78,7 @@ integrity = false
 # Then transpile to ES5
 [[task]]
 name = 'rollup'
-dep = 'clients/##.js'
+dep = 'client/##.js'
 run = 'rollup --config rollup.config.js'
 
 # First delete and recreate the cache
@@ -97,7 +97,7 @@ mkdir .cache
 [[task]]
 name = 'prettier'
 run = """
-prettier --write "clients/**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"
+prettier --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"
 """
 
 # DEPENDENCY MANAGEMNT
