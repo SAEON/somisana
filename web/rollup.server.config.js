@@ -1,7 +1,15 @@
 import swc from 'rollup-plugin-swc'
 
 export default {
-  external: ['react', 'react/jsx-runtime', 'react-dom/client', 'react-dom/server', /\@mui\/material/],
+  external: [
+    'regenerator-runtime',
+'https://ga.jspm.io/npm:react-dom@18.0.0/dev.server.node.js',
+'path',
+'fs/promises',
+'fs',
+'url',
+'react/jsx-runtime'
+  ],
   input: ['server/ssr/src/index.js'],
   output: [
     {
