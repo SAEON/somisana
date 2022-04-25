@@ -10,14 +10,14 @@ const NODE_ENV = process.env.NODE_ENV || 'development'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default {
-  external: ['react', 'react/jsx-runtime', 'react-dom', 'react-dom/server', '@mui/material/Button'],
+  external: ['react', 'react/jsx-runtime', 'react-dom/client', 'react-dom/server', /\@mui\/material/],
   input: fs
-    .readdirSync(join(__dirname, 'clients/pages'))
-    .filter(name => fs.lstatSync(join(__dirname, `clients/pages/${name}`)).isDirectory())
+    .readdirSync(join(__dirname, 'client/pages'))
+    .filter(name => fs.lstatSync(join(__dirname, `client/pages/${name}`)).isDirectory())
     .map(name =>
       fs
-        .readdirSync(join(__dirname, `clients/pages/${name}`))
-        .map(f => join(__dirname, `clients/pages/${name}/${f}`))
+        .readdirSync(join(__dirname, `client/pages/${name}`))
+        .map(f => join(__dirname, `client/pages/${name}/${f}`))
     )
     .flat(),
   output: [
