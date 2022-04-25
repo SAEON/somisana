@@ -8,6 +8,7 @@ extensions = ['chomp@0.1:jspm', 'chomp@0.1:swc']
 
 [[task]]
 name = 'start'
+serial = true
 deps = ['.cache', '.cache/*.html', 'server']
 
 ############################# 
@@ -17,7 +18,8 @@ deps = ['.cache', '.cache/*.html', 'server']
 [[task]]
 name = 'server'
 env = { TZ='UTC', NODE_ENV='development', NODE_LOADER_CONFIG='loaders/config.js' }
-deps = ['server/ssr/#.js', 'node.importmap', 'loaders/*.js']
+serial = true
+deps = ['server/ssr/index.js', 'node.importmap']
 run = """
 prettier \
   --ignore-path ../.prettierignore \
@@ -27,9 +29,9 @@ node --trace-warnings --experimental-loader @node-loader/core server
 """
 
 [[task]]
-target = 'server/ssr/#.js'
-dep = 'server/ssr/src/#.js'
-run = 'rollup -c rollup.server.config.js'
+target = 'server/ssr/index.js'
+dep = 'server/ssr/src/index.js'
+run = 'rollup -c rollup/server.config.js'
 
 ############################# 
 #############################
@@ -61,7 +63,7 @@ integrity = false
 target = '.cache'
 dep = 'client/**/*.js'
 run = """
-rollup --config rollup.client.config.js
+rollup --config rollup/client.config.js
 """
 
 # First delete and recreate the cache

@@ -9,10 +9,9 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
 import { CacheProvider } from '@emotion/react'
 import emotionServer from '@emotion/server/create-instance'
+const { default: createEmotionServer } = emotionServer
 
 const __dirname = dirname(import.meta)
-
-const { default: createEmotionServer } = emotionServer
 
 export default async ctx => {
   const { url } = ctx.request
@@ -25,7 +24,7 @@ export default async ctx => {
 
     const page = ctx.request.url.replace('.html', '').replace('/', '')
     const htmlUtf8 = await fs.readFile(join(__dirname, `../../.cache/${page}.html`), {
-      encoding: 'utf-8',
+      encoding: 'utf-8'
     })
     const SsrEntry = await import(join(__dirname, `../../.cache/ssr.${page}.js`)).then(
       ({ default: C }) => C
