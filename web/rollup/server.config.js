@@ -1,14 +1,19 @@
 import rimraf from 'rimraf'
 import swc from 'rollup-plugin-swc'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { join } from 'path'
 
-rimraf.sync('server/ssr/index.js')
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+rimraf.sync(join(__dirname, '../server/ssr/index.js'))
 
 export default {
-  input: ['server/ssr/src/index.js'],
+  input: [join(__dirname, '../server/ssr/src/index.js')],
   output: [
     {
       exports: 'auto',
-      dir: 'server/ssr',
+      dir: join(__dirname, '../server/ssr'),
       format: 'esm',
       compact: false
     }

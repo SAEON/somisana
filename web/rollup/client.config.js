@@ -6,20 +6,20 @@ import { join } from 'path'
 import fs from 'fs'
 import rimraf from 'rimraf'
 
-rimraf.sync('.cache')
-
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+rimraf.sync(join(__dirname, '../.cache'))
+
 export default {
   input: fs
-    .readdirSync(join(__dirname, 'client/pages'))
-    .filter(name => fs.lstatSync(join(__dirname, `client/pages/${name}`)).isDirectory())
+    .readdirSync(join(__dirname, '../client/pages'))
+    .filter(name => fs.lstatSync(join(__dirname, `../client/pages/${name}`)).isDirectory())
     .map(name =>
       fs
-        .readdirSync(join(__dirname, `client/pages/${name}`))
-        .map(f => join(__dirname, `client/pages/${name}/${f}`))
+        .readdirSync(join(__dirname, `../client/pages/${name}`))
+        .map(f => join(__dirname, `../client/pages/${name}/${f}`))
     )
     .flat(),
   output: [

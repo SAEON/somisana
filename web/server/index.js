@@ -9,6 +9,7 @@ import openCors from './middleware/open-cors.js'
 import blacklistRoutes from './middleware/blacklist-routes.js'
 import whitelistRoutes from './middleware/whitelist-routes.js'
 import ssr from './ssr/index.js'
+import gql from './graphql/index.js'
 
 const __dirname = dirname(import.meta)
 

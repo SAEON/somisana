@@ -72,6 +72,7 @@ name = 'clear-cache'
 run = """
 rimraf node.importmap
 rimraf .cache
+rimraf server/ssr/*.js
 """
 
 ############################# 
