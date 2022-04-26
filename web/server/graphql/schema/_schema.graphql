@@ -1,0 +1,12 @@
+scalar DateTime
+scalar JSON
+scalar Void
+scalar WKT_4326
+
+type Query {
+  test: void
+}
+
+type Mutation {
+  test: Void
+}
