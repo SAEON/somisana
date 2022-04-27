@@ -6,10 +6,10 @@ import dirname from './lib/dirname.js'
 import { KEY, PORT } from './config/index.js'
 import restrictCors from './middleware/restrict-cors.js'
 import openCors from './middleware/open-cors.js'
-import blacklistRoutes from './middleware/blacklist-routes.js'
-import whitelistRoutes from './middleware/whitelist-routes.js'
+import blacklist from './middleware/blacklist.js'
+import whitelist from './middleware/whitelist.js'
 import ssr from './ssr/index.js'
-import gql from './graphql/index.js'
+import apolloServer from './graphql/index.js'
 
 const __dirname = dirname(import.meta)
 
@@ -18,12 +18,26 @@ api.keys = [KEY]
 api.proxy = true
 
 api
-  .use(blacklistRoutes(restrictCors, '/'))
-  .use(whitelistRoutes(openCors, '/'))
-  .use(new KoaRouter().get(/^.*$/, ssr).routes())
+  .use(blacklist(restrictCors, '/'))
+  .use(whitelist(openCors, '/'))
+  .use(
+    blacklist(
+      new KoaRouter()
+        .get('/http', async ctx => (ctx.body = 'GET home route'))
+        .get(/^.*$/, ssr)
+        .routes(),
+      '/graphql'
+    )
+  )
 
 // Configure HTTP servers
 const httpServer = createServer(api.callback())
+
+// Configure Apollo servers
+apolloServer
+  .start()
+  .then(() => apolloServer.applyMiddleware({ app: api, cors: false }))
+  .then(() => console.log('gql'))
 
 httpServer.listen(PORT, () => {
   console.info('=== SOMISANA READY ===')

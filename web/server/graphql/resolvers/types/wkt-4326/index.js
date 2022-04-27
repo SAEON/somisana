@@ -17,5 +17,5 @@ export default new GraphQLScalarType({
   serialize: value => {
     if (!parse(value)) throw new GraphQLError(error)
     return value
-  },
+  }
 })
