@@ -46,6 +46,11 @@ template = 'jspm'
 [task.template-options]
 default-provider = 'jspm'
 env = ['node', 'development', 'module']
+ignore = [
+  'graphql',
+  'apollo-server-core',
+  'apollo-server-koa'
+]
 
 # Transpile HTML + js => HTML / import map
 [[task]]
