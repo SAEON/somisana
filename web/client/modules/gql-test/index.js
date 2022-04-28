@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import Div from '../../components/div/index.js'
 
