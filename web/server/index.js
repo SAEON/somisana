@@ -21,17 +21,10 @@ const api = new Koa()
 api.keys = [KEY]
 api.proxy = true
 
-// Create the HTTP server
-export const httpServer = createServer()
-
-// Create the Apollo server
-export const apolloServer = await graphql({ httpServer, api })
-
 // Configure middleware
 api
   .use(koaBody())
-  .use(blacklist(restrictCors, '/'))
-  .use(whitelist(openCors, '/'))
+  .use(restrictCors)
   .use(
     whitelist(
       koaCompress({
@@ -52,6 +45,12 @@ api
       '/graphql'
     )
   )
+
+// Create the HTTP server
+export const httpServer = createServer()
+
+// Create the Apollo server
+export const apolloServer = await graphql({ httpServer, api })
 
 // Start the API
 httpServer.on('request', api.callback()).listen(PORT, () => {

@@ -1,5 +1,11 @@
-import Counter from '../../modules/counter/index.js'
+import { Routes, Route } from 'react-router-dom'
+import Home from './routes/home/index.js'
+
 
 export default () => {
-  return <Counter />
+  return (
+    <Routes>
+      <Route path="*" element={<Home />} />
+    </Routes>
+  )
 }

@@ -50,7 +50,8 @@ ignore = [
   'graphql',
   'apollo-server-core',
   'apollo-server-koa',
-  'koa-bodyparser'
+  'koa-bodyparser',
+  'node-fetch'
 ]
 
 # Transpile HTML + js => HTML / import map
