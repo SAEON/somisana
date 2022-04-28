@@ -1,3 +1,7 @@
+/**
+ * Only apply the middleware
+ * to the whitelist
+ */
 export default (fn, ...whitelist) =>
   async (ctx, next) => {
     for (const route of whitelist) {

@@ -1,14 +1,18 @@
 import { renderToString } from 'react-dom/server'
 import { join } from 'path'
 import fs from 'fs/promises'
+import fetch from 'node-fetch'
 import dirname from '../../lib/dirname.js'
 import { createReadStream } from 'fs'
+import { ApolloProvider, ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client'
 import theme from '../../../theme/mui/index.js'
 import createEmotionCache from '../../../create-emotion-cache.js'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
 import { CacheProvider } from '@emotion/react'
 import emotionServer from '@emotion/server/create-instance'
+import { StaticRouter } from 'react-router-dom/server'
+
 const { default: createEmotionServer } = emotionServer
 
 const __dirname = dirname(import.meta)
@@ -37,7 +41,26 @@ export default async ctx => {
       <CacheProvider value={cache}>
         <ThemeProvider theme={theme}>
           <CssBaseline>
-            <SsrEntry />
+            <ApolloProvider
+              client={
+                new ApolloClient({
+                  ssrMode: true,
+                  link: createHttpLink({
+                    fetch,
+                    uri: 'http://localhost:3000/graphql',
+                    credentials: 'same-origin',
+                    headers: {
+                      cookie: ctx.get('Cookie'),
+                    },
+                  }),
+                  cache: new InMemoryCache(),
+                })
+              }
+            >
+              <StaticRouter location={url} context={{}}>
+                <SsrEntry />
+              </StaticRouter>
+            </ApolloProvider>
           </CssBaseline>
         </ThemeProvider>
       </CacheProvider>

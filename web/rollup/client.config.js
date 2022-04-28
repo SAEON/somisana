@@ -19,6 +19,7 @@ export default {
     .map(name =>
       fs
         .readdirSync(join(__dirname, `../client/pages/${name}`))
+        .filter(n => fs.lstatSync(join(__dirname, `../client/pages/${name}/${n}`)).isFile())
         .map(f => join(__dirname, `../client/pages/${name}/${f}`))
     )
     .flat(),

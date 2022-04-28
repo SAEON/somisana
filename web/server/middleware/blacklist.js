@@ -1,3 +1,6 @@
+/**
+ * Apply to all routes except the blacklist
+ */
 export default (fn, ...blacklist) =>
   async (ctx, next) => {
     for (const route of blacklist) {
