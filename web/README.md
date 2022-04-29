@@ -13,7 +13,7 @@
 From the `somisana/web` directory, setup your environment:
 
 ```sh
-# Install Node.js (v17.8.0)
+# Install Node.js (v16.14.2)
 
 # Install chomp
 npm install -g chomp
@@ -41,6 +41,6 @@ The build process will automatically configure routes from specific files in the
 
 1. Add a new file - `client/html/your-new-route.html` - in the same style as the other HTML files in `client/html`. Note that the `<script>` tag should have `src="index.your-new-route.js"`.
 2. Add a new folder `client/pages/your-new-route` with 2 files (`index.js` and `ssr.js`). This folder should be of the same format of other folders in `client/pages/*`
-3. Update `server/index.importmap.js` to include an import to `.cache/ssr.<your-new-route>.js` so that the imports defined in the client are available at SSR time
+3. Update `index.importmap.js` to include an import to `.cache/ssr.<your-new-route>.js` so that the imports defined in the client are available at SSR time
 
 The `Rollup` build will look for the `index.js` and `ssr.js` files and process them so that the Node.js application can find them. Note that the `ssr.js` file should not run code except via invoking functions (otherwise browser-specific APIs cause the SSR process to fail) and there should be a default export that is the entry point to the React code.

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { gql, useQuery } from '@apollo/client'
-import Div from '../../components/div/index.js'
+import Div from '../../components/div'
 
 const GqlTest = () => {
   const { error, loading, data } = useQuery(

@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { ctx as configCtx } from '../config/index.js'
+import { ctx as configCtx } from '../config'
 import { ApolloProvider, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
 
 export default ({ children }) => {

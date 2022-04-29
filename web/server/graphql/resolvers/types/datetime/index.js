@@ -20,5 +20,5 @@ export default new GraphQLScalarType({
   parseLiteral(ast) {
     if (ast.kind === Kind.STRING) return new Date(ast.value)
     return null
-  },
+  }
 })
