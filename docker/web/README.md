@@ -8,10 +8,14 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Clients
+# Testing
 
-TODO
+Build and run the docker image on your local computer for testing purposes
 
-# API
+```sh
+# Build and image (from the directory with the Dockerfile)
+docker build -t saeon/somisana_web .
 
-TODO
+# Execute an image as a container
+docker run --rm saeon/somisana_web
+```

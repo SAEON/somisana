@@ -11,7 +11,7 @@ name = 'start'
 serial = true
 deps = ['.cache', '.cache/*.html', 'server']
 
-############################# 
+#############################
 #############################
 #############################
 
@@ -21,14 +21,11 @@ env = { TZ='UTC', NODE_ENV='development', NODE_LOADER_CONFIG='loaders/config.js'
 serial = true
 deps = ['server/ssr/index.js', 'node.importmap']
 run = """
-prettier \
-  --ignore-path ../.prettierignore \
-  --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
-  --write "loaders/**/*.js"
 node --trace-warnings --experimental-loader @node-loader/core server
 """
 
 [[task]]
+name = 'rollup:ssr'
 target = 'server/ssr/#.js'
 dep = 'server/ssr/src/#.jsx'
 run = 'rollup -c rollup/server.config.js'
@@ -64,7 +61,7 @@ template = 'jspm'
 env = ['browser', 'development', 'module']
 default-provider = 'jspm'
 preload = true
-integrity = false
+integrity = true
 
 [[task]]
 target = '.cache'
@@ -106,7 +103,7 @@ prettier \
 # DEPENDENCY MANAGEMNT
 
 [[task]]
-name = 'clean-deps'
+name = 'reset'
 run = 'find . -name node_modules -type d -exec rm -rv {} + && find . -name package-lock.json -type f -delete'
 
 [[task]]
