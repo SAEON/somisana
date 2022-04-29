@@ -3,6 +3,7 @@ import swc from 'rollup-plugin-swc'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { join } from 'path'
+import extensions from './plugins/extensions.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -15,15 +16,15 @@ export default {
       exports: 'auto',
       dir: join(__dirname, '../server/ssr'),
       format: 'esm',
-      compact: false,
-    },
+      compact: false
+    }
   ],
   plugins: [
     {
       resolveId(id, parentId) {
         if (parentId && !id.startsWith('../') && !id.startsWith('./')) return { id, external: true }
-      },
+      }
     },
-    swc(),
-  ],
+    swc()
+  ]
 }

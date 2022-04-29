@@ -1,7 +1,7 @@
 import { createContext, useState } from 'react'
 import * as _config from './env/index.js'
 
-export const ctx = createContext()
+export const ctx = createContext(_config)
 
 const ConfigProvider = props => {
   const [config, setConfig] = useState(_config)

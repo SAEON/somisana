@@ -12,7 +12,7 @@ console.info(
           ? mask(value)
           : typeof value === 'function'
           ? value.toString()
-          : value,
+          : value
       ])
       .sort(([a], [b]) => {
         if (a > b) return 1

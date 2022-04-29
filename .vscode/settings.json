@@ -4,6 +4,7 @@
     "browserslist",
     "chompfile",
     "croco",
+    "importee",
     "Neue",
     "numpy",
     "Parens",
@@ -15,6 +16,7 @@
     "Roboto",
     "Segoe",
     "SOMISANA",
+    "swcrc",
     "VENV",
     "virtualenv"
   ]

@@ -1,7 +1,7 @@
 import { ApolloServer } from 'apollo-server-koa'
 import {
   ApolloServerPluginDrainHttpServer,
-  ApolloServerPluginLandingPageGraphQLPlayground,
+  ApolloServerPluginLandingPageGraphQLPlayground
 } from 'apollo-server-core'
 import _schema from './schema/index.js'
 
@@ -18,13 +18,13 @@ export default async ({ httpServer, api }) => {
         settings: {
           'editor.cursorShape': 'line',
           'request.credentials': 'include',
-          'editor.theme': 'light',
-        },
-      }),
+          'editor.theme': 'light'
+        }
+      })
     ],
     context: ({ ctx }) => {
       return ctx
-    },
+    }
   })
 
   await apolloServer.start()

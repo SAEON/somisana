@@ -5,5 +5,5 @@ export default new GraphQLScalarType({
   name: 'Void',
   parseLiteral: () => null,
   parseValue: () => null,
-  serialize: () => null,
+  serialize: () => null
 })

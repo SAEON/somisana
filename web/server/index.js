@@ -29,7 +29,7 @@ api
     whitelist(
       koaCompress({
         threshold: 2048,
-        flush: zlib.constants.Z_SYNC_FLUSH,
+        flush: zlib.constants.Z_SYNC_FLUSH
       }),
       '/http',
       '/graphql'

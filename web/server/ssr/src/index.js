@@ -28,7 +28,7 @@ export default async ctx => {
 
     const page = ctx.request.url.replace('.html', '').replace('/', '')
     const htmlUtf8 = await fs.readFile(join(__dirname, `../../.cache/${page}.html`), {
-      encoding: 'utf-8',
+      encoding: 'utf-8'
     })
     const SsrEntry = await import(join(__dirname, `../../.cache/ssr.${page}.js`)).then(
       ({ default: C }) => C
@@ -50,10 +50,10 @@ export default async ctx => {
                     uri: 'http://localhost:3000/graphql',
                     credentials: 'same-origin',
                     headers: {
-                      cookie: ctx.get('Cookie'),
-                    },
+                      cookie: ctx.get('Cookie')
+                    }
                   }),
-                  cache: new InMemoryCache(),
+                  cache: new InMemoryCache()
                 })
               }
             >

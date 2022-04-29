@@ -99,6 +99,7 @@ prettier \
   --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml)" \
   --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" \
   --write "loaders/**/*.js" \
+  --write "rollup/**/*.js" \
   --write "./*.@(js|jsx|json|mjs|cjs|graphql|yml)"
 """
 
