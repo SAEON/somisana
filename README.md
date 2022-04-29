@@ -15,6 +15,7 @@ SOMISANA-related tooling
   - [saeon/somisana_geopython](#saeonsomisana_geopython)
   - [saeon/somisana_python-scripts](#saeonsomisana_python-scripts)
 - [Deployment](#deployment)
+  - [Docker](#docker)
   - [saeon/somisana_geopython](#saeonsomisana_geopython-1)
   - [saeon/somisana_python-scripts](#saeonsomisana_python-scripts-1)
     - [Pre processing scripts](#pre-processing-scripts)
@@ -112,6 +113,7 @@ The tag format is `python-scripts.v*`
 # Deployment
 
 ## Docker
+
 System components are [Dockerized](docker/). Build Docker images from the root of the repository
 
 ## saeon/somisana_geopython
