@@ -9,10 +9,9 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_web-dev
   BRANCH_REF: next
-  DEPLOY_SOURCE: deploy/web/${{ env.BRANCH_REF }}/stack
-  DEPLOY_TARGET: somisana
-  STACK_COMPOSE_PATH: /home/runner/${{ env.DEPLOY_TARGET }}/${{ env.DEPLOY_SOURCE }}.yml
-  STACK_CONFIG_PATH: /home/runner/${{ env.DEPLOY_TARGET }}/${{ env.DEPLOY_SOURCE }}.env
+  DEPLOY_SOURCE: deploy/web/next/stack.yml
+  STACK_COMPOSE_PATH: /home/runner/somisana/deploy/web/next/stack.yml
+  STACK_CONFIG_PATH: /home/runner/somisana/deploy/web/next/stack.env
 
 jobs:
   build:
@@ -66,8 +65,8 @@ jobs:
           username: ${{ secrets.ULWAPPSWARM01_HOST_USERNAME }}
           password: ${{ secrets.ULWAPPSWARM01_HOST_PASSWORD }}
           port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
-          source: ${{ env.DEPLOY_SOURCE }}.yml
-          target: ${{ env.DEPLOY_TARGET }}
+          source: ${{ env.DEPLOY_SOURCE }}
+          target: 'somisana'
 
       - name: (SSH) Deploy stack
         uses: appleboy/ssh-action@master
