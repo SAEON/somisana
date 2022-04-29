@@ -4,6 +4,10 @@
   "type": "module",
   "description": "SOMISANA web stack",
   "author": "zd.smith@saeon.nrf.ac.za",
+  "scripts": {
+    "rollup:client": "rollup --config rollup/client.config.js",
+    "rollup:ssr": "rollup --config rollup/server.config.js"
+  },
   "dependencies": {
     "@apollo/client": "^3.6.0",
     "@emotion/cache": "^11.7.1",
@@ -11,6 +15,7 @@
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.8.1",
     "@graphql-tools/schema": "^8.3.10",
+    "@jspm/generator": "^1.0.0-beta.30",
     "@koa/router": "^10.1.1",
     "@mui/material": "^5.6.2",
     "@node-loader/core": "^2.0.0",
@@ -33,17 +38,16 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.3.0",
-    "rimraf": "^3.0.2",
     "rollup": "^2.70.2",
     "rollup-plugin-swc": "^0.2.1",
     "swc-loader": "^0.2.0",
-    "wkt": "^0.1.1"
-  },
-  "devDependencies": {
-    "@jspm/generator": "^1.0.0-beta.30",
+    "wkt": "^0.1.1",
+    "rimraf": "^3.0.2",
     "@swc/cli": "^0.1.57",
     "@swc/core": "^1.2.170",
-    "mkdirp": "^1.0.4",
+    "mkdirp": "^1.0.4"
+  },
+  "devDependencies": {
     "nodemon": "^2.0.15",
     "npm-check-updates": "^12.5.9",
     "prettier": "^2.6.2"

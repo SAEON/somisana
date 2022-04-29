@@ -13,7 +13,7 @@
 From the `somisana/web` directory, setup your environment:
 
 ```sh
-# Install Node.js (v16.14.2)
+# Install Node.js (v16.14.2 - higher versions not supported yet)
 
 # Install chomp
 npm install -g chomp

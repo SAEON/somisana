@@ -111,7 +111,8 @@ The tag format is `python-scripts.v*`
 
 # Deployment
 
-The mode run uses the `saeon/somisana_python-scripts` image, which is built from the `saeon/somisana_geopython` image. Whenever a script is changed a new version of the package should be produced
+## Docker
+System components are [Dockerized](docker/). Build Docker images from the root of the repository
 
 ## saeon/somisana_geopython
 

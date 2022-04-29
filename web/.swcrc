@@ -1,9 +1,14 @@
 {
+  "minify": false,
   "jsc": {
     "target": "es2017",
     "parser": {
       "syntax": "typescript",
       "tsx": true
+    },
+    "minify": {
+      "compress": false,
+      "mangle": false
     },
     "transform": {
       "optimizer": {

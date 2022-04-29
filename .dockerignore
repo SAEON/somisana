@@ -1,5 +1,7 @@
 .github
 .git
 .husky
-.venv
+**/.venv/**
 **/node_modules/**
+**/.cache/**
+**/node.importmap
