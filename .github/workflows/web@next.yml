@@ -9,6 +9,10 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_web-dev
   BRANCH_REF: next
+  DEPLOY_SOURCE: deploy/web/${{ env.BRANCH_REF }}/stack
+  DEPLOY_TARGET: somisana
+  STACK_COMPOSE_PATH: /home/runner/${{ env.DEPLOY_TARGET }}/${{ env.DEPLOY_SOURCE }}.yml
+  STACK_CONFIG_PATH: /home/runner/${{ env.DEPLOY_TARGET }}/${{ env.DEPLOY_SOURCE }}.env
 
 jobs:
   build:
@@ -45,3 +49,33 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: [build]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Check out source code (shared)
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH_REF }}
+
+      - name: (SCP) Copy stack configuration to app server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.ULWAPPSWARM01_HOSTNAME }}
+          username: ${{ secrets.ULWAPPSWARM01_HOST_USERNAME }}
+          password: ${{ secrets.ULWAPPSWARM01_HOST_PASSWORD }}
+          port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
+          source: ${{ env.DEPLOY_SOURCE }}.yml
+          target: ${{ env.DEPLOY_TARGET }}
+
+      - name: (SSH) Deploy stack
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ULWAPPSWARM01_HOSTNAME }}
+          username: ${{ secrets.ULWAPPSWARM01_HOST_USERNAME }}
+          password: ${{ secrets.ULWAPPSWARM01_HOST_PASSWORD }}
+          port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
+          script: |
+            echo "DOCKER_IMAGE=${{ needs.build.outputs.image }}" > ${{ env.STACK_CONFIG_PATH }}
+            sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} somisana_web_next
