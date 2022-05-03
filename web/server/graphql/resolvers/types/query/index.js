@@ -1,3 +1,3 @@
 export default {
-  test: async () => null
+  test: async () => null,
 }

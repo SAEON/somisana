@@ -1,1 +1,30 @@
-# TODO
+version: '3.8'
+
+networks:
+  somisana_stable:
+    name: somisana_stable
+    driver: overlay
+    attachable: true
+
+services:
+  web:
+    image: $DOCKER_IMAGE
+    deploy:
+      replicas: 1
+      rollback_config:
+        parallelism: 0
+      update_config:
+        parallelism: 0
+        order: start-first
+        failure_action: rollback
+      restart_policy:
+        condition: any
+        delay: 30s
+    environment:
+      ALLOWED_ORIGINS: https://somisana.ac.za
+      NODE_ENV: development
+      TZ: utc
+    ports:
+      - 7008:3000
+    networks:
+      - somisana_stable
