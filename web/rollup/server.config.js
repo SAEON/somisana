@@ -16,15 +16,15 @@ export default {
       exports: 'auto',
       dir: join(__dirname, '../server/ssr'),
       format: 'esm',
-      compact: false
-    }
+      compact: false,
+    },
   ],
   plugins: [
     {
       resolveId(id, parentId) {
         if (parentId && !id.startsWith('../') && !id.startsWith('./')) return { id, external: true }
-      }
+      },
     },
-    swc()
-  ]
+    swc(),
+  ],
 }
