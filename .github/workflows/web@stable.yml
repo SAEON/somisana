@@ -1,4 +1,4 @@
-name: deploy-web@next
+name: deploy-web@stable
 
 on:
   push:
@@ -9,11 +9,72 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_web
   BRANCH_REF: stable
+  DEPLOY_SOURCE: deploy/web/stable/stack.yml
+  STACK_COMPOSE_PATH: /home/runner/somisana/deploy/web/stable/stack.yml
+  STACK_CONFIG_PATH: /home/runner/somisana/deploy/web/stable/stack.env
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
     steps:
-      - name: test workflow
-        run: |
-          echo TODO
+      - name: Checkout source code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.BRANCH_REF }}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=match,pattern=web\.v(.*),group=1,priority=1000
+            type=sha
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: docker/web/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: [build]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Check out source code (shared)
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH_REF }}
+
+      - name: (SCP) Copy stack configuration to app server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.ULWAPPSWARM01_HOSTNAME }}
+          username: ${{ secrets.ULWAPPSWARM01_HOST_USERNAME }}
+          password: ${{ secrets.ULWAPPSWARM01_HOST_PASSWORD }}
+          port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
+          source: ${{ env.DEPLOY_SOURCE }}
+          target: 'somisana'
+
+      - name: (SSH) Deploy stack
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ULWAPPSWARM01_HOSTNAME }}
+          username: ${{ secrets.ULWAPPSWARM01_HOST_USERNAME }}
+          password: ${{ secrets.ULWAPPSWARM01_HOST_PASSWORD }}
+          port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
+          script: |
+            echo "DOCKER_IMAGE=${{ needs.build.outputs.image }}" > ${{ env.STACK_CONFIG_PATH }}
+            sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} somisana_web_stable

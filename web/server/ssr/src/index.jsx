@@ -23,16 +23,15 @@ export default async ctx => {
 
     const page = ctx.request.url.replace('.html', '').replace('/', '')
     const htmlUtf8 = await fs.readFile(join(__dirname, `../../.cache/${page}.html`), {
-      encoding: 'utf-8'
+      encoding: 'utf-8',
     })
     const SsrEntry = await import(join(__dirname, `../../.cache/ssr.${page}.js`)).then(
       ({ default: C }) => C
     )
 
     const emotionCache = createEmotionCache()
-    const { extractCriticalToChunks, constructStyleTagsFromChunks } = createEmotionServer(
-      emotionCache
-    )
+    const { extractCriticalToChunks, constructStyleTagsFromChunks } =
+      createEmotionServer(emotionCache)
 
     const html = renderToString(
       <Layout ctx={ctx} emotionCache={emotionCache}>

@@ -19,10 +19,10 @@ export default ({ children, emotionCache, ctx }) => (
                 uri: 'http://localhost:3000/graphql',
                 credentials: 'same-origin',
                 headers: {
-                  cookie: ctx.get('Cookie')
-                }
+                  cookie: ctx.get('Cookie'),
+                },
               }),
-              cache: new InMemoryCache()
+              cache: new InMemoryCache(),
             })
           }
         >
