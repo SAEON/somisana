@@ -25,6 +25,6 @@ services:
       NODE_ENV: development
       TZ: utc
     ports:
-      - 6006:3000
+      - 6007:3000
     networks:
       - somisana_next
