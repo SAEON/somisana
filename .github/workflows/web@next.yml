@@ -77,4 +77,4 @@ jobs:
           port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
           script: |
             echo "DOCKER_IMAGE=${{ needs.build.outputs.image }}" > ${{ env.STACK_CONFIG_PATH }}
-            sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} somisana_web_next
+            sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} somisana_next
