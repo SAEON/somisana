@@ -88,6 +88,6 @@ export default function extensions({ extensions = DEFAULT_EXTENSIONS, resolveInd
         extensions,
         resolveIndex
       )
-    }
+    },
   }
 }

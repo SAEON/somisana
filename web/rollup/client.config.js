@@ -33,23 +33,23 @@ export default {
       entryFileNames: ({ facadeModuleId: id }) => {
         const p = id.split('/')
         return `[name].${p[p.length - 2]}.js`
-      }
-    }
+      },
+    },
   ],
   plugins: [
     extensions({
       extensions: ['.tsx', '.ts', '.jsx', '.js'],
-      resolveIndex: true
+      resolveIndex: true,
     }),
     {
       resolveId(id, parentId) {
         if (parentId && !id.startsWith('../') && !id.startsWith('./')) return { id, external: true }
-      }
+      },
     },
     replace({
       preventAssignment: true,
-      'process.env.NODE_ENV': JSON.stringify(NODE_ENV)
+      'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
     }),
-    swc({ configFile: join(__dirname, '../.swcrc') })
-  ]
+    swc({ configFile: join(__dirname, '../.swcrc') }),
+  ],
 }
