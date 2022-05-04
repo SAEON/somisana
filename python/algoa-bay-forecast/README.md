@@ -45,7 +45,8 @@ cmake ..
 cmake --build .
 sudo cmake --build . --target install
 
-# If this doesn't work, your may have to copy the build/lib output somewhere - or at least update your PATH
+# Then I had to copy the build libraries to /usr/lib so that Python can use them
+sudo cp -a proj-9.0.0/build/lib/. /usr/lib/
 ```
 
 ### Setup the project
@@ -64,3 +65,28 @@ pipenv run script
 ### Setup your environment variables
 
 Run this command `cp .env.example .env`, and the adjust the environment variables accordingly in the `.env` file
+
+### Setup 3rd party services
+Run 3rd party services via Docker. These commands setup Docker containers that should work with default configuration.
+
+
+```sh
+# Create a Docker network
+docker network create --driver bridge somisana
+
+# MongoDB
+docker run \
+  --net=somisana \
+  --name mongo \
+  --restart always \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=password \
+  -v /home/$USER/mongo:/data/db \
+  -d \
+  -p 27017:27017 \
+  mongo:5.0.8
+
+# PostGIS
+```
+
+**PostGIS**
