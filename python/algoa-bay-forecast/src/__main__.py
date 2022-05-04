@@ -12,24 +12,24 @@ import psycopg2
 
 # Connect to mongo
 mongo = MongoClient(
-          config.MONGO_HOST,
-          username=config.MONGO_USERNAME,
-          password=config.MONGO_PASSWORD
-        )[config.MONGO_DB]
+    config.MONGO_HOST,
+    username=config.MONGO_USERNAME,
+    password=config.MONGO_PASSWORD
+)[config.MONGO_DB]
 
 # Test mongo insert
 mongo['some-collection'].insert_one({"hello": "world"})
 
 print('Mongo client is connecting correctly')
 
-#Conect to postgres
+# Conect to postgres
 pg = psycopg2.connect(
-          host=config.PG_HOST,
-          port=config.PG_PORT,
-          database=config.PG_DB,
-          user=config.PG_USERNAME,
-          password=config.PG_PASSWORD
-        )
+    host=config.PG_HOST,
+    port=config.PG_PORT,
+    database=config.PG_DB,
+    user=config.PG_USERNAME,
+    password=config.PG_PASSWORD
+)
 
 pg.autocommit = True
 
