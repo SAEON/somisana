@@ -8,6 +8,7 @@
     - [Install binaries](#install-binaries)
     - [Setup the project](#setup-the-project)
     - [Setup your environment variables](#setup-your-environment-variables)
+    - [Setup 3rd party services](#setup-3rd-party-services)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -67,8 +68,8 @@ pipenv run script
 Run this command `cp .env.example .env`, and the adjust the environment variables accordingly in the `.env` file
 
 ### Setup 3rd party services
-Run 3rd party services via Docker. These commands setup Docker containers that should work with default configuration.
 
+Run 3rd party services via Docker. These commands setup Docker containers that should work with default configuration.
 
 ```sh
 # Create a Docker network
