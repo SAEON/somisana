@@ -28,6 +28,7 @@
     "ULWAPPSWARM",
     "VENV",
     "virtualenv",
+    "xarray",
     "xzvf"
   ]
 }
