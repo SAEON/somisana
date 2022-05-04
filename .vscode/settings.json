@@ -4,9 +4,14 @@
     "appleboy",
     "browserslist",
     "chompfile",
+    "cmake",
+    "conda",
     "croco",
     "Dockerized",
     "importee",
+    "libcurl",
+    "libgeos",
+    "mkdir",
     "Neue",
     "numpy",
     "Parens",
@@ -21,6 +26,7 @@
     "swcrc",
     "ULWAPPSWARM",
     "VENV",
-    "virtualenv"
+    "virtualenv",
+    "xzvf"
   ]
 }
