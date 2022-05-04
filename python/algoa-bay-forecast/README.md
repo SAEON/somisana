@@ -77,17 +77,25 @@ docker network create --driver bridge somisana
 
 # MongoDB
 docker run \
-  --net=somisana \
   --name mongo \
+  --net=somisana \
   --restart always \
+  -p 27017:27017 \
   -e MONGO_INITDB_ROOT_USERNAME=admin \
   -e MONGO_INITDB_ROOT_PASSWORD=password \
-  -v /home/$USER/mongo:/data/db \
   -d \
-  -p 27017:27017 \
   mongo:5.0.8
 
 # PostGIS
+docker run \
+  --name postgis \
+  --net=somisana \
+  --restart always \
+  -p 5432:5432 \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=password \
+  -e POSTGRES_DB=somisana_local \
+  -e PGDATA=/var/lib/postgresql/data/pgdata \
+  -d \
+  ghcr.io/saeon/postgis:sha-40d864a
 ```
-
-**PostGIS**
