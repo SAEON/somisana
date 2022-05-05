@@ -43,7 +43,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.NGINX_IMAGE_NAME }}
           tags: |
-            type=raw,value=latest-dev
+            type=raw,value=next
             type=sha
 
       - name: Build and push
