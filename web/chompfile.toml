@@ -69,7 +69,7 @@ integrity = true
 
 [[task]]
 target = '.cache'
-dep = 'client/**/*.js'
+dep = 'client/**/*'
 run = """
 rollup --config rollup/client.config.js
 """
