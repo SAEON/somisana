@@ -98,4 +98,14 @@ docker run \
   -e PGDATA=/var/lib/postgresql/data/pgdata \
   -d \
   ghcr.io/saeon/postgis:sha-40d864a
+
+# PGAdmin4
+docker run \
+  --net=somisana \
+  --name pgadmin \
+  -p 5001:80 \
+  -e PGADMIN_DEFAULT_EMAIL=<your email address> \
+  -e PGADMIN_DEFAULT_PASSWORD=password \
+  -d \
+  dpage/pgadmin4:6.8
 ```
