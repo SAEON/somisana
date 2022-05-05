@@ -21,7 +21,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: github-runner.saeon.int # This allows for layer caching, which speeds up testing (Shared runners don't cache images)
     outputs:
       image: ${{ steps.meta.outputs.tags }}
     steps:
@@ -73,4 +73,4 @@ jobs:
             -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
             -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
             -e SCRIPT_NAME=popr_algoa-bay-forecast \
-            ${{ needs.build.outputs.image }}
+            ghcr.io/saeon/somisana_python-scripts-dev:next
