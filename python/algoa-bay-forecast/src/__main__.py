@@ -1,13 +1,10 @@
 import ast
-import matplotlib.pyplot as plt
 import geojsoncontour
-import numpy as np
 from geojson import FeatureCollection
-import cartopy.crs as ccrs
-from datetime import timedelta, datetime
+
 from mongo import connection as mongoConnection
 from postgis import connection as pgConnection
-from contours.temperature import test as salinity
+from contours.temperature import tranform as salinity
 
 salinity()
 

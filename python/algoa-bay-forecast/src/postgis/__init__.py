@@ -10,4 +10,8 @@ connection = psycopg2.connect(
     password=PG_PASSWORD
 )
 
+# Load ./schema.sql
+# Apply schema.sql to the postgis server
+
+
 connection.autocommit = True
