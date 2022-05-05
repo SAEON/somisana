@@ -12,6 +12,8 @@ const { default: createEmotionServer } = emotionServer
 
 const __dirname = dirname(import.meta)
 
+const INDEX_NAME = 'somisana'
+
 export default async ctx => {
   const { url } = ctx.request
 
@@ -21,7 +23,7 @@ export default async ctx => {
   } else {
     ctx.set('Content-type', 'text/html')
 
-    const page = ctx.request.url.replace('.html', '').replace('/', '')
+    const page = ctx.request.url.replace('.html', '').replace('/', '') || INDEX_NAME
     const htmlUtf8 = await fs.readFile(join(__dirname, `../../.cache/${page}.html`), {
       encoding: 'utf-8',
     })
