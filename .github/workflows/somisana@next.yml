@@ -21,7 +21,7 @@ env:
 
 jobs:
   build:
-    runs-on: github-runner.saeon.int # This allows for layer caching, which speeds up testing (Shared runners don't cache images)
+    runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.meta.outputs.tags }}
     steps:
