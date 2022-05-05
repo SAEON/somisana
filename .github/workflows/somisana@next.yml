@@ -63,11 +63,11 @@ jobs:
   #           --rm \
   #           -e PG_HOST=${{ env.PG_HOST }} \
   #           -e PG_PORT=${{ env.PG_PORT }} \
-  #           -e PG_DB=${{ env.PG_DB }} \
+  #           -e PG_DB=somisana_next \
   #           -e PG_USERNAME=${{ env.PG_USERNAME }} \
   #           -e PG_PASSWORD=${{ env.PG_PASSWORD }} \
   #           -e MONGO_HOST=${{ env.MONGO_HOST }} \
-  #           -e MONGO_DB=${{ env.MONGO_DB }} \
+  #           -e MONGO_DB=somisana_next \
   #           -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
   #           -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
   #           -e SCRIPT_NAME=popr_algoa-bay-forecast \
