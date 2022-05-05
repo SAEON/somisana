@@ -8,7 +8,7 @@ on:
 env:
   BRANCH_REF: next
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_python-scripts-dev
+  IMAGE_NAME: ${{ github.repository }}_python-scripts
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
   PG_DB: ${{ secrets.PG_DB_NEXT }}
@@ -44,7 +44,6 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=next
-            type=sha
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -61,7 +60,8 @@ jobs:
     steps:
       - name: Algoa Bay forecast (post processing)
         run: >-
-          docker run \
+          docker pull ghcr.io/saeon/somisana_python-scripts:next \
+          && docker run \
             --rm \
             -e PG_HOST=${{ env.PG_HOST }} \
             -e PG_PORT=${{ env.PG_PORT }} \
@@ -73,4 +73,4 @@ jobs:
             -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
             -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
             -e SCRIPT_NAME=popr_algoa-bay-forecast \
-            ghcr.io/saeon/somisana_python-scripts-dev:next
+            ghcr.io/saeon/somisana_python-scripts:next
