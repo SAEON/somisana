@@ -11,11 +11,9 @@ env:
   IMAGE_NAME: ${{ github.repository }}_python-scripts
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
-  PG_DB: ${{ secrets.PG_DB_NEXT }}
   PG_USERNAME: ${{ secrets.PG_USERNAME }}
   PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
   MONGO_HOST: ${{ secrets.MONGO_HOST_NEXT }}
-  MONGO_DB: ${{ secrets.MONGO_DB_NEXT }}
   MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
 
