@@ -100,6 +100,11 @@ docker run \
   ghcr.io/saeon/postgis:sha-40d864a
 
 # PGAdmin4
+# Connection details
+#### host: postgis
+#### DB:   somisana_local
+#### User: admin
+#### Pswd: password 
 docker run \
   --net=somisana \
   --name pgadmin \
