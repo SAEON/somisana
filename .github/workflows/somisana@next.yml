@@ -8,7 +8,7 @@ on:
 env:
   BRANCH_REF: next
   REGISTRY: ghcr.io
-  IMAGE_NAME: somisana_python-scripts
+  IMAGE_NAME: ${{ github.repository }}_python-scripts
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
   PG_DB: ${{ secrets.PG_DB_NEXT }}
