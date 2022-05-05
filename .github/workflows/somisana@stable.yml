@@ -9,12 +9,12 @@ env:
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_STABLE }}
   PG_DB: ${{ secrets.PG_DB_STABLE }}
-  PG_USERNAME: ${{ secrets.PG_USERNAME }}
-  PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+  PG_USERNAME: ${{ secrets.PG_USERNAME_STABLE }}
+  PG_PASSWORD: ${{ secrets.PG_PASSWORD_STABLE }}
   MONGO_HOST: ${{ secrets.MONGO_HOST_STABLE }}
   MONGO_DB: ${{ secrets.MONGO_DB_STABLE }}
-  MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
-  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+  MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STABLE }}
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }}
 
 jobs:
   exe:
