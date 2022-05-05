@@ -1,14 +1,14 @@
 name: somisana@next
 
 on:
-  schedule:
-    - cron: '0 1 * * *'
   push:
     branches:
       - next
 
 env:
-  IMAGE_NAME: ghcr.io/saeon/somisana_python-scripts:0.0.6
+  BRANCH_REF: next
+  IMAGE_NAME: ${{ github.repository }}_python-scripts-dev
+  REGISTRY: ghcr.io
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
   PG_DB: ${{ secrets.PG_DB_NEXT }}
@@ -20,7 +20,43 @@ env:
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: Check out source code (shared)
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH_REF }}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.NGINX_IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest-dev
+            type=sha
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: docker/python-scripts/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
   exe:
+    needs: [build]
     runs-on: github-runner.saeon.int
     steps:
       - name: Algoa Bay forecast (post processing)
@@ -37,4 +73,4 @@ jobs:
             -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
             -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
             -e SCRIPT_NAME=popr_algoa-bay-forecast \
-            ${{ env.IMAGE_NAME }}
+            ${{ needs.build.outputs.image }}
