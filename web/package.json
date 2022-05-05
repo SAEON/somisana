@@ -38,13 +38,13 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-router-dom": "^6.3.0",
-    "rollup": "^2.71.1",
+    "rollup": "^2.72.0",
     "rollup-plugin-swc": "^0.2.1",
     "swc-loader": "^0.2.0",
     "wkt": "^0.1.1",
     "rimraf": "^3.0.2",
     "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.175",
+    "@swc/core": "^1.2.177",
     "mkdirp": "^1.0.4"
   },
   "devDependencies": {
