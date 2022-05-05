@@ -8,7 +8,7 @@ on:
 env:
   BRANCH_REF: next
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_python-scripts
+  IMAGE_NAME: somisana_python-scripts
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
   PG_DB: ${{ secrets.PG_DB_NEXT }}
@@ -21,7 +21,7 @@ env:
 
 jobs:
   build:
-    runs-on: github-runner.saeon.int # This allows for layer caching, which speeds up testing (Shared runners don't cache images)
+    runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.meta.outputs.tags }}
     steps:
@@ -55,23 +55,23 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  exe:
-    needs: [build]
-    runs-on: github-runner.saeon.int
-    steps:
-      - name: Algoa Bay forecast (post processing)
-        run: >-
-          docker run \
-            --rm \
-            -e PG_HOST=${{ env.PG_HOST }} \
-            -e PG_PORT=${{ env.PG_PORT }} \
-            -e PG_DB=${{ env.PG_DB }} \
-            -e PG_USERNAME=${{ env.PG_USERNAME }} \
-            -e PG_PASSWORD=${{ env.PG_PASSWORD }} \
-            -e MONGO_HOST=${{ env.MONGO_HOST }} \
-            -e MONGO_DB=${{ env.MONGO_DB }} \
-            -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
-            -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
-            -e SCRIPT_NAME=popr_algoa-bay-forecast \
-            ${{ needs.build.outputs.image }}
+  # exe:
+  #   needs: [build]
+  #   runs-on: github-runner.saeon.int
+  #   steps:
+  #     - name: Algoa Bay forecast (post processing)
+  #       run: >-
+  #         docker run \
+  #           --rm \
+  #           -e PG_HOST=${{ env.PG_HOST }} \
+  #           -e PG_PORT=${{ env.PG_PORT }} \
+  #           -e PG_DB=${{ env.PG_DB }} \
+  #           -e PG_USERNAME=${{ env.PG_USERNAME }} \
+  #           -e PG_PASSWORD=${{ env.PG_PASSWORD }} \
+  #           -e MONGO_HOST=${{ env.MONGO_HOST }} \
+  #           -e MONGO_DB=${{ env.MONGO_DB }} \
+  #           -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
+  #           -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
+  #           -e SCRIPT_NAME=popr_algoa-bay-forecast \
+  #           ${{ needs.build.outputs.image }}
             
