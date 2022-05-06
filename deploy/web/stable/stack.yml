@@ -22,8 +22,6 @@ services:
         delay: 30s
     environment:
       ALLOWED_ORIGINS: https://somisana.ac.za
-      NODE_ENV: development
-      TZ: utc
     ports:
       - 7008:3000
     networks:
