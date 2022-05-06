@@ -2,12 +2,12 @@ name: deploy-web@next
 
 on:
   push:
-    tags:
-      - web-dev.v*
+    branches:
+      - next
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_web-dev
+  IMAGE_NAME: ${{ github.repository }}_web
   BRANCH_REF: next
   DEPLOY_SOURCE: deploy/web/next/stack.yml
   STACK_COMPOSE_PATH: /home/runner/somisana/deploy/web/next/stack.yml
@@ -37,8 +37,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=match,pattern=web-dev\.v(.*),group=1,priority=1000
             type=sha
+            type=raw,next
 
       - name: Build and push
         uses: docker/build-push-action@v2

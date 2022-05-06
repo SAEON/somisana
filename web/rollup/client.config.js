@@ -7,11 +7,12 @@ import fs from 'fs'
 import rimraf from 'rimraf'
 import extensions from './plugins/extensions.js'
 
-const NODE_ENV = process.env.NODE_ENV || 'development'
-
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 rimraf.sync(join(__dirname, '../.cache'))
+
+const NODE_ENV = process.env.NODE_ENV || 'development'
+const API = process.env.API || 'http://localhost:3000'
 
 export default {
   input: fs
@@ -49,6 +50,7 @@ export default {
     replace({
       preventAssignment: true,
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+      'process.env.API': JSON.stringify(API)
     }),
     swc({ configFile: join(__dirname, '../.swcrc') }),
   ],
