@@ -44,6 +44,10 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
+          build-args:
+            API: https://somisana.dvn
+            NODE_ENV: development
+            TZ: utc
           file: docker/web/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
