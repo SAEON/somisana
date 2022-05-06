@@ -1,16 +1,20 @@
 FROM ubuntu:20.04
 
 ##############
-# USER CONFIG
+# BUILD CONIG
 ##############
 
+ARG API
 ARG NODE_ENV
-ENV NODE_ENV=$NODE_ENV
-
 ARG TZ
-ENV TZ=$TZ
-
 ARG ALLOWED_ORIGINS
+
+##############
+# USER CONFIG (runtime)
+##############
+
+ENV NODE_ENV=$NODE_ENV
+ENV TZ=$TZ
 ENV ALLOWED_ORIGINS=$ALLOWED_ORIGINS
 
 ##############
@@ -54,6 +58,10 @@ ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 WORKDIR /somisana
 
 COPY web/ .
+
+# Configure client (build time only)
+RUN echo "API=${API}" > .env
+RUN echo "NODE_ENV=${NODE_ENV}"
 
 # Install deps
 RUN npm install -g chomp

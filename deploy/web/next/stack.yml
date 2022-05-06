@@ -9,6 +9,12 @@ networks:
 services:
   web:
     image: $DOCKER_IMAGE
+    build:
+      context: .
+      args:
+        API: https://somisana.dvn
+        NODE_ENV: development
+        TZ: utc
     deploy:
       replicas: 1
       rollback_config:
@@ -22,8 +28,6 @@ services:
         delay: 30s
     environment:
       ALLOWED_ORIGINS: https://somisana.dvn
-      NODE_ENV: development
-      TZ: utc
     ports:
       - 6007:3000
     networks:
