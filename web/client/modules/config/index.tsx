@@ -3,7 +3,7 @@ import * as _config from './env/index.js'
 
 if (_config.NODE_ENV !== 'production') {
   const ignore: string[] = []
-  
+
   console.info(
     'Configuration',
     Object.fromEntries(
@@ -18,7 +18,6 @@ if (_config.NODE_ENV !== 'production') {
     )
   )
 }
-
 
 export const ctx = createContext(_config)
 

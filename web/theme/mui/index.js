@@ -1,33 +1,35 @@
 import createTheme from '@mui/material/styles/createTheme'
-import red from '@mui/material/colors/red'
+import blueGrey from '@mui/material/colors/blueGrey'
+
+const systemFont = [
+  '-apple-system',
+  'BlinkMacSystemFont',
+  '"Segoe UI"',
+  'Roboto',
+  '"Helvetica Neue"',
+  'Arial',
+  'sans-serif',
+  '"Apple Color Emoji"',
+  '"Segoe UI Emoji"',
+  '"Segoe UI Symbol"',
+];
 
 const theme = createTheme({
   shape: {
     borderRadius: 2,
   },
   palette: {
-    mode: 'light',
+    mode: 'dark',  
     primary: {
-      main: red[800],
+      main: blueGrey[700],
     },
     secondary: {
-      main: red[100],
+      main: blueGrey[100],
     },
   },
   typography: {
     allVariants: {
-      fontFamily: [
-        '-apple-system',
-        'BlinkMacSystemFont',
-        '"Segoe UI"',
-        'Roboto',
-        '"Helvetica Neue"',
-        'Arial',
-        'sans-serif',
-        '"Apple Color Emoji"',
-        '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"',
-      ].join(','),
+      fontFamily: systemFont.join(','),
     },
   },
 })

@@ -13,7 +13,7 @@ const Home = () => {
       <Suspense fallback={null}>
         <SuspenseTest />
       </Suspense>
-      <Div sx={{backgroundColor: theme => theme.palette.primary.light}}>The styled Div</Div>
+      <Div sx={{ backgroundColor: theme => theme.palette.primary.light }}>The styled Div</Div>
     </>
   )
 }
