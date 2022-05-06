@@ -1,3 +1,10 @@
+import { Routes, Route } from 'react-router-dom'
+import Home from './routes/home'
+
 export default () => {
-  return <h1>SOMISANA</h1>
+  return (
+    <Routes>
+      <Route path="*" element={<Home />} />
+    </Routes>
+  )
 }

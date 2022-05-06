@@ -50,7 +50,7 @@ export default {
     replace({
       preventAssignment: true,
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
-      'process.env.API': JSON.stringify(API)
+      'process.env.API': JSON.stringify(API),
     }),
     swc({ configFile: join(__dirname, '../.swcrc') }),
   ],
