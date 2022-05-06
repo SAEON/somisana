@@ -10,6 +10,9 @@ ENV NODE_ENV=$NODE_ENV
 ARG TZ
 ENV TZ=$TZ
 
+ARG ALLOWED_ORIGINS
+ENV ALLOWED_ORIGINS=$ALLOWED_ORIGINS
+
 ##############
 # NODE.JS
 ##############
@@ -77,6 +80,7 @@ CMD \
   NODE_ENV=$NODE_ENV \
   TZ=$TZ \
   NODE_LOADER_CONFIG=loaders/config.js \
+  ALLOWED_ORIGINS=https://somisana.dvn \
   node \
     --experimental-loader @node-loader/core \
     server
