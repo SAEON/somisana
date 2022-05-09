@@ -86,7 +86,7 @@ const SiteSettingsPanel = () => {
               aria-controls="language-settings-content"
               id="language-settings-header"
             >
-              <Typography>Language settings</Typography>
+              <Typography>Language</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography>TODO select language</Typography>
@@ -98,7 +98,7 @@ const SiteSettingsPanel = () => {
               aria-controls="coolie-settings-content"
               id="coolie-settings-header"
             >
-              <Typography>Cookie settings</Typography>
+              <Typography>Cookies</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography>TODO allow cookies</Typography>
