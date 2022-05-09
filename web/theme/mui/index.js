@@ -12,14 +12,14 @@ const systemFont = [
   '"Apple Color Emoji"',
   '"Segoe UI Emoji"',
   '"Segoe UI Symbol"',
-];
+]
 
 const theme = createTheme({
   shape: {
     borderRadius: 2,
   },
   palette: {
-    mode: 'dark',  
+    mode: 'dark',
     primary: {
       main: blueGrey[700],
     },
