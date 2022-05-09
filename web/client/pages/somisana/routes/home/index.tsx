@@ -1,44 +1,21 @@
-import Grid from '@mui/material/Grid'
-import Typography from '@mui/material/Typography'
-import { alpha } from '@mui/material/styles'
-import Fade from '@mui/material/Fade'
+import Tooltip from '@mui/material/Tooltip'
+import IconButton from '@mui/material/IconButton'
+import { Cog } from '../../../../components/icons'
+import Title from './title'
 
 const Home = () => {
   return (
-    <Fade timeout={2500} key="home" in>
-      <Grid
-        sx={{
-          height: '100vh',
-          alignContent: 'center',
-          justifyContent: 'center',
-        }}
-        container
-      >
-        <Grid item xs={12} sm={12} md={8} xl={6}>
-          <Typography
-            sx={{
-              textAlign: 'center',
-              color: theme => alpha(theme.palette.primary.main, 0.9),
-            }}
-            variant="h1"
-          >
-            SOMISANA
-          </Typography>
-          <Typography
-            sx={{
-              textAlign: 'center',
-              color: theme => alpha(theme.palette.primary.main, 0.9),
-            }}
-            variant="h5"
-            variantMapping={{
-              h5: 'h2',
-            }}
-          >
-            Sustainable Ocean Modelling Initiative: A South African Approach
-          </Typography>
-        </Grid>
-      </Grid>
-    </Fade>
+    <>
+      <Title />
+      <Tooltip placement="left" title="Site settings">
+        <IconButton
+          size='medium'
+          sx={{ position: 'absolute', bottom: 0, right: 0, margin: theme => theme.spacing(2) }}
+        >
+          <Cog />
+        </IconButton>
+      </Tooltip>
+    </>
   )
 }
 
