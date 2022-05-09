@@ -80,6 +80,9 @@ RUN chomp rollup:ssr
 RUN chomp jspm:client
 RUN chomp jspm:node
 
+# Copy static files
+RUN cp -r public/* .cache/
+
 # Expose the Noode.js HTTP port
 EXPOSE 3000
 
