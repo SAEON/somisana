@@ -9,6 +9,7 @@ export const schema = _schema
 
 export default async ({ httpServer, api }) => {
   const apolloServer = new ApolloServer({
+    csrfPrevention: true,
     uploads: false,
     schema,
     introspection: true,
