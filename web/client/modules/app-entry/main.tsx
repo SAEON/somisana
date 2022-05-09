@@ -1,33 +1,22 @@
+import { API_GQL } from '../config/env'
 import { hydrateRoot } from 'react-dom/client'
-import ConfigProvider from '../config'
-import Apollo from '../apollo'
-import ThemeProvider from '@mui/material/styles/ThemeProvider'
-import theme from '../../../theme/mui'
-import CssBaseline from '@mui/material/CssBaseline'
-import { CacheProvider as EmotionCacheProvider } from '@emotion/react'
-import createEmotionCache from '../../../create-emotion-cache.js'
-import { BrowserRouter } from 'react-router-dom'
+import App from '../../../common/app'
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
+import { BrowserRouter as Router } from 'react-router-dom'
 
-const cache = createEmotionCache()
+const apolloClient = new ApolloClient({
+  cache: new InMemoryCache({}),
+  link: new HttpLink({
+    uri: API_GQL,
+    credentials: 'include',
+  }),
+})
 
-const App = ({ children }) => (
-  <EmotionCacheProvider value={cache}>
-    <ThemeProvider theme={theme}>
-      <CssBaseline>
-        <ConfigProvider>
-          <Apollo>
-            <BrowserRouter>{children}</BrowserRouter>
-          </Apollo>
-        </ConfigProvider>
-      </CssBaseline>
-    </ThemeProvider>
-  </EmotionCacheProvider>
-)
-
-export default Page =>
+export default Page => {
   hydrateRoot(
     document.getElementById('root'),
-    <App>
+    <App Router={Router} apolloClient={apolloClient}>
       <Page />
     </App>
   )
+}

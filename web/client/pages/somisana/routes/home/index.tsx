@@ -9,7 +9,7 @@ const Home = () => {
       <Title />
       <Tooltip placement="left" title="Site settings">
         <IconButton
-          size='medium'
+          size="medium"
           sx={{ position: 'absolute', bottom: 0, right: 0, margin: theme => theme.spacing(2) }}
         >
           <Cog />

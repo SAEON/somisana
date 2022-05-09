@@ -3,7 +3,7 @@ import { join } from 'path'
 import fs from 'fs/promises'
 import dirname from '../../lib/dirname.js'
 import { createReadStream } from 'fs'
-import createEmotionCache from '../../../create-emotion-cache.js'
+import { createEmotionCache } from '../../../common/app'
 import emotionServer from '@emotion/server/create-instance'
 
 import Layout from './_layout.jsx'

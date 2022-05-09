@@ -98,6 +98,7 @@ run = """
 prettier \
   --ignore-path ../.prettierignore \
   --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
+  --write "common/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
   --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" \
   --write "loaders/**/*.js" \
   --write "rollup/**/*.js" \
