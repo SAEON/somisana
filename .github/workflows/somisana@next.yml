@@ -74,4 +74,3 @@ jobs:
             -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
             -e SCRIPT_NAME=popr_algoa-bay-forecast \
             ${{ needs.build.outputs.image }}
-            
