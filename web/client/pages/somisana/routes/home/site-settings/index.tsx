@@ -3,13 +3,34 @@ import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import Button from '@mui/material/Button'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
-import { Cog, Close, ExpandMore, SaveAll } from '../../../../../components/icons'
+import { Cog, Close, ExpandMore, CheckAll } from '../../../../../components/icons'
 import Toolbar from '@mui/material/Toolbar'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import Accordion from '@mui/material/Accordion'
+import Accordion_ from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
+import { styled } from '@mui/material/styles'
+import AccordionProps from '@mui/material/AccordionProps'
+
+const Accordion = styled((props: AccordionProps) => (
+  <Accordion_
+    sx={{
+      backgroundColor: 'transparent',
+      border: theme => `1px solid ${theme.palette.divider}`,
+      '&:not(:last-child)': {
+        borderBottom: 0,
+      },
+      '&:before': {
+        display: 'none',
+      },
+    }}
+    square
+    disableGutters
+    variant="outlined"
+    {...props}
+  />
+))({})
 
 const SiteSettingsPanel = () => {
   const [open, setOpen] = useState(false)
@@ -57,10 +78,9 @@ const SiteSettingsPanel = () => {
         <Box
           sx={{
             minWidth: 400,
-            margin: theme => theme.spacing(1),
           }}
         >
-          <Accordion variant="outlined">
+          <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMore />}
               aria-controls="language-settings-content"
@@ -72,7 +92,7 @@ const SiteSettingsPanel = () => {
               <Typography>TODO select language</Typography>
             </AccordionDetails>
           </Accordion>
-          <Accordion variant="outlined">
+          <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMore />}
               aria-controls="coolie-settings-content"
@@ -102,9 +122,9 @@ const SiteSettingsPanel = () => {
             onClick={() => setOpen(false)}
             variant="text"
             size="small"
-            startIcon={<SaveAll />}
+            startIcon={<CheckAll />}
           >
-            Save settings
+            Okay
           </Button>
         </Toolbar>
       </SwipeableDrawer>
