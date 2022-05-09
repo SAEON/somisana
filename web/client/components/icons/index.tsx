@@ -1,5 +1,5 @@
 import SvgIcon from '@mui/material/SvgIcon'
-import { mdiCog, mdiClose, mdiChevronDown, mdiContentSaveAll } from '@mdi/js'
+import { mdiCog, mdiClose, mdiChevronDown, mdiContentSaveAll, mdiCheckAll } from '@mdi/js'
 
 export const Cog = (props: any) => (
   <SvgIcon {...props}>
@@ -22,5 +22,11 @@ export const ExpandMore = (props: any) => (
 export const SaveAll = (props: any) => (
   <SvgIcon {...props}>
     <path d={mdiContentSaveAll} />
+  </SvgIcon>
+)
+
+export const CheckAll = (props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiCheckAll} />
   </SvgIcon>
 )
