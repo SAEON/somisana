@@ -3,7 +3,7 @@ const mask = str => str?.replace(/./g, '*').padEnd(60, '*')
 const MASKED_FIELDS = config.DEPLOYMENT_ENV === 'production' ? ['KEY'] : []
 
 console.info(
-  'Configuration',
+  'Server configuration',
   Object.fromEntries(
     Object.entries(config)
       .map(([field, value]) => [
