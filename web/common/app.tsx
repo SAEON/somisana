@@ -1,7 +1,7 @@
 import { CacheProvider as EmotionCacheProvider } from '@emotion/react'
 import ThemeProvider from '@mui/material/styles/ThemeProvider'
 import CssBaseline from '@mui/material/CssBaseline'
-import theme from '../theme/mui'
+import theme from './theme/mui'
 import ConfigProvider from '../client/modules/config'
 import SiteSettingsProvider from '../client/modules/site-settings'
 import createCache from '@emotion/cache'
