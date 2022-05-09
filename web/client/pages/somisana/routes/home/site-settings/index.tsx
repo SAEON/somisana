@@ -7,30 +7,11 @@ import { Cog, Close, ExpandMore, CheckAll } from '../../../../../components/icon
 import Toolbar from '@mui/material/Toolbar'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import Accordion_ from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
-import { styled } from '@mui/material/styles'
-import AccordionProps from '@mui/material/AccordionProps'
+import Accordion from '../../../../../components/accordion'
 
-const Accordion = styled((props: AccordionProps) => (
-  <Accordion_
-    sx={{
-      backgroundColor: 'transparent',
-      border: theme => `1px solid ${theme.palette.divider}`,
-      '&:not(:last-child)': {
-        borderBottom: 0,
-      },
-      '&:before': {
-        display: 'none',
-      },
-    }}
-    square
-    disableGutters
-    variant="outlined"
-    {...props}
-  />
-))({})
+
 
 const SiteSettingsPanel = () => {
   const [open, setOpen] = useState(false)
@@ -61,9 +42,7 @@ const SiteSettingsPanel = () => {
       >
         <Toolbar
           disableGutters
-          variant="dense"
           sx={{
-            borderBottom: 1,
             padding: theme => theme.spacing(1),
             display: 'flex',
             alignItems: 'center',
@@ -109,7 +88,6 @@ const SiteSettingsPanel = () => {
           disableGutters
           variant="dense"
           sx={{
-            borderTop: 1,
             padding: theme => theme.spacing(1),
             display: 'flex',
             alignItems: 'center',
@@ -121,7 +99,7 @@ const SiteSettingsPanel = () => {
             color="inherit"
             onClick={() => setOpen(false)}
             variant="text"
-            size="small"
+            size="medium"
             startIcon={<CheckAll />}
           >
             Okay

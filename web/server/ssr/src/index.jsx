@@ -20,6 +20,12 @@ export default async ctx => {
   if (url.match(/\.js$/)) {
     ctx.set('Content-type', 'application/javascript; charset=utf-8')
     ctx.body = createReadStream(join(__dirname, `../../.cache/${url}`))
+  } else if (url.endsWith('.png')) {
+    ctx.set('Content-type', 'image/png')
+    ctx.body = createReadStream(join(__dirname, `../../.cache/${url}`))
+  } else if (url.endsWith('site.webmanifest')) {
+    ctx.set('Content-type', 'application/json; charset=utf-8')
+    ctx.body = createReadStream(join(__dirname, `../../.cache/${url}`))
   } else {
     ctx.set('Content-type', 'text/html')
 

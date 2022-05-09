@@ -9,11 +9,17 @@ extensions = ['chomp@0.1:jspm', 'chomp@0.1:swc']
 [[task]]
 name = 'start'
 serial = true
-deps = ['.cache', '.cache/*.html', 'server']
+deps = ['.cache', '.cache/*.html', 'copy-static-files', 'server']
 
 #############################
 #############################
 #############################
+
+[[task]]
+name = 'copy-static-files'
+run = """
+cp -r public/* .cache/
+"""
 
 [[task]]
 name = 'server'
