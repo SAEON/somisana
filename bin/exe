@@ -1,7 +1,8 @@
 #!/bin/bash
 
 if [ "$1" == "popr_algoa-bay-forecast" ]; then
-  python python/algoa-bay-forecast/src/__main__.py
+  cd python/algoa-bay-forecast
+  python src/__main__.py
 elif [ "$1" == "other_script" ]; then
   echo "TODO"
 else 
