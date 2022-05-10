@@ -2,7 +2,10 @@
   "cSpell.words": [
     "Algoa",
     "appleboy",
+    "arange",
     "browserslist",
+    "cartopy",
+    "ccrs",
     "chompfile",
     "cmake",
     "conda",
@@ -21,6 +24,7 @@
     "POSTGIS",
     "pyenv",
     "pypi",
+    "pyplot",
     "Roboto",
     "Segoe",
     "SOMISANA",

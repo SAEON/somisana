@@ -21,11 +21,15 @@ def transform():
     lon = grid.lon_rho.values
     lat = grid.lat_rho.values
 
+    print(lon)
+
     # Loading sst from file
     sst = data.surf_t.values
     sst[np.where(sst == 0)] = np.nan
 
-    # Flexable max and min
+    # print (sst[:,1,1])
+
+    # Flexible max and min
     cmin = np.nanmin(sst)
     cmax = np.nanmax(sst)
 
@@ -37,7 +41,7 @@ def transform():
 
     # Loading time
     time = data.time.values
-    # Time of intialiasion hard coded from file
+    # Time of initialisation hard coded from file
     date_ref = datetime(2000, 1, 1, 0, 0, 0)
 
     dates = []
