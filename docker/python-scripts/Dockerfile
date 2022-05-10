@@ -38,7 +38,7 @@ COPY --chown=somisana:somisana . .
 # Install pipenv
 RUN pip install --user pipenv
 
-# Algoa Bay
+# Install algoa Bay
 WORKDIR /home/somisana/python/algoa-bay-forecast
 RUN pipenv sync --system
 
