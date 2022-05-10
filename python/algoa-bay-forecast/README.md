@@ -8,7 +8,9 @@
     - [Install binaries](#install-binaries)
     - [Setup the project](#setup-the-project)
     - [Setup your environment variables](#setup-your-environment-variables)
-    - [Setup 3rd party services](#setup-3rd-party-services)
+    - [Setup 3rd party services for local development](#setup-3rd-party-services-for-local-development)
+      - [MongoDB](#mongodb)
+      - [PostGIS](#postgis)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -67,50 +69,12 @@ pipenv run script
 
 Run this command `cp .env.example .env`, and the adjust the environment variables accordingly in the `.env` file
 
-### Setup 3rd party services
+### Setup 3rd party services for local development
 
 Run 3rd party services via Docker. These commands setup Docker containers that should work with default configuration.
 
-```sh
-# Create a Docker network
-docker network create --driver bridge somisana
+#### MongoDB
+Please read the instructions at [https://github.com/SAEON/mongo](https://github.com/SAEON/mongo#local-development) for setting up a local MongoDB server on a local computer
 
-# MongoDB
-docker run \
-  --name mongo \
-  --net=somisana \
-  --restart always \
-  -p 27017:27017 \
-  -e MONGO_INITDB_ROOT_USERNAME=admin \
-  -e MONGO_INITDB_ROOT_PASSWORD=password \
-  -d \
-  mongo:5.0.8
-
-# PostGIS
-docker run \
-  --name postgis \
-  --net=somisana \
-  --restart always \
-  -p 5432:5432 \
-  -e POSTGRES_USER=admin \
-  -e POSTGRES_PASSWORD=password \
-  -e POSTGRES_DB=somisana_local \
-  -e PGDATA=/var/lib/postgresql/data/pgdata \
-  -d \
-  ghcr.io/saeon/postgis:sha-40d864a
-
-# PGAdmin4
-# Connection details
-#### host: postgis
-#### DB:   somisana_local
-#### User: admin
-#### Pswd: password 
-docker run \
-  --net=somisana \
-  --name pgadmin \
-  -p 5001:80 \
-  -e PGADMIN_DEFAULT_EMAIL=<your email address> \
-  -e PGADMIN_DEFAULT_PASSWORD=password \
-  -d \
-  dpage/pgadmin4:6.8
-```
+#### PostGIS
+Please read the instructions at [https://github.com/SAEON/postgis](https://github.com/SAEON/postgis#local-development) for setting up a local PostGIS server (and PGAdmin4 interface) via Docker
