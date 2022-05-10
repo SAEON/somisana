@@ -2,6 +2,8 @@
 
 if [ "$1" == "popr_algoa-bay-forecast" ]; then
   cd python/algoa-bay-forecast
+  echo hi
+  pwd
   pipenv run script
 elif [ "$1" == "other_script" ]; then
   echo "TODO"
