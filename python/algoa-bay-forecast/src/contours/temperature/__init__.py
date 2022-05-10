@@ -11,7 +11,7 @@ def hour_rounder(t):
     return (t.replace(second=0, microsecond=0, minute=0, hour=t.hour)
             + timedelta(hours=t.minute//30))
 
-def tranform():
+def transform():
     data = xr.open_dataset(MODEL_OUTPUT_PATH)
     grid = xr.open_dataset(MODEL_GRID_PATH)
 

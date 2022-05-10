@@ -4,9 +4,9 @@ from geojson import FeatureCollection
 
 from mongo import connection as mongoConnection
 from postgis import connection as pgConnection
-from contours.temperature import tranform as salinity
+from contours.temperature import transform as temperature
 
-salinity()
+temperature()
 
 # Test mongo connection
 mongoConnection['some-collection'].insert_one({"hello": "world"})
