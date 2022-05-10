@@ -112,9 +112,8 @@ The tag format is `python-scripts.v*`
 
 # Deployment
 
-## Docker
-
-System components are [Dockerized](docker/). Build Docker images from the root of the repository
+## [Docker](docker/)
+All Dockerfiles are defined in the [docker/](docker/) directory of this repository.
 
 ## saeon/somisana_geopython
 
