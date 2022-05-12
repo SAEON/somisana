@@ -20,7 +20,7 @@ env:
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_NEXT }}
 
 jobs:
-  build:
+  build-python-scripts:
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.meta.outputs.tags }}
@@ -54,8 +54,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  exe:
-    needs: [build]
+  post-processing:
+    needs: [build-python-scripts]
     runs-on: github-runner.saeon.int
     steps:
       - name: Algoa Bay forecast (post processing)
@@ -72,4 +72,4 @@ jobs:
             -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
             -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
             -e SCRIPT_NAME=popr_algoa-bay-forecast \
-            ${{ needs.build.outputs.image }}
+            ${{ needs.build-python-scripts.outputs.image }}

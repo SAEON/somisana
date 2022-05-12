@@ -16,7 +16,7 @@ env:
   MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STABLE }}
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }}
 
-jobs:
+post-processing:
   exe:
     runs-on: github-runner.saeon.int
     steps:
