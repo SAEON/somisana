@@ -54,6 +54,18 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+  test-matlab:
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Test matlab
+        run: >-
+          docker run \
+            --rm \
+            -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
+            -e MLM_LICENSE_FILE=/licenses/license.lic \
+            mathworks/matlab:r2022a \
+            -batch rand
+
   post-processing:
     needs: [build-python-scripts]
     runs-on: github-runner.saeon.int
@@ -73,3 +85,10 @@ jobs:
             -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
             -e SCRIPT_NAME=popr_algoa-bay-forecast \
             ${{ needs.build-python-scripts.outputs.image }}
+
+  # cleanup-images:
+  #   needs: [post-processing]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Delete python-scripts
+  #       uses: 
