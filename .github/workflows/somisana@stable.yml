@@ -16,6 +16,19 @@ env:
   MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STABLE }}
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }}
 
+test-matlab:
+  runs-on: github-runner.saeon.int
+  steps:
+    - name: Test matlab
+      run: >-
+        docker run \
+          --rm \
+          --mac-address 02:42:ff:ff:ff:ff \
+          -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
+          -e MLM_LICENSE_FILE=/licenses/license.lic \
+          mathworks/matlab:r2022a \
+            -batch rand
+
 post-processing:
   exe:
     runs-on: github-runner.saeon.int

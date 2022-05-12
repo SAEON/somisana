@@ -61,10 +61,11 @@ jobs:
         run: >-
           docker run \
             --rm \
+            --mac-address 02:42:ff:ff:ff:ff \
             -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
             -e MLM_LICENSE_FILE=/licenses/license.lic \
             mathworks/matlab:r2022a \
-            -batch rand
+              -batch rand
 
   post-processing:
     needs: [build-python-scripts]
@@ -85,10 +86,3 @@ jobs:
             -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
             -e SCRIPT_NAME=popr_algoa-bay-forecast \
             ${{ needs.build-python-scripts.outputs.image }}
-
-  # cleanup-images:
-  #   needs: [post-processing]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Delete python-scripts
-  #       uses: 
