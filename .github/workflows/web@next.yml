@@ -3,7 +3,7 @@ name: deploy-web@next
 on:
   push:
     branches:
-      - next
+      - next.disabled
 
 env:
   REGISTRY: ghcr.io
