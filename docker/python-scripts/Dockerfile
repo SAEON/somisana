@@ -1,4 +1,4 @@
-FROM ghcr.io/saeon/somisana_geopython:latest
+FROM ghcr.io/saeon/somisana_geopython:0.0.8
 
 ARG PG_HOST
 ENV PG_HOST=$PG_HOST
@@ -24,6 +24,12 @@ ENV MONGO_PASSWORD=$MONGO_PASSWORD
 ARG SCRIPT_NAME=default
 ENV SCRIPT_NAME=$SCRIPT_NAME
 
+ARG COPERNICUS_USERNAME
+ENV COPERNICUS_USERNAME=$COPERNICUS_USERNAME
+
+ARG COPERNICUS_PASSWORD
+ENV COPERNICUS_PASSWORD=$COPERNICUS_PASSWORD
+
 # Setup a non-root user (Python complains about this)
 RUN useradd -m -s /bin/bash somisana
 USER somisana
@@ -40,6 +46,10 @@ RUN pip install --user pipenv
 
 # Install algoa Bay
 WORKDIR /home/somisana/python/algoa-bay-forecast
+RUN pipenv sync --system
+
+# Install download-forcing-inputs script
+WORKDIR /home/somisana/python/download-forcing-inputs
 RUN pipenv sync --system
 
 # Set working directory again to $HOME

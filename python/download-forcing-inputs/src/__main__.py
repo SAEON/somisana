@@ -2,7 +2,7 @@
 from config import COPERNICUS_USERNAME, COPERNICUS_PASSWORD
 import sys, os, glob
 from datetime import timedelta, date, datetime
-import download_frcst
+import download_forecast
 #import subprocess
 
 startTime_all=datetime.now() # for timing purposes
