@@ -1,9 +1,6 @@
 name: somisana@next
 
-on:
-  push:
-    branches:
-      - next
+on: workflow_dispatch
 
 env:
   BRANCH_REF: next
