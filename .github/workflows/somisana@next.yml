@@ -75,7 +75,7 @@ jobs:
               -batch "run('/somisana-scripts/hello.m')"
 
   post-processing:
-    needs: [test-matlab]
+    needs: [build-python-scripts, test-matlab]
     runs-on: github-runner.saeon.int
     steps:
       - name: Algoa Bay forecast (post processing)
