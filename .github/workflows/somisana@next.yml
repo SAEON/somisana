@@ -51,7 +51,16 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+  download-forcing-input:
+    needs: [build-python-scripts]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Download Algoa-bay forcing input
+        run: >-
+          echo "Matt TODO"
+
   test-matlab:
+    needs: [download-forcing-input]
     runs-on: github-runner.saeon.int
     steps:
       - name: Test matlab
@@ -65,16 +74,8 @@ jobs:
             mathworks/matlab:r2022a \
               -batch "run('/somisana-scripts/hello.m')"
 
-  download-forcing-input:
-    needs: [build-python-scripts]
-    runs-on: github-runner.saeon.int
-    steps:
-      - name: Download Algoa-bay forcing input
-        run: >-
-          echo "Matt TODO"
-
   post-processing:
-    needs: [download-forcing-input]
+    needs: [test-matlab]
     runs-on: github-runner.saeon.int
     steps:
       - name: Algoa Bay forecast (post processing)
