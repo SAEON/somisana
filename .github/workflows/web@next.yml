@@ -1,9 +1,6 @@
 name: deploy-web@next
 
-on:
-  push:
-    branches:
-      - next.disabled
+on: workflow_dispatch
 
 env:
   REGISTRY: ghcr.io
