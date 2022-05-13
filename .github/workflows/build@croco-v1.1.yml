@@ -1,0 +1,19 @@
+name: build@saeon/croco-v1.1
+
+on:
+  push:
+    branches:
+      - next
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}_croco-v1.1
+  BRANCH_REF: next
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test
+        run: >-
+          echo hi
