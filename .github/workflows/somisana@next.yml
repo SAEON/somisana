@@ -59,6 +59,7 @@ jobs:
     steps:
       - name: Test matlab
         run: >-
+          pwd && \
           docker run \
             --rm \
             --mac-address 02:42:ff:ff:ff:ff \
