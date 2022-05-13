@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "==1.16.6"
+requests = "==2.27.1"
+pathlib = "==1.0.1"
+motuclient = "==1.8.4"
+Pydap = "==3.2.2"
+environs = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8.10"
+
+[scripts]
+script = "python src/__main__.py"
