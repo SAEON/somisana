@@ -20,6 +20,7 @@ SOMISANA-related tooling
   - [Docker](#docker)
   - [saeon/somisana_geopython](#saeonsomisana_geopython-1)
   - [saeon/somisana_toolkit](#saeonsomisana_toolkit-1)
+  - [saeon/somisana_web](#saeonsomisana_web)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -98,6 +99,7 @@ Run `source ~/.bashrc` so that changes to your shell environment take effect.
 # The SOMISANA Toolkit
 
 ## Forecast mode
+
 ```txt
 -5 -4 -3 -2 -1 +0 +1 +2 +3 +4 +5
    -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
@@ -131,6 +133,7 @@ The tag format is `toolkit.v*`
 # Deployment
 
 ## [Docker](docker/)
+
 All Dockerfiles are defined in the [docker/](docker/) directory of this repository.
 
 ## saeon/somisana_geopython
@@ -145,4 +148,5 @@ docker run \
   ghcr.io/saeon/somisana_toolkit:latest \
     <script name>
 ```
-## saeon/somisana_web 
+
+## saeon/somisana_web
