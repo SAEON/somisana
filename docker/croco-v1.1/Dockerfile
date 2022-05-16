@@ -3,11 +3,11 @@ FROM ubuntu:20.04
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
-  apt-get install -y \
-    mpich \
-    make \
-    libnetcdff-dev \
-    libnetcdf-dev
+  && apt-get install -y \
+      mpich \
+      make \
+      libnetcdff-dev \
+      libnetcdf-dev
 
 WORKDIR /somisana
 
