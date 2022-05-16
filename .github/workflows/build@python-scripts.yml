@@ -1,13 +1,13 @@
-name: build@saeon/somisana_python-scripts
+name: build@saeon/somisana_toolkit
 
 on:
   push:
     tags:
-      - python-scripts.v*
+      - toolkit.v*
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_python-scripts
+  IMAGE_NAME: ${{ github.repository }}_toolkit
   BRANCH_REF: stable
 
 jobs:
@@ -35,14 +35,14 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest
-            type=match,pattern=python-scripts\.v(.*),group=1,priority=1000
+            type=match,pattern=toolkit\.v(.*),group=1,priority=1000
             type=sha
 
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: docker/python-scripts/Dockerfile
+          file: docker/toolkit/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

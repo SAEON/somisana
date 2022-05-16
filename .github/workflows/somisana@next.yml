@@ -5,7 +5,7 @@ on: workflow_dispatch
 env:
   BRANCH_REF: next
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_python-scripts
+  IMAGE_NAME: ${{ github.repository }}_toolkit
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
   PG_DB: ${{ secrets.PG_DB_NEXT }}
@@ -17,7 +17,7 @@ env:
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_NEXT }}
 
 jobs:
-  build-python-scripts:
+  build-toolkit:
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.meta.outputs.tags }}
@@ -46,13 +46,13 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: docker/python-scripts/Dockerfile
+          file: docker/toolkit/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
   download-forcing-input:
-    needs: [build-python-scripts]
+    needs: [build-toolkit]
     runs-on: github-runner.saeon.int
     steps:
       - name: Download Algoa-bay forcing input
@@ -75,7 +75,7 @@ jobs:
               -batch "run('/somisana-scripts/hello.m')"
 
   post-processing:
-    needs: [build-python-scripts, test-matlab]
+    needs: [build-toolkit, test-matlab]
     runs-on: github-runner.saeon.int
     steps:
       - name: Algoa Bay forecast (post processing)
@@ -91,5 +91,5 @@ jobs:
             -e MONGO_DB=${{ env.MONGO_DB }} \
             -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
             -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
-            -e SCRIPT_NAME=popr_algoa-bay-forecast \
-            ${{ needs.build-python-scripts.outputs.image }}
+            ${{ needs.build-toolkit.outputs.image }} \
+              popr_algoa-bay-forecast
