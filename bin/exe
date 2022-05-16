@@ -2,10 +2,10 @@
 
 if [ "$1" == "popr_algoa-bay-forecast" ]; then
   cd python/algoa-bay-forecast
-  pipenv run script
+  python src
 elif [ "$1" == "download-forcing-inputs" ]; then
   cd python/download-forcing-inputs
-  pipenv run script
+  python src
 else 
   echo "Unknown script specified: $1"
 fi

@@ -41,13 +41,23 @@ COPY --chown=somisana:somisana . .
 # Install pipenv
 RUN pip install --user pipenv
 
+##
+# pipenv install --system is used instead of
+# pipenv sync --system because that way
+# depdendencies can be shared
+#
+# That means that lockfiles are NOT used in this build
+# process, but for now it would be too expensive in
+# terms of storage space to install deps multiple times
+##
+
 # Install algoa Bay
 WORKDIR /home/somisana/python/algoa-bay-forecast
-RUN pipenv sync
+RUN pipenv install --system
 
 # Install download-forcing-inputs script
 WORKDIR /home/somisana/python/download-forcing-inputs
-RUN pipenv sync
+RUN pipenv install --system
 
 WORKDIR /home/somisana
 
