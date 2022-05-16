@@ -11,6 +11,8 @@ SOMISANA-related tooling
     - [Install pyenv](#install-pyenv)
     - [Set global Python version](#set-global-python-version)
     - [Install pipenv (for dependency management/locks)](#install-pipenv-for-dependency-managementlocks)
+- [The SOMISANA Toolkit](#the-somisana-toolkit)
+  - [Forecast mode](#forecast-mode)
 - [Publishing](#publishing)
   - [saeon/somisana_geopython](#saeonsomisana_geopython)
   - [saeon/somisana_toolkit](#saeonsomisana_toolkit)
@@ -92,6 +94,24 @@ export PIPENV_VENV_IN_PROJECT="enabled"
 ```
 
 Run `source ~/.bashrc` so that changes to your shell environment take effect.
+
+# The SOMISANA Toolkit
+
+## Forecast mode
+```txt
+-5 -4 -3 -2 -1 +0 +1 +2 +3 +4 +5
+   -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
+      -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
+         -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
+            -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
+               -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
+                  -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
+                     -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
+                        -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
+                           -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
+                              -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
+                                 -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
+```
 
 # Publishing
 
