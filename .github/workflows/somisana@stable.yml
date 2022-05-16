@@ -5,7 +5,7 @@ on:
     - cron: '0 1 * * *'
 
 env:
-  IMAGE_NAME: ghcr.io/saeon/somisana_python-scripts:0.0.7
+  IMAGE_NAME: ghcr.io/saeon/somisana_toolkit:0.0.1
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_STABLE }}
   PG_DB: ${{ secrets.PG_DB_STABLE }}
@@ -46,5 +46,5 @@ jobs:
               -e MONGO_DB=${{ env.MONGO_DB }} \
               -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
               -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
-              -e SCRIPT_NAME=popr_algoa-bay-forecast \
-              ${{ env.IMAGE_NAME }}
+              ${{ env.IMAGE_NAME }} \
+                popr_algoa-bay-forecast

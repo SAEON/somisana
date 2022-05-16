@@ -21,9 +21,6 @@ ENV MONGO_USERNAME=$MONGO_USERNAME
 ARG MONGO_PASSWORD=password
 ENV MONGO_PASSWORD=$MONGO_PASSWORD
 
-ARG SCRIPT_NAME=default
-ENV SCRIPT_NAME=$SCRIPT_NAME
-
 ARG COPERNICUS_USERNAME
 ENV COPERNICUS_USERNAME=$COPERNICUS_USERNAME
 
@@ -46,14 +43,13 @@ RUN pip install --user pipenv
 
 # Install algoa Bay
 WORKDIR /home/somisana/python/algoa-bay-forecast
-RUN pipenv sync --system
+RUN pipenv sync
 
 # Install download-forcing-inputs script
 WORKDIR /home/somisana/python/download-forcing-inputs
-RUN pipenv sync --system
+RUN pipenv sync
 
-# Set working directory again to $HOME
 WORKDIR /home/somisana
 
-# Set the entry point
-CMD bin/exe $SCRIPT_NAME
+ENTRYPOINT [ "bin/exe" ]
+CMD [ "default" ]
