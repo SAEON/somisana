@@ -16,7 +16,7 @@ run = '''
   doctoc web/README.md
   doctoc docker/web/README.md
   doctoc docker/geopython/README.md
-  doctoc docker/python-scripts/README.md
+  doctoc docker/toolkit/README.md
   doctoc python/algoa-bay-forecast/README.md
 '''
 

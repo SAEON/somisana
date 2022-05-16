@@ -13,13 +13,11 @@ SOMISANA-related tooling
     - [Install pipenv (for dependency management/locks)](#install-pipenv-for-dependency-managementlocks)
 - [Publishing](#publishing)
   - [saeon/somisana_geopython](#saeonsomisana_geopython)
-  - [saeon/somisana_python-scripts](#saeonsomisana_python-scripts)
+  - [saeon/somisana_toolkit](#saeonsomisana_toolkit)
 - [Deployment](#deployment)
   - [Docker](#docker)
   - [saeon/somisana_geopython](#saeonsomisana_geopython-1)
-  - [saeon/somisana_python-scripts](#saeonsomisana_python-scripts-1)
-    - [Pre processing scripts](#pre-processing-scripts)
-    - [Post processing scripts](#post-processing-scripts)
+  - [saeon/somisana_toolkit](#saeonsomisana_toolkit-1)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -99,16 +97,16 @@ Run `source ~/.bashrc` so that changes to your shell environment take effect.
 
 Code is bundled as Docker images. To publish versions of the tooling in this repository tag and push code appropriately.
 
-- All the python scripts are packed as a single Docker image. Whenever the Python scripts change, a new version of the saeon/somisana_python-scripts Docker image must be pushed
+- All the python scripts are packed as a single Docker image. Whenever the Python scripts change, a new version of the saeon/somisana_toolkit Docker image must be pushed
 - The Python scripts base image should only need to be updated when a new version of python is desired
 
 ## saeon/somisana_geopython
 
 The tag format is `geopython.v*`
 
-## saeon/somisana_python-scripts
+## saeon/somisana_toolkit
 
-The tag format is `python-scripts.v*`
+The tag format is `toolkit.v*`
 
 # Deployment
 
@@ -117,18 +115,13 @@ All Dockerfiles are defined in the [docker/](docker/) directory of this reposito
 
 ## saeon/somisana_geopython
 
-## saeon/somisana_python-scripts
+## saeon/somisana_toolkit
 
 All python scripts are bundled to the same Docker image. To execute these scripts, run a Docker container from this image and specify the name of the script to run as an environment variables
 
-### Pre processing scripts
-
-### Post processing scripts
-
 ```sh
-# Algoa Bay forecast
 docker run \
-  --rm
-  -e SCRIPT_NAME=popr_algoa-bay-forecast \
-  ghcr.io/saeon/somisana_python-scripts:latest
+  --rm \
+  ghcr.io/saeon/somisana_toolkit:latest \
+    <script name>
 ```
