@@ -16,35 +16,37 @@ env:
   MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STABLE }}
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }}
 
-test-matlab:
-  runs-on: github-runner.saeon.int
-  steps:
-    - name: Test matlab
-      run: >-
-        docker run \
-          --rm \
-          --mac-address 02:42:ff:ff:ff:ff \
-          -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
-          -e MLM_LICENSE_FILE=/licenses/license.lic \
-          mathworks/matlab:r2022a \
-            -batch rand
-
-post-processing:
-  exe:
+jobs:
+  test-matlab:
     runs-on: github-runner.saeon.int
     steps:
-      - name: Algoa Bay forecast (post processing)
+      - name: Test matlab
         run: >-
           docker run \
             --rm \
-            -e PG_HOST=${{ env.PG_HOST }} \
-            -e PG_PORT=${{ env.PG_PORT }} \
-            -e PG_DB=${{ env.PG_DB }} \
-            -e PG_USERNAME=${{ env.PG_USERNAME }} \
-            -e PG_PASSWORD=${{ env.PG_PASSWORD }} \
-            -e MONGO_HOST=${{ env.MONGO_HOST }} \
-            -e MONGO_DB=${{ env.MONGO_DB }} \
-            -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
-            -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
-            -e SCRIPT_NAME=popr_algoa-bay-forecast \
-            ${{ env.IMAGE_NAME }}
+            --mac-address 02:42:ff:ff:ff:ff \
+            -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
+            -e MLM_LICENSE_FILE=/licenses/license.lic \
+            mathworks/matlab:r2022a \
+              -batch rand
+
+  post-processing:
+    needs: [test-matlab]
+    exe:
+      runs-on: github-runner.saeon.int
+      steps:
+        - name: Algoa Bay forecast (post processing)
+          run: >-
+            docker run \
+              --rm \
+              -e PG_HOST=${{ env.PG_HOST }} \
+              -e PG_PORT=${{ env.PG_PORT }} \
+              -e PG_DB=${{ env.PG_DB }} \
+              -e PG_USERNAME=${{ env.PG_USERNAME }} \
+              -e PG_PASSWORD=${{ env.PG_PASSWORD }} \
+              -e MONGO_HOST=${{ env.MONGO_HOST }} \
+              -e MONGO_DB=${{ env.MONGO_DB }} \
+              -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
+              -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
+              -e SCRIPT_NAME=popr_algoa-bay-forecast \
+              ${{ env.IMAGE_NAME }}
