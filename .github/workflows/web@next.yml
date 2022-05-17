@@ -1,4 +1,4 @@
-name: deploy-web@next
+name: web@next
 
 on: workflow_dispatch
 
