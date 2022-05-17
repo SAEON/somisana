@@ -19,7 +19,7 @@ const theme = createTheme({
     borderRadius: 2,
   },
   palette: {
-    mode: 'dark',
+    mode: 'light',
     primary: {
       main: blueGrey[700],
     },

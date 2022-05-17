@@ -93,11 +93,6 @@ rimraf server/ssr/*.js
 #############################
 #############################
 
-# [[task]]
-# name = 'prettier'
-# dep = 'client/**/*.js'
-# run = 'prettier --ignore-path ../.prettierignore --write "${{changed}}"'
-
 [[task]]
 name = 'prettier'
 run = """

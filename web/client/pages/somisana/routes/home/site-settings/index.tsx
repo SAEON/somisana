@@ -10,8 +10,10 @@ import Typography from '@mui/material/Typography'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import Accordion from '../../../../../components/accordion'
-
-
+import FormGroup from '@mui/material/FormGroup'
+import Toggle from '../../../../../components/toggle'
+import MuiLink from '@mui/material/Link'
+import { Link } from 'react-router-dom'
 
 const SiteSettingsPanel = () => {
   const [open, setOpen] = useState(false)
@@ -55,9 +57,12 @@ const SiteSettingsPanel = () => {
           </IconButton>
         </Toolbar>
         <Box
-          sx={{
+          sx={theme => ({
             minWidth: 400,
-          }}
+            [theme.breakpoints.up('sm')]: {
+              maxWidth: 400,
+            },
+          })}
         >
           <Accordion>
             <AccordionSummary
@@ -80,7 +85,55 @@ const SiteSettingsPanel = () => {
               <Typography>Cookies</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography>TODO allow cookies</Typography>
+              <Typography
+                sx={{
+                  fontSize: '0.8rem',
+                  mb: theme => theme.spacing(2),
+                  textAlign: 'justify'
+                }}
+              >
+                We use cookies to enable necessary functionality such as authentication.
+                Additionally, we use cookies to analyze site usage. No personal information is
+                provided to 3rd parties &#40;see our{' '}
+                <MuiLink component={Link} to="/privacy-policy">
+                  privacy policy
+                </MuiLink>{' '}
+                for more information&#41;.
+              </Typography>
+              <FormGroup aria-label="Cookie settings" row>
+                <Toggle
+                  labelProps={{
+                    value: 'Necessary',
+                    label: 'Necessary',
+                    labelPlacement: 'start',
+                  }}
+                  switchProps={{
+                    inputProps: {
+                      'aria-label': 'Toggle necessary cookies',
+                    },
+                    defaultChecked: true,
+                    disabled: true,
+                    size: 'small',
+                  }}
+                />
+                <Toggle
+                  labelProps={{
+                    value: 'Google analytics',
+                    label: 'Google analytics',
+                    labelPlacement: 'start',
+                  }}
+                  switchProps={{
+                    inputProps: {
+                      'aria-label': 'Google analytics',
+                    },
+                    defaultChecked: true,
+                    disabled: false,
+                    size: 'small',
+                    onChange: ({ target: { checked } }) =>
+                      (window['ga-disable-G-6ZM4ST1XCC'] = !checked),
+                  }}
+                />
+              </FormGroup>
             </AccordionDetails>
           </Accordion>
         </Box>
@@ -96,13 +149,14 @@ const SiteSettingsPanel = () => {
           }}
         >
           <Button
-            color="inherit"
+            color="primary"
             onClick={() => setOpen(false)}
-            variant="text"
+            variant="contained"
+            disableElevation
             size="medium"
             startIcon={<CheckAll />}
           >
-            Okay
+            Accept
           </Button>
         </Toolbar>
       </SwipeableDrawer>
