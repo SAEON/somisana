@@ -25,7 +25,10 @@ cp -r public/* .cache/
 name = 'server'
 env = { TZ='UTC', NODE_ENV='development', NODE_LOADER_CONFIG='loaders/config.js' }
 serial = true
-deps = ['server/ssr/index.js', 'node.importmap']
+deps = [
+  'server/ssr/index.js',
+  'node.importmap'
+]
 run = """
 prettier \
   --ignore-path ../.prettierignore \
@@ -54,6 +57,7 @@ template = 'jspm'
 default-provider = 'jspm'
 env = ['node', 'development', 'module']
 ignore = [
+  'mongodb',
   'graphql',
   'apollo-server-core',
   'apollo-server-koa',
