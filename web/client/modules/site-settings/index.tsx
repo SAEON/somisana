@@ -1,5 +1,6 @@
-import { createContext, useCallback, useEffect } from 'react'
+import { createContext, useContext, useCallback, useEffect } from 'react'
 import useLocalStorage from '../../hooks/use-local-storage'
+import { ctx as configContext } from '../config'
 
 interface SiteSettings {
   disableGoogleAnalytics?: Boolean
@@ -13,7 +14,11 @@ const DEFAULT_SITE_SETTINGS: SiteSettings = {
 export const ctx = createContext(DEFAULT_SITE_SETTINGS)
 
 const Provider = (props: object) => {
-  const [settings, updateSettings] = useLocalStorage(window.location.origin, DEFAULT_SITE_SETTINGS)
+  const { ORIGIN } = useContext(configContext)
+  const [settings, updateSettings] = useLocalStorage(
+    window?.location.origin || ORIGIN,
+    DEFAULT_SITE_SETTINGS
+  ) // TODO - probably needs to be cookie state so that it's accessible on the server
 
   const updateSetting = useCallback((obj: SiteSettings) => {
     updateSettings((settings: SiteSettings) => ({ ...settings, ...obj }))
