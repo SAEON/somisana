@@ -1,14 +1,30 @@
-import { useState } from 'react'
-import { createContext } from 'react'
+import { createContext, useCallback, useEffect } from 'react'
+import useLocalStorage from '../../hooks/use-local-storage'
 
-const DEFAULT_SITE_SETTINGS = {}
+interface SiteSettings {
+  disableGoogleAnalytics: Boolean
+  updateSetting: Function
+}
+
+const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  disableGoogleAnalytics: false,
+  updateSetting: undefined,
+}
 
 export const ctx = createContext(DEFAULT_SITE_SETTINGS)
 
 const Provider = (props: object) => {
-  const [setSettings, updateSiteSettings] = useState(DEFAULT_SITE_SETTINGS)
+  const [settings, updateSettings] = useLocalStorage(window.location.origin, DEFAULT_SITE_SETTINGS)
 
-  return <ctx.Provider value={{}} {...props} />
+  const updateSetting = useCallback(obj => {
+    updateSettings(settings => ({ ...settings, ...obj }))
+  }, [])
+
+  useEffect(() => {
+    window['ga-disable-G-6ZM4ST1XCC'] = settings.disableGoogleAnalytics
+  }, [settings.disableGoogleAnalytics])
+
+  return <ctx.Provider value={{ ...settings, updateSetting }} {...props} />
 }
 
 export default Provider
