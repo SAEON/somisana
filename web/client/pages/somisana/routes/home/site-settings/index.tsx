@@ -88,21 +88,23 @@ const SiteSettingsPanel = () => {
                 will be displayed in the default locale &#40;English&#41;
               </SectionDescription>
               <FormGroup aria-label="Locale settings" row>
-                <Toggle
-                  labelProps={{
-                    value: 'Right-to-left',
-                    label: 'Right-to-left',
-                    labelPlacement: 'start',
-                  }}
-                  switchProps={{
-                    inputProps: {
-                      'aria-label': 'Toggle right-to-left text direction',
-                    },
-                    defaultChecked: false,
-                    disabled: true,
-                    size: 'small',
-                  }}
-                />
+                <Tooltip placement="top-start" title="For right-to-left locales">
+                  <Toggle
+                    labelProps={{
+                      value: 'Right-to-left',
+                      label: 'Right-to-left',
+                      labelPlacement: 'start',
+                    }}
+                    switchProps={{
+                      inputProps: {
+                        'aria-label': 'Toggle right-to-left text direction',
+                      },
+                      defaultChecked: false,
+                      disabled: true,
+                      size: 'small',
+                    }}
+                  />
+                </Tooltip>
               </FormGroup>
             </AccordionDetails>
           </Accordion>
@@ -127,38 +129,42 @@ const SiteSettingsPanel = () => {
                 for more information&#41;
               </SectionDescription>
               <FormGroup aria-label="Cookie settings" row>
-                <Toggle
-                  labelProps={{
-                    value: 'Necessary',
-                    label: 'Necessary',
-                    labelPlacement: 'start',
-                  }}
-                  switchProps={{
-                    inputProps: {
-                      'aria-label': 'Toggle necessary cookies',
-                    },
-                    defaultChecked: true,
-                    disabled: true,
-                    size: 'small',
-                  }}
-                />
-                <Toggle
-                  labelProps={{
-                    value: 'Google analytics',
-                    label: 'Google analytics',
-                    labelPlacement: 'start',
-                  }}
-                  switchProps={{
-                    inputProps: {
-                      'aria-label': 'Google analytics',
-                    },
-                    defaultChecked: true,
-                    disabled: false,
-                    size: 'small',
-                    onChange: ({ target: { checked } }) =>
-                      (window['ga-disable-G-6ZM4ST1XCC'] = !checked),
-                  }}
-                />
+                <Tooltip placement="top-start" title="Required for authentication">
+                  <Toggle
+                    labelProps={{
+                      value: 'Necessary',
+                      label: 'Necessary',
+                      labelPlacement: 'start',
+                    }}
+                    switchProps={{
+                      inputProps: {
+                        'aria-label': 'Toggle necessary cookies',
+                      },
+                      defaultChecked: true,
+                      disabled: true,
+                      size: 'small',
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip placement="top-start" title="We get it!">
+                  <Toggle
+                    labelProps={{
+                      value: 'Google analytics',
+                      label: 'Google analytics',
+                      labelPlacement: 'start',
+                    }}
+                    switchProps={{
+                      inputProps: {
+                        'aria-label': 'Google analytics',
+                      },
+                      defaultChecked: true,
+                      disabled: false,
+                      size: 'small',
+                      onChange: ({ target: { checked } }) =>
+                        (window['ga-disable-G-6ZM4ST1XCC'] = !checked),
+                    }}
+                  />
+                </Tooltip>
               </FormGroup>
             </AccordionDetails>
           </Accordion>
@@ -178,7 +184,6 @@ const SiteSettingsPanel = () => {
             color="primary"
             onClick={() => setOpen(false)}
             variant="contained"
-            disableElevation
             size="medium"
             startIcon={<CheckAll />}
           >

@@ -21,7 +21,7 @@ const theme = createTheme({
     },
     MuiButtonBase: {
       defaultProps: {
-        disableTouchRipple: true,
+        disableTouchRipple: false,
       },
     },
     MuiButton: {
