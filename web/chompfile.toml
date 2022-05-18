@@ -118,12 +118,12 @@ run = 'find . -name node_modules -type d -exec rm -rv {} + && find . -name packa
 
 [[task]]
 name = 'ncu'
-run = 'ncu'
+run = 'ncu -x @mui/material'
 
 [[task]]
 name = 'ncu:u'
 run = """
-ncu -u
+ncu -u -x @mui/material
 npm install
 """
 
