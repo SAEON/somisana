@@ -34,7 +34,7 @@ prettier \
   --ignore-path ../.prettierignore \
   --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
   --write "loaders/**/*.js"
-node --trace-warnings --experimental-loader @node-loader/core server
+node --trace-warnings --loader @node-loader/core server
 """
 
 [[task]]
