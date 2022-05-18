@@ -61,7 +61,7 @@ RUN pipenv install --system
 
 RUN mkdir /home/somisana/python/download-forcing-inputs/gfs
 RUN mkdir /home/somisana/python/download-forcing-inputs/mercator
-#WORKDIR /home/somisana
+WORKDIR /home/somisana
 
-#ENTRYPOINT [ "bin/exe" ]
-#CMD [ "default" ]
+ENTRYPOINT [ "bin/exe" ]
+CMD [ "default" ]
