@@ -1,4 +1,4 @@
-name: deploy-web@stable
+name: web@stable
 
 on:
   push:

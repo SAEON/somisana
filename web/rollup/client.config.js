@@ -9,7 +9,7 @@ import extensions from './plugins/extensions.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-rimraf.sync(join(__dirname, '../.cache'))
+rimraf.sync(join(__dirname, '../.cache/*.js'))
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
 const API = process.env.API || 'http://localhost:3000'
