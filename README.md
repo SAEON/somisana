@@ -33,7 +33,8 @@ Follow this guide to setup the source code on your local computer for developmen
 I'm fond of the NPM tooling for managing source code - including README formatting/table-of-contents, etc. As such please install Node.js so that you can use the tools associated with managing this repository (refer to `package.json.dependencies` for more information).
 
 ```sh
-# Install Node.js
+# Install nvm (Node.js version manager)
+# Install Node.js (16.14.2, via nvm)
 
 # Install chomp via NPM (or install chomp via RUST (not recommended)
 # NOTE - The chomp binary downloads in the background after installing
