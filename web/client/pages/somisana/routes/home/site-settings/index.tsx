@@ -1,17 +1,16 @@
-import { useState, useContext, useEffect } from 'react'
+import { useState, useContext, useEffect, Suspense, lazy } from 'react'
 import { ctx as siteSettingsContext } from '../../../../../modules/site-settings'
 import Tooltip from '@mui/material/Tooltip'
-import IconButton from '@mui/material/IconButton'
-import Button from '@mui/material/Button'
-import SwipeableDrawer from '@mui/material/SwipeableDrawer'
+import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
-import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 import Typography from '@mui/material/Typography'
 import { Cog, Close, CheckAll } from '../../../../../components/icons'
-import LanguageSettings from './language'
-import ThemeSettings from './theme'
-import CookieSettings from './cookies'
-import AppBar from '@mui/material/AppBar'
+import Loading from '../../../../../components/loading'
+import Button from '@mui/material/Button'
+
+const DrawerContent = lazy(() => import('./_drawer-content'))
 
 const SiteSettingsPanel = () => {
   const { updateSetting, ...settings } = useContext(siteSettingsContext)
@@ -61,23 +60,16 @@ const SiteSettingsPanel = () => {
             }}
           >
             <Typography>Site settings</Typography>
-            <IconButton onClick={() => setOpen(false)} size="small">
+            <IconButton color='inherit' onClick={() => setOpen(false)} size="small">
               <Close />
             </IconButton>
           </Toolbar>
         </AppBar>
-        <Box
-          sx={theme => ({
-            overflow: 'auto',
-            [theme.breakpoints.up('sm')]: {
-              maxWidth: 400,
-            },
-          })}
-        >
-          <LanguageSettings />
-          <CookieSettings />
-          <ThemeSettings />
-        </Box>
+
+        <Suspense fallback={<Loading />}>
+          <DrawerContent />
+        </Suspense>
+
         <AppBar elevation={0} variant="outlined" position="relative" sx={{ marginTop: 'auto' }}>
           <Toolbar
             disableGutters
