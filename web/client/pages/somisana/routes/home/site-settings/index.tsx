@@ -113,7 +113,7 @@ const SiteSettingsPanel = () => {
               size="small"
               startIcon={<CheckAll />}
             >
-              Accept
+              Save
             </Button>
           </Toolbar>
         </AppBar>
