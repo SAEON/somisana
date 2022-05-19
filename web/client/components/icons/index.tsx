@@ -1,12 +1,12 @@
 import SvgIcon from '@mui/material/SvgIcon'
 import { mdiCog, mdiClose, mdiChevronDown, mdiContentSaveAll, mdiCheckAll } from '@mdi/js'
-import {styled} from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 
 export const Cog = styled((props: any) => (
   <SvgIcon {...props}>
     <path d={mdiCog} />
   </SvgIcon>
-))({}) 
+))({})
 
 export const Close = styled((props: any) => (
   <SvgIcon {...props}>

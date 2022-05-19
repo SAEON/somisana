@@ -60,12 +60,13 @@ const SiteSettingsPanel = () => {
             }}
           >
             <Typography>Site settings</Typography>
-            <IconButton color='inherit' onClick={() => setOpen(false)} size="small">
+            <IconButton color="inherit" onClick={() => setOpen(false)} size="small">
               <Close />
             </IconButton>
           </Toolbar>
         </AppBar>
 
+        {/* TODO - loading should be circular with size change animations */}
         <Suspense fallback={<Loading />}>
           <DrawerContent />
         </Suspense>
@@ -83,13 +84,13 @@ const SiteSettingsPanel = () => {
             }}
           >
             <Button
-              color="primary"
+              color="inherit"
               onClick={() => {
                 setOpen(false)
                 updateSetting({ accepted: true })
               }}
-              variant="contained"
-              size="medium"
+              variant="text"
+              size="small"
               startIcon={<CheckAll />}
             >
               Accept
