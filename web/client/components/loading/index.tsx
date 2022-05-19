@@ -1,10 +1,6 @@
 import LinearProgress from '@mui/material/LinearProgress'
+import { styled } from '@mui/material/styles'
 
-const Loading = ({ msg = undefined }) => (
-  <>
-    <LinearProgress style={{ zIndex: 1099 }} />
-    {msg && msg}
-  </>
-)
+const Loading = props => <LinearProgress style={{ zIndex: 1099 }} {...props} />
 
-export default Loading
+export default styled(Loading)({})

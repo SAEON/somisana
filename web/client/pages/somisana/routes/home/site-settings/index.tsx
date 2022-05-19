@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography'
 import { Cog, Close, CheckAll } from '../../../../../components/icons'
 import Loading from '../../../../../components/loading'
 import Button from '@mui/material/Button'
+import Fade from '@mui/material/Fade'
 
 const DrawerContent = lazy(() => import('./_drawer-content'))
 
@@ -66,9 +67,28 @@ const SiteSettingsPanel = () => {
           </Toolbar>
         </AppBar>
 
-        {/* TODO - loading should be circular with size change animations */}
-        <Suspense fallback={<Loading />}>
-          <DrawerContent />
+        <Suspense
+          fallback={
+            <Loading
+              sx={theme => ({
+                [theme.breakpoints.up('sm')]: {
+                  display: 'block',
+                  width: 400,
+                },
+              })}
+            />
+          }
+        >
+          <Fade in key="lazy-loaded-drawer-content">
+            <DrawerContent
+              sx={theme => ({
+                overflow: 'auto',
+                [theme.breakpoints.up('sm')]: {
+                  maxWidth: 400,
+                },
+              })}
+            />
+          </Fade>
         </Suspense>
 
         <AppBar elevation={0} variant="outlined" position="relative" sx={{ marginTop: 'auto' }}>

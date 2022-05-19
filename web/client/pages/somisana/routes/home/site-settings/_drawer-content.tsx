@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, forwardRef } from 'react'
 import Loading from '../../../../../components/loading'
 import Box from '@mui/material/Box'
 
@@ -6,16 +6,9 @@ const LanguageSettings = lazy(() => import('./language'))
 const ThemeSettings = lazy(() => import('./theme'))
 const CookieSettings = lazy(() => import('./cookies'))
 
-const DrawerContent = () => {
+const DrawerContent = forwardRef((props, ref) => {
   return (
-    <Box
-      sx={theme => ({
-        overflow: 'auto',
-        [theme.breakpoints.up('sm')]: {
-          maxWidth: 400,
-        },
-      })}
-    >
+    <Box ref={ref} {...props}>
       <Suspense fallback={<Loading />}>
         <LanguageSettings />
       </Suspense>
@@ -27,6 +20,6 @@ const DrawerContent = () => {
       </Suspense>
     </Box>
   )
-}
+})
 
 export default DrawerContent
