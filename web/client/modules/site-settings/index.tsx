@@ -1,5 +1,5 @@
-import { createContext, useContext, useCallback, useEffect } from 'react'
-import useLocalStorage from '../../hooks/use-local-storage'
+import { createContext, useContext, useCallback, useEffect, useMemo } from 'react'
+import useCookieState, { getCookieValue } from '../../hooks/use-cookie-state'
 import { ctx as configContext } from '../config'
 
 interface SiteSettings {
@@ -13,22 +13,38 @@ const DEFAULT_SITE_SETTINGS: SiteSettings = {
 
 export const ctx = createContext(DEFAULT_SITE_SETTINGS)
 
-const Provider = (props: object) => {
+const Provider = ({ cookie, ...props }) => {
   const { ORIGIN } = useContext(configContext)
-  const [settings, updateSettings] = useLocalStorage(
-    window?.location.origin || ORIGIN,
-    DEFAULT_SITE_SETTINGS
-  ) // TODO - probably needs to be cookie state so that it's accessible on the server
+
+  const cookies = typeof document === 'undefined' ? cookie : document.cookie
+
+  const [settings, updateSettings] = useCookieState(ORIGIN, {
+    ...DEFAULT_SITE_SETTINGS,
+    ...JSON.parse(
+      getCookieValue({
+        key: ORIGIN,
+        cookies: cookies,
+        options: null,
+        defaultValue: null,
+      }) || '{}'
+    ),
+  })
+
+  const _settings = useMemo(
+    () => (typeof settings === 'string' ? JSON.parse(settings) : settings),
+    [settings]
+  )
 
   const updateSetting = useCallback((obj: SiteSettings) => {
-    updateSettings((settings: SiteSettings) => ({ ...settings, ...obj }))
+    const newSettings: SiteSettings = { ..._settings, ...obj }
+    updateSettings(newSettings)
   }, [])
 
   useEffect(() => {
-    window['ga-disable-G-6ZM4ST1XCC'] = settings.disableGoogleAnalytics
-  }, [settings.disableGoogleAnalytics])
+    window['ga-disable-G-6ZM4ST1XCC'] = _settings.disableGoogleAnalytics
+  }, [_settings.disableGoogleAnalytics])
 
-  return <ctx.Provider value={{ ...settings, updateSetting }} {...props} />
+  return <ctx.Provider value={{ ..._settings, updateSetting }} {...props} />
 }
 
 export default Provider

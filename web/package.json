@@ -28,6 +28,7 @@
     "apollo-server-core": "^3.7.0",
     "apollo-server-koa": "^3.7.0",
     "browserslist": "^4.20.3",
+    "cookie": "^0.5.0",
     "dataloader": "^2.1.0",
     "dotenv": "^16.0.1",
     "es-module-shims": "^1.5.5",

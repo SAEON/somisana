@@ -4,6 +4,8 @@ import fetch from 'node-fetch'
 import App from '../../../common/app'
 
 export default ({ children, ctx, emotionCache }) => {
+  const cookie = ctx.get('Cookie')
+
   const apolloClient = new ApolloClient({
     ssrMode: true,
     link: createHttpLink({
@@ -11,7 +13,7 @@ export default ({ children, ctx, emotionCache }) => {
       uri: 'http://localhost:3000/graphql',
       credentials: 'same-origin',
       headers: {
-        cookie: ctx.get('Cookie'),
+        cookie,
       },
     }),
     cache: new InMemoryCache(),
@@ -19,6 +21,7 @@ export default ({ children, ctx, emotionCache }) => {
 
   return (
     <App
+      cookie={cookie}
       emotionCache={emotionCache}
       Router={props => <StaticRouter location={ctx.request.url} context={{}} {...props} />}
       apolloClient={apolloClient}

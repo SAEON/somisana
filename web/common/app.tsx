@@ -9,12 +9,18 @@ import { ApolloProvider } from '@apollo/client'
 
 export const createEmotionCache = () => createCache({ key: 'css' })
 
-const App = ({ Router, apolloClient, children, emotionCache = createEmotionCache() }) => (
+const App = ({
+  Router,
+  apolloClient,
+  children,
+  emotionCache = createEmotionCache(),
+  cookie = undefined,
+}) => (
   <EmotionCacheProvider value={emotionCache}>
     <ThemeProvider theme={theme}>
       <CssBaseline>
         <ConfigProvider>
-          <SiteSettingsProvider>
+          <SiteSettingsProvider cookie={cookie}>
             <ApolloProvider client={apolloClient}>
               <Router>{children}</Router>
             </ApolloProvider>

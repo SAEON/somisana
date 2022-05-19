@@ -116,11 +116,11 @@ const SiteSettingsPanel = () => {
                 for more information&#41;
               </SectionDescription>
               <FormGroup aria-label="Cookie settings" row>
-                <Tooltip placement="left-start" title="Required for authentication">
+                <Tooltip placement="left-start" title="These settings are stored in a cookie">
                   <Toggle
                     labelProps={{
-                      value: 'Necessary',
-                      label: 'Necessary',
+                      value: 'Site settings',
+                      label: 'Site settings',
                       labelPlacement: 'start',
                     }}
                     switchProps={{
@@ -128,6 +128,43 @@ const SiteSettingsPanel = () => {
                         'aria-label': 'Toggle necessary cookies',
                       },
                       defaultChecked: true,
+                      disabled: true,
+                      size: 'small',
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip placement="left-start" title="Our single-sign-on system requires cookies">
+                  <Toggle
+                    labelProps={{
+                      value: 'Authentication',
+                      label: 'Authentication',
+                      labelPlacement: 'start',
+                    }}
+                    switchProps={{
+                      inputProps: {
+                        'aria-label': 'Toggle necessary cookies',
+                      },
+                      defaultChecked: false,
+                      disabled: true,
+                      size: 'small',
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip
+                  placement="left-start"
+                  title="Please provide us feedback on site-feature usage!"
+                >
+                  <Toggle
+                    labelProps={{
+                      value: 'Client session',
+                      label: 'Client session',
+                      labelPlacement: 'start',
+                    }}
+                    switchProps={{
+                      inputProps: {
+                        'aria-label': 'Toggle necessary cookies',
+                      },
+                      defaultChecked: false,
                       disabled: true,
                       size: 'small',
                     }}
