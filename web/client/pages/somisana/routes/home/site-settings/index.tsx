@@ -1,20 +1,22 @@
-import { useState } from 'react'
+import { useState, useContext, useEffect } from 'react'
+import { ctx as siteSettingsContext } from '../../../../../modules/site-settings'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import Button from '@mui/material/Button'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
-import { Cog, Close, ExpandMore, CheckAll } from '../../../../../components/icons'
 import Toolbar from '@mui/material/Toolbar'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
-import Accordion from '../../../../../components/accordion'
 import FormGroup from '@mui/material/FormGroup'
-import Toggle from '../../../../../components/toggle'
 import MuiLink from '@mui/material/Link'
 import { Link } from 'react-router-dom'
 import { styled } from '@mui/material/styles'
+import { Cog, Close, ExpandMore, CheckAll } from '../../../../../components/icons'
+import Accordion from '../../../../../components/accordion'
+import Toggle from '../../../../../components/toggle'
+import SelectLocale from './_select-local'
 
 const SectionDescription = styled(Typography)(({ theme }) => ({
   fontSize: '0.8rem',
@@ -22,7 +24,14 @@ const SectionDescription = styled(Typography)(({ theme }) => ({
 }))
 
 const SiteSettingsPanel = () => {
+  const { updateSetting, ...settings } = useContext(siteSettingsContext)
   const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if (!settings.accepted) {
+      setOpen(true)
+    }
+  }, [settings.accepted])
 
   return (
     <>
@@ -70,7 +79,8 @@ const SiteSettingsPanel = () => {
             },
           })}
         >
-          <Accordion>
+          {/* LANGUAGE */}
+          <Accordion defaultExpanded={settings.accepted === false ? true : undefined}>
             <AccordionSummary
               expandIcon={<ExpandMore />}
               aria-controls="language-settings-content"
@@ -81,34 +91,20 @@ const SiteSettingsPanel = () => {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <SectionDescription>
+              <SectionDescription sx={{ marginBottom: 0 }}>
                 The SOMISANA i18n effort &#40;content translation&#41; is a community-driven
                 initiative. If the content is not already translated for the locale of your choice,
                 please consider submitting a translation! Content that has not yet been translated
                 will be displayed in the default locale &#40;English&#41;
               </SectionDescription>
               <FormGroup aria-label="Locale settings" row>
-                <Tooltip placement="top-start" title="For right-to-left locales">
-                  <Toggle
-                    labelProps={{
-                      value: 'Right-to-left',
-                      label: 'Right-to-left',
-                      labelPlacement: 'start',
-                    }}
-                    switchProps={{
-                      inputProps: {
-                        'aria-label': 'Toggle right-to-left text direction',
-                      },
-                      defaultChecked: false,
-                      disabled: true,
-                      size: 'small',
-                    }}
-                  />
-                </Tooltip>
+                <SelectLocale />
               </FormGroup>
             </AccordionDetails>
           </Accordion>
-          <Accordion>
+
+          {/* COOKIE */}
+          <Accordion defaultExpanded={settings.accepted === false ? true : undefined}>
             <AccordionSummary
               expandIcon={<ExpandMore />}
               aria-controls="coolie-settings-content"
@@ -129,11 +125,11 @@ const SiteSettingsPanel = () => {
                 for more information&#41;
               </SectionDescription>
               <FormGroup aria-label="Cookie settings" row>
-                <Tooltip placement="top-start" title="Required for authentication">
+                <Tooltip placement="left-start" title="These settings are stored in a cookie">
                   <Toggle
                     labelProps={{
-                      value: 'Necessary',
-                      label: 'Necessary',
+                      value: 'Site settings',
+                      label: 'Site settings',
                       labelPlacement: 'start',
                     }}
                     switchProps={{
@@ -146,7 +142,44 @@ const SiteSettingsPanel = () => {
                     }}
                   />
                 </Tooltip>
-                <Tooltip placement="top-start" title="We get it!">
+                <Tooltip placement="left-start" title="Our single-sign-on system requires cookies">
+                  <Toggle
+                    labelProps={{
+                      value: 'Authentication',
+                      label: 'Authentication',
+                      labelPlacement: 'start',
+                    }}
+                    switchProps={{
+                      inputProps: {
+                        'aria-label': 'Toggle necessary cookies',
+                      },
+                      defaultChecked: false,
+                      disabled: true,
+                      size: 'small',
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip
+                  placement="left-start"
+                  title="Please provide us feedback on site-feature usage!"
+                >
+                  <Toggle
+                    labelProps={{
+                      value: 'Client session',
+                      label: 'Client session',
+                      labelPlacement: 'start',
+                    }}
+                    switchProps={{
+                      inputProps: {
+                        'aria-label': 'Toggle necessary cookies',
+                      },
+                      defaultChecked: false,
+                      disabled: true,
+                      size: 'small',
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip placement="left-start" title="We get it!">
                   <Toggle
                     labelProps={{
                       value: 'Google analytics',
@@ -157,15 +190,33 @@ const SiteSettingsPanel = () => {
                       inputProps: {
                         'aria-label': 'Google analytics',
                       },
-                      defaultChecked: true,
+                      checked: !settings.disableGoogleAnalytics,
                       disabled: false,
                       size: 'small',
                       onChange: ({ target: { checked } }) =>
-                        (window['ga-disable-G-6ZM4ST1XCC'] = !checked),
+                        updateSetting({ disableGoogleAnalytics: !checked }),
                     }}
                   />
                 </Tooltip>
               </FormGroup>
+            </AccordionDetails>
+          </Accordion>
+
+          {/* THEME */}
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMore />}
+              aria-controls="theme-settings-content"
+              id="theme-settings-header"
+            >
+              <Typography variant="overline" variantMapping={{ overline: 'h3' }}>
+                Theme
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <SectionDescription sx={{ marginBottom: 0 }}>
+                TODO - toggle between light and dark?
+              </SectionDescription>
             </AccordionDetails>
           </Accordion>
         </Box>
@@ -182,7 +233,10 @@ const SiteSettingsPanel = () => {
         >
           <Button
             color="primary"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false)
+              updateSetting({ accepted: true })
+            }}
             variant="contained"
             size="medium"
             startIcon={<CheckAll />}
