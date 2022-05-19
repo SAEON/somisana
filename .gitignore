@@ -6,6 +6,9 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+# Scratch directories
+.temp
+
 web/node.importmap
 web/server/ssr/*.js
 
