@@ -1,9 +1,7 @@
 name: build@saeon/croco-v1.1
 
 on:
-  push:
-    branches:
-      - next
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io

@@ -57,7 +57,12 @@ jobs:
     steps:
       - name: Download Algoa-bay forcing input
         run: >-
-          echo "Matt TODO"
+          docker run \
+            --rm \
+            -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+            -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+               download-forcing-inputs
+
 
   test-matlab:
     needs: [download-forcing-input]
