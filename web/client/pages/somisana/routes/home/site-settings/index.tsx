@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { ctx as siteSettingsContext } from '../../../../../modules/site-settings'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
@@ -26,6 +26,12 @@ const SectionDescription = styled(Typography)(({ theme }) => ({
 const SiteSettingsPanel = () => {
   const { updateSetting, ...settings } = useContext(siteSettingsContext)
   const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if (!settings.accepted) {
+      setOpen(true)
+    }
+  }, [settings.accepted])
 
   return (
     <>
@@ -73,7 +79,8 @@ const SiteSettingsPanel = () => {
             },
           })}
         >
-          <Accordion>
+          {/* LANGUAGE */}
+          <Accordion defaultExpanded={settings.accepted === false ? true : undefined}>
             <AccordionSummary
               expandIcon={<ExpandMore />}
               aria-controls="language-settings-content"
@@ -95,7 +102,9 @@ const SiteSettingsPanel = () => {
               </FormGroup>
             </AccordionDetails>
           </Accordion>
-          <Accordion>
+
+          {/* COOKIE */}
+          <Accordion defaultExpanded={settings.accepted === false ? true : undefined}>
             <AccordionSummary
               expandIcon={<ExpandMore />}
               aria-controls="coolie-settings-content"
@@ -192,6 +201,24 @@ const SiteSettingsPanel = () => {
               </FormGroup>
             </AccordionDetails>
           </Accordion>
+
+          {/* THEME */}
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMore />}
+              aria-controls="theme-settings-content"
+              id="theme-settings-header"
+            >
+              <Typography variant="overline" variantMapping={{ overline: 'h3' }}>
+                Theme
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <SectionDescription sx={{ marginBottom: 0 }}>
+                TODO - toggle between light and dark?
+              </SectionDescription>
+            </AccordionDetails>
+          </Accordion>
         </Box>
         <Toolbar
           disableGutters
@@ -206,7 +233,10 @@ const SiteSettingsPanel = () => {
         >
           <Button
             color="primary"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false)
+              updateSetting({ accepted: true })
+            }}
             variant="contained"
             size="medium"
             startIcon={<CheckAll />}

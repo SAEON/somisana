@@ -3,11 +3,13 @@ import useCookieState, { getCookieValue } from '../../hooks/use-cookie-state'
 import { ctx as configContext } from '../config'
 
 interface SiteSettings {
+  accepted: Boolean
   disableGoogleAnalytics?: Boolean
   updateSetting?: Function
 }
 
 const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  accepted: false,
   disableGoogleAnalytics: false,
 }
 
