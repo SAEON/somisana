@@ -1,6 +1,18 @@
 * text eol=lf
 *.png binary
+*.PNG binary
 *.jpg binary
 *.zip binary
 *.nc binary
 *.tar.gz binary
+*.jar binary
+*.pdf binary
+*.jar.duplicate binary
+*.a binary
+*.mat binary
+*.mexglx binary
+*.mexa64 binary
+*.mexmaci binary
+*.mexs64 binary
+*.mexw32 binary
+*.nc4 binary

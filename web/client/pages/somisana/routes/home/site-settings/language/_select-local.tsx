@@ -1,4 +1,4 @@
-import ComboBox from '../../../../../components/combo-box'
+import ComboBox from '../../../../../../components/combo-box'
 import Tooltip from '@mui/material/Tooltip'
 
 const SelectLocale = () => {
