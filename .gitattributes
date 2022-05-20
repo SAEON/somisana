@@ -17,3 +17,4 @@
 *.mexw32 binary
 *.nc4 binary
 *.grb binary
+*.cdf binary
