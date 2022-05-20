@@ -1,10 +1,10 @@
 import { useContext } from 'react'
-import { ctx as siteSettingsContext } from '../../../../../../modules/site-settings'
-import Accordion from '../../../../../../components/accordion'
+import { ctx as siteSettingsContext } from '../../'
+import Accordion from '../../../../components/accordion'
 import Typography from '@mui/material/Typography'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
-import { ExpandMore } from '../../../../../../components/icons'
+import { ExpandMore } from '../../../../components/icons'
 import { SectionDescription } from '../components'
 
 const ThemeSettings = () => {
