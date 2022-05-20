@@ -1,5 +1,5 @@
 import { useContext, memo } from 'react'
-import { ctx as siteSettingsContext } from '../../'
+import { ctx as siteSettingsContext } from '../../_provider'
 import Accordion from '../../../../components/accordion'
 import Typography from '@mui/material/Typography'
 import AccordionSummary from '@mui/material/AccordionSummary'

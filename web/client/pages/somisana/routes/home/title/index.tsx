@@ -1,9 +1,16 @@
+import { useContext } from 'react'
+import { ctx as i18nContext } from '../../../../../modules/i18n'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import Fade from '@mui/material/Fade'
 
 const Title = () => {
+  const { t, locale } = useContext(i18nContext)
+
+  // TODO LOCALE
+  console.log('rendering', locale, t('/home_h2', locale))
+
   return (
     <Fade key="home" in>
       <Grid
@@ -34,7 +41,7 @@ const Title = () => {
               h5: 'h2',
             }}
           >
-            Sustainable Ocean Modelling Initiative: A South African Approach
+            {t('/home_h2', locale)}
           </Typography>
         </Grid>
       </Grid>

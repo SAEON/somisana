@@ -1,5 +1,5 @@
 import { useContext, Suspense, lazy } from 'react'
-import { ctx as siteSettingsContext } from '../'
+import { ctx as siteSettingsContext } from '../_provider'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'

@@ -27,7 +27,7 @@ env = { TZ='UTC', NODE_ENV='development', NODE_LOADER_CONFIG='loaders/config.js'
 serial = true
 deps = [
   'server/ssr/index.js',
-  # 'node.importmap'
+  'node.importmap'
 ]
 run = """
 prettier \
