@@ -1,7 +1,7 @@
 import { createContext, useContext, useCallback, useEffect, useMemo } from 'react'
 import useCookieState, { getCookieValue } from '../../hooks/use-cookie-state'
 import { ctx as configContext } from '../config'
-export {default as SettingPanel} from './settings-panel'
+export { default as SettingPanel } from './settings-panel'
 
 interface SiteSettings {
   accepted: Boolean
@@ -38,7 +38,7 @@ const Provider = ({ cookie, ...props }) => {
     [settings]
   )
 
-  const updateSetting = useCallback((obj: SiteSettings) => {
+  const updateSetting = useCallback(async (obj: SiteSettings) => {
     const newSettings: SiteSettings = { ..._settings, ...obj }
     updateSettings(newSettings)
   }, [])
