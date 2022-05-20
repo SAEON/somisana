@@ -62,6 +62,7 @@ export const SettingPanel = ({ open, setOpen }) => {
           <DrawerContent
             sx={theme => ({
               overflow: 'auto',
+              height: '100%',
               [theme.breakpoints.up('sm')]: {
                 maxWidth: 400,
               },

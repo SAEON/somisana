@@ -15,8 +15,6 @@ const t = (s, locale) => {
 export const ctx = createContext({ t })
 
 const P = ({ locale, ...props }) => {
-  console.log('hi', locale)
-
   return <ctx.Provider value={{ t, locale }} {...props} />
 }
 
