@@ -10,7 +10,11 @@ export default db => () =>
       return db
         .then(db => db.collection(name))
         .then(collection => collection.find(query).toArray())
-        .then(docs => filters.map(filter => docs.filter(sift(filter))))
+        .then(docs =>
+          filters.map(filter =>
+            docs.filter(sift(filter)).map(doc => ({ __collection: name, ...doc }))
+          )
+        )
     })
     acc[`find${alias}`] = filter => loader.load(filter)
     return acc

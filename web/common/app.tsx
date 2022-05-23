@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import theme from './theme/mui'
 import ConfigProvider from '../client/modules/config'
 import SiteSettingsProvider from '../client/modules/site-settings'
+import I18nProvider from '../client/modules/i18n'
 import createCache from '@emotion/cache'
 import { ApolloProvider } from '@apollo/client'
 
@@ -15,15 +16,18 @@ const App = ({
   children,
   emotionCache = createEmotionCache(),
   cookie = undefined,
+  defaultLocale = 'en_ZA',
 }) => (
   <EmotionCacheProvider value={emotionCache}>
     <ThemeProvider theme={theme}>
       <CssBaseline>
         <ConfigProvider>
-          <SiteSettingsProvider cookie={cookie}>
-            <ApolloProvider client={apolloClient}>
-              <Router>{children}</Router>
-            </ApolloProvider>
+          <SiteSettingsProvider defaultLocale={defaultLocale} cookie={cookie}>
+            <I18nProvider>
+              <ApolloProvider client={apolloClient}>
+                <Router>{children}</Router>
+              </ApolloProvider>
+            </I18nProvider>
           </SiteSettingsProvider>
         </ConfigProvider>
       </CssBaseline>
