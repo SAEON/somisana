@@ -7,14 +7,15 @@ import { gql, useQuery } from '@apollo/client'
 import Box from '@mui/material/Box'
 
 const SelectLocale = memo(
-  ({ updateSetting, locale }) => {
+  ({ updateSetting, language }) => {
     const { error, loading, data } = useQuery(
       gql`
         query locales {
           locales {
             id
             ... on Locale {
-              locale
+              name
+              code
               language
             }
           }
@@ -38,26 +39,26 @@ const SelectLocale = memo(
     }
 
     return (
-      <Tooltip title="Select locale" placement="left">
+      <Tooltip title="Select language" placement="left">
         <ComboBox
-          getOptionLabel={option => option.language}
-          label="Locale"
+          getOptionLabel={option => option.name}
+          label="language"
           autoHighlight
-          value={data.locales.find(option => option.locale === locale)}
-          onChange={(e, option) => updateSetting({ locale: option.locale })}
+          value={data.locales.find(option => option.language === language)}
+          onChange={(e, option) => updateSetting({ language: option.language })}
           options={data.locales}
           renderOption={(props, option) => (
             <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
               <img
                 loading="lazy"
                 width="20"
-                src={`https://flagcdn.com/w20/${option.locale.split('_')[1].toLowerCase()}.png`}
-                srcSet={`https://flagcdn.com/w40/${option.locale
+                src={`https://flagcdn.com/w20/${option.code.split('_')[1].toLowerCase()}.png`}
+                srcSet={`https://flagcdn.com/w40/${option.code
                   .split('_')[1]
                   .toLowerCase()}.png 2x`}
                 alt=""
               />
-              {option.language} ({option.locale})
+              {option.name}
             </Box>
           )}
         />
@@ -68,7 +69,7 @@ const SelectLocale = memo(
 )
 
 export default () => {
-  const { updateSetting, locale } = useContext(siteSettingsContext)
+  const { updateSetting, language } = useContext(siteSettingsContext)
 
-  return <SelectLocale updateSetting={updateSetting} locale={locale} />
+  return <SelectLocale updateSetting={updateSetting} language={language} />
 }

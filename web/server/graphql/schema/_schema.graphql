@@ -9,8 +9,9 @@ interface Node {
 
 type Locale implements Node {
   id: ID!
-  locale: String!
+  name: String!
   language: String!
+  code: String!
 }
 
 type PageInfo {

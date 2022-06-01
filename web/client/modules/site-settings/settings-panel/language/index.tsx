@@ -26,11 +26,11 @@ const LanguageSettings = memo(
           <AccordionDetails>
             <SectionDescription sx={{ marginBottom: 0 }}>
               The SOMISANA i18n effort &#40;content translation&#41; is a community-driven
-              initiative. If the content is not already translated for the locale of your choice,
+              initiative. If the content is not already translated for the language of your choice,
               please consider submitting a translation! Content that has not yet been translated
-              will be displayed in the default locale &#40;English&#41;
+              will be displayed in the default language &#40;English&#41;
             </SectionDescription>
-            <FormGroup aria-label="Locale settings" row>
+            <FormGroup aria-label="Language settings" row>
               <SelectLocale />
             </FormGroup>
           </AccordionDetails>

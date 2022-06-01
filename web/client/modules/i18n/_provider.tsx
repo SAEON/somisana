@@ -3,26 +3,26 @@ import { ctx as siteSettingsContext } from '../site-settings'
 
 const text = {
   '/home_h2': {
-    en_ZA: 'Sustainable Ocean Modelling Initiative: A South African Approach',
-    xh_ZA: 'Testing that the translations work',
+    en: 'Sustainable Ocean Modelling Initiative: A South African Approach',
+    xh: 'Testing that the translations work',
   },
 }
 
-const t = (s, locale) => {
-  return text[s]?.[locale] || text[s]?.en_ZA
+const t = (s, language) => {
+  return text[s]?.[language] || text[s]?.en
 }
 
 export const ctx = createContext({ t })
 
-const P = ({ locale, ...props }) => {
-  return <ctx.Provider value={{ t, locale }} {...props} />
+const P = ({ language, ...props }) => {
+  return <ctx.Provider value={{ t, language }} {...props} />
 }
 
 /**
- * Locale has to be forced during SSR
+ * language has to be forced during SSR
  */
 export const Provider = ({ ...props }) => {
-  const { locale } = useContext(siteSettingsContext)
+  const { language } = useContext(siteSettingsContext)
 
-  return <P locale={locale} {...props} />
+  return <P language={language} {...props} />
 }

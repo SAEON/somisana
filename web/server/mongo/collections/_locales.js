@@ -5,11 +5,11 @@ export default {
     {
       index: 'language',
       options: {
-        unique: true,
+        unique: false,
       },
     },
     {
-      index: 'locale',
+      index: 'code',
       options: {
         unique: true,
       },
@@ -19,15 +19,19 @@ export default {
     $jsonSchema: {
       bsonType: 'object',
       description: 'Locale document',
-      required: ['locale', 'language'],
+      required: ['language', 'code', 'name'],
       properties: {
         language: {
           bsonType: 'string',
-          description: 'Name of the locale language (in English)',
+          description: 'Abbreviation of the language (for example, en=English)',
         },
-        locale: {
+        code: {
           bsonType: 'string',
-          description: 'locale short code',
+          description: 'Locale short code',
+        },
+        name: {
+          bsonType: 'string',
+          description: 'Name of the locale language (in English)',
         },
       },
     },

@@ -6,10 +6,10 @@ import { alpha } from '@mui/material/styles'
 import Fade from '@mui/material/Fade'
 
 const Title = () => {
-  const { t, locale } = useContext(i18nContext)
+  const { t, language } = useContext(i18nContext)
 
   // TODO LOCALE
-  console.log('rendering', locale, t('/home_h2', locale))
+  console.log('rendering', language, t('/home_h2', language))
 
   return (
     <Fade key="home" in>
@@ -41,7 +41,7 @@ const Title = () => {
               h5: 'h2',
             }}
           >
-            {t('/home_h2', locale)}
+            {t('/home_h2', language)}
           </Typography>
         </Grid>
       </Grid>
