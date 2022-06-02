@@ -8,9 +8,6 @@ import Fade from '@mui/material/Fade'
 const Title = () => {
   const { t, language } = useContext(i18nContext)
 
-  // TODO LOCALE
-  console.log('rendering', language, t('/home_h2', language))
-
   return (
     <Fade key="home" in>
       <Grid

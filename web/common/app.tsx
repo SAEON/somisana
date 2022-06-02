@@ -16,9 +16,8 @@ const App = ({
   children,
   emotionCache = createEmotionCache(),
   cookie = undefined,
-  acceptLanguage = 'en',
+  acceptLanguage = window.navigator.language,
 }) => {
-  console.log('acceptLanguage', acceptLanguage)
   return (
     <EmotionCacheProvider value={emotionCache}>
       <ThemeProvider theme={theme}>

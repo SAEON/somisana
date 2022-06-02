@@ -5,10 +5,7 @@ import App from '../../../common/app'
 
 export default ({ children, ctx, emotionCache }) => {
   const cookie = ctx.get('Cookie')
-
   const language = ctx.get('Accept-language').split(',')[0]
-
-  console.log('l', language)
 
   const apolloClient = new ApolloClient({
     ssrMode: true,
