@@ -3,7 +3,27 @@ scalar JSON
 scalar Void
 scalar WKT_4326
 
+interface Node {
+  id: ID!
+}
+
+type Locale implements Node {
+  id: ID!
+  name: String!
+  language: String!
+  code: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
 type Query {
+  node(id: ID!): Node
+  locales(id: ID): [Node]!
   test: Void
 }
 

@@ -63,7 +63,6 @@ jobs:
             -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
                download-forcing-inputs
 
-
   test-matlab:
     needs: [download-forcing-input]
     runs-on: github-runner.saeon.int

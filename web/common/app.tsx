@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import theme from './theme/mui'
 import ConfigProvider from '../client/modules/config'
 import SiteSettingsProvider from '../client/modules/site-settings'
+import I18nProvider from '../client/modules/i18n'
 import createCache from '@emotion/cache'
 import { ApolloProvider } from '@apollo/client'
 
@@ -15,20 +16,26 @@ const App = ({
   children,
   emotionCache = createEmotionCache(),
   cookie = undefined,
-}) => (
-  <EmotionCacheProvider value={emotionCache}>
-    <ThemeProvider theme={theme}>
-      <CssBaseline>
-        <ConfigProvider>
-          <SiteSettingsProvider cookie={cookie}>
-            <ApolloProvider client={apolloClient}>
-              <Router>{children}</Router>
-            </ApolloProvider>
-          </SiteSettingsProvider>
-        </ConfigProvider>
-      </CssBaseline>
-    </ThemeProvider>
-  </EmotionCacheProvider>
-)
+  acceptLanguage = 'en',
+}) => {
+  console.log('acceptLanguage', acceptLanguage)
+  return (
+    <EmotionCacheProvider value={emotionCache}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline>
+          <ConfigProvider>
+            <SiteSettingsProvider acceptLanguage={acceptLanguage} cookie={cookie}>
+              <I18nProvider>
+                <ApolloProvider client={apolloClient}>
+                  <Router>{children}</Router>
+                </ApolloProvider>
+              </I18nProvider>
+            </SiteSettingsProvider>
+          </ConfigProvider>
+        </CssBaseline>
+      </ThemeProvider>
+    </EmotionCacheProvider>
+  )
+}
 
 export default App
