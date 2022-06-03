@@ -1,11 +1,12 @@
-import { createContext, useCallback, useEffect, useState } from 'react'
-import { useCookieState } from 'use-cookie-state'
+import { createContext, useEffect, useState, useMemo } from 'react'
 import c from 'cookie'
 
 const COOKIE_KEY = 'SOMISANA_SITE_SETTINGS'
 
+const ENCODE = { path: '/', expires: new Date('10000') }
+
 interface SiteSettings {
-  accepted: Boolean
+  accepted?: Boolean
   disableGoogleAnalytics?: Boolean
   language?: String
   updateSetting?: Function
@@ -20,36 +21,36 @@ export const ctx = createContext(DEFAULT_SITE_SETTINGS)
 
 export const Provider = ({ cookie, acceptLanguage, ...props }) => {
   /**
-   * The site is always rendered according to the Accept-language
-   * HTTP header. But a user can select a different language,
-   * in which case on the client (not the server) the site
-   * will be re-rendered in the preffered langauge. The
-   * preferred language is stored in the cookie as 'language'
+   * Load the cookie
    */
-  const [language, setLanguage] = useState(acceptLanguage)
+  const existingCookie = useMemo(() => c.parse(cookie || document.cookie || '')?.[COOKIE_KEY], [])
+
+  const {
+    accepted = false,
+    disableGoogleAnalytics = false,
+    language = acceptLanguage,
+  } = JSON.parse(existingCookie || '')
 
   /**
-   * Site settings that need to be persisted
+   * Set the initial settings state using stored cookie values
    */
-  const [settings, updateSettings] = useCookieState(
-    COOKIE_KEY,
-    JSON.stringify({
-      ...DEFAULT_SITE_SETTINGS,
-      language,
-    }),
-    {
-      decode: c.CookieParseOptions,
-      encode: c.CookieSerializeOptions,
-    }
-  )
+  const [siteSettings, setSiteSettings]: [SiteSettings, Function] = useState({
+    accepted,
+    disableGoogleAnalytics,
+    language: acceptLanguage,
+  })
 
-  const updateSetting = useCallback(async (obj: SiteSettings) => {
-    const newSettings: SiteSettings = { ...JSON.parse(settings), ...obj }
-    updateSettings(JSON.stringify(newSettings))
-    if (newSettings.language) {
-      setLanguage(newSettings.language)
-    }
-  }, [])
+  /**
+   * Whenever the siteSettings changes,
+   * sync the state to a cookie
+   */
+  useEffect(() => {
+    document.cookie = c.serialize(COOKIE_KEY, JSON.stringify(siteSettings), ENCODE)
+  }, [siteSettings])
+
+  const updateSetting = (obj: SiteSettings) => {
+    setSiteSettings((s: SiteSettings) => ({ ...s, ...obj }))
+  }
 
   /**
    * Client only
@@ -58,23 +59,21 @@ export const Provider = ({ cookie, acceptLanguage, ...props }) => {
    * object is being updated
    */
   useEffect(() => {
-    window['ga-disable-G-6ZM4ST1XCC'] = JSON.parse(settings).disableGoogleAnalytics
-  }, [])
+    window['ga-disable-G-6ZM4ST1XCC'] = siteSettings.disableGoogleAnalytics
+  })
 
   /**
    * Client only
    *
-   * Re-render the page in a user's preferred language,
-   * if that prefferred language doesn't match their
-   * browser's language setting
+   * If the language in the cookie is not the same as the
+   * accept language HTTP header, re-render the page with
+   * the language override
    */
   useEffect(() => {
-    if (language !== JSON.parse(settings).language) {
-      setLanguage(JSON.parse(settings).language)
+    if (language !== acceptLanguage) {
+      setSiteSettings((s: SiteSettings) => ({ ...s, language }))
     }
-  }, [language])
+  }, [])
 
-  const { language: prefferedLanguage, ...userSettings } = JSON.parse(settings)
-
-  return <ctx.Provider value={{ ...userSettings, language, updateSetting }} {...props} />
+  return <ctx.Provider value={{ ...siteSettings, updateSetting }} {...props} />
 }
