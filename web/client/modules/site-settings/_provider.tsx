@@ -23,7 +23,7 @@ export const Provider = ({ cookie, acceptLanguage, ...props }) => {
    * The site is always rendered according to the Accept-language
    * HTTP header. But a user can select a different language,
    * in which case on the client (not the server) the site
-   * will be re-rendered in the preffered langauge. The 
+   * will be re-rendered in the preffered langauge. The
    * preferred language is stored in the cookie as 'language'
    */
   const [language, setLanguage] = useState(acceptLanguage)
