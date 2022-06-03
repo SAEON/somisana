@@ -1,13 +1,10 @@
-import { useContext } from 'react'
-import { ctx as i18nContext } from '../../../../../modules/i18n'
+import Translate from '../../../../../modules/i18n/translate'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import Fade from '@mui/material/Fade'
 
 const Title = () => {
-  const { t, language } = useContext(i18nContext)
-
   return (
     <Fade key="home" in>
       <Grid
@@ -38,7 +35,7 @@ const Title = () => {
               h5: 'h2',
             }}
           >
-            {t('/home_h2', language)}
+            <Translate contentId="/home_h2" />
           </Typography>
         </Grid>
       </Grid>
