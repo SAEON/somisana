@@ -4,7 +4,7 @@ import fetch from 'node-fetch'
 import App from '../../../common/app'
 
 export default ({ children, ctx, emotionCache }) => {
-  const cookie = ctx.get('Cookie')
+  const cookie = ctx.get('Cookie') || ''
   const language = ctx.get('Accept-language').split(',')[0]
 
   const apolloClient = new ApolloClient({

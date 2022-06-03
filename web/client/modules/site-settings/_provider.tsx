@@ -23,13 +23,17 @@ export const Provider = ({ cookie, acceptLanguage, ...props }) => {
   /**
    * Load the cookie
    */
-  const existingCookie = useMemo(() => c.parse(cookie || document.cookie || '')?.[COOKIE_KEY], [])
+  const existingCookie = useMemo(
+    () =>
+      c.parse(cookie || typeof document === 'undefined' ? '' : document.cookie || '')?.[COOKIE_KEY],
+    []
+  )
 
   const {
     accepted = false,
     disableGoogleAnalytics = false,
     language = acceptLanguage,
-  } = JSON.parse(existingCookie || '')
+  } = JSON.parse(existingCookie || '{}')
 
   /**
    * Set the initial settings state using stored cookie values
