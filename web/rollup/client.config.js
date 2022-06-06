@@ -6,6 +6,7 @@ import { join } from 'path'
 import fs from 'fs'
 import rimraf from 'rimraf'
 import extensions from './plugins/extensions.js'
+import css from 'rollup-plugin-import-css'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -51,6 +52,12 @@ export default {
       preventAssignment: true,
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
       'process.env.API': JSON.stringify(API),
+    }),
+    css({
+      output: 'index.css',
+      alwaysOutput: true,
+      minify: false,
+      transform: null,
     }),
     swc({ configFile: join(__dirname, '../.swcrc') }),
   ],

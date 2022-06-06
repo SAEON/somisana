@@ -23,11 +23,14 @@ const APP_ENTRIES = await fs
 export default async ctx => {
   const { url } = ctx.request
 
-  if (url.match(/\.js$/)) {
+  if (url.endsWith('.js')) {
     ctx.set('Content-type', 'application/javascript; charset=utf-8')
     ctx.body = createReadStream(normalize(join(files, url)))
   } else if (url.endsWith('.png')) {
     ctx.set('Content-type', 'image/png')
+    ctx.body = createReadStream(normalize(join(files, url)))
+  } else if (url.endsWith('.css')) {
+    ctx.set('Content-type', 'text/css')
     ctx.body = createReadStream(normalize(join(files, url)))
   } else if (url.endsWith('site.webmanifest')) {
     ctx.set('Content-type', 'application/json; charset=utf-8')

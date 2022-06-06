@@ -38,7 +38,7 @@ const Header = ({ children, ...props }) => {
           <Link href="/false-bay-forecast">False Bay forecast</Link>
         </MenuItem>
         <MenuItem>
-          <Link href="/map">Interactive map</Link>
+          <Link href="/atlas">Atlas</Link>
         </MenuItem>
       </Menu>
 
