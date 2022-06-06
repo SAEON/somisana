@@ -24,14 +24,14 @@
     "@node-loader/import-maps": "^1.0.3",
     "@rollup/plugin-replace": "^4.0.0",
     "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.196",
-    "apollo-server-core": "^3.8.1",
-    "apollo-server-koa": "^3.8.1",
+    "@swc/core": "^1.2.197",
+    "apollo-server-core": "^3.8.2",
+    "apollo-server-koa": "^3.8.2",
     "browserslist": "^4.20.3",
     "cookie": "^0.5.0",
     "dataloader": "^2.1.0",
     "dotenv": "^16.0.1",
-    "es-module-shims": "^1.5.5",
+    "es-module-shims": "^1.5.6",
     "graphql": "^16.5.0",
     "graphql-type-json": "^0.3.2",
     "koa": "^2.13.4",
@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.16",
-    "npm-check-updates": "^13.0.4",
+    "npm-check-updates": "^13.1.1",
     "prettier": "^2.6.2"
   },
   "prettier": {
