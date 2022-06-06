@@ -14,9 +14,19 @@ WORKDIR /somisana
 COPY croco/1.1/ .
 RUN chmod +x jobcomp
 
-#Copy cppdef.h and param.h from algoa_bay_compile_options [cppdefs.h and param.h for algoa bay have been added to croco/algoa_bay_compile_options] 
-COPY croco/algoa_bay_compile_options/ .
+RUN mkdir /somisana/exe
+RUN mv jobcomp /somisana/exe
 
 RUN tar -xf croco-v1.1.tar.gz && rm  croco-v1.1.tar.gz
 
-RUN ./jobcomp>jobcomp.log
+#Copy cppdef.h and param.h from algoa_bay_compile_options [cppdefs.h and param.h for algoa bay have been added to croco/algoa_bay_compile_options] 
+WORKDIR /somisana/exe
+
+COPY croco/algoa_bay_compile_options/ /somisana/exe
+
+WORKDIR /somisana/
+#RUN ./jobcomp>jobcomp.log
+
+CMD [ "default" ]
+
+
