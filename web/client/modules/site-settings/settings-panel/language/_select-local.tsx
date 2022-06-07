@@ -53,9 +53,7 @@ const SelectLocale = memo(
                 loading="lazy"
                 width="20"
                 src={`https://flagcdn.com/w20/${option.code.split('_')[1].toLowerCase()}.png`}
-                srcSet={`https://flagcdn.com/w40/${option.code
-                  .split('_')[1]
-                  .toLowerCase()}.png 2x`}
+                srcSet={`https://flagcdn.com/w40/${option.code.split('_')[1].toLowerCase()}.png 2x`}
                 alt=""
               />
               {option.name}

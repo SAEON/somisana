@@ -1,11 +1,15 @@
-import { createContext, useCallback, useEffect } from 'react'
-import { useCookieState } from 'use-cookie-state'
+import { createContext, useEffect, useState, useMemo } from 'react'
+import c from 'cookie'
+
+const COOKIE_KEY = 'SOMISANA_SITE_SETTINGS'
+
+const ENCODE = { path: '/', expires: new Date('10000') }
 
 interface SiteSettings {
-  accepted: Boolean
+  accepted?: Boolean
   disableGoogleAnalytics?: Boolean
   language?: String
-  updateSetting?: Function,
+  updateSetting?: Function
 }
 
 const DEFAULT_SITE_SETTINGS: SiteSettings = {
@@ -15,35 +19,65 @@ const DEFAULT_SITE_SETTINGS: SiteSettings = {
 
 export const ctx = createContext(DEFAULT_SITE_SETTINGS)
 
-const COOKIE_KEY = 'SOMISANA_SITE_SETTINGS'
-
 export const Provider = ({ cookie, acceptLanguage, ...props }) => {
-  const [settings, updateSettings] = useCookieState(COOKIE_KEY, (a) => {
-    console.log('a', a)
-    return JSON.stringify({
-      ...DEFAULT_SITE_SETTINGS,
-      language: acceptLanguage,
-    })
+  /**
+   * Load the cookie
+   */
+  const existingCookie = useMemo(
+    () =>
+      c.parse(cookie || typeof document === 'undefined' ? '' : document.cookie || '')?.[COOKIE_KEY],
+    []
+  )
+
+  const {
+    accepted = false,
+    disableGoogleAnalytics = false,
+    language = acceptLanguage,
+  } = JSON.parse(existingCookie || '{}')
+
+  /**
+   * Set the initial settings state using stored cookie values
+   */
+  const [siteSettings, setSiteSettings]: [SiteSettings, Function] = useState({
+    accepted,
+    disableGoogleAnalytics,
+    language: acceptLanguage,
   })
 
-
-
-  const updateSetting = useCallback(async (obj: SiteSettings) => {
-    const newSettings: SiteSettings = { ...JSON.parse(settings), ...obj }
-    updateSettings(JSON.stringify(newSettings))
-  }, [])
-
-  // Client only
+  /**
+   * Whenever the siteSettings changes,
+   * sync the state to a cookie
+   */
   useEffect(() => {
-    window['ga-disable-G-6ZM4ST1XCC'] = JSON.parse(settings).disableGoogleAnalytics
+    document.cookie = c.serialize(COOKIE_KEY, JSON.stringify(siteSettings), ENCODE)
+  }, [siteSettings])
+
+  const updateSetting = (obj: SiteSettings) => {
+    setSiteSettings((s: SiteSettings) => ({ ...s, ...obj }))
+  }
+
+  /**
+   * Client only
+   *
+   * This can only be done on the client, since the window
+   * object is being updated
+   */
+  useEffect(() => {
+    window['ga-disable-G-6ZM4ST1XCC'] = siteSettings.disableGoogleAnalytics
+  })
+
+  /**
+   * Client only
+   *
+   * If the language in the cookie is not the same as the
+   * accept language HTTP header, re-render the page with
+   * the language override
+   */
+  useEffect(() => {
+    if (language !== acceptLanguage) {
+      setSiteSettings((s: SiteSettings) => ({ ...s, language }))
+    }
   }, [])
 
-  // // Client only
-  // useEffect(() => {
-  //   updateSetting({language})
-  // }, [])
-
-  console.log('settings', settings)
-
-  return <ctx.Provider value={{ ...JSON.parse(settings), updateSetting }} {...props} />
+  return <ctx.Provider value={{ ...siteSettings, updateSetting }} {...props} />
 }

@@ -7,6 +7,7 @@ import SiteSettingsProvider from '../client/modules/site-settings'
 import I18nProvider from '../client/modules/i18n'
 import createCache from '@emotion/cache'
 import { ApolloProvider } from '@apollo/client'
+import ErrorBoundary from '../client/components/error-boundary'
 
 export const createEmotionCache = () => createCache({ key: 'css' })
 
@@ -16,9 +17,8 @@ const App = ({
   children,
   emotionCache = createEmotionCache(),
   cookie = undefined,
-  acceptLanguage = 'en',
+  acceptLanguage = window.navigator.language,
 }) => {
-  console.log('acceptLanguage', acceptLanguage)
   return (
     <EmotionCacheProvider value={emotionCache}>
       <ThemeProvider theme={theme}>
@@ -27,7 +27,9 @@ const App = ({
             <SiteSettingsProvider acceptLanguage={acceptLanguage} cookie={cookie}>
               <I18nProvider>
                 <ApolloProvider client={apolloClient}>
-                  <Router>{children}</Router>
+                  <ErrorBoundary>
+                    <Router>{children}</Router>
+                  </ErrorBoundary>
                 </ApolloProvider>
               </I18nProvider>
             </SiteSettingsProvider>

@@ -1,9 +1,6 @@
 name: web@stable
 
-on:
-  push:
-    tags:
-      - web.v*
+on: workflow_dispatch
 
 env:
   REGISTRY: ghcr.io
@@ -12,6 +9,10 @@ env:
   DEPLOY_SOURCE: deploy/web/stable/stack.yml
   STACK_COMPOSE_PATH: /home/runner/somisana/deploy/web/stable/stack.yml
   STACK_CONFIG_PATH: /home/runner/somisana/deploy/web/stable/stack.env
+  MONGO_HOST: ${{ secrets.MONGO_HOST_STABLE }}
+  MONGO_DB: ${{ secrets.MONGO_DB_STABLE }}
+  MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STABLE }}
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }}
 
 jobs:
   build:
@@ -38,7 +39,6 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=sha
-            type=match,pattern=web\.v(.*),group=1,priority=1000
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -81,4 +81,8 @@ jobs:
           port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
           script: |
             echo "DOCKER_IMAGE=${{ needs.build.outputs.image }}" > ${{ env.STACK_CONFIG_PATH }}
+            echo "MONGO_HOST=${{ env.MONGO_HOST }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "MONGO_DB=${{ env.MONGO_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "MONGO_USERNAME=${{ env.MONGO_USERNAME }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}" >> ${{ env.STACK_CONFIG_PATH }}
             sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} somisana_stable

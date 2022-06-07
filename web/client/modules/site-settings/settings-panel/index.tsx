@@ -31,6 +31,7 @@ export const SettingPanel = ({ open, setOpen }) => {
     >
       <AppBar elevation={0} variant="outlined" position="relative">
         <Toolbar
+          variant="dense"
           disableGutters
           sx={{
             padding: theme => theme.spacing(1),

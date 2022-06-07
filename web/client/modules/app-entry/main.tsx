@@ -1,3 +1,4 @@
+import '../../css/index.css'
 import { API_GQL } from '../config/env'
 import { hydrateRoot } from 'react-dom/client'
 import App from '../../../common/app'

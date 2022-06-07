@@ -22,6 +22,10 @@ services:
         delay: 30s
     environment:
       ALLOWED_ORIGINS: https://somisana.ac.za
+      MONGO_HOST: $MONGO_HOST
+      MONGO_DB: $MONGO_DB
+      MONGO_USERNAME: $MONGO_USERNAME
+      MONGO_PASSWORD: $MONGO_PASSWORD
     ports:
       - 7008:3000
     networks:

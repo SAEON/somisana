@@ -1,0 +1,9 @@
+html, body, #root {
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex-grow: 1;
+  min-height: 100%;
+}
