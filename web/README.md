@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Quick start](#quick-start)
+  - [Start a local MongoDB server](#start-a-local-mongodb-server)
   - [Add an HTML page to the app](#add-an-html-page-to-the-app)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -34,6 +35,10 @@ chomp --watch
 1. Transpile the client source code (`JSX`) to regular JavaScript. This is done via `Rollup`/`SWC`. Look at the [rollup.config.js](rollup.config.js) for more information
 2. Link the transpiled source code to the HTML entry points using `JSPM` (look at the `html` task in [chompfile.toml](chompfile.toml))
 3. Start the `Koa` app (Node.js)
+
+## Start a local MongoDB server
+
+Follow instructions to [set up a locally running MongoDB server via Docker](https://github.com/SAEON/mongo#local-development) (or, just generally speaking, a locally running MongoDB docker container is required).
 
 ## Add an HTML page to the app
 
