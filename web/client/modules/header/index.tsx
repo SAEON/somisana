@@ -1,60 +1,32 @@
-import { useState } from 'react'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
-import Tooltip from '@mui/material/Tooltip'
-import IconButton from '@mui/material/IconButton'
-import { Menu as MenuIcon } from '../../components/icons'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import Link from '@mui/material/Link'
 
-const Header = ({ children, ...props }) => {
-  const [anchorEl, setAnchorEl] = useState(false)
+import ElevationOnScroll from './animations/elevation-on-scroll'
+import NavigationMenu from './navigation-menu'
 
-  const open = Boolean(anchorEl)
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
+const Header = ({ children, routes = [], ...props }) => {
+
+
+
 
   return (
     <>
-      {/* SIDE MENU */}
-      <Menu
-        id="navigation-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem>
-          <Link href="/algoa-bay-forecast">Algoa Bay forecast</Link>
-        </MenuItem>
-        <MenuItem>
-          <Link href="/false-bay-forecast">False Bay forecast</Link>
-        </MenuItem>
-        <MenuItem>
-          <Link href="/atlas">Atlas</Link>
-        </MenuItem>
-      </Menu>
+
 
       {/* HEADER */}
-      <AppBar elevation={0} position="fixed" variant="outlined" color="inherit">
+      <ElevationOnScroll>
+      <AppBar sx={{borderTop: 'none', borderLeft: 'none', borderRight: 'none'}} position="fixed" color="inherit">
         <Toolbar disableGutters sx={{ px: theme => theme.spacing(1) }} variant="dense" {...props}>
-          {/* TOGGLE DRAWER */}
-          <Tooltip placement="right" title="Navigation menu">
-            <IconButton onClick={handleClick} size="medium">
-              <MenuIcon />
-            </IconButton>
-          </Tooltip>
+                {/* NAVIGATION MENU */}
+      <NavigationMenu routes={routes} />
 
           {children}
         </Toolbar>
       </AppBar>
+      </ElevationOnScroll>
+
+      {/* PUSH CONTENT DOWN */}
+      <Toolbar variant="dense" />
     </>
   )
 }

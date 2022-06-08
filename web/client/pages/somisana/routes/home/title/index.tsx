@@ -9,7 +9,7 @@ const Title = () => {
     <Fade key="home" in>
       <Grid
         sx={{
-          height: '100vh',
+          flexGrow: 1,
           alignContent: 'center',
           justifyContent: 'center',
         }}
