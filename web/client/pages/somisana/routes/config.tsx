@@ -1,5 +1,5 @@
 import { lazy } from 'react'
-import {Cog} from '../../../components/icons'
+import { Cog } from '../../../components/icons'
 import Transition from '../../../components/page-transition'
 
 const HomePage = lazy(() => import('./home'))
@@ -19,7 +19,6 @@ export default [
     ),
   },
 
-
   {
     label: 'Privacy policy',
     Icon: Cog,
@@ -33,5 +32,5 @@ export default [
     to: '/privacy-policy',
     excludeFromNav: true,
     includeInFooter: true,
-  }
+  },
 ]
