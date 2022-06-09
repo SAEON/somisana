@@ -3,6 +3,7 @@ import Toolbar from '@mui/material/Toolbar'
 import ElevationOnScroll from './animations/elevation-on-scroll'
 import NavigationMenu from './navigation-menu'
 import Breadcrumbs from './breadcrumbs'
+import Divider from '@mui/material/Divider'
 
 const Header = ({ children, routes = [], ...props }) => {
   return (
@@ -14,16 +15,14 @@ const Header = ({ children, routes = [], ...props }) => {
             borderTop: 'none',
             borderLeft: 'none',
             borderRight: 'none',
-            opacity: 0.8,
+            opacity: 0.95,
           }}
           position="fixed"
           color="inherit"
         >
           <Toolbar disableGutters sx={{ px: theme => theme.spacing(1) }} variant="dense" {...props}>
-            {/* NAVIGATION MENU */}
             <NavigationMenu routes={routes} />
-
-            {/* BREADCRUMBS */}
+            <Divider sx={{ mx: theme => theme.spacing(1) }} flexItem orientation="vertical" />
             <Breadcrumbs routes={routes} />
 
             {children}

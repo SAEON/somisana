@@ -4,17 +4,6 @@ import { Link, useLocation } from 'react-router-dom'
 import MuiIcon from '@mui/material/Icon'
 import MuiLink from '@mui/material/Link'
 
-const sxIcon = {
-  marginRight: theme => theme.spacing(0.5),
-  width: 18,
-  height: 18,
-}
-
-const sxLink = {
-  display: 'flex',
-  alignItems: 'center',
-}
-
 export default ({ contentBase = '/', routes }) => {
   const { pathname } = useLocation() // Trigger re-render on location changes
   const normalizedPathname = pathname.replace(contentBase, '/')
@@ -38,12 +27,12 @@ export default ({ contentBase = '/', routes }) => {
         tree.slice(0, -1).map(({ label, Icon, BreadcrumbsIcon, breadcrumbsLabel, to }) => {
           Icon = BreadcrumbsIcon || Icon
           label = breadcrumbsLabel || label
+          label = label.replace('Home', 'SOMISANA')
 
           return (
-            <MuiLink
-              component={Link}
+            <Typography
+              component={props => <MuiLink component={Link} {...props} />}
               key={label}
-              color="inherit"
               to={
                 to ||
                 tree
@@ -51,21 +40,43 @@ export default ({ contentBase = '/', routes }) => {
                   .map(({ to, label }) => to || label)
                   .join('/')
               }
-              sx={sxLink}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                '& .MuiSvgIcon-root': {
+                  mt: '0 !important',
+                  ml: '0 !important',
+                  mb: '0 !important',
+                },
+              }}
             >
-              {Icon && <MuiIcon sx={sxIcon} size={18} component={Icon} />}
+              {Icon && (
+                <MuiIcon
+                  sx={{ mr: theme => theme.spacing(0.5), width: '0.8em' }}
+                  component={Icon}
+                />
+              )}
               {label}
-            </MuiLink>
+            </Typography>
           )
         })}
 
       {tree.slice(-1).map(({ label, breadcrumbsLabel, Icon, BreadcrumbsIcon } = {}) => {
         Icon = BreadcrumbsIcon || Icon
         label = breadcrumbsLabel || label
+        label = label.replace('Home', 'SOMISANA')
 
         return (
-          <Typography key={label} color="textPrimary" sx={sxLink}>
-            {Icon && <MuiIcon sx={sxIcon} size={18} component={Icon} />}
+          <Typography
+            key={label}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {Icon && (
+              <MuiIcon sx={{ mr: theme => theme.spacing(0.5), width: '0.8em' }} component={Icon} />
+            )}
             {label}
           </Typography>
         )
