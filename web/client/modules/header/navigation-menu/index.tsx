@@ -30,7 +30,7 @@ export default ({ routes }) => {
         {routes.map(({ includeInNavMenu, ...props }) => {
           if (!includeInNavMenu) return null
 
-          return <NavItem key={props.label} {...props} />
+          return <NavItem key={props.label} onClick={() => setAnchorEl(null)} {...props} />
         })}
       </Menu>
     </>

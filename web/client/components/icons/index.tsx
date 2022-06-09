@@ -1,10 +1,45 @@
 import SvgIcon from '@mui/material/SvgIcon'
-import { mdiCog, mdiClose, mdiChevronDown, mdiContentSaveAll, mdiCheckAll, mdiMenu } from '@mdi/js'
 import { styled } from '@mui/material/styles'
+import {
+  mdiCog,
+  mdiClose,
+  mdiChevronDown,
+  mdiMap,
+  mdiContentSaveAll,
+  mdiCheckAll,
+  mdiMenu,
+  mdiHome,
+  mdiLicense,
+  mdiFileSign,
+} from '@mdi/js'
 
 export const Cog = styled((props: any) => (
   <SvgIcon {...props}>
     <path d={mdiCog} />
+  </SvgIcon>
+))({})
+
+export const Home = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiHome} />
+  </SvgIcon>
+))({})
+
+export const Map = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiMap} />
+  </SvgIcon>
+))({})
+
+export const Contract = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiFileSign} />
+  </SvgIcon>
+))({})
+
+export const License = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiLicense} />
   </SvgIcon>
 ))({})
 

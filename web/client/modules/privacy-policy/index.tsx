@@ -4,8 +4,8 @@ import Markdown from 'react-markdown'
 import Div from '../../components/div'
 
 const PrivacyPolicy = () => (
-  <Div sx={{ marginTop: theme => theme.spacing(2) }}>
-    <Container>
+  <Div sx={{ marginTop: theme => theme.spacing(2), flex: 1 }}>
+    <Container sx={{ margin: 'auto' }}>
       <Markdown>{content}</Markdown>
     </Container>
   </Div>
