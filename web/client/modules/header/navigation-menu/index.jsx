@@ -11,45 +11,27 @@ export default ({ routes }) => {
     <>
       <IconButton
         aria-label="Show navigation menu"
-        onClick={e => setAnchorEl(anchorEl ? null : e.currentTarget)}
+        onClick={e => setAnchorEl(e.currentTarget)}
         color="inherit"
-        size="large"
+        size="medium"
       >
         <MenuIcon />
       </IconButton>
 
       <Menu
-        id="site-navigation-menu"
+        id="navigation-menu"
         anchorEl={anchorEl}
-        disableScrollLock
-        keepMounted
         open={Boolean(anchorEl)}
         onClose={() => setAnchorEl(null)}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
       >
-        {routes
-          .filter(({ requiredPermission = false, excludeFromNav = false }) => {
-            if (excludeFromNav) {
-              return false
-            }
+        {routes.map(({ includeInNavMenu, ...props }) => {
+          if (!includeInNavMenu) return null
 
-            return true // refer to data portal for auth
-          })
-          .map(({ label, Icon, to, href }) => {
-            if (!Icon) {
-              throw new Error('Cannot draw menu item without an Icon')
-            }
-
-            return (
-              <NavItem
-                onClick={() => setAnchorEl(null)}
-                href={href}
-                key={label}
-                Icon={Icon}
-                label={label}
-                to={to}
-              />
-            )
-          })}
+          return <NavItem key={props.label} {...props} />
+        })}
       </Menu>
     </>
   )

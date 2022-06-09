@@ -1,9 +1,9 @@
 import Header from '../../../modules/header'
 import SiteSettings from './site-settings'
 
-export default () => {
+export default props => {
   return (
-    <Header>
+    <Header {...props}>
       <SiteSettings />
     </Header>
   )

@@ -1,36 +1,30 @@
-import { lazy } from 'react'
+import { lazy, Suspense } from 'react'
+import Loading from '../../../components/loading'
 import { Cog } from '../../../components/icons'
-import Transition from '../../../components/page-transition'
+import HomePage from './home'
 
-const HomePage = lazy(() => import('./home'))
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
 
 export default [
   {
-    label: 'Home',
     to: '/',
-    includeInFooter: true,
-    exact: true,
+    path: '*',
+    label: 'Home',
     Icon: Cog,
-    render: () => (
-      <Transition>
-        <HomePage />
-      </Transition>
-    ),
+    includeInNavMenu: true,
+    element: () => <HomePage />,
   },
 
   {
+    to: '/privacy-policy',
+    path: '/privacy-policy',
     label: 'Privacy policy',
     Icon: Cog,
-    exact: true,
-    group: 'legal',
-    render: () => (
-      <Transition>
+    includeInNavMenu: true,
+    element: () => (
+      <Suspense fallback={<Loading />}>
         <PrivacyPolicyPage />
-      </Transition>
+      </Suspense>
     ),
-    to: '/privacy-policy',
-    excludeFromNav: true,
-    includeInFooter: true,
   },
 ]
