@@ -24,7 +24,7 @@ const Header = ({ children, routes = [], ...props }) => {
             <NavigationMenu routes={routes} />
 
             {/* BREADCRUMBS */}
-            <Breadcrumbs />
+            <Breadcrumbs routes={routes} />
 
             {children}
           </Toolbar>
