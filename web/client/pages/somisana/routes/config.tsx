@@ -58,21 +58,21 @@ export default [
   },
 
   {
+    to: '/no-route', // Hack - the to property is still required
     group: 'source code',
     label: 'Source code',
     Icon: Github,
     href: 'https://github.com/SAEON/somisana',
     includeInNavMenu: false,
     includeInFooter: true,
-    to: '/no-route', // Hack - the to property is still required
   },
   {
+    to: '/no-route', // Hack - the to property is still required
     group: 'source code',
     label: 'License (MIT)',
     Icon: License,
     includeInNavMenu: false,
     includeInFooter: true,
     href: 'https://github.com/SAEON/somisana/blob/stable/LICENSE',
-    to: '/no-route', // Hack - the to property is still required
   },
 ]

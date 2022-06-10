@@ -1,6 +1,8 @@
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid'
 import { Link } from './_components'
+import Div from '../../components/div'
+import SiteSettings from './site-settings'
 
 export default ({ routes }) => {
   return (
@@ -21,6 +23,14 @@ export default ({ routes }) => {
               <Link {...props} />
             </Grid>
           ))}
+        <Div
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <SiteSettings />
+        </Div>
       </Grid>
     </Grid>
   )

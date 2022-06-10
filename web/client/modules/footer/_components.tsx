@@ -26,7 +26,7 @@ export const Link = ({ label, Icon, href, to }) => {
         component={props => (
           <MuiLink
             sx={{
-              color: theme => isActive ? theme.palette.primary.main : theme.palette.common.white,
+              color: theme => (isActive ? theme.palette.primary.main : theme.palette.common.white),
             }}
             {...props}
             to={href ? undefined : to}

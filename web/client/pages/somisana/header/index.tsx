@@ -1,10 +1,4 @@
 import Header from '../../../modules/header'
-import SiteSettings from './site-settings'
+export { default as LanguageSelector } from './language-selector'
 
-export default props => {
-  return (
-    <Header {...props}>
-      <SiteSettings />
-    </Header>
-  )
-}
+export default props => <Header {...props} />
