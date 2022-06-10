@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
 import Loading from '../../../components/loading'
-import { Home, Contract, Map, About, Github, License } from '../../../components/icons'
+import { Home, Contract, Map, About, Github, License, Link } from '../../../components/icons'
 import HomePage from './home'
 import VisualizationsPage from './visualizations'
 
@@ -75,4 +75,16 @@ export default [
     includeInFooter: true,
     href: 'https://github.com/SAEON/somisana/blob/stable/LICENSE',
   },
+
+  {
+    to: '/no-route', // Hack - the to property is still required
+    group: 'source code',
+    label: 'flagpedia.net',
+    Icon: Link,
+    includeInNavMenu: false,
+    includeInFooter: true,
+    href: 'https://flagpedia.net',
+  },
+
+  
 ]
