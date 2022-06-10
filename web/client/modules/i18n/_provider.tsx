@@ -1,4 +1,4 @@
-import { useContext, createContext, memo } from 'react'
+import { useContext, createContext } from 'react'
 import { ctx as siteSettingsContext } from '../site-settings'
 
 const text = {
@@ -6,10 +6,36 @@ const text = {
     en: 'Sustainable Ocean Modelling Initiative: A South African Approach',
     xh: 'Testing that the translations work',
   },
+  language: {
+    en: 'Language',
+  },
+  'language-settings-blurb': {
+    en: 'The SOMISANA i18n effort (content translation) is a community-driven initiative. If the content is not already translated for the language of your choice, please consider submitting a translation! Content that has not yet been translated will be displayed in the default language (English)',
+  },
+  cookies: {
+    en: 'Cookies',
+  },
+  theme: {
+    en: 'Theme',
+  },
+  'Language translation': {
+    en: 'Language translation',
+  },
+  'suggest-translation': {
+    en: ' Please suggest a translation',
+  },
 }
 
 const t = (s, language) => {
-  return text[s]?.[language] || text[s]?.en
+  if (!text[s]) {
+    throw new Error(
+      'Cannot translate non-existent text key. Please use an existing text key (or create a new one)'
+    )
+  }
+  return {
+    text: text[s][language] || text[s]?.en,
+    missing: !text[s][language],
+  }
 }
 
 export const ctx = createContext({ t })

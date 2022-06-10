@@ -14,12 +14,19 @@ import {
   mdiInformationVariant,
   mdiApi,
   mdiGithub,
-  mdiLink
+  mdiLink,
+  mdiTranslate,
 } from '@mdi/js'
 
 export const Api = styled((props: any) => (
   <SvgIcon {...props}>
     <path d={mdiApi} />
+  </SvgIcon>
+))({})
+
+export const Translate = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiTranslate} />
   </SvgIcon>
 ))({})
 

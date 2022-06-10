@@ -4,7 +4,7 @@ import Markdown from 'react-markdown'
 import Div from '../../components/div'
 
 const About = () => (
-  <Div sx={{ marginTop: theme => theme.spacing(2), flex: 1 }}>
+  <Div sx={{ my: theme => theme.spacing(2), flex: 1 }}>
     <Container sx={{ margin: 'auto' }}>
       <Markdown>{content}</Markdown>
     </Container>

@@ -1,4 +1,5 @@
 import { useContext, memo } from 'react'
+import Translate from '../../../i18n/translate'
 import { ctx as siteSettingsContext } from '../../_provider'
 import Accordion from '../../../../components/accordion'
 import Typography from '@mui/material/Typography'
@@ -20,15 +21,12 @@ const LanguageSettings = memo(
             id="language-settings-header"
           >
             <Typography variant="overline" variantMapping={{ overline: 'h3' }}>
-              Language
+              <Translate contentId="language" />
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
             <SectionDescription sx={{ marginBottom: 0 }}>
-              The SOMISANA i18n effort &#40;content translation&#41; is a community-driven
-              initiative. If the content is not already translated for the language of your choice,
-              please consider submitting a translation! Content that has not yet been translated
-              will be displayed in the default language &#40;English&#41;
+              <Translate contentId="language-settings-blurb" />
             </SectionDescription>
             <FormGroup aria-label="Language settings" row>
               <SelectLocale />

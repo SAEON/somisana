@@ -85,6 +85,4 @@ export default [
     includeInFooter: true,
     href: 'https://flagpedia.net',
   },
-
-  
 ]
