@@ -41,7 +41,7 @@ const LanguageSettings = memo(
   () => true
 )
 
-export default ({forceLanguage}) => {
+export default ({ forceLanguage }) => {
   const { accepted } = useContext(siteSettingsContext)
   return <LanguageSettings forceLanguage accepted={accepted} />
 }

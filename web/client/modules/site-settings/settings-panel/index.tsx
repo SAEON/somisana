@@ -12,7 +12,7 @@ import Fade from '@mui/material/Fade'
 
 const DrawerContent = lazy(() => import('./_content'))
 
-export const SettingPanel = ({forceLanguage, open, setOpen }) => {
+export const SettingPanel = ({ forceLanguage, open, setOpen }) => {
   const { updateSetting } = useContext(siteSettingsContext)
 
   return (

@@ -26,10 +26,7 @@ const Header = ({ children, routes = [], ...props }) => {
             <Divider sx={{ mx: theme => theme.spacing(1) }} flexItem orientation="vertical" />
             <Breadcrumbs routes={routes} />
 
-<Div sx={{ml: 'auto'}}>
-{children}
-</Div>
-  
+            <Div sx={{ ml: 'auto' }}>{children}</Div>
           </Toolbar>
         </AppBar>
       </ElevationOnScroll>
