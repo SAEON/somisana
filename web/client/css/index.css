@@ -5,6 +5,7 @@ html, body, #root {
   align-items: stretch;
   justify-content: flex-start;
   flex-grow: 1;
+  min-height: 100%;
 }
 
 ::-webkit-scrollbar {
@@ -21,4 +22,9 @@ html, body, #root {
 ::-webkit-scrollbar-thumb {
   background-color: #999999;
   border-radius: 4px;
+}
+
+.debug {
+  box-sizing: border-box;
+  border: 2px solid red !important;
 }

@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
 ##############
-# BUILD CONIG
+# BUILD CONFIG
 ##############
 
 ARG API
@@ -12,6 +12,7 @@ ARG MONGO_HOST
 ARG MONGO_DB
 ARG MONGO_USERNAME
 ARG MONGO_PASSWORD
+ARG TECHNICAL_CONTACT
 
 ##############
 # USER CONFIG (runtime)
@@ -69,7 +70,8 @@ COPY web/ .
 
 # Configure client (build time only)
 RUN echo "API=${API}" > .env
-RUN echo "NODE_ENV=${NODE_ENV}"
+RUN echo "NODE_ENV=${NODE_ENV}" >> .env
+RUN echo "TECHNICAL_CONTACT=${TECHNICAL_CONTACT}" >> .env
 
 # Install deps
 RUN npm install -g chomp

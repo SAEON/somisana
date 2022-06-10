@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import PageTransition from './page-transition'
 
-export default ({ routes }) => {
+export default ({ routes, ...props }) => {
   return (
     <Routes>
       {routes.map(({ path, element: E, label }) => {
@@ -11,7 +11,7 @@ export default ({ routes }) => {
             path={path}
             element={
               <PageTransition tKey={label}>
-                <E />
+                <E {...props} />
               </PageTransition>
             }
           />

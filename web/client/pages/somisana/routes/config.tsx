@@ -1,10 +1,11 @@
 import { lazy, Suspense } from 'react'
 import Loading from '../../../components/loading'
-import { Home, Contract, Map } from '../../../components/icons'
+import { Home, Contract, Map, About, Github, License } from '../../../components/icons'
 import HomePage from './home'
+import VisualizationsPage from './visualizations'
 
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
-const AtlasPage = lazy(() => import('../../atlas/ssr'))
+const AboutPage = lazy(() => import('../../../modules/about'))
 
 export default [
   {
@@ -13,18 +14,30 @@ export default [
     label: 'Home',
     Icon: Home,
     includeInNavMenu: true,
-    element: () => <HomePage />,
+    includeInFooter: true,
+    element: props => <HomePage {...props} />,
   },
 
   {
     to: '/visualizations',
     path: '/visualizations',
-    label: 'Atlas',
+    label: 'Visualisations',
     Icon: Map,
     includeInNavMenu: true,
-    element: () => (
+    includeInFooter: true,
+    element: props => <VisualizationsPage {...props} />,
+  },
+
+  {
+    to: '/about',
+    path: '/about',
+    label: 'About',
+    Icon: About,
+    includeInNavMenu: true,
+    includeInFooter: true,
+    element: props => (
       <Suspense fallback={<Loading />}>
-        <AtlasPage />
+        <AboutPage {...props} />
       </Suspense>
     ),
   },
@@ -33,12 +46,33 @@ export default [
     to: '/privacy-policy',
     path: '/privacy-policy',
     label: 'Privacy policy',
+    group: 'legal',
+    includeInFooter: true,
+    includeInNavMenu: false,
     Icon: Contract,
-    includeInNavMenu: true,
-    element: () => (
+    element: props => (
       <Suspense fallback={<Loading />}>
-        <PrivacyPolicyPage />
+        <PrivacyPolicyPage {...props} />
       </Suspense>
     ),
+  },
+
+  {
+    group: 'source code',
+    label: 'Source code',
+    Icon: Github,
+    href: 'https://github.com/SAEON/somisana',
+    includeInNavMenu: false,
+    includeInFooter: true,
+    to: '/no-route', // Hack - the to property is still required
+  },
+  {
+    group: 'source code',
+    label: 'License (MIT)',
+    Icon: License,
+    includeInNavMenu: false,
+    includeInFooter: true,
+    href: 'https://github.com/SAEON/somisana/blob/stable/LICENSE',
+    to: '/no-route', // Hack - the to property is still required
   },
 ]

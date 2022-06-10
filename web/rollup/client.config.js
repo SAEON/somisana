@@ -14,6 +14,8 @@ rimraf.sync(join(__dirname, '../.cache/*.js'))
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
 const API = process.env.API || 'http://localhost:3000'
+const TECHNICAL_CONTACT =
+  process.env.TECHNICAL_CONTACT || 'Missing configuration (TECHNICAL_CONTACT)'
 
 export default {
   input: fs
@@ -52,6 +54,7 @@ export default {
       preventAssignment: true,
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
       'process.env.API': JSON.stringify(API),
+      'process.env.TECHNICAL_CONTACT': JSON.stringify(TECHNICAL_CONTACT),
     }),
     css({
       output: 'index.css',

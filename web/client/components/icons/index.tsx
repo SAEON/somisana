@@ -11,7 +11,28 @@ import {
   mdiHome,
   mdiLicense,
   mdiFileSign,
+  mdiInformationVariant,
+  mdiApi,
+  mdiGithub,
 } from '@mdi/js'
+
+export const Api = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiApi} />
+  </SvgIcon>
+))({})
+
+export const Github = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiGithub} />
+  </SvgIcon>
+))({})
+
+export const About = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiInformationVariant} />
+  </SvgIcon>
+))({})
 
 export const Cog = styled((props: any) => (
   <SvgIcon {...props}>

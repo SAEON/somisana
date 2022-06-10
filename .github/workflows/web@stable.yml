@@ -48,6 +48,7 @@ jobs:
             API=https://somisana.ac.za
             NODE_ENV=production
             TZ=utc
+            TECHNICAL_CONTACT=zd.smith@saeon.nrf.ac.za
           file: docker/web/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}

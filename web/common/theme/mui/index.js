@@ -710,4 +710,8 @@ const theme = createTheme({
   },
 })
 
+if (typeof window != 'undefined') {
+  window.theme = theme
+}
+
 export default createTheme(theme, {})
