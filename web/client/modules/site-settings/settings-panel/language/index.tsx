@@ -10,10 +10,10 @@ import { SectionDescription } from '../components'
 import FormGroup from '@mui/material/FormGroup'
 
 const LanguageSettings = memo(
-  ({ accepted }) => {
+  ({ accepted, forceLanguage }) => {
     return (
       <>
-        <Accordion defaultExpanded={accepted === false ? true : undefined}>
+        <Accordion defaultExpanded={forceLanguage || accepted === false ? true : undefined}>
           <AccordionSummary
             expandIcon={<ExpandMore />}
             aria-controls="language-settings-content"
@@ -41,7 +41,7 @@ const LanguageSettings = memo(
   () => true
 )
 
-export default () => {
+export default ({forceLanguage}) => {
   const { accepted } = useContext(siteSettingsContext)
-  return <LanguageSettings accepted={accepted} />
+  return <LanguageSettings forceLanguage accepted={accepted} />
 }

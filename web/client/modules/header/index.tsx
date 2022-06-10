@@ -4,6 +4,7 @@ import ElevationOnScroll from './animations/elevation-on-scroll'
 import NavigationMenu from './navigation-menu'
 import Breadcrumbs from './breadcrumbs'
 import Divider from '@mui/material/Divider'
+import Div from '../../components/div'
 
 const Header = ({ children, routes = [], ...props }) => {
   return (
@@ -25,7 +26,10 @@ const Header = ({ children, routes = [], ...props }) => {
             <Divider sx={{ mx: theme => theme.spacing(1) }} flexItem orientation="vertical" />
             <Breadcrumbs routes={routes} />
 
-            {children}
+<Div sx={{ml: 'auto'}}>
+{children}
+</Div>
+  
           </Toolbar>
         </AppBar>
       </ElevationOnScroll>

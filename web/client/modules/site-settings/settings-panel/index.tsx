@@ -12,7 +12,7 @@ import Fade from '@mui/material/Fade'
 
 const DrawerContent = lazy(() => import('./_content'))
 
-export const SettingPanel = ({ open, setOpen }) => {
+export const SettingPanel = ({forceLanguage, open, setOpen }) => {
   const { updateSetting } = useContext(siteSettingsContext)
 
   return (
@@ -61,6 +61,7 @@ export const SettingPanel = ({ open, setOpen }) => {
       >
         <Fade in key="lazy-loaded-drawer-content">
           <DrawerContent
+            forceLanguage
             sx={theme => ({
               overflow: 'auto',
               height: '100%',

@@ -7,7 +7,7 @@ export default () => {
   return (
     <>
       <Header routes={routes}>
-        {/* <LanguageSelector /> */}
+        <LanguageSelector />
       </Header>
       <RouteSwitcher routes={routes} />
       <Footer routes={routes} />
