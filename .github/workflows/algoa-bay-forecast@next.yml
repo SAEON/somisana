@@ -20,17 +20,19 @@ env:
 jobs:
   setup-env:
     runs-on: ubuntu-latest
+    outputs:
+      TODAY: ${{ steps.date}}
     steps:
       - name: Get current date
-        run: |
-          echo "TODAY=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
+        id: date
+        run: echo "::set-output name=TODAY::$(date +'%Y-%m-%d')"
 
   test-envs:
     needs: [setup-env]
     runs-on: github-runner.saeon.int
     steps:
       - name: Test
-        run: echo ${{ env.TODAY }}
+        run: echo ${{  needs.setup-env.outputs.TODAY }}
   
   # # Create a folder on SAEON's runner that can be referenced across jobs
   # create-tmp-directory:
