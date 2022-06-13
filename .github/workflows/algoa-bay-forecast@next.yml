@@ -1,11 +1,11 @@
-name: somisana@next
+name: algoa-bay-forecast@next
 
 on: workflow_dispatch
 
 env:
   BRANCH_REF: next
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_toolkit
+  TOOLKIT_IMAGE: ${{ github.repository }}_toolkit
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
   PG_DB: ${{ secrets.PG_DB_NEXT }}
@@ -38,7 +38,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
           tags: |
             type=sha
 

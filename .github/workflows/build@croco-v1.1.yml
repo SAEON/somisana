@@ -5,7 +5,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_croco-v1.1
+  IMAGE_NAME: ${{ github.repository }}_croco
   BRANCH_REF: next
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=sha
+            type=raw,value=1.1
 
       - name: Build and push
         uses: docker/build-push-action@v2
