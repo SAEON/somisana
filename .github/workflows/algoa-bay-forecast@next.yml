@@ -117,7 +117,7 @@ jobs:
 
   # Python script to process the model output into PostgreSQL
   post-processing:
-    needs: [build-toolkit, test-matlab]
+    needs: [build-toolkit, model-run]
     runs-on: github-runner.saeon.int
     steps:
       - name: Algoa Bay forecast (post processing)
