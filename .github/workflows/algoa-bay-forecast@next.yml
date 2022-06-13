@@ -25,12 +25,12 @@ jobs:
   setup-env:
     runs-on: ubuntu-latest
     steps:
-      name: Create datetime env variables
-      run: >-
-        echo "TODAY=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-        echo "YESTERDAY=$(date -d "$xx -1 day" +%Y%m%d)" >> $GITHUB_ENV
-        echo TODO (TODAY, YESTERDAY)
-        echo TODO - use the TODAY VARIABLE to create the name for the tmp/somisana/algoa-bay-forecast/xxxxxxx dir
+      - name: Create datetime env variables
+        run: | 
+          echo "TODAY=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+          echo "YESTERDAY=$(date -d "$xx -1 day" +%Y%m%d)" >> $GITHUB_ENV
+          echo TODO (TODAY, YESTERDAY)
+          echo TODO - use the TODAY VARIABLE to create the name for the tmp/somisana/algoa-bay-forecast/xxxxxxx dir
   
   # Create a folder on SAEON's runner that can be referenced across jobs
   create-tmp-directory:
