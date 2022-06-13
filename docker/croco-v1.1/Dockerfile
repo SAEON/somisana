@@ -14,17 +14,13 @@ WORKDIR /home/somisana
 COPY croco/1.1/ .
 RUN chmod +x jobcomp
 
-RUN tar -xf croco-v1.1.tar.gz && rm  croco-v1.1.tar.gz
+RUN tar -xf croco-v1.1.tar.gz \
+  && rm croco-v1.1.tar.gz
 
-#Copy cppdef.h and param.h from algoa_bay_compile_options [cppdefs.h and param.h for algoa bay have been added to croco/algoa_bay_compile_options] 
+# CROCO needs to be compiled for every model. These are the compilation options specific to the Algoa Bay Forecast model
+#  - cppdefs.h
+#  - param.h 
 COPY croco/algoa_bay_compile_options/ .
 
 RUN chmod u+x run_jobcomp.sh
 RUN mkdir /home/somisana/exe
-#RUN mv jobcomp /somisana/exe
-
-#RUN ./jobcomp>jobcomp.log
-
-CMD [ "default" ]
-
-
