@@ -16,8 +16,6 @@ env:
   MONGO_DB: ${{ secrets.MONGO_DB_NEXT }}
   MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_NEXT }}
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_NEXT }}
-  TODAY: '20220613'
-  YESTERDAY: '20220612'
 
 jobs:
   setup-env:
