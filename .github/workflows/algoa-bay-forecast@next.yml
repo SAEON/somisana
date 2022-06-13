@@ -5,6 +5,7 @@ on: workflow_dispatch
 env:
   BRANCH_REF: next
   REGISTRY: ghcr.io
+  CROCO_IMAGE: ghcr.io/saeon/somisana_croco:1.1
   TOOLKIT_IMAGE: ${{ github.repository }}_toolkit
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
@@ -15,9 +16,23 @@ env:
   MONGO_DB: ${{ secrets.MONGO_DB_NEXT }}
   MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_NEXT }}
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_NEXT }}
+  TODAY: '20220613'
+  YESTERDAY: '20220612'
 
 jobs:
+  # Create a folder on SAEON's runner that can be referenced across jobs
+  create-tmp-directory:
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Create tmp directory
+        run: >-
+          mkdir \
+            -p \
+            /tmp/somisana/run_$(date +%Y%m%d)/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs}
+  
+  # (DEV ONLY) Build most recent Python scripts as a temporary Docker image
   build-toolkit:
+    needs: [create-tmp-directory]
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.meta.outputs.tags }}
@@ -51,6 +66,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+  # Python script to download daily input data
   download-forcing-input:
     needs: [build-toolkit]
     runs-on: github-runner.saeon.int
@@ -59,25 +75,47 @@ jobs:
         run: >-
           docker run \
             --rm \
+            -v /tmp/somisana/run_$(date +%Y%m%d)/download_inputs/:/home/somisana/python/download-forcing-inputs/download-output \
             -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
             -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+            ${{ needs.build-toolkit.outputs.image }} \
                download-forcing-inputs
 
-  test-matlab:
+  # Make the forcing files 
+  pre-processing:
     needs: [download-forcing-input]
     runs-on: github-runner.saeon.int
     steps:
-      - name: Test matlab
+      - name: Run CROCO-tools
         run: >-
           docker run \
             --rm \
             --mac-address 02:42:ff:ff:ff:ff \
             -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
             -v $(pwd)/python/algoa-bay-forecast/matlab:/somisana-scripts/ \
+            -v /tmp/somisana/run_$(date +%Y%m%d)/download_inputs/:/somisana-scripts/forcing-inputs \
             -e MLM_LICENSE_FILE=/licenses/license.lic \
             mathworks/matlab:r2022a \
-              -batch "run('/somisana-scripts/hello.m')"
+              -batch "run('/somisana-scripts/run.m')" 
 
+  # Execute the CROCO exe, in the context of a Docker container instantiated from the Image containing the CROCO executable
+  model-run:
+    needs: [pre-processing]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Execute CROCO binary
+        run: >-
+          docker run \
+            --rm \
+            -v /tmp/somisana/run_$(date +%Y%m%d):/tmp/somisana \
+            -v /$(pwd)/python/algoa-bay-forecast/run_model:/home/somisana \
+            ${{ env.CROCO_IMAGE }} \
+              /home/somisana/run_croco.bash \
+                /tmp/somisana/croco \
+                ${{ env.TODAY }} \
+                ${{ env.YESTERDAY }}
+
+  # Python script to process the model output into PostgreSQL
   post-processing:
     needs: [build-toolkit, test-matlab]
     runs-on: github-runner.saeon.int
