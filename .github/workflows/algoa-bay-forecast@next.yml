@@ -20,6 +20,16 @@ env:
   YESTERDAY: '20220612'
 
 jobs:
+  # Setup dynamic environment variables
+  # TODO https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
+  setup-env:
+    runs-on: ubuntu-latest
+    steps:
+      name: Create datetime env variables
+      run: >-
+        echo TODO (TODAY, YESTERDAY)
+        echo TODO - use the TODAY VARIABLE to create the name for the tmp/somisana/algoa-bay-forecast/xxxxxxx dir
+  
   # Create a folder on SAEON's runner that can be referenced across jobs
   create-tmp-directory:
     runs-on: github-runner.saeon.int
