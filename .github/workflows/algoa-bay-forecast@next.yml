@@ -22,14 +22,10 @@ env:
 jobs:
   setup-env:
     runs-on: ubuntu-latest
-    # outputs:
-    #   TODAY: ${{ steps.date}}
     steps:
-      name: Get current date
-      id: date
-      # run: echo "::set-output name=TODAY::$(date +'%Y-%m-%d')"
-      run: |
-        echo "TODAY=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
+      - name: Get current date
+        run: |
+          echo "TODAY=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
 
   test-envs:
     needs: [setup-env]
