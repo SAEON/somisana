@@ -27,6 +27,8 @@ jobs:
     steps:
       name: Create datetime env variables
       run: >-
+        echo "TODAY=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+        echo "YESTERDAY=$(date -d "$xx -1 day" +%Y%m%d)" >> $GITHUB_ENV
         echo TODO (TODAY, YESTERDAY)
         echo TODO - use the TODAY VARIABLE to create the name for the tmp/somisana/algoa-bay-forecast/xxxxxxx dir
   
@@ -38,7 +40,7 @@ jobs:
         run: >-
           mkdir \
             -p \
-            /tmp/somisana/run_$(date +%Y%m%d)/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs}
+            /tmp/somisana/algoa-bay-forecast/{{ env.TODAY }}/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs}
   
   # (DEV ONLY) Build most recent Python scripts as a temporary Docker image
   build-toolkit:
