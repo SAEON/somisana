@@ -21,7 +21,7 @@ jobs:
   setup-env:
     runs-on: ubuntu-latest
     outputs:
-      TODAY: ${{ steps.date}}
+      TODAY: ${{ steps.date.outputs.date}}
     steps:
       - name: Get current date
         id: date
