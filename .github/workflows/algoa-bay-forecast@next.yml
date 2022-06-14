@@ -38,10 +38,14 @@ jobs:
     runs-on: github-runner.saeon.int
     steps:
       - name: Create /tmp/somisana/algoa-bay-forecast/next/<model run date> directory structure
-        run: |
-          mkdir -p "/tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}"
-          cd "/tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}"
-          mkdir -p {croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs}
+        run: >-
+          mkdir \
+            -p \
+            /tmp/somisana/algoa-bay-forecast/next/"${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}"/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs}
+        # run: |
+        #   mkdir -p "/tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}"
+        #   cd "/tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}"
+        #   mkdir -p {croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs}
   
   # # (DEV ONLY)
   # # The SOMISANA toolkit is a suite of scripts to facilitate
