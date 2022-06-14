@@ -18,140 +18,133 @@ env:
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_NEXT }}
 
 jobs:
+  # Create timestamp strings used for downloading forcing input (or using the restart input from the previous day)
   configure-runtime:
     runs-on: ubuntu-latest
     outputs:
-      TODAY: ${{ steps.TODAY.outputs.TODAY}}
-      YESTERDAY: ${{ steps.YESTERDAY.outputs.YESTERDAY}}
+      MODEL_RUN_DATE: ${{ steps.MODEL_RUN_DATE.outputs.MODEL_RUN_DATE}}
+      RESTART_FILE_DATE: ${{ steps.RESTART_FILE_DATE.outputs.RESTART_FILE_DATE}}
     steps:
-      - name: Set TODAY string context
-        id: TODAY
-        run: echo "::set-output name=TODAY::$(date +'%Y%m%d')"
-      - name: Set YESTERDAY string context
-        id: YESTERDAY
-        run: echo "::set-output name=YESTERDAY::$(date +'%Y%m%d' --date yesterday)"
+      - name: Set MODEL_RUN_DATE string context
+        id: MODEL_RUN_DATE
+        run: echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
+      - name: Set RESTART_FILE_DATE string context
+        id: RESTART_FILE_DATE
+        run: echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date RESTART_FILE_DATE)"  
 
-  test-envs:
+  # Create a tmp folder structure for mode run assets
+  mkdir:
     needs: [configure-runtime]
     runs-on: github-runner.saeon.int
     steps:
-      - name: Test
-        run: |
-          echo ${{  needs.configure-runtime.outputs.TODAY }}
-          echo ${{  needs.configure-runtime.outputs.YESTERDAY }}
+      - name: Create /tmp/somisana/algoa-bay-forecast/<model run date> directory structure
+        run: >-
+          mkdir \
+            -p \
+            /tmp/somisana/algoa-bay-forecast/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs}
   
-  # # Create a folder on SAEON's runner that can be referenced across jobs
-  # create-tmp-directory:
-  #   runs-on: github-runner.saeon.int
-  #   steps:
-  #     - name: Create tmp directory
-  #       run: >-
-  #         mkdir \
-  #           -p \
-  #           /tmp/somisana/run_$(date +%Y%m%d)/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs}
-  
-  # # (DEV ONLY) Build most recent Python scripts as a temporary Docker image
-  # build-toolkit:
-  #   needs: [create-tmp-directory]
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     image: ${{ steps.meta.outputs.tags }}
-  #   steps:
-  #     - name: Check out source code (shared)
-  #       uses: actions/checkout@v2
-  #       with:
-  #         ref: ${{ env.BRANCH_REF }}
+  # (DEV ONLY) Build most recent Python scripts as a temporary Docker image
+  build-toolkit:
+    needs: [mkdir]
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: Check out source code (shared)
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH_REF }}
 
-  #     - name: Log in to the Container registry
-  #       uses: docker/login-action@v1
-  #       with:
-  #         registry: ${{ env.REGISTRY }}
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-  #     - name: Extract metadata (tags, labels) for Docker
-  #       id: meta
-  #       uses: docker/metadata-action@v3
-  #       with:
-  #         images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
-  #         tags: |
-  #           type=sha
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
+          tags: |
+            type=sha
 
-  #     - name: Build and push
-  #       uses: docker/build-push-action@v2
-  #       with:
-  #         context: .
-  #         file: docker/toolkit/Dockerfile
-  #         push: true
-  #         tags: ${{ steps.meta.outputs.tags }}
-  #         labels: ${{ steps.meta.outputs.labels }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: docker/toolkit/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
-  # # Python script to download daily input data
-  # download-forcing-input:
-  #   needs: [build-toolkit]
-  #   runs-on: github-runner.saeon.int
-  #   steps:
-  #     - name: Download Algoa-bay forcing input
-  #       run: >-
-  #         docker run \
-  #           --rm \
-  #           -v /tmp/somisana/run_$(date +%Y%m%d)/download_inputs/:/home/somisana/python/download-forcing-inputs/download-output \
-  #           -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
-  #           -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-  #           ${{ needs.build-toolkit.outputs.image }} \
-  #              download-forcing-inputs
+  # Python script to download daily input data
+  download-forcing-input:
+    needs: [build-toolkit, configure-runtime]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Download Algoa-bay forcing input
+        run: >-
+          docker run \
+            --rm \
+            -v /tmp/somisana/algoa-bay-forecast/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}/download_inputs/:/home/somisana/python/download-forcing-inputs/download-output \
+            -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+            -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+            ${{ needs.build-toolkit.outputs.image }} \
+               download-forcing-inputs
 
-  # # Make the forcing files 
-  # pre-processing:
-  #   needs: [download-forcing-input]
-  #   runs-on: github-runner.saeon.int
-  #   steps:
-  #     - name: Run CROCO-tools
-  #       run: >-
-  #         docker run \
-  #           --rm \
-  #           --mac-address 02:42:ff:ff:ff:ff \
-  #           -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
-  #           -v $(pwd)/python/algoa-bay-forecast/matlab:/somisana-scripts/ \
-  #           -v /tmp/somisana/run_$(date +%Y%m%d)/download_inputs/:/somisana-scripts/forcing-inputs \
-  #           -e MLM_LICENSE_FILE=/licenses/license.lic \
-  #           mathworks/matlab:r2022a \
-  #             -batch "run('/somisana-scripts/run.m')" 
+  # Make the forcing files 
+  pre-processing:
+    needs: [download-forcing-input, configure-runtime]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Run CROCO-tools
+        run: >-
+          docker run \
+            --rm \
+            --mac-address 02:42:ff:ff:ff:ff \
+            -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
+            -v $(pwd)/python/algoa-bay-forecast/matlab:/somisana-scripts/ \
+            -v /tmp/somisana/algoa-bay-forecast/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}/download_inputs/:/somisana-scripts/forcing-inputs \
+            -e MLM_LICENSE_FILE=/licenses/license.lic \
+            mathworks/matlab:r2022a \
+              -batch "run('/somisana-scripts/run.m')" 
 
-  # # Execute the CROCO exe, in the context of a Docker container instantiated from the Image containing the CROCO executable
-  # model-run:
-  #   needs: [pre-processing]
-  #   runs-on: github-runner.saeon.int
-  #   steps:
-  #     - name: Execute CROCO binary
-  #       run: >-
-  #         docker run \
-  #           --rm \
-  #           -v /tmp/somisana/run_$(date +%Y%m%d):/tmp/somisana \
-  #           -v /$(pwd)/python/algoa-bay-forecast/run_model:/home/somisana \
-  #           ${{ env.CROCO_IMAGE }} \
-  #             /home/somisana/run_croco.bash \
-  #               /tmp/somisana/croco \
-  #               ${{ env.TODAY }} \
-  #               ${{ env.YESTERDAY }}
+  # Execute the CROCO exe, in the context of a Docker container instantiated from the Image containing the CROCO executable
+  model-run:
+    needs: [pre-processing, configure-runtime]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Execute CROCO binary
+        run: >-
+          docker run \
+            --rm \
+            -v -v /tmp/somisana/algoa-bay-forecast/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}:/tmp/somisana \
+            -v /$(pwd)/python/algoa-bay-forecast/run_model:/home/somisana \
+            ${{ env.CROCO_IMAGE }} \
+              /home/somisana/run_croco.bash \
+                /tmp/somisana/croco \
+                ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }} \
+                ${{ needs.configure-runtime.outputs.RESTART_FILE_DATE }}
 
-  # # Python script to process the model output into PostgreSQL
-  # post-processing:
-  #   needs: [build-toolkit, model-run]
-  #   runs-on: github-runner.saeon.int
-  #   steps:
-  #     - name: Algoa Bay forecast (post processing)
-  #       run: >-
-  #         docker run \
-  #           --rm \
-  #           -e PG_HOST=${{ env.PG_HOST }} \
-  #           -e PG_PORT=${{ env.PG_PORT }} \
-  #           -e PG_DB=${{ env.PG_DB }} \
-  #           -e PG_USERNAME=${{ env.PG_USERNAME }} \
-  #           -e PG_PASSWORD=${{ env.PG_PASSWORD }} \
-  #           -e MONGO_HOST=${{ env.MONGO_HOST }} \
-  #           -e MONGO_DB=${{ env.MONGO_DB }} \
-  #           -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
-  #           -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
-  #           ${{ needs.build-toolkit.outputs.image }} \
-  #             popr_algoa-bay-forecast
+  # Python script to process the model output into PostgreSQL
+  post-processing:
+    needs: [build-toolkit, model-run]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Algoa Bay forecast (post processing)
+        run: >-
+          docker run \
+            --rm \
+            -e PG_HOST=${{ env.PG_HOST }} \
+            -e PG_PORT=${{ env.PG_PORT }} \
+            -e PG_DB=${{ env.PG_DB }} \
+            -e PG_USERNAME=${{ env.PG_USERNAME }} \
+            -e PG_PASSWORD=${{ env.PG_PASSWORD }} \
+            -e MONGO_HOST=${{ env.MONGO_HOST }} \
+            -e MONGO_DB=${{ env.MONGO_DB }} \
+            -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
+            -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
+            ${{ needs.build-toolkit.outputs.image }} \
+              popr_algoa-bay-forecast
