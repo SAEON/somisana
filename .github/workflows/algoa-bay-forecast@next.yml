@@ -106,7 +106,7 @@ jobs:
         run: >-
           docker run \
             --rm \
-            -v /tmp/somisana/algoa-bay-forecast/next/$dirname/:/tmp/somisana/current
+            -v /tmp/somisana/algoa-bay-forecast/next/$dirname/:/tmp/somisana/current \
             -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
             -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
             ${{ needs.build-toolkit.outputs.image }} \
