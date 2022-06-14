@@ -29,7 +29,7 @@ jobs:
         run: echo "::set-output name=TODAY::$(date +'%Y%m%d')"
       - name: Set YESTERDAY string context
         id: YESTERDAY
-        run: echo "::set-output name=TODAY::$(date +'%Y%m%d' --date yesterday)"
+        run: echo "::set-output name=YESTERDAY::$(date +'%Y%m%d' --date yesterday)"
 
   test-envs:
     needs: [configure-runtime]
