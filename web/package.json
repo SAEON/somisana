@@ -9,11 +9,11 @@
     "rollup:ssr": "rollup --config rollup/server.config.js"
   },
   "dependencies": {
-    "@apollo/client": "^3.6.6",
-    "@emotion/cache": "^11.7.1",
-    "@emotion/react": "^11.9.0",
+    "@apollo/client": "^3.6.8",
+    "@emotion/cache": "^11.9.3",
+    "@emotion/react": "^11.9.3",
     "@emotion/server": "^11.4.0",
-    "@emotion/styled": "^11.8.1",
+    "@emotion/styled": "^11.9.3",
     "@graphql-tools/schema": "^8.3.14",
     "@jspm/generator": "^1.0.0-beta.31",
     "@koa/router": "^10.1.1",
@@ -24,7 +24,7 @@
     "@node-loader/import-maps": "^1.0.3",
     "@rollup/plugin-replace": "^4.0.0",
     "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.197",
+    "@swc/core": "^1.2.198",
     "apollo-server-core": "^3.8.2",
     "apollo-server-koa": "^3.8.2",
     "browserslist": "^4.20.4",
@@ -57,8 +57,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.16",
-    "npm-check-updates": "^13.1.2",
-    "prettier": "^2.6.2"
+    "npm-check-updates": "^13.1.5",
+    "prettier": "^2.7.0"
   },
   "prettier": {
     "printWidth": 100,
