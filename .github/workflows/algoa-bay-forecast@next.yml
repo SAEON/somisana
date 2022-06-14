@@ -43,119 +43,119 @@ jobs:
             -p \
             /tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs}
   
-  # (DEV ONLY)
-  # The SOMISANA toolkit is a suite of scripts to facilitate
-  # running SOMISANA models - for example the Algoa Bay Forecast.
-  # In the context of a testing environment, where updates to these
-  # scripts is part of the development workflow, the toolkit needs
-  # to be compiled on every run
-  build-toolkit:
-    needs: [mkdir]
-    runs-on: ubuntu-latest
-    outputs:
-      image: ${{ steps.meta.outputs.tags }}
-    steps:
-      - name: Check out source code (shared)
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_REF }}
-      - name: Log in to the Container registry
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
-          tags: |
-            type=sha
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: docker/toolkit/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+  # # (DEV ONLY)
+  # # The SOMISANA toolkit is a suite of scripts to facilitate
+  # # running SOMISANA models - for example the Algoa Bay Forecast.
+  # # In the context of a testing environment, where updates to these
+  # # scripts is part of the development workflow, the toolkit needs
+  # # to be compiled on every run
+  # build-toolkit:
+  #   needs: [mkdir]
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     image: ${{ steps.meta.outputs.tags }}
+  #   steps:
+  #     - name: Check out source code (shared)
+  #       uses: actions/checkout@v2
+  #       with:
+  #         ref: ${{ env.BRANCH_REF }}
+  #     - name: Log in to the Container registry
+  #       uses: docker/login-action@v1
+  #       with:
+  #         registry: ${{ env.REGISTRY }}
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Extract metadata (tags, labels) for Docker
+  #       id: meta
+  #       uses: docker/metadata-action@v3
+  #       with:
+  #         images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
+  #         tags: |
+  #           type=sha
+  #     - name: Build and push
+  #       uses: docker/build-push-action@v2
+  #       with:
+  #         context: .
+  #         file: docker/toolkit/Dockerfile
+  #         push: true
+  #         tags: ${{ steps.meta.outputs.tags }}
+  #         labels: ${{ steps.meta.outputs.labels }}
 
-  # Download environmental data used to constrain model boundaries.
-  # These downloads are used to create forcing files that are fed as input to the CROCO model
-  # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
-  # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
-  download-boundary-data:
-    needs: [build-toolkit, configure-runtime]
-    runs-on: github-runner.saeon.int
-    steps:
-      - name: Download Algoa-bay forcing input
-        run: >-
-          docker run \
-            --rm \
-            -v /tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}/download_inputs/:/home/somisana/python/download-forcing-inputs/download-output \
-            -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
-            -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-            ${{ needs.build-toolkit.outputs.image }} \
-               download-forcing-inputs
+  # # Download environmental data used to constrain model boundaries.
+  # # These downloads are used to create forcing files that are fed as input to the CROCO model
+  # # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
+  # # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
+  # download-boundary-data:
+  #   needs: [build-toolkit, configure-runtime]
+  #   runs-on: github-runner.saeon.int
+  #   steps:
+  #     - name: Download Algoa-bay forcing input
+  #       run: >-
+  #         docker run \
+  #           --rm \
+  #           -v /tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}/download_inputs/:/home/somisana/python/download-forcing-inputs/download-output \
+  #           -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+  #           -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+  #           ${{ needs.build-toolkit.outputs.image }} \
+  #              download-forcing-inputs
 
-  # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
-  # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
-  make-forcings:
-    needs: [download-boundary-data, configure-runtime]
-    runs-on: github-runner.saeon.int
-    steps:
-      - name: Make forcing files
-        run: >-
-          docker run \
-            --rm \
-            --mac-address 02:42:ff:ff:ff:ff \
-            -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
-            -v $(pwd)/python/algoa-bay-forecast/matlab:/somisana-scripts/ \
-            -v /tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}/download_inputs/:/somisana-scripts/forcing-inputs \
-            -e MLM_LICENSE_FILE=/licenses/license.lic \
-            mathworks/matlab:r2022a \
-              -batch "run('/somisana-scripts/run.m')" 
+  # # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
+  # # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
+  # make-forcings:
+  #   needs: [download-boundary-data, configure-runtime]
+  #   runs-on: github-runner.saeon.int
+  #   steps:
+  #     - name: Make forcing files
+  #       run: >-
+  #         docker run \
+  #           --rm \
+  #           --mac-address 02:42:ff:ff:ff:ff \
+  #           -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
+  #           -v $(pwd)/python/algoa-bay-forecast/matlab:/somisana-scripts/ \
+  #           -v /tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}/download_inputs/:/somisana-scripts/forcing-inputs \
+  #           -e MLM_LICENSE_FILE=/licenses/license.lic \
+  #           mathworks/matlab:r2022a \
+  #             -batch "run('/somisana-scripts/run.m')" 
 
-  # Execute the CROCO model using the forcing files created previously
-  # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image. 
-  # As such the CROCO model run must be in the context of a container instantiated from that Docker image
-  model-run:
-    needs: [make-forcings, configure-runtime]
-    runs-on: github-runner.saeon.int
-    steps:
-      - name: Execute CROCO binary
-        run: >-
-          docker run \
-            --rm \
-            -v /tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}:/tmp/somisana \
-            -v /$(pwd)/python/algoa-bay-forecast/run_model:/home/somisana \
-            ${{ env.CROCO_IMAGE }} \
-              /home/somisana/run_croco.bash \
-                /tmp/somisana/croco \
-                ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }} \
-                ${{ needs.configure-runtime.outputs.RESTART_FILE_DATE }}
+  # # Execute the CROCO model using the forcing files created previously
+  # # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image. 
+  # # As such the CROCO model run must be in the context of a container instantiated from that Docker image
+  # model-run:
+  #   needs: [make-forcings, configure-runtime]
+  #   runs-on: github-runner.saeon.int
+  #   steps:
+  #     - name: Execute CROCO binary
+  #       run: >-
+  #         docker run \
+  #           --rm \
+  #           -v /tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}:/tmp/somisana \
+  #           -v /$(pwd)/python/algoa-bay-forecast/run_model:/home/somisana \
+  #           ${{ env.CROCO_IMAGE }} \
+  #             /home/somisana/run_croco.bash \
+  #               /tmp/somisana/croco \
+  #               ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }} \
+  #               ${{ needs.configure-runtime.outputs.RESTART_FILE_DATE }}
 
-  # The CROCO model outputs NetCDF data that represents ocean conditions of an 
-  # area mapped to a grid. The post-processing step is for extracting data into
-  # a PostGIS instance where it is useful in the context of web applications 
-  # (specifically as the backend of a WMS server)
-  post-processing:
-    needs: [build-toolkit, model-run]
-    runs-on: github-runner.saeon.int
-    steps:
-      - name: Algoa Bay forecast (post processing)
-        run: >-
-          docker run \
-            --rm \
-            -e PG_HOST=${{ env.PG_HOST }} \
-            -e PG_PORT=${{ env.PG_PORT }} \
-            -e PG_DB=${{ env.PG_DB }} \
-            -e PG_USERNAME=${{ env.PG_USERNAME }} \
-            -e PG_PASSWORD=${{ env.PG_PASSWORD }} \
-            -e MONGO_HOST=${{ env.MONGO_HOST }} \
-            -e MONGO_DB=${{ env.MONGO_DB }} \
-            -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
-            -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
-            ${{ needs.build-toolkit.outputs.image }} \
-              popr_algoa-bay-forecast
+  # # The CROCO model outputs NetCDF data that represents ocean conditions of an 
+  # # area mapped to a grid. The post-processing step is for extracting data into
+  # # a PostGIS instance where it is useful in the context of web applications 
+  # # (specifically as the backend of a WMS server)
+  # post-processing:
+  #   needs: [build-toolkit, model-run]
+  #   runs-on: github-runner.saeon.int
+  #   steps:
+  #     - name: Algoa Bay forecast (post processing)
+  #       run: >-
+  #         docker run \
+  #           --rm \
+  #           -e PG_HOST=${{ env.PG_HOST }} \
+  #           -e PG_PORT=${{ env.PG_PORT }} \
+  #           -e PG_DB=${{ env.PG_DB }} \
+  #           -e PG_USERNAME=${{ env.PG_USERNAME }} \
+  #           -e PG_PASSWORD=${{ env.PG_PASSWORD }} \
+  #           -e MONGO_HOST=${{ env.MONGO_HOST }} \
+  #           -e MONGO_DB=${{ env.MONGO_DB }} \
+  #           -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
+  #           -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
+  #           ${{ needs.build-toolkit.outputs.image }} \
+  #             popr_algoa-bay-forecast
