@@ -18,21 +18,27 @@ env:
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_NEXT }}
 
 jobs:
-  setup-env:
+  configure-runtime:
     runs-on: ubuntu-latest
     outputs:
-      TODAY: ${{ steps.date.outputs.TODAY}}
+      TODAY: ${{ steps.TODAY.outputs.TODAY}}
+      YESTERDAY: ${{ steps.YESTERDAY.outputs.YESTERDAY}}
     steps:
-      - name: Get current date
-        id: date
+      - name: Set TODAY string context
+        id: TODAY
         run: echo "::set-output name=TODAY::$(date +'%Y%m%d')"
+      - name: Set YESTERDAY string context
+        id: YESTERDAY
+        run: echo "::set-output name=TODAY::$(date +'%Y%m%d' --date yesterday)"
 
   test-envs:
-    needs: [setup-env]
+    needs: [configure-runtime]
     runs-on: github-runner.saeon.int
     steps:
       - name: Test
-        run: echo ${{  needs.setup-env.outputs.TODAY }}
+        run: |
+          echo ${{  needs.configure-runtime.outputs.TODAY }}
+          echo ${{  needs.configure-runtime.outputs.YESTERDAY }}
   
   # # Create a folder on SAEON's runner that can be referenced across jobs
   # create-tmp-directory:
