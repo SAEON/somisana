@@ -41,7 +41,9 @@ jobs:
         run: >-
           mkdir \
             -p \
-            /tmp/somisana/algoa-bay-forecast/next/"${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}"/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs}
+            /tmp/somisana/algoa-bay-forecast/next/"${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}"/{ \
+              croco/ { \
+                exe,forcing_temp,forcing,forecast,scratch},download_inputs}
         # run: |
         #   mkdir -p "/tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}"
         #   cd "/tmp/somisana/algoa-bay-forecast/next/${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}"
