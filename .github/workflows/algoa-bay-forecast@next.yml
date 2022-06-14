@@ -111,6 +111,10 @@ jobs:
     env:
       dirname: ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}
     steps:
+      - name: Check out source code (shared)
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH_REF }}
       - name: Make forcing files
         run: >-
           docker run \
@@ -132,6 +136,10 @@ jobs:
     env:
       dirname: ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}
     steps:
+      - name: Check out source code (shared)
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH_REF }}
       - name: Execute CROCO binary
         run: >-
           docker run \
