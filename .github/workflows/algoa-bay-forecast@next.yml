@@ -41,7 +41,8 @@ jobs:
     steps:
       - name: Create /tmp/somisana/algoa-bay-forecast/next/<model run date> directory structure
         run: >-
-          mkdir \
+          rm -rf /tmp/somisana/algoa-bay-forecast/next/$dirname \
+          && mkdir \
             -p \
             /tmp/somisana/algoa-bay-forecast/next/$dirname/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs}
   
