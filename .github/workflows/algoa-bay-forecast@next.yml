@@ -32,7 +32,15 @@ jobs:
         id: RESTART_FILE_DATE
         run: echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date RESTART_FILE_DATE)"  
 
-  # Create a tmp folder structure for mode run assets
+  # Create a tmp folder structure for mode run assets. The format is:
+  ## YYYYMMDD/
+  ##  - download_inputs/
+  ##  - croco/
+  ##     - exe/
+  ##     - forcing/
+  ##     - forcing_temp/
+  ##     - forecast/
+  ##     - scratch/
   mkdir:
     needs: [configure-runtime]
     runs-on: github-runner.saeon.int
@@ -98,7 +106,7 @@ jobs:
         run: >-
           docker run \
             --rm \
-            -v /tmp/somisana/algoa-bay-forecast/next/$dirname/download_inputs/:/home/somisana/python/download-forcing-inputs/download-output \
+            -v /tmp/somisana/algoa-bay-forecast/next/$dirname/:/tmp/somisana/current
             -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
             -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
             ${{ needs.build-toolkit.outputs.image }} \
@@ -122,11 +130,11 @@ jobs:
             --rm \
             --mac-address 02:42:ff:ff:ff:ff \
             -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
-            -v $(pwd)/python/algoa-bay-forecast/matlab:/somisana-scripts/ \
-            -v /tmp/somisana/algoa-bay-forecast/next/$dirname/download_inputs/:/somisana-scripts/forcing-inputs \
+            -v $(pwd)/python/algoa-bay-forecast/matlab:/crocotools/ \
+            -v /tmp/somisana/algoa-bay-forecast/next/$dirname/:/tmp/somisana/current \
             -e MLM_LICENSE_FILE=/licenses/license.lic \
             mathworks/matlab:r2022a \
-              -batch "run('/somisana-scripts/run.m')" 
+              -batch "run('/crocotools/run.m')" 
 
   # Execute the CROCO model using the forcing files created previously
   # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image. 
@@ -145,11 +153,11 @@ jobs:
         run: >-
           docker run \
             --rm \
-            -v /tmp/somisana/algoa-bay-forecast/next/$dirname:/tmp/somisana \
-            -v /$(pwd)/python/algoa-bay-forecast/run_model:/home/somisana \
+            -v /tmp/somisana/algoa-bay-forecast/next/$dirname:/tmp/somisana/current \
+            -v /$(pwd)/python/algoa-bay-forecast/run_model:/home/somisana/current \
             ${{ env.CROCO_IMAGE }} \
               /home/somisana/run_croco.bash \
-                /tmp/somisana/croco \
+                /tmp/somisana/current/croco \
                 ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }} \
                 ${{ needs.configure-runtime.outputs.RESTART_FILE_DATE }}
 
