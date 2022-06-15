@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_web
+  IMAGE_NAME: ${{ github.repository }}_web_stable
   NGINX_IMAGE_NAME: ${{ github.repository }}_nginx_stable
   BRANCH_REF: stable
   DEPLOY_SOURCE: deploy/web/stable/stack.yml
