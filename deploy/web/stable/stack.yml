@@ -21,7 +21,7 @@ services:
         condition: any
         delay: 30s
     ports:
-      - 7008:3000
+      - 7008:80
     networks:
       - somisana_stable
 
