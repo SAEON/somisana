@@ -17,6 +17,8 @@ Python scripts for pre-processing, and post-processing CROCO model output
 
 Include somewhere in the docs that the docker toolkit image must be built for a specific user on a specific server (i.e the userId of an existing user must be passed to the docker build as an argument). Alternatively a different volume mount can be used to the default one included in the GitHub actions yml file of this repo
 
+https://stackoverflow.com/a/67021906/3114742
+
 # Scripts
 
 ## Pre-processing
