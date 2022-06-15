@@ -53,7 +53,7 @@ jobs:
             && mkdir \
               -p \
               /tmp/somisana/algoa-bay-forecast/next/$dirname/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs} \
-                && chown -R :somisana /tmp/somisana/algoa-bay-forecast/next/$dirname/
+                && chown -R :somisana /tmp/somisana/algoa-bay-forecast/next/
   
   # (DEV ONLY)
   # The SOMISANA toolkit is a suite of scripts to facilitate
