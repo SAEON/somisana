@@ -22,10 +22,11 @@ const SelectLocale = memo(
             }
           }
         }
-      `, {
+      `,
+      {
         variables: {
-          languages: LANGUAGES
-        }
+          languages: LANGUAGES,
+        },
       }
     )
 
