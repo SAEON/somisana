@@ -21,7 +21,7 @@ services:
         condition: any
         delay: 30s
     ports:
-      7008:3000
+      - 7008:3000
     networks:
       - somisana_stable
 
@@ -44,7 +44,5 @@ services:
       MONGO_DB: $MONGO_DB
       MONGO_USERNAME: $MONGO_USERNAME
       MONGO_PASSWORD: $MONGO_PASSWORD
-    ports:
-      - 7008:3000
     networks:
       - somisana_stable

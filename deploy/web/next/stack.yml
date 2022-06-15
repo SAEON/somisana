@@ -21,7 +21,7 @@ services:
         condition: any
         delay: 30s
     ports:
-      6007:3000
+      - 6007:3000
     networks:
       - somisana_next
 
