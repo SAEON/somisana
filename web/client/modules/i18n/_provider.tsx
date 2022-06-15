@@ -10,7 +10,7 @@ const text = {
     en: 'Language',
   },
   'language-settings-blurb': {
-    en: 'The SOMISANA i18n effort (content translation) is a community-driven initiative. If the content is not already translated for the language of your choice, please consider submitting a translation! Content that has not yet been translated will be displayed in the default language (English)',
+    en: 'The SOMISANA i18n effort (content translation) will be a community-driven initiative - please submit an issue on GitHub to fast track this feature! (https://github.com/SAEON/somisana/issues)',
   },
   cookies: {
     en: 'Cookies',

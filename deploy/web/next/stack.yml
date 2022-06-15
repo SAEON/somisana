@@ -7,6 +7,24 @@ networks:
     attachable: true
 
 services:
+  nginx:
+    image: $NGINX_IMAGE
+    deploy:
+      replicas: 1
+      rollback_config:
+        parallelism: 0
+      update_config:
+        parallelism: 0
+        order: start-first
+        failure_action: rollback
+      restart_policy:
+        condition: any
+        delay: 30s
+    ports:
+      6007:3000
+    networks:
+      - somisana_next
+
   web:
     image: $DOCKER_IMAGE
     deploy:
@@ -26,7 +44,5 @@ services:
       MONGO_DB: $MONGO_DB
       MONGO_USERNAME: $MONGO_USERNAME
       MONGO_PASSWORD: $MONGO_PASSWORD
-    ports:
-      - 6007:3000
     networks:
       - somisana_next

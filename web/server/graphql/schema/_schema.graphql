@@ -21,9 +21,13 @@ type PageInfo {
   endCursor: String
 }
 
+enum Language {
+  en
+}
+
 type Query {
   node(id: ID!): Node
-  locales(id: ID): [Node]!
+  locales(id: ID, languages: [Language!]): [Node]!
   test: Void
 }
 

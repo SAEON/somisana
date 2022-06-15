@@ -6,12 +6,14 @@ import Tooltip from '@mui/material/Tooltip'
 import { gql, useQuery } from '@apollo/client'
 import Box from '@mui/material/Box'
 
+const LANGUAGES = ['en']
+
 const SelectLocale = memo(
   ({ updateSetting, language }) => {
     const { error, loading, data } = useQuery(
       gql`
-        query locales {
-          locales {
+        query locales($languages: [Language!]) {
+          locales(languages: $languages) {
             id
             ... on Locale {
               name
@@ -20,7 +22,11 @@ const SelectLocale = memo(
             }
           }
         }
-      `
+      `, {
+        variables: {
+          languages: LANGUAGES
+        }
+      }
     )
 
     if (loading) {
