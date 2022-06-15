@@ -50,10 +50,18 @@ jobs:
       - name: Create /tmp/somisana/algoa-bay-forecast/next/<model run date> directory structure
         run: >-
           rm -rf /tmp/somisana/algoa-bay-forecast/next/$dirname \
-            && mkdir \
-              -p \
-              /tmp/somisana/algoa-bay-forecast/next/$dirname/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs} \
-                && chown -R :somisana /tmp/somisana/algoa-bay-forecast/next/
+          && mkdir \
+            -p \
+            /tmp/somisana/algoa-bay-forecast/next/$dirname/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs} \
+          && chown \
+            -R \
+            :somisana \
+            /tmp/somisana/algoa-bay-forecast/next/$dirname \
+          && chmod \
+            -R \
+            774 \
+            /tmp/somisana/algoa-bay-forecast/next/$dirname
+                      
   
   # (DEV ONLY)
   # The SOMISANA toolkit is a suite of scripts to facilitate
