@@ -23,7 +23,7 @@ RUN wget -q https://www.mathworks.com/mpm/glnxa64/mpm && \
     ln -s /opt/matlab/bin/matlab /usr/local/bin/matlab
 
 # Add "matlab" user and grant sudo permission.
-RUN adduser --shell /bin/bash --disabled-password --gecos "" matlab && \
+RUN adduser -u 1998 --shell /bin/bash --disabled-password --gecos "" matlab && \
     echo "matlab ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/matlab && \
     chmod 0440 /etc/sudoers.d/matlab
 
