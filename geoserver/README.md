@@ -1,0 +1,1 @@
+# Refer to the Docker stack in deploy/geoserver
