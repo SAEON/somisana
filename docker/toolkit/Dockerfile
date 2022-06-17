@@ -57,10 +57,7 @@ RUN pipenv install --system
 WORKDIR /home/somisana/python/download-forcing-inputs
 RUN pipenv install --system
 
-RUN mkdir /home/somisana/python/download-forcing-inputs/download-output
-#RUN mkdir /home/somisana/python/download-forcing-inputs/download-output/gfs
-#RUN mkdir /home/somisana/python/download-forcing-inputs/download-output/mercator
-#RUN mkdir /home/somisana/python/download-forcing-inputs/download-output/mercator
+# Set the base working directory for all scripts
 WORKDIR /home/somisana
 
 ENTRYPOINT [ "bin/exe" ]
