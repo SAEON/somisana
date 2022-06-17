@@ -1,0 +1,11 @@
+name: run-model
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hi
+        run: echo hi
