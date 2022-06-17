@@ -142,7 +142,7 @@ jobs:
             -v $(pwd)/python/algoa-bay-forecast/matlab:/crocotools/ \
             -v /tmp/somisana/algoa-bay-forecast/next/$dirname:/tmp/somisana/current \
             -e MLM_LICENSE_FILE=/licenses/license.lic \
-            mathworks/matlab:r2022a \
+            ghcr.io/saeon/somisana_matlab:r2022a \
               -batch "run('/crocotools/run.m')" 
 
   # Execute the CROCO model using the forcing files created previously
