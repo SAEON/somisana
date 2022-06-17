@@ -116,8 +116,8 @@ jobs:
           docker run \
             --rm \
             -v /tmp/somisana/algoa-bay-forecast/next/$dirname/:/tmp/somisana/current \
-            -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
-            -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+            -e COPERNICUS_USERNAME=${{ secrets.COPERNICUS_USERNAME }} \
+            -e COPERNICUS_PASSWORD=${{ secrets.COPERNICUS_PASSWORD }} \
             ${{ needs.build-toolkit.outputs.image }} \
                download-forcing-inputs
 
