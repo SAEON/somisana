@@ -5,7 +5,7 @@
 
 - [Local development](#local-development)
   - [Setup Python](#setup-python)
-  - [Configure motoclient](#configure-motoclient)
+  - [Configure motuclient](#configure-motuclient)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
