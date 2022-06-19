@@ -14,10 +14,11 @@
 ## Setup Python
 
 ```sh
+pipenv --python 3.8.10
 pipenv install
 ```
 
-## Configure motoclient
+## Configure motuclient
 
 Make sure that the `motuclient` CLI is available on your $PATH
 

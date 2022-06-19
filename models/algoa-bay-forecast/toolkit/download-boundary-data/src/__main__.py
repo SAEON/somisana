@@ -60,6 +60,7 @@ def run_mercator():
         DOWNLOADS_PATH
     )
 
+# TODO this is defined twice
 def runInParallel(*fns):
   processes = []
   for fn in fns:
