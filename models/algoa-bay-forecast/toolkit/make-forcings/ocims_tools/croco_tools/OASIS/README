@@ -1,0 +1,116 @@
+Building simple non-nested configuration CONFIG
+===============================================
+
+Same grid for CROCO (Lm x Mm = 73x60 points) 
+           and WRF (west_east x north_south = 73x60 points)
+
+NOTE: CROCO TIMESTEP (croco.in) MUST BE MULTIPLE OF WRF TIMESTEP (namelist.input)
+
+Get the sources code
+--------------------
+- CROCO[/CROCO] (ocean model): follow the instruction there https://gforge.inria.fr/plugins/mediawiki/wiki/croco/index.php/Get_the_code	
+- WRF (from 3.6.1 and after, atmopheric model) (atmopheric model): http://www2.mmm.ucar.edu/wrf/users/
+- OASIS3-MCT_v3.0 (generic coupler) : https://verc.enes.org/oasis/download/oasis-registration-form
+
+Create file system
+------------------
+The file system may look like that:
+
+					$HOME/OASIS
+					    |
+
+	README	oasis3-mct_v3.0	  compile_oa3-mct_v3.0	Run_CONFIG	scripts
+					   		   |
+
+ 				croco_files wrf_files oasis_files outputs run_oasis.sh
+
+
+ - croco_files and wrf_files can be somewhere else, e.g., in their usual places
+   (see CROCO CONFIG and WRF CONFIG below):
+	+ croco_files in $HOME/croco_tools/run_CONFIG
+	+ wrf_files in $HOME/WRFV3/run_CONFIG
+ - code sources can also be copied from SVN directories during compilation (e.g., CROCO).
+
+
+COMPILING
+---------
+ 1 - First Compile OASIS in $HOME/OASIS/oasis3-mct_v3.0
+	* in $HOME/OASIS/oasis3-mct_v3.0/util/make_dir, create make.my_pc 
+          from existing examples (e.g., make.linux.openmpi_gfortran)
+	* in make.my_pc set all library path (netcdf, gfortran, gcc, mpif90 ...) 
+          and name of directory where library will be put 
+          (e.g. $(HOME)/OASIS/compile_oa3-mct_v3.0)
+	* set make.my_pc name in make.inc
+	* make -f TopMakefileOasis3 --> creates libraries in 
+          $(HOME)/OASIS/compile_oa3-mct_v3.0
+
+ 2 - Compile WRF in $HOME/WRF/WRFV3_coupled and $HOME/WRF/WRFV3.
+	* In $HOME/WRF/WRFV3_coupled:
+		- Type "configure" and create configure.wrf with 
+			distributed memory option (dm)
+		- Add all bits of OASIS code as in given examples 
+      		    (e.g., configure.wrf.coupled.linux_openmpi-gfortran) 
+		- $ compile em_real
+			--> coupled real.exe and wrf.exe
+	* In $HOME/WRF/WRFV3: do the same without OASIS 
+			--> uncoupled real.exe and wrf.exe
+
+ 3 - Compile CROCO in $HOME/croco_tools/Run_CONFIG
+	* This should be done after CROCO CONFIG is created (see below)
+	* change dimension in param.h
+	#  elif defined CONFIG 
+	       parameter (LLm0=73, MMm0=60,  N=32)      ! CONFIG
+	* set #define CONFIG and #define OA_COUPLING in cppdefs.h
+
+CROCO CONFIG
+-----------
+ - create and go to ~/croco_tools/Run_CONFIG
+ - set crocotools_param
+ - run make_grid, make_forcing, make_clim --> croco input files
+ - set croco.in
+   (you can check if croco is running alone but with #undef OA_COUPLING)
+
+WRF CONFIG
+----------
+ - create run_CONFIG directory in both coupled and uncoupled WRF directories: 
+	$cp -r run run_CONFIG
+	--> input files will be placed in uncoupled WRF (needs real.exe of uncoupled WRF!)
+	--> wrf.exe of coupled WRF will be used in the coupled run
+ - create preprocessing script file in WPS:
+	cp  $HOME/OASIS/scripts/make_wrf_input.bash $HOME/WRF/WPS/make_wrf_CONFIG.bash 
+        cp  $HOME/OASIS/scripts/configure.namelist_wrf $HOME/WRF/WPS/configure.namelist_CONFIG
+ - set configure.namelist_CONFIG: grid dimensions and dates 
+	(for the same grid, WRF has 1 more point in X and Y directions than CROCO)
+ - set make_wrf_CONFIG.bash: directory paths to uncoupled WRF
+ - run make_wrf_CONFIG.bash (grid,ungrib,metgrid) --> intermediate wrf files
+ - run make_wrf_CONFIG.bash (real.exe of uncoupled WRF) --> wrf input files
+ - run make_wrf_CONFIG.bash (wrf.exe of uncoupled WRF)
+					 --> namelist and check running is ok!
+
+OASIS
+-----
+ - Create grid and masking files
+	+ install NCO if not done before
+ 	+ cp $HOME/OASIS/scripts/make_oasis_files.sh $HOME/OASIS/Run_CONFIG/oasis_files/.
+	+ in make_oasis_files.sh set paths and number of CROCO and WRF grids
+ 	+ run make_oasis_files.sh --> calls NCO functions to creates masks.nc and grids.nc
+
+ - Create namcouple: OASIS namelist file
+	+ cp $HOME/OASIS/scripts/make_namcouple.sh $HOME/OASIS/Run_CONFIG/oasis_files/.
+ 	+ run make_namcouple.sh
+   --> sets automatically:
+	+ coupling frequency: set to ocean model timestep dto 
+	+ LAG: set to LAG = -(cpl_freq - dta) = dta-dto (<=0)
+	+ dimensions: 
+   	 for croco :  XDIM = Lm = 73		YDIM = Mm = 60 
+         for wrf  :  XDIM = west_east_stag = 74	YDIM = south_north_stag = 61
+
+RUN COUPLED MODEL
+-----------------
+ - In file run_oasis set paths and choose number of CPUs for CROCO and WRF
+ - run coupled model:
+	$ run_oasis
+
+Ouf!
+
+ 

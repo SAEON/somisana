@@ -1,0 +1,19 @@
+Opendap_tools
+
+matlab scripts to be use with matlab and opendap.
+getdap.m  : Download a data subsets from a OPENDAP server.
+readattribute.m : Get the attribute of an OPENDAP dataset
+readdap.m : Reproduce the loaddods behavior; retry (100 times) 
+            in case of network failure.
+
+
+A loaddap (version 3.5.2) mex file is provided (compiled on a fedorax64
+plateform with matlab2006, and fedora 32 bit platefom with matlab6).
+The sources can be found at:
+http://www.opendap.org/download/ml-structs.html
+
+loaddap need the libdap-3.6.2 library :
+http://www.opendap.org/download/libdap++.html
+
+Pierrick Penven 2006/10/02
+ 

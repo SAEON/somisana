@@ -1,0 +1,114 @@
+#============================================================
+# Configuration parameters to be used in wrf_wps.bash
+# to generate namelist.wps and namelist.input
+#============================================================
+
+domain_name="BENGUELA_LR_OA"
+
+#-------------------------------------
+# Nb domains
+#-------------------------------------
+max_domains=1
+
+#-------------------------------------
+#  Parent grid parameters
+#    dx: horizontal resolution in [km]
+#-------------------------------------
+dx=30
+
+xdim_d01=74
+ydim_d01=61
+nbvertlevel=28
+nbmetlevel=27 
+#nbmetlevel=18 #AMIP
+
+central_lat=-32
+central_lon=15
+
+topo_res_d01='10m'
+
+#--------------------------------------
+# Dates of parent simulation
+#--------------------------------------
+start_y=2008
+start_m=09
+start_d=01
+start_h=00
+#
+end_y=2008
+end_m=09
+end_d=06
+end_h=18
+
+start_date_d01=$start_y'-'$start_m'-'$start_d'_'$start_h:00:00
+end_date_d01=$end_y'-'$end_m'-'$end_d'_'$end_h:00:00
+
+#------------------------------------------------------------
+# Data Sources
+#
+# LBC_type   : data source for initial and boundary conditions
+# LSM_type   : data source for  surface forcing
+# obc_freq_h : boundary condition frequency        [hour]
+#------------------------------------------------------------
+LBC_type="FNL"
+LSM_type="FNL"
+obc_freq_h=6
+
+#-----------------------------------------------------------
+# I/O parameters
+#
+#  run_time_d      : time of integration         [days]
+#  run_time_h      : time of integration         [hours]
+#                    the 2 time values add up in WRF
+#  his_interval_h  : history data interval time  [hours]
+#  his_frames      : nb of history records per file
+#  restart_flag    : .true. or .false.
+#  rst_interval_h  : restart data interval       [hours]
+#-----------------------------------------------------------
+run_time_d=0
+run_time_h=0
+
+his_interval_h=6
+his_frames=4
+
+restart=".false."
+rst_interval_h=72
+
+sst_update=1
+auxinput4_interval=360
+
+#---------------------------------------------
+# Nesting
+#
+#   xdim_child=N*refine_coef+1
+#   ydim_child=M*refine_coef+1
+#----------------------------------------------
+
+# Nest 1 ====
+
+refine_coef_d02=3
+i_parent_str_d02=30
+j_parent_str_d02=16
+xdim_d02=190
+ydim_d02=100
+
+start_date_d02=$start_date_d01
+end_date_d02=$end_date_d01
+
+topo_res_d02='10m'
+
+# Nest 2 ===
+
+refine_coef_d03=5
+i_parent_str_d03=30
+j_parent_str_d03=21
+xdim_d03=101
+ydim_d03=66
+
+start_date_d03=$start_date_d01
+end_date_d03=$end_date_d01
+
+topo_res_d03='2s'
+
+#=================================================
+

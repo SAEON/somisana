@@ -5,7 +5,7 @@ on: workflow_dispatch
 env:
   BRANCH_REF: next
   REGISTRY: ghcr.io
-  CROCO_IMAGE: ghcr.io/saeon/somisana_croco:1.1
+  CROCO_IMAGE: ${{ github.repository }}_croco-v1.1
   TOOLKIT_IMAGE: ${{ github.repository }}_toolkit
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
@@ -20,6 +20,39 @@ env:
   COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
 
 jobs:
+  # Compile CROCO model from customized source code (specific to the Algoa Bay forecast)
+  compile-model:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.BRANCH_REF }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
+          tags: |
+            type=raw,value=algoa-bay-forecast
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: models/algoa-bay-forecast/croco/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  
   # Create timestamp strings used for downloading forcing input (or using the restart input from the previous day)
   configure-runtime:
     runs-on: ubuntu-latest
@@ -98,7 +131,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: docker/toolkit/Dockerfile
+          file: models/algoa-bay-forecast/toolkit/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -150,8 +183,8 @@ jobs:
   # Execute the CROCO model using the forcing files created previously
   # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image. 
   # As such the CROCO model run must be in the context of a container instantiated from that Docker image
-  model-run:
-    needs: [make-forcings, configure-runtime]
+  run-model:
+    needs: [compile-model, make-forcings, configure-runtime]
     runs-on: github-runner.saeon.int
     env:
       dirname: ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}
@@ -177,7 +210,7 @@ jobs:
   # a PostGIS instance where it is useful in the context of web applications 
   # (specifically as the backend of a WMS server)
   post-processing:
-    needs: [build-toolkit, model-run]
+    needs: [build-toolkit, run-model]
     runs-on: github-runner.saeon.int
     steps:
       - name: Algoa Bay forecast (post processing)
@@ -194,4 +227,4 @@ jobs:
             -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
             -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
             ${{ needs.build-toolkit.outputs.image }} \
-              popr_algoa-bay-forecast
+              post-processing

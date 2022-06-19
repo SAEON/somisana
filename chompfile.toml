@@ -14,8 +14,8 @@ name = 'doc'
 run = '''
   doctoc README.md
   doctoc web/README.md
-  doctoc docker/**/*.md
-  doctoc python/**/*.md
+  doctoc models/**/*.md
+  doctoc models/**/**/*.md
 '''
 
 [[task]]
