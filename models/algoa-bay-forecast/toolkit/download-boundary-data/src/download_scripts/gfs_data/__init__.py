@@ -1,4 +1,3 @@
-from multiprocessing import Process
 from pydap.client import open_url
 from datetime import datetime, timedelta, time
 import sys
@@ -11,16 +10,6 @@ The GFS model is initialised every 6 hours, and provides hourly forecasts
 For the historical data we download the forecast for hours 1 through 6 from each initialisation 
 The forecast data gets downloaded from the latest available initialisation
 """
-
-# TODO this is defined twice
-def runInParallel(*fns):
-  processes = []
-  for fn in fns:
-    p = Process(target=fn)
-    p.start()
-    processes.append(p)
-  for p in processes:
-    p.join()
 
 def download(today, hdays, fdays, geographic_extent, dirout):
     # Configure the script
@@ -56,19 +45,14 @@ def download(today, hdays, fdays, geographic_extent, dirout):
     lookback = today + timedelta(days =- hdays)
     while lookback < latest_dt:
         for offset in range(1, 7):
-            fns.append(lambda: downloadFile(dirout, lookback, offset, geographic_extent))
-            # downloadFile(dirout, lookback, offset, geographic_extent)
+            downloadFile(dirout, lookback, offset, geographic_extent)
         lookback = lookback + timedelta(hours=6)
 
     # Download forecast data
     print('\n=== Downloading forecast data ===')
     total_forecast_hours = int((fdays - delta_days) * 24)
     for offset in range(1, total_forecast_hours + 1):
-        fns.append(lambda: downloadFile(dirout, latest_dt, offset, geographic_extent))
-        # downloadFile(dirout, latest_dt, offset, geographic_extent)
-
-    # Run all the download functions in parallel
-    runInParallel(*fns)
+        downloadFile(dirout, latest_dt, offset, geographic_extent)
 
     print('\nGFS download completed (in '+str(datetime.now() - now)+' h:m:s)')
     return delta_days  # return this as we need it when generating the croco forcing files
