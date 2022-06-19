@@ -6,7 +6,7 @@
 - [Quick start](#quick-start)
   - [Setup your local dev environment](#setup-your-local-dev-environment)
     - [Install binaries](#install-binaries)
-    - [Setup the project](#setup-the-project)
+    - [Setup script for development](#setup-script-for-development)
     - [Setup your environment variables](#setup-your-environment-variables)
     - [Setup 3rd party services for local development](#setup-3rd-party-services-for-local-development)
       - [MongoDB](#mongodb)
@@ -71,7 +71,9 @@ Run this command `cp .env.example .env`, and the adjust the environment variable
 Run 3rd party services via Docker. These commands setup Docker containers that should work with default configuration.
 
 #### MongoDB
+
 Please read the instructions at [https://github.com/SAEON/mongo](https://github.com/SAEON/mongo#local-development) for setting up a local MongoDB server on a local computer
 
 #### PostGIS
+
 Please read the instructions at [https://github.com/SAEON/postgis](https://github.com/SAEON/postgis#local-development) for setting up a local PostGIS server (and PGAdmin4 interface) via Docker
