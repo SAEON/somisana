@@ -195,15 +195,16 @@ jobs:
           ref: ${{ env.BRANCH_REF }}
       - name: Execute CROCO binary
         run: >-
-          docker run \
-            --rm \
-            -v /tmp/somisana/algoa-bay-forecast/next/$dirname:/tmp/somisana/current \
-            -v /$(pwd)/python/algoa-bay-forecast/run_model:/home/somisana/current \
-            ${{ env.CROCO_IMAGE }} \
-              /home/somisana/run_croco.bash \
-                /tmp/somisana/current/croco \
-                ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }} \
-                ${{ needs.configure-runtime.outputs.RESTART_FILE_DATE }}
+          docker pull ${{ env.CROCO_IMAGE }} \
+            && docker run \
+              --rm \
+              -v /tmp/somisana/algoa-bay-forecast/next/$dirname:/tmp/somisana/current \
+              -v /$(pwd)/python/algoa-bay-forecast/run_model:/home/somisana/current \
+              ${{ env.CROCO_IMAGE }} \
+                /home/somisana/run_croco.bash \
+                  /tmp/somisana/current/croco \
+                  ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }} \
+                  ${{ needs.configure-runtime.outputs.RESTART_FILE_DATE }}
 
   # The CROCO model outputs NetCDF data that represents ocean conditions of an 
   # area mapped to a grid. The post-processing step is for extracting data into
