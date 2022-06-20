@@ -47,7 +47,7 @@ jobs:
             NODE_ENV=production
             TZ=utc
             TECHNICAL_CONTACT=zd.smith@saeon.nrf.ac.za
-          file: docker/web/Dockerfile
+          file: web/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
