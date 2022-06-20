@@ -1,9 +1,18 @@
-from multiprocessing import Process
 from config import COPERNICUS_USERNAME, COPERNICUS_PASSWORD
 import os
 from datetime import timedelta, date
 from download_scripts.gfs_data import download as gfs
 from download_scripts.mercator_data import download as mercator
+from multiprocessing import Process
+
+def runInParallel(*fns):
+  processes = []
+  for fn in fns:
+    p = Process(target=fn)
+    p.start()
+    processes.append(p)
+  for p in processes:
+    p.join()
 
 TMP_DIRECTORY = '/tmp/somisana/current'
 DOWNLOADS_PATH = os.path.join(TMP_DIRECTORY, 'download_inputs/')
@@ -59,15 +68,6 @@ def run_mercator():
         depths,
         DOWNLOADS_PATH
     )
-
-def runInParallel(*fns):
-  processes = []
-  for fn in fns:
-    p = Process(target=fn)
-    p.start()
-    processes.append(p)
-  for p in processes:
-    p.join()
 
 # Run script
 runInParallel( run_gfs, run_mercator )

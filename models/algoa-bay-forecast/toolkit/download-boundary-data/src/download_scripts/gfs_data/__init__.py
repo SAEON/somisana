@@ -1,7 +1,8 @@
 from pydap.client import open_url
 from datetime import datetime, timedelta, time
 import sys
-from download_scripts.gfs_data.fns import downloadFile, testUrl
+from download_scripts.gfs_data.fns import make_test_url, make_fn, run_fns
+
 
 """
 Download GFS forecast data for running a croco model
@@ -11,11 +12,12 @@ For the historical data we download the forecast for hours 1 through 6 from each
 The forecast data gets downloaded from the latest available initialisation
 """
 
+
 def download(today, hdays, fdays, geographic_extent, dirout):
     # Configure the script
     now = datetime.now()
-    hdays = hdays + 0.25 # Pad the simulation period (6 hrs)
-    fdays = fdays + 0.25 # Pad the simulation period (6 hrs)
+    hdays = hdays + 0.25  # Pad the simulation period (6 hrs)
+    fdays = fdays + 0.25  # Pad the simulation period (6 hrs)
 
     # Find latest available data
     today = datetime.combine(today, time())
@@ -24,8 +26,8 @@ def download(today, hdays, fdays, geographic_extent, dirout):
     iters = 0
     while not(gfs_exists):
         try:
-            print('Testing for latest data', latest_dt)
-            open_url(testUrl(latest_dt))
+            print('Testing for latest GFS data', latest_dt)
+            open_url(make_test_url(latest_dt))
             gfs_exists = True
         except:
             latest_dt = latest_dt+timedelta(hours=-6)
@@ -40,19 +42,20 @@ def download(today, hdays, fdays, geographic_extent, dirout):
     # Collection download functions for parallel execution
     fns = []
 
-    # Download historical data
-    print('\n\n=== Downloading historical data ===')
-    lookback = today + timedelta(days =- hdays)
+    # Create download functions for historical data
+    lookback = today + timedelta(days=- hdays)
     while lookback < latest_dt:
         for offset in range(1, 7):
-            downloadFile(dirout, lookback, offset, geographic_extent)
+            fns.append(make_fn(dirout, lookback, offset, geographic_extent))
         lookback = lookback + timedelta(hours=6)
 
-    # Download forecast data
-    print('\n=== Downloading forecast data ===')
+    # Create download functions for forecast data
     total_forecast_hours = int((fdays - delta_days) * 24)
     for offset in range(1, total_forecast_hours + 1):
-        downloadFile(dirout, latest_dt, offset, geographic_extent)
+        fns.append(make_fn(dirout, latest_dt, offset, geographic_extent))
+
+    # Run all the downloads
+    run_fns(fns)
 
     print('\nGFS download completed (in '+str(datetime.now() - now)+' h:m:s)')
     return delta_days  # return this as we need it when generating the croco forcing files
