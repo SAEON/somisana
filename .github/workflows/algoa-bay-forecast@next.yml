@@ -76,7 +76,7 @@ jobs:
   ##     - forcing_temp/
   ##     - forecast/
   ##     - scratch/
-  mkdir:
+  create-output-directory:
     needs: [configure-runtime]
     runs-on: github-runner.saeon.int
     env:
@@ -98,14 +98,13 @@ jobs:
             /tmp/somisana/algoa-bay-forecast/next/$dirname
                       
   
-  # (DEV ONLY)
   # The SOMISANA toolkit is a suite of scripts to facilitate
   # running SOMISANA models - for example the Algoa Bay Forecast.
   # In the context of a testing environment, where updates to these
   # scripts is part of the development workflow, the toolkit needs
   # to be compiled on every run
-  build-toolkit:
-    needs: [mkdir]
+  bundle-python-toolkit:
+    needs: [create-output-directory]
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.meta.outputs.tags }}
@@ -141,7 +140,7 @@ jobs:
   # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
   # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
   download-boundary-data:
-    needs: [build-toolkit, configure-runtime]
+    needs: [bundle-python-toolkit, configure-runtime]
     runs-on: github-runner.saeon.int
     env:
       dirname: ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}
@@ -153,7 +152,7 @@ jobs:
             -v /tmp/somisana/algoa-bay-forecast/next/$dirname/:/tmp/somisana/current \
             -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
             -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-            ${{ needs.build-toolkit.outputs.image }} \
+            ${{ needs.bundle-python-toolkit.outputs.image }} \
                download-boundary-data
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
@@ -211,7 +210,7 @@ jobs:
   # a PostGIS instance where it is useful in the context of web applications 
   # (specifically as the backend of a WMS server)
   post-processing:
-    needs: [build-toolkit, run-model]
+    needs: [bundle-python-toolkit, run-model]
     runs-on: github-runner.saeon.int
     steps:
       - name: Algoa Bay forecast (post processing)
@@ -227,5 +226,5 @@ jobs:
             -e MONGO_DB=${{ env.MONGO_DB }} \
             -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
             -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
-            ${{ needs.build-toolkit.outputs.image }} \
+            ${{ needs.bundle-python-toolkit.outputs.image }} \
               post-processing

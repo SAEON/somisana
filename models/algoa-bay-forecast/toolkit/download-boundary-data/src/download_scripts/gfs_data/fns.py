@@ -2,13 +2,13 @@ import os
 from pathlib import Path
 from multiprocessing import Process
 from time import sleep
+from datetime import datetime
 
-base_url = 'https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25_1hr.pl?file=gfs.t'
-base_url_test = 'https://nomads.ncep.noaa.gov/dods/gfs_0p25_1hr/gfs'
+MAX_CONCURRENT_DOWNLOADS = 5
 
 
 def make_download_url(dt, offset, extent):
-    return base_url \
+    return 'https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25_1hr.pl?file=gfs.t' \
         + dt.strftime("%H") \
         + 'z.pgrb2.0p25.f' \
         + str(offset).zfill(3) \
@@ -47,16 +47,16 @@ def download_file(dirout, dt, offset, geographic_extent):
     if not(os.path.isfile(file)):
         url = make_download_url(dt, offset, geographic_extent)
         cmd = 'curl -silent \'' + url + '\'' + ' -o ' + file
-        print('downloading to', file)
+        print(datetime.now().strftime("%H:%M:%S"), 'GFS download', file)
         os.system(cmd)
         # Test for download error (1000 ~= 1kb)
         if Path(file).stat().st_size < 1000:
-            print('WARNING: ' + file + ' could not be downloaded')
+            print('WARNING: Tiny file indicates' + file + ' download error')
             os.remove(file)
 
 
 def make_test_url(dt):
-    return base_url_test \
+    return 'https://nomads.ncep.noaa.gov/dods/gfs_0p25_1hr/gfs' \
         + dt.strftime("%Y") \
         + dt.strftime("%m") \
         + dt.strftime("%d") \
@@ -66,7 +66,6 @@ def make_test_url(dt):
 
 
 def run_fns(fns):
-    MAX_P = 20
     processes = []
     while (len(fns) > 0):
         # Clean up finished processes
@@ -75,7 +74,7 @@ def run_fns(fns):
                 processes.pop(i)
 
         # Start new processes if there is room
-        if (len(processes) < MAX_P):
+        if (len(processes) < MAX_CONCURRENT_DOWNLOADS):
             f = fns.pop(0)
             p = Process(target=f)
             p.start()
