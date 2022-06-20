@@ -111,7 +111,7 @@ jobs:
   ##     - forcing_temp/
   ##     - forecast/
   ##     - scratch/
-  create-output-directory:
+  create-working-directory:
     needs: [configure-runtime]
     runs-on: github-runner.saeon.int
     outputs:
@@ -142,10 +142,10 @@ jobs:
   # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
   # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
   download-boundary-data:
-    needs: [bundle-python-toolkit, create-output-directory]
+    needs: [bundle-python-toolkit, create-working-directory]
     runs-on: github-runner.saeon.int
     env:
-      WORKDIR: ${{ needs.create-output-directory.outputs.WORKDIR }}
+      WORKDIR: ${{ needs.create-working-directory.outputs.WORKDIR }}
     steps:
       - name: Download Algoa-bay forcing input
         run: >-
@@ -160,10 +160,10 @@ jobs:
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
   make-forcings:
-    needs: [download-boundary-data, create-output-directory]
+    needs: [download-boundary-data, create-working-directory]
     runs-on: github-runner.saeon.int
     env:
-      WORKDIR: ${{ needs.create-output-directory.outputs.WORKDIR }}
+      WORKDIR: ${{ needs.create-working-directory.outputs.WORKDIR }}
     steps:
       - name: Check out source code (shared)
         uses: actions/checkout@v2
@@ -185,11 +185,11 @@ jobs:
   # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image.
   # As such the CROCO model run must be in the context of a container instantiated from that Docker image
   run-model:
-    needs: [compile-model, make-forcings, configure-runtime, create-output-directory]
+    needs: [compile-model, make-forcings, configure-runtime, create-working-directory]
     runs-on: github-runner.saeon.int
     env:
       dirname: ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}
-      WORKDIR: ${{ needs.create-output-directory.outputs.WORKDIR }}
+      WORKDIR: ${{ needs.create-working-directory.outputs.WORKDIR }}
     steps:
       - name: Check out source code (shared)
         uses: actions/checkout@v2
@@ -212,10 +212,10 @@ jobs:
   # a PostGIS instance where it is useful in the context of web applications
   # (specifically as the backend of a WMS server)
   post-processing:
-    needs: [bundle-python-toolkit, run-model, create-output-directory]
+    needs: [bundle-python-toolkit, run-model, create-working-directory]
     runs-on: github-runner.saeon.int
     env:
-      WORKDIR: ${{ needs.create-output-directory.outputs.WORKDIR }}
+      WORKDIR: ${{ needs.create-working-directory.outputs.WORKDIR }}
     steps:
       - name: Algoa Bay forecast (post processing)
         run: >-
