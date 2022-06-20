@@ -47,7 +47,7 @@ def run_gfs():
     print('Configuring MatLab with dates from GFS download...')
     env = open(MATLAB_ENV_PATH, "w")
     env.write("""RUN_DATE={0}
-    DELTA_DAYS_GFS={1}"""
+DELTA_DAYS_GFS={1}"""
         .format(
             str(date.today()),
             str(delta_days_gfs)
