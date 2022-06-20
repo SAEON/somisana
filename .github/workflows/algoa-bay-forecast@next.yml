@@ -133,7 +133,7 @@ jobs:
             -R \
             774 \
             /tmp/somisana/algoa-bay-forecast/next/$dirname
-      - name: Create $DIRNAME env
+      - name: Set $WORKDIR
         id: WORKDIR
         run: echo "::set-output name=WORKDIR::/tmp/somisana/algoa-bay-forecast/next/$dirname"
 
@@ -212,7 +212,7 @@ jobs:
   # a PostGIS instance where it is useful in the context of web applications
   # (specifically as the backend of a WMS server)
   post-processing:
-    needs: [bundle-python-toolkit, run-model, create-output-directory.outputs]
+    needs: [bundle-python-toolkit, run-model, create-output-directory]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.create-output-directory.outputs.WORKDIR }}
