@@ -196,9 +196,9 @@ jobs:
             && docker run \
               --rm \
               -v /tmp/somisana/algoa-bay-forecast/next/$dirname:/tmp/somisana/current \
-              -v /$(pwd)/python/algoa-bay-forecast/run_model:/home/somisana/current \
+              -v $(pwd)/models/algoa-bay-forecast/toolkit/run-model:/home/somisana/current \
               ${{ env.CROCO_IMAGE }} \
-                /home/somisana/run_croco.bash \
+                /home/somisana/current/run-model/run_croco.bash \
                   /tmp/somisana/current/croco \
                   ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }} \
                   ${{ needs.configure-runtime.outputs.RESTART_FILE_DATE }}

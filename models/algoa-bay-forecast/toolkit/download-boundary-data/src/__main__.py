@@ -4,7 +4,6 @@ import os
 from datetime import timedelta, date
 from download_scripts.gfs import gfs
 from download_scripts.mercator import mercator
-from multiprocessing import Process
 
 TMP_DIRECTORY = '/tmp/somisana/current'
 DOWNLOADS_PATH = os.path.join(TMP_DIRECTORY, 'download_inputs/')
@@ -31,43 +30,33 @@ print('simulation temporal coverage: ' + str(date_start) + ' - ' + str(date_end)
 print('spatial extent for download of global forcing data (west, east, south, north):')
 
 # Download GFS data (ocean surface weather data)
-def run_gfs():
-  print('Downloading GFS data...')
-  delta_days_gfs = gfs(date_now, hdays, fdays, domain, DOWNLOADS_PATH)
-  print('Configuring MatLab...')
-  env = open(MATLAB_ENV_PATH, "w")
-  env.write("""RUN_DATE={0}
-DELTA_DAYS_GFS={1}"""
-      .format(
-          str(date.today()),
-          str(delta_days_gfs)
-      ))
-  env.close()
+print('Downloading GFS data...')
+delta_days_gfs = gfs(date_now, hdays, fdays, domain, DOWNLOADS_PATH)
 
 # Download Mercator data (ocean boundary data)
-def run_mercator():
-  print('Downloading Mercator data...')
-  mercator(
-      COPERNICUS_USERNAME,
-      COPERNICUS_PASSWORD,
-      domain,
-      date_now,
-      hdays,
-      fdays,
-      varsOfInterest,
-      depths,
-      DOWNLOADS_PATH
-  )
+print('Downloading Mercator data...')
+mercator(
+    COPERNICUS_USERNAME,
+    COPERNICUS_PASSWORD,
+    domain,
+    date_now,
+    hdays,
+    fdays,
+    varsOfInterest,
+    depths,
+    DOWNLOADS_PATH
+)
 
-def run_in_parallel(*fns):
-  processes = []
-  for fn in fns:
-    p = Process(target=fn)
-    p.start()
-    processes.append(p)
-  for p in processes:
-    p.join()
+# MatLab is configured via a .env file
+print('Configuring MatLab...')
+env = open(MATLAB_ENV_PATH, "w")
+env.write("""RUN_DATE={0}
+DELTA_DAYS_GFS={1}"""
+    .format(
+        str(date.today()),
+        str(delta_days_gfs)
+    ))
+env.close()
 
-# Run script
-run_in_parallel( run_gfs, run_mercator )
+# Script complete
 print('Complete!')
