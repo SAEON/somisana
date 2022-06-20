@@ -99,7 +99,7 @@ jobs:
             /tmp/somisana/algoa-bay-forecast/next/$dirname
       - name: Create $DIRNAME env
         id: WORKING_DIRECTORY
-        run: echo "::set-output name=WORKING_DIRECTORY::$dirname"
+        run: echo "::set-output name=WORKING_DIRECTORY::/tmp/somisana/algoa-bay-forecast/next/$dirname"
 
   test:
     runs-on: ubuntu-latest
