@@ -102,7 +102,6 @@ jobs:
   # scripts is part of the development workflow, the toolkit needs
   # to be compiled on every run
   bundle-python-toolkit:
-    needs: [create-output-directory]
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.meta.outputs.tags }}
