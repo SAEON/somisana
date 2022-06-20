@@ -53,6 +53,7 @@
     "ULWAPPSWARM",
     "VENV",
     "virtualenv",
+    "WORKDIR",
     "xarray",
     "xzvf"
   ]

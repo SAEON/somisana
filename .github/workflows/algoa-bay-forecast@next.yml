@@ -79,7 +79,7 @@ jobs:
     needs: [configure-runtime]
     runs-on: github-runner.saeon.int
     outputs:
-      WORKING_DIRECTORY: ${{ steps.WORKING_DIRECTORY.outputs.WORKING_DIRECTORY}}
+      WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
     env:
       dirname: ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}
     steps:
@@ -98,15 +98,15 @@ jobs:
             774 \
             /tmp/somisana/algoa-bay-forecast/next/$dirname
       - name: Create $DIRNAME env
-        id: WORKING_DIRECTORY
-        run: echo "::set-output name=WORKING_DIRECTORY::/tmp/somisana/algoa-bay-forecast/next/$dirname"
+        id: WORKDIR
+        run: echo "::set-output name=WORKDIR::/tmp/somisana/algoa-bay-forecast/next/$dirname"
 
   test:
     runs-on: ubuntu-latest
     needs: [create-output-directory]
     steps:
       - name: test
-        run: echo ${{ needs.create-output-directory.outputs.WORKING_DIRECTORY }}
+        run: echo ${{ needs.create-output-directory.outputs.WORKDIR }}
 
   # # The SOMISANA toolkit is a suite of scripts to facilitate
   # # running SOMISANA models - for example the Algoa Bay Forecast.
