@@ -137,7 +137,7 @@ jobs:
   # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
   # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
   download-boundary-data:
-    needs: [bundle-python-toolkit, configure-runtime]
+    needs: [bundle-python-toolkit, configure-runtime, create-output-directory]
     runs-on: github-runner.saeon.int
     env:
       dirname: ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }}
