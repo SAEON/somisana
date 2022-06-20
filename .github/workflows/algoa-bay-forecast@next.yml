@@ -105,7 +105,8 @@ jobs:
     runs-on: github-runner.saeon.int
     needs: [create-output-directory]
     steps:
-      run: echo ${{ needs.create-output-directory.outputs.WORKING_DIRECTORY }}
+      - name: test
+        run: echo ${{ needs.create-output-directory.outputs.WORKING_DIRECTORY }}
 
   # # The SOMISANA toolkit is a suite of scripts to facilitate
   # # running SOMISANA models - for example the Algoa Bay Forecast.
