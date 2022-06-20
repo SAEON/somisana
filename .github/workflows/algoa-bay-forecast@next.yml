@@ -5,7 +5,7 @@ on: workflow_dispatch
 env:
   BRANCH_REF: next
   REGISTRY: ghcr.io
-  CROCO_IMAGE: ${{ github.repository }}_croco-v1.1
+  CROCO_IMAGE: ${{ github.repository }}_algoa_bay_forecast_croco
   TOOLKIT_IMAGE: ${{ github.repository }}_algoa-bay-forecast_toolkit
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
@@ -52,7 +52,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  
   # Create timestamp strings used for downloading forcing input (or using the restart input from the previous day)
   configure-runtime:
     runs-on: ubuntu-latest
@@ -65,7 +64,7 @@ jobs:
         run: echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
       - name: Set RESTART_FILE_DATE string context
         id: RESTART_FILE_DATE
-        run: echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date RESTART_FILE_DATE)"  
+        run: echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date RESTART_FILE_DATE)"
 
   # Create a tmp folder structure for mode run assets. The format is:
   ## YYYYMMDD/
@@ -96,8 +95,7 @@ jobs:
             -R \
             774 \
             /tmp/somisana/algoa-bay-forecast/next/$dirname
-                      
-  
+
   # The SOMISANA toolkit is a suite of scripts to facilitate
   # running SOMISANA models - for example the Algoa Bay Forecast.
   # In the context of a testing environment, where updates to these
@@ -177,10 +175,10 @@ jobs:
             -v /tmp/somisana/algoa-bay-forecast/next/$dirname:/tmp/somisana/current \
             -e MLM_LICENSE_FILE=/licenses/license.lic \
             ghcr.io/saeon/somisana_matlab:r2022a \
-              -batch "run('/crocotools/run.m')" 
+              -batch "run('/crocotools/run.m')"
 
   # Execute the CROCO model using the forcing files created previously
-  # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image. 
+  # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image.
   # As such the CROCO model run must be in the context of a container instantiated from that Docker image
   run-model:
     needs: [compile-model, make-forcings, configure-runtime]
@@ -205,9 +203,9 @@ jobs:
                   ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }} \
                   ${{ needs.configure-runtime.outputs.RESTART_FILE_DATE }}
 
-  # The CROCO model outputs NetCDF data that represents ocean conditions of an 
+  # The CROCO model outputs NetCDF data that represents ocean conditions of an
   # area mapped to a grid. The post-processing step is for extracting data into
-  # a PostGIS instance where it is useful in the context of web applications 
+  # a PostGIS instance where it is useful in the context of web applications
   # (specifically as the backend of a WMS server)
   post-processing:
     needs: [bundle-python-toolkit, run-model]
