@@ -11,6 +11,8 @@ export default async ({ httpServer, api }) => {
   const apolloServer = new ApolloServer({
     csrfPrevention: true,
     uploads: false,
+    cache: 'bounded',
+    persistedQueries: true,
     schema,
     introspection: true,
     plugins: [
