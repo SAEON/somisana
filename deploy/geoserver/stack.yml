@@ -20,6 +20,10 @@ services:
       restart_policy:
         condition: any
         delay: 30s
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
     ports:
       - 7009:8080
     networks:
