@@ -1,5 +1,9 @@
 version: '3.8'
 
+volumes:
+   data:
+   settings:
+
 networks:
   geoserver:
     name: geoserver
@@ -25,8 +29,13 @@ services:
           cpus: '4'
           memory: 4G
     environment:
+      - GEOSERVER_DATA_DIR=/opt/geoserver/data_dir
+      - GEOWEBCACHE_CACHE_DIR=/opt/geoserver/data_dir/gwc
       - GEOSERVER_ADMIN_USER=$GEOSERVER_ADMIN_USER
       - GEOSERVER_ADMIN_PASSWORD=$GEOSERVER_ADMIN_PASSWORD
+    volumes:
+      - data:/opt/geoserver/data_dir
+      - settings:/settings
     ports:
       - 7009:8080
     networks:
