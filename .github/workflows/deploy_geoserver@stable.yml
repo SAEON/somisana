@@ -1,0 +1,40 @@
+name: deploy_geoserver@stable
+
+on: workflow_dispatch
+
+env:
+  REGISTRY: ghcr.io
+  BRANCH_REF: stable
+  DEPLOY_SOURCE: deploy/geoserver/stack.yml
+  STACK_COMPOSE_PATH: /home/runner/somisana/deploy/geoserver/stack.yml
+  STACK_CONFIG_PATH: /home/runner/somisana/deploy/geoserver/stack.env
+
+jobs:
+  deploy:
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Check out source code (shared)
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH_REF }}
+
+      - name: (SCP) Copy stack configuration to app server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.ULWAPPSWARM01_HOSTNAME }}
+          username: ${{ secrets.ULWAPPSWARM01_HOST_USERNAME }}
+          password: ${{ secrets.ULWAPPSWARM01_HOST_PASSWORD }}
+          port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
+          source: ${{ env.DEPLOY_SOURCE }}
+          target: 'somisana'
+
+      - name: (SSH) Deploy stack
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ULWAPPSWARM01_HOSTNAME }}
+          username: ${{ secrets.ULWAPPSWARM01_HOST_USERNAME }}
+          password: ${{ secrets.ULWAPPSWARM01_HOST_PASSWORD }}
+          port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
+          script: |
+            echo "" > ${{ env.STACK_CONFIG_PATH }}
+            sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} geoserver

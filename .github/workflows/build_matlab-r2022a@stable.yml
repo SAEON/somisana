@@ -1,13 +1,11 @@
-name: build@saeon/somisana_geopython
+name: build_matlab-r2022a@stable
 
 on:
-  push:
-    tags:
-      - geopython.v*
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_geopython
+  IMAGE_NAME: ${{ github.repository }}_matlab
   BRANCH_REF: stable
 
 jobs:
@@ -34,14 +32,13 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest
-            type=match,pattern=geopython\.v(.*),group=1,priority=1000
-            type=sha
+            type=raw,value=r2022a
 
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: docker/geopython
+          context: .
+          file: docker/matlab/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

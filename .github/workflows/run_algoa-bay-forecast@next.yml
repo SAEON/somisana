@@ -1,4 +1,4 @@
-name: algoa-bay-forecast@next
+name: run_algoa-bay-forecast@next
 
 on: workflow_dispatch
 

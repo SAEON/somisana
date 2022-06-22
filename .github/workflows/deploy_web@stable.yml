@@ -1,4 +1,4 @@
-name: web@stable
+name: deploy_web@stable
 
 on: workflow_dispatch
 

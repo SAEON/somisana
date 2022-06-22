@@ -20,3 +20,7 @@ services:
       restart_policy:
         condition: any
         delay: 30s
+    ports:
+      - 7009:8080
+    networks:
+      - geoserver
