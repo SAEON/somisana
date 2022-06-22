@@ -4,20 +4,53 @@ on: workflow_dispatch
 
 env:
   REGISTRY: ghcr.io
+  IMAGE: ${{ github.repository }}_geoserver
   BRANCH_REF: stable
   DEPLOY_SOURCE: deploy/geoserver/stack.yml
   STACK_COMPOSE_PATH: /home/runner/somisana/deploy/geoserver/stack.yml
   STACK_CONFIG_PATH: /home/runner/somisana/deploy/geoserver/stack.env
+  GEOSERVER_ADMIN_USER: ${{ secrets.GEOSERVER_ADMIN_USER }}
+  GEOSERVER_ADMIN_PASSWORD: ${{ secrets.GEOSERVER_ADMIN_PASSWORD }}
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.BRANCH_REF }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE }}
+          tags: |
+            type=sha
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: docker/geopython
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
   deploy:
+    needs: [build]
     runs-on: github-runner.saeon.int
     steps:
       - name: Check out source code (shared)
         uses: actions/checkout@v2
         with:
           ref: ${{ env.BRANCH_REF }}
-
       - name: (SCP) Copy stack configuration to app server
         uses: appleboy/scp-action@master
         with:
@@ -27,7 +60,6 @@ jobs:
           port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
           source: ${{ env.DEPLOY_SOURCE }}
           target: 'somisana'
-
       - name: (SSH) Deploy stack
         uses: appleboy/ssh-action@master
         with:
@@ -36,5 +68,7 @@ jobs:
           password: ${{ secrets.ULWAPPSWARM01_HOST_PASSWORD }}
           port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
           script: |
-            echo "" > ${{ env.STACK_CONFIG_PATH }}
+            echo "IMAGE=${{ needs.build.outputs.image }}" > ${{ env.STACK_CONFIG_PATH }}
+            echo "GEOSERVER_ADMIN_USER=${{ env.GEOSERVER_ADMIN_USER }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "GEOSERVER_ADMIN_PASSWORD=${{ env.GEOSERVER_ADMIN_PASSWORD }}" >> ${{ env.STACK_CONFIG_PATH }}
             sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} geoserver

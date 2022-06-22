@@ -8,7 +8,7 @@ networks:
 
 services:
   geoserver:
-    image: oscarfonts/geoserver
+    image: $IMAGE
     deploy:
       replicas: 1
       rollback_config:
@@ -24,6 +24,9 @@ services:
         limits:
           cpus: '4'
           memory: 4G
+    environment:
+      - GEOSERVER_ADMIN_USER=$GEOSERVER_ADMIN_USER
+      - GEOSERVER_ADMIN_PASSWORD=$GEOSERVER_ADMIN_PASSWORD
     ports:
       - 7009:8080
     networks:
