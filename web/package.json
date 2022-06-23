@@ -9,7 +9,7 @@
     "rollup:ssr": "rollup --config rollup/server.config.js"
   },
   "dependencies": {
-    "@apollo/client": "^3.6.8",
+    "@apollo/client": "^3.6.9",
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
     "@emotion/server": "^11.4.0",
@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.16",
-    "npm-check-updates": "^14.0.1",
+    "npm-check-updates": "^14.0.2",
     "prettier": "^2.7.1"
   },
   "prettier": {
