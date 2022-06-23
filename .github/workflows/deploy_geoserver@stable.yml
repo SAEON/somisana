@@ -9,8 +9,8 @@ env:
   DEPLOY_SOURCE: deploy/geoserver/stack.yml
   STACK_COMPOSE_PATH: /home/runner/somisana/deploy/geoserver/stack.yml
   STACK_CONFIG_PATH: /home/runner/somisana/deploy/geoserver/stack.env
-  GEOSERVER_ADMIN_USER: ${{ secrets.GEOSERVER_ADMIN_USER }}
-  GEOSERVER_ADMIN_PASSWORD: ${{ secrets.GEOSERVER_ADMIN_PASSWORD }}
+  GEOSERVER_ADMIN_USER: ${{ secrets.GEOSERVER_USERNAME }}
+  GEOSERVER_ADMIN_PASSWORD: ${{ secrets.GEOSERVER_PASSWORD }}
 
 jobs:
   deploy:
