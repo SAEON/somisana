@@ -35,9 +35,9 @@ services:
       - GEOSERVER_ADMIN_PASSWORD=$GEOSERVER_ADMIN_PASSWORD
       # - JAVA_OPTS="-DALLOW_ENV_PARAMETRIZATION=true"
       - PROXY_BASE_URL=https://maps.somisana.ac.za/geoserver
-    # volumes:
-    #   - data:/opt/geoserver/data_dir
-    #   - settings:/settings
+    volumes:
+      - data:/opt/geoserver/data_dir
+      - settings:/settings
     ports:
       - 7009:8080
     networks:
