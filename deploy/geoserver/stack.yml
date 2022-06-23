@@ -33,6 +33,8 @@ services:
       - GEOWEBCACHE_CACHE_DIR=/opt/geoserver/data_dir/gwc
       - GEOSERVER_ADMIN_USER=$GEOSERVER_ADMIN_USER
       - GEOSERVER_ADMIN_PASSWORD=$GEOSERVER_ADMIN_PASSWORD
+      - JAVA_OPTS="-DALLOW_ENV_PARAMETRIZATION=true"
+      - PROXY_BASE_URL=https://XXXXX.XXXXXXXXXX.XXXX/geoserver
     volumes:
       - data:/opt/geoserver/data_dir
       - settings:/settings
