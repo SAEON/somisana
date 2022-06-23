@@ -35,6 +35,7 @@ services:
       - GEOSERVER_ADMIN_PASSWORD=$GEOSERVER_ADMIN_PASSWORD
       - JAVA_OPTS="-DALLOW_ENV_PARAMETRIZATION=true"
       - PROXY_BASE_URL=https://maps.somisana.ac.za/geoserver
+      - CSRF_WHITELIST=maps.somisana.ac.za
     volumes:
       - data:/opt/geoserver/data_dir
       - settings:/settings
