@@ -36,6 +36,11 @@ services:
       - JAVA_OPTS="-DALLOW_ENV_PARAMETRIZATION=true"
       - PROXY_BASE_URL=https://maps.somisana.ac.za/geoserver
       - CSRF_WHITELIST=maps.somisana.ac.za
+      - POSTGRES_JNDI=TRUE
+      - HOST=$PG_HOST
+      - POSTGRES_DB=$PG_DB
+      - POSTGRES_USER=$PG_USERNAME
+      - POSTGRES_PASS=$PG_PASSWORD
     volumes:
       - data:/opt/geoserver/data_dir
       - settings:/settings

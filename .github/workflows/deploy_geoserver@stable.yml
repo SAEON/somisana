@@ -5,12 +5,17 @@ on: workflow_dispatch
 env:
   REGISTRY: ghcr.io
   IMAGE: kartoza/geoserver:2.20.4
-  BRANCH_REF: next
+  BRANCH_REF: stable
   DEPLOY_SOURCE: deploy/geoserver/stack.yml
   STACK_COMPOSE_PATH: /home/runner/somisana/deploy/geoserver/stack.yml
   STACK_CONFIG_PATH: /home/runner/somisana/deploy/geoserver/stack.env
   GEOSERVER_ADMIN_USER: ${{ secrets.GEOSERVER_USERNAME }}
   GEOSERVER_ADMIN_PASSWORD: ${{ secrets.GEOSERVER_PASSWORD }}
+  PG_HOST: ${{ secrets.PG_HOST }}
+  PG_PORT: ${{ secrets.PG_PORT_STABLE }}
+  PG_DB: ${{ secrets.PG_DB_STABLE }}
+  PG_USERNAME: ${{ secrets.PG_USERNAME_STABLE }}
+  PG_PASSWORD: ${{ secrets.PG_PASSWORD_STABLE }}
 
 jobs:
   deploy:
@@ -40,4 +45,9 @@ jobs:
             echo "IMAGE=${{ env.IMAGE }}" > ${{ env.STACK_CONFIG_PATH }}
             echo "GEOSERVER_ADMIN_USER=${{ env.GEOSERVER_ADMIN_USER }}" >> ${{ env.STACK_CONFIG_PATH }}
             echo "GEOSERVER_ADMIN_PASSWORD=${{ env.GEOSERVER_ADMIN_PASSWORD }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "PG_HOST=${{ env.PG_HOST }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "PG_PORT=${{ env.PG_PORT }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "PG_DB=${{ env.PG_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "PG_USERNAME=${{ env.PG_USERNAME }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "PG_PASSWORD=${{ env.PG_PASSWORD }}" >> ${{ env.STACK_CONFIG_PATH }}
             sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} geoserver
