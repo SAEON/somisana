@@ -12,7 +12,7 @@ networks:
 
 services:
   geoserver:
-    image: $IMAGE
+    image: kartoza/geoserver:2.20.4
     deploy:
       replicas: 1
       rollback_config:
