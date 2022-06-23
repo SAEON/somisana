@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 env:
   REGISTRY: ghcr.io
-  IMAGE: ${{ github.repository }}_geoserver
+  IMAGE: kartoza/geoserver:2.20.4
   BRANCH_REF: next
   DEPLOY_SOURCE: deploy/geoserver/stack.yml
   STACK_COMPOSE_PATH: /home/runner/somisana/deploy/geoserver/stack.yml
@@ -37,6 +37,7 @@ jobs:
           password: ${{ secrets.ULWAPPSWARM01_HOST_PASSWORD }}
           port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
           script: |
-            echo "GEOSERVER_ADMIN_USER=${{ env.GEOSERVER_ADMIN_USER }}" > ${{ env.STACK_CONFIG_PATH }}
+            echo "IMAGE=${{ env.IMAGE }}" > ${{ env.STACK_CONFIG_PATH }}
+            echo "GEOSERVER_ADMIN_USER=${{ env.GEOSERVER_ADMIN_USER }}" >> ${{ env.STACK_CONFIG_PATH }}
             echo "GEOSERVER_ADMIN_PASSWORD=${{ env.GEOSERVER_ADMIN_PASSWORD }}" >> ${{ env.STACK_CONFIG_PATH }}
             sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} geoserver
