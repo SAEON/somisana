@@ -39,6 +39,7 @@ services:
       - POSTGRES_JNDI=TRUE
       - HOST=$PG_HOST
       - POSTGRES_DB=$PG_DB
+      - POSTGRES_PORT=$PG_PORT
       - POSTGRES_USER=$PG_USERNAME
       - POSTGRES_PASS=$PG_PASSWORD
     volumes:
