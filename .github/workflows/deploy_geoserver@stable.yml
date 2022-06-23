@@ -5,7 +5,7 @@ on: workflow_dispatch
 env:
   REGISTRY: ghcr.io
   IMAGE: ${{ github.repository }}_geoserver
-  BRANCH_REF: stable
+  BRANCH_REF: next
   DEPLOY_SOURCE: deploy/geoserver/stack.yml
   STACK_COMPOSE_PATH: /home/runner/somisana/deploy/geoserver/stack.yml
   STACK_CONFIG_PATH: /home/runner/somisana/deploy/geoserver/stack.env
