@@ -1,9 +1,10 @@
 name: build_geopython@stable
 
 on:
-  push:
-    tags:
-      - geopython.v*
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
 
 env:
   REGISTRY: ghcr.io
@@ -34,9 +35,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest
-            type=match,pattern=geopython\.v(.*),group=1,priority=1000
-            type=sha
+            type=raw,value=${{ github.event.inputs.tag }}
 
       - name: Build and push
         uses: docker/build-push-action@v2

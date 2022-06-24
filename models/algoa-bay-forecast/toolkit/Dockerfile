@@ -1,4 +1,4 @@
-FROM ghcr.io/saeon/somisana_geopython:0.0.8
+FROM ghcr.io/saeon/somisana_geopython:3.8.10
 
 # BUILD TIME
 
@@ -32,21 +32,17 @@ WORKDIR /home/somisana
 
 # Setup pipenv environment
 ENV PATH="/home/somisana/.local/bin:$PATH"
+ENV PIPENV_VENV_IN_PROJECT="enabled"
 ENV LANG="en_US.UTF-8"
 
-COPY --chown=somisana:somisana models/algoa-bay-forecast/toolkit/ .
-
-# Install pipenv
-RUN pip install --user pipenv
+COPY --chown=somisana:somisana . .
 
 # Install "download-boundary-data"
 WORKDIR /home/somisana/download-boundary-data
-RUN pipenv --python 3.8.10
 RUN pipenv sync
 
 # Install "post-processing"
 WORKDIR /home/somisana/post-processing
-RUN pipenv --python 3.8.10
 RUN pipenv sync
 
 # Set the base working directory for all scripts
