@@ -31,6 +31,7 @@ USER somisana
 WORKDIR /home/somisana
 
 # Setup pipenv environment
+RUN pip install --user pipenv
 ENV PATH="/home/somisana/.local/bin:$PATH"
 ENV PIPENV_VENV_IN_PROJECT="enabled"
 ENV LANG="en_US.UTF-8"

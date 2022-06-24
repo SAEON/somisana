@@ -1,4 +1,4 @@
-FROM osgeo/gdal:ubuntu-full-3.5.0
+FROM osgeo/gdal:ubuntu-full-3.4.3
 
 # Disable apt prompts for the duration of the build only
 ARG DEBIAN_FRONTEND=noninteractive
@@ -24,8 +24,7 @@ RUN apt-get update \
     libgeos-c1v5 \
     libgeos-dev \
     libgeos-doc \
-    python3-pip \
-    pipenv
+    python3-pip
 
 # TODO
 #
