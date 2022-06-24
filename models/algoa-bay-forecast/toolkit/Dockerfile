@@ -31,20 +31,22 @@ USER somisana
 WORKDIR /home/somisana
 
 # Setup pipenv environment
-RUN pip install --user pipenv
 ENV PATH="/home/somisana/.local/bin:$PATH"
 ENV PIPENV_VENV_IN_PROJECT="enabled"
 ENV LANG="en_US.UTF-8"
+RUN pip install --user pipenv
 
 COPY --chown=somisana:somisana . .
 
 # Install "download-boundary-data"
 WORKDIR /home/somisana/download-boundary-data
+RUN rm -rf .venv && mkdir .venv
 RUN pipenv sync
 
-# Install "post-processing"
-WORKDIR /home/somisana/post-processing
-RUN pipenv sync
+# # Install "post-processing"
+# WORKDIR /home/somisana/post-processing
+# RUN rm -rf .venv && mkdir .venv
+# RUN pipenv sync
 
 # Set the base working directory for all scripts
 WORKDIR /home/somisana

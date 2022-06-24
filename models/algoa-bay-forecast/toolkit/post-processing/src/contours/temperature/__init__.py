@@ -21,8 +21,6 @@ def transform():
     lon = grid.lon_rho.values
     lat = grid.lat_rho.values
 
-    print(lon)
-
     # Loading sst from file
     sst = data.surf_t.values
     sst[np.where(sst == 0)] = np.nan
@@ -57,6 +55,7 @@ def transform():
 
     for x in np.arange(len(sst)):
         data_crs = ccrs.PlateCarree()
+        print(data_crs)
         figure = plt.figure()
         ax = plt.axes(projection=ccrs.epsg(3857))
         contourf = ax.contourf(lon, lat, sst[x,:,:],vmin = cmin, vmax = cmax, levels=contour_levels, cmap=colormap)
