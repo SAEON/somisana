@@ -10,8 +10,23 @@ connection = psycopg2.connect(
     password=PG_PASSWORD
 )
 
-# Load ./schema.sql
-# Apply schema.sql to the postgis server
-
-
 connection.autocommit = True
+
+# Setup PostGIS schema and WMS views
+schema = open('src/sql/schema.sql', 'r')
+schemaSql = schema.read()
+schema.close()
+salinityView = open('src/sql/wms-abf-salinity.sql', 'r')
+salinityViewSql = salinityView.read()
+salinityView.close()
+temperatureView = open('src/sql/wms-abf-temperature.sql', 'r')
+temperatureViewSql = temperatureView.read()
+temperatureView.close()
+
+cursor = connection.cursor()
+cursor.execute(schemaSql)
+cursor.execute(salinityViewSql)
+cursor.execute(temperatureViewSql)
+print('PostGIS schema (re)initialized')
+
+# Apply schema.sql to the postgis server

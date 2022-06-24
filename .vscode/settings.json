@@ -40,6 +40,7 @@
     "pipenv",
     "pipfile",
     "POSTGIS",
+    "psycopg",
     "pyenv",
     "pypi",
     "pyplot",
