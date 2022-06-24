@@ -39,23 +39,15 @@ COPY --chown=somisana:somisana models/algoa-bay-forecast/toolkit/ .
 # Install pipenv
 RUN pip install --user pipenv
 
-##
-# pipenv install --system is used instead of
-# pipenv sync --system because that way
-# depdendencies can be shared
-#
-# That means that lockfiles are NOT used in this build
-# process, but for now it would be too expensive in
-# terms of storage space to install deps multiple times
-##
-
 # Install "download-boundary-data"
 WORKDIR /home/somisana/download-boundary-data
-RUN pipenv install --system
+RUN pipenv --python 3.8.10
+RUN pipenv sync
 
 # Install "post-processing"
 WORKDIR /home/somisana/post-processing
-RUN pipenv install --system
+RUN pipenv --python 3.8.10
+RUN pipenv sync
 
 # Set the base working directory for all scripts
 WORKDIR /home/somisana

@@ -2,10 +2,10 @@
 
 if [ "$1" == "post-processing" ]; then
   cd post-processing
-  python src
+  pipenv run script
 elif [ "$1" == "download-boundary-data" ]; then
   cd download-boundary-data
-  python src
+  pipenv run script
 else 
   echo "Unknown script specified: $1"
 fi
