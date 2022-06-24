@@ -44,6 +44,7 @@ RUN rm -rf .venv && mkdir .venv
 RUN pipenv sync
 
 # # Install "post-processing"
+# This might be relevant - https://stackoverflow.com/questions/57919110/how-to-set-pipenv-venv-in-project-on-per-project-basis
 # WORKDIR /home/somisana/post-processing
 # RUN rm -rf .venv && mkdir .venv
 # RUN pipenv sync
