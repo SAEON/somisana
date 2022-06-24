@@ -34,7 +34,7 @@ WORKDIR /home/somisana
 ENV PATH="/home/somisana/.local/bin:$PATH"
 ENV PIPENV_VENV_IN_PROJECT="enabled"
 ENV LANG="en_US.UTF-8"
-RUN pip install --user pipenv
+RUN pip install --user pipenv==2022.3.28
 
 COPY --chown=somisana:somisana . .
 
@@ -43,11 +43,10 @@ WORKDIR /home/somisana/download-boundary-data
 RUN rm -rf .venv && mkdir .venv
 RUN pipenv sync
 
-# # Install "post-processing"
-# This might be relevant - https://stackoverflow.com/questions/57919110/how-to-set-pipenv-venv-in-project-on-per-project-basis
-# WORKDIR /home/somisana/post-processing
-# RUN rm -rf .venv && mkdir .venv
-# RUN pipenv sync
+# Install "post-processing"
+WORKDIR /home/somisana/post-processing
+RUN rm -rf .venv && mkdir .venv
+RUN pipenv sync
 
 # Set the base working directory for all scripts
 WORKDIR /home/somisana
