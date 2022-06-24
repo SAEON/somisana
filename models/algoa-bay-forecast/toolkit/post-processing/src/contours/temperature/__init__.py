@@ -50,15 +50,39 @@ def transform():
         dates_check.append(date_round)
         dates.append(date_round.timestamp())
 
+    for step in np.arange(len(sst)):
+        frame = sst[step,:,:]
+        for eta_rho, frame_x in  enumerate(frame):
+            for xi_rho, value in enumerate(frame_x):
+                print('step', step, 'timestamp', data.surf_t.time[step].values)
+                print('x (I think)', 'convert to gps', eta_rho)
+                print('y (I think)', 'convert to gps', xi_rho)
+                print('temperature', value)
+                print(step)
+                
+        # print (step, len(frame))
+        # print(frame[:, 0])
+
+    # for step, cell in enumerate(data.surf_t):
+    #     # Each timestep has:
+    #     #  => a time value
+    #     #  => an xy grid with values
+    #     time = cell.time.values
+    #     for x_step, x_cell in enumerate(cell.xi_rho):
+    #         print('time step', step)
+    #         print('x step', x_step)
+    #     # xi_rho = measurement.xi_rho[time]
+        
+        # print('xi_rho', eta_rho, xi_rho)
+
     #Creating a list of contourf plots to be converted to geojson 
     list_geo = []
 
-    for x in np.arange(len(sst)):
+    for i in np.arange(len(sst)):
         data_crs = ccrs.PlateCarree()
-        print(data_crs)
         figure = plt.figure()
         ax = plt.axes(projection=ccrs.epsg(3857))
-        contourf = ax.contourf(lon, lat, sst[x,:,:],vmin = cmin, vmax = cmax, levels=contour_levels, cmap=colormap)
+        contourf = ax.contourf(lon, lat, sst[i,:,:],vmin = cmin, vmax = cmax, levels=contour_levels, cmap=colormap)
         list_geo.append(contourf)
         plt.close()
 
