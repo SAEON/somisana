@@ -2,21 +2,16 @@
 
 # ENV variables
 
-RUNDIR=$1
-TIME=$2 # i.e. 20220607
-TIME_prev=$3 # i.e. 20220606
+RUNDIR=$1 # set as env variable called WORKDIR in .yml create-working-directory
+TIME=$2 # i.e. 20220607 set as env variable called MODEL_RUN_DATE in .yml configure-runtime
+TIME_prev=$3 # i.e. 20220606  set as env variable called RESTART_FILE_DATE in .yml configure-runtime
 
-#HDAYS=$4
-HDAYS=5
-#FDAYS=$5
+HDAYS=5   # Fixed value in this context
 FDAYS=5
-#NH_AVG=$6
-NH_AVG=6
-#NH_AVGSURF=$7
-NH_AVGSURF=1
+NH_AVG=6  # The temporal average of the output file in hours 
+NH_AVGSURF=1  # The temporal average of the output file (only surface variables) in hours 
 NDAYS=$((HDAYS + FDAYS)) 
-
-INDIR=$(pwd)
+INDIR=$(pwd)  # where the croco_frcst.in file is stored, in the current setup it is in the same directory
 
 ########################################################
 #  Define files and run parameters
@@ -25,13 +20,14 @@ INDIR=$(pwd)
 MPI_NUM_PROCS=12
 
 MODEL=croco
-SCRATCHDIR=$RUNDIR/scratch
-EXEDIR=$RUNDIR/exe
-INPUTDIR_SRF=$RUNDIR/forcing_temp
-INPUTDIR_BRY=$RUNDIR/forcing_temp
-INPUTDIR_GRD=$RUNDIR/forcing
-FORECASTDIR=$RUNDIR/forecast
-ARCHIVEDIR=$RUNDIR/archive
+SCRATCHDIR=$RUNDIR/croco/scratch
+#EXEDIR=$RUNDIR/exe
+EXEDIR=$(pwd)
+INPUTDIR_SRF=$RUNDIR/croco/forcing_temp
+INPUTDIR_BRY=$RUNDIR/croco/forcing_temp
+INPUTDIR_GRD=$RUNDIR/croco/forcing
+FORECASTDIR=$RUNDIR/croco/forecast
+ARCHIVEDIR=$RUNDIR/croco/archive
 #TIDEDIR=$RUNDIR/tide
 CODFILE=croco
 #AGRIF_FILE=AGRIF_FixedGrids.in
