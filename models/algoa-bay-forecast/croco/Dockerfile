@@ -9,7 +9,7 @@ RUN apt-get update \
       libnetcdff-dev \
       libnetcdf-dev
 
-WORKDIR /croco-1.1
+WORKDIR /algoa-bay-forecast
 
 COPY 1.1/ .
 RUN chmod +x jobcomp

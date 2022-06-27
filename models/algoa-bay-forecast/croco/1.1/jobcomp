@@ -25,7 +25,7 @@
 # set source, compilation and run directories
 #
 #SOURCE=/home/gfearon/croco-v1.1/OCEAN
-SOURCE=/home/somisana/croco-v1.1/OCEAN
+SOURCE=/algoa-bay-forecast/croco-v1.1/OCEAN
 SCRDIR=./Compile
 RUNDIR=`pwd`
 ROOT_DIR=$SOURCE/..
