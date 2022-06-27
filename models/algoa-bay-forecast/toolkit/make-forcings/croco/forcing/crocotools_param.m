@@ -138,7 +138,7 @@ DATADIR='/tmp/somisana/current/download_inputs/'
 %
 %  Forcing data directory (ncep, quikscat, datasets download with opendap, etc..)
 %  Directory where the forcing files (created daily) are stored  
-FORC_DATA_DIR ='/tmp/somisana/current/croco/forcing_temp/';
+FORC_DATA_DIR ='/tmp/somisana/current/croco/forcing/';
 %
 % eval(['!mkdir ',CROCO_files_dir])
 %

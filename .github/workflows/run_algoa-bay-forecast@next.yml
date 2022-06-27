@@ -106,9 +106,7 @@ jobs:
   ## YYYYMMDD/
   ##  - download_inputs/
   ##  - croco/
-  ##     - exe/
   ##     - forcing/
-  ##     - forcing_temp/
   ##     - forecast/
   ##     - scratch/
   create-working-directory:
@@ -124,7 +122,7 @@ jobs:
           rm -rf /tmp/somisana/algoa-bay-forecast/next/$dirname \
           && mkdir \
             -p \
-            /tmp/somisana/algoa-bay-forecast/next/$dirname/{croco/{exe,forcing_temp,forcing,forecast,scratch},download_inputs} \
+            /tmp/somisana/algoa-bay-forecast/next/$dirname/{croco/{forcing,forecast,scratch},download_inputs} \
           && chown \
             -R \
             :somisana \
