@@ -36,7 +36,7 @@ ENV PIPENV_VENV_IN_PROJECT="enabled"
 ENV LANG="en_US.UTF-8"
 RUN pip install --user pipenv==2022.3.28
 
-COPY --chown=somisana:somisana . .
+COPY --chown=somisana:somisana toolkit/ .
 
 # Install "download-boundary-data"
 WORKDIR /home/somisana/download-boundary-data
