@@ -9,7 +9,7 @@ RUN apt-get update \
       libnetcdff-dev \
       libnetcdf-dev
 
-WORKDIR /home/somisana
+WORKDIR /croco-1.1
 
 COPY 1.1/ .
 RUN chmod +x jobcomp
@@ -21,4 +21,5 @@ RUN tar -xf croco-v1.1.tar.gz \
 COPY overwrites/ .
 
 RUN chmod u+x run_jobcomp.sh
-RUN mkdir /home/somisana/exe
+RUN mkdir /croco-exe
+RUN ./run_jobcomp.sh

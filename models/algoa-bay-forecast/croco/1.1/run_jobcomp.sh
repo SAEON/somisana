@@ -2,4 +2,4 @@
 
 ./jobcomp>jobcomp.log
 
-mv cppdefs.h param.h croco Compile jobcomp.log /home/somisana/exe
+mv cppdefs.h param.h croco Compile jobcomp.log /croco-exe
