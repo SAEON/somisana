@@ -1,16 +1,11 @@
 #!/bin/bash
-#
-###############################################
-# define the time variables from input arguments
-################################################
-# this script gets called from run_frcst.py with these inputs
+
+# ENV variables
+
 RUNDIR=$1
-INDIR=$(pwd)
-#RUNDIR='/home/matthew/github/somisana/python/algoa-bay-forecast/matlab/croco'
-TIME=$2
-#TIME='20220607'
-TIME_prev=$3
-#TIME_prev='20220606'
+TIME=$2 # i.e. 20220607
+TIME_prev=$3 # i.e. 20220606
+
 #HDAYS=$4
 HDAYS=5
 #FDAYS=$5
@@ -20,6 +15,8 @@ NH_AVG=6
 #NH_AVGSURF=$7
 NH_AVGSURF=1
 NDAYS=$((HDAYS + FDAYS)) 
+
+INDIR=$(pwd)
 
 ########################################################
 #  Define files and run parameters

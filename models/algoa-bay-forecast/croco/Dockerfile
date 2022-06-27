@@ -4,22 +4,40 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
   && apt-get install -y \
-      mpich \
-      make \
-      libnetcdff-dev \
-      libnetcdf-dev
+    mpich \
+    make \
+    libnetcdff-dev \
+    libnetcdf-dev
 
 WORKDIR /algoa-bay-forecast
 
-COPY 1.1/ .
-RUN chmod +x jobcomp
+# Copy the CROCO model source code
+COPY 1.1/ croco-1.1/
 
-RUN tar -xf croco-v1.1.tar.gz \
-  && rm croco-v1.1.tar.gz
-
-# Customize the compiliation (cppdefs.h, param.h)
+# The overwrites (cppdefs.h and param.h) are
+# needed both during compilation and during model execution
+COPY overwrites/ croco-1.1/
 COPY overwrites/ .
 
-RUN chmod u+x run_jobcomp.sh
-RUN mkdir /croco-exe
-RUN ./run_jobcomp.sh
+# Create the entrypoint to run the compiled model
+COPY run-model/ .
+
+# Compile the model
+WORKDIR /algoa-bay-forecast/croco-1.1
+RUN tar -xf croco-v1.1.tar.gz \
+  && rm croco-v1.1.tar.gz \
+  && chmod +x jobcomp \
+  && ./jobcomp > jobcomp.log
+
+# Move the compiled outputs
+WORKDIR /algoa-bay-forecast
+RUN mv \
+  croco-1.1/croco \
+  croco-1.1/Compile \
+  croco-1.1/jobcomp.log \
+  ./ \
+  && rm -rf croco-1.1
+
+# The entrypoint is script to run the model
+ENTRYPOINT [ "run_croco.bash" ]
+CMD [ "args-missing" ]
