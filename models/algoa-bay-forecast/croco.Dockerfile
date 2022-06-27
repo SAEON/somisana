@@ -22,9 +22,6 @@ COPY croco/overwrites/ .
 # Create the entrypoint to run the compiled model
 COPY croco/run-model/ .
 
-# Copy the grid into the running directory
-COPY lib/grd.nc .
-
 # Compile the model
 WORKDIR /algoa-bay-forecast/croco-1.1
 RUN tar -xf croco-v1.1.tar.gz \
@@ -40,7 +37,3 @@ RUN mv \
   croco-1.1/jobcomp.log \
   ./ \
   && rm -rf croco-1.1
-
-# The entrypoint is script to run the model
-ENTRYPOINT [ "run_croco.bash" ]
-CMD [ "args-missing" ]

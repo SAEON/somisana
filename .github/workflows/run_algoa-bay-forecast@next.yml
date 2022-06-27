@@ -198,10 +198,11 @@ jobs:
         run: >-
           docker run \
             --rm \
-            -v $WORKDIR:/algoa-bay-forecast/forcings \
+            -v $WORKDIR:/algoa-bay-forecast/current \
+            -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
             ${{ needs.compile-model.outputs.image }} \
-              /home/somisana/source-code/run_croco.bash \
-                /algoa-bay-forecast/forcings/croco \
+              ./run_croco.bash \
+                /algoa-bay-forecast/current \
                 ${{ needs.configure-runtime.outputs.MODEL_RUN_DATE }} \
                 ${{ needs.configure-runtime.outputs.RESTART_FILE_DATE }}
 
