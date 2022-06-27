@@ -12,15 +12,18 @@ RUN apt-get update \
 WORKDIR /algoa-bay-forecast
 
 # Copy the CROCO model source code
-COPY 1.1/ croco-1.1/
+COPY croco/1.1/ croco-1.1/
 
 # The overwrites (cppdefs.h and param.h) are
 # needed both during compilation and during model execution
-COPY overwrites/ croco-1.1/
-COPY overwrites/ .
+COPY croco/overwrites/ croco-1.1/
+COPY croco/overwrites/ .
 
 # Create the entrypoint to run the compiled model
-COPY run-model/ .
+COPY croco/run-model/ .
+
+# Copy the grid into the running directory
+COPY lib/grd.nc .
 
 # Compile the model
 WORKDIR /algoa-bay-forecast/croco-1.1

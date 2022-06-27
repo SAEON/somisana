@@ -46,7 +46,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: models/algoa-bay-forecast/croco
+          context: models/algoa-bay-forecast
+          file: models/algoa-bay-forecast/croco.Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -174,6 +175,7 @@ jobs:
             --mac-address 02:42:ff:ff:ff:ff \
             -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
             -v $(pwd)/models/algoa-bay-forecast/toolkit/make-forcings:/crocotools/ \
+            -v $(pwd)/models/algoa-bay-forecast/toolkit/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
             -v $WORKDIR:/tmp/somisana/current \
             -e MLM_LICENSE_FILE=/licenses/license.lic \
             ghcr.io/saeon/somisana_matlab:r2022a \
