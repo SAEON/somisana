@@ -1,7 +1,7 @@
 import xarray as xr
 import numpy as np
 from datetime import timedelta, datetime
-from config import MODEL_OUTPUT_PATH, MODEL_GRID_PATH
+from config import MODEL_OUTPUT_PATH
 
 # All dates in the CROCO output are represented
 # in seconds from 1 Jan 2000 (i.e. the reference date)
@@ -18,13 +18,10 @@ def hour_rounder(t):
 
 def transform():
     data = xr.open_dataset(MODEL_OUTPUT_PATH)
-    grid = xr.open_dataset(MODEL_GRID_PATH)
 
     print(data)
 
     # Dimensions that need to be transformed
-    lon = grid.lon_rho.values
-    lat = grid.lat_rho.values
     time = data.time.values
 
     # Variables
