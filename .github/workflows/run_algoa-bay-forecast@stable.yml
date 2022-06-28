@@ -2,7 +2,7 @@ name: run_algoa-bay-forecast@stable
 
 on:
   schedule:
-    - cron:  '0 1 * * *'
+    - cron:  '0 4 * * *'
 
 env:
   BRANCH_REF: stable
