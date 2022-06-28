@@ -4,6 +4,7 @@
 *.jpg binary
 *.zip binary
 *.nc binary
+*.nc4 binary
 *.tar.gz binary
 *.jar binary
 *.pdf binary
