@@ -3,7 +3,6 @@
 *.PNG binary
 *.jpg binary
 *.zip binary
-*.nc binary
 *.tar.gz binary
 *.jar binary
 *.pdf binary
@@ -15,6 +14,5 @@
 *.mexmaci binary
 *.mexs64 binary
 *.mexw32 binary
-*.nc4 binary
 *.grb binary
 *.cdf binary
