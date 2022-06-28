@@ -11,6 +11,11 @@ REFERENCE_DATE = datetime(2000, 1, 1, 0, 0, 0)
 def hour_rounder(t):
     return (t.replace(second=0, microsecond=0, minute=0, hour=t.hour) + timedelta(hours=t.minute//30))
 
+
+# Model variables use the dimesions time (time from reference date),
+# eta_rho (lat) and xi_rho (lon). We are changing eta_rho and xi_rho 
+# from grid pionts to real lat and lon data.
+
 def transform():
     data = xr.open_dataset(MODEL_OUTPUT_PATH)
     grid = xr.open_dataset(MODEL_GRID_PATH)
