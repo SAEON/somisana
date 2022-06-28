@@ -3,6 +3,7 @@
 *.PNG binary
 *.jpg binary
 *.zip binary
+*.nc binary
 *.tar.gz binary
 *.jar binary
 *.pdf binary
