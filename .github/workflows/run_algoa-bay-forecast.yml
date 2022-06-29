@@ -29,15 +29,13 @@ jobs:
       RESTART_FILE_DATE: ${{ steps.RESTART_FILE_DATE.outputs.RESTART_FILE_DATE}}
       BRANCH_REF: ${{ steps.BRANCH_REF.outputs.BRANCH_REF }}
     steps:
-      - name: Get branch ref
+      - name: Set BRANCH_REF
         id: BRANCH_REF
         run: echo "::set-output name=BRANCH_REF::${GITHUB_REF##*/}"
-      - name: Log current branch
-        run: echo "Running action on branch ${{ steps.BRANCH_REF.outputs.BRANCH_REF }}"
-      - name: Set MODEL_RUN_DATE string context
+      - name: Set MODEL_RUN_DATE
         id: MODEL_RUN_DATE
         run: echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
-      - name: Set RESTART_FILE_DATE string context
+      - name: Set RESTART_FILE_DATE
         id: RESTART_FILE_DATE
         run: echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date RESTART_FILE_DATE)"
 
@@ -53,7 +51,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
         with:
-          ref: $BRANCH_REF
+          ref: ${{ env.BRANCH_REF }}
       - name: Log in to the Container registry
         uses: docker/login-action@v1
         with:
