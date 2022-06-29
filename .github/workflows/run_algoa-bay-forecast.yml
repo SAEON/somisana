@@ -25,7 +25,7 @@ jobs:
     outputs:
       BRANCH_REF: ${{ steps.BRANCH_REF.outputs.value }}
       CROCO_IMAGE: ${{ steps.CROCO_IMAGE.outputs.value }}
-      TOOLKIT_IMAGE: {{ steps.TOOLKIT_IMAGE.outputs.value }}
+      TOOLKIT_IMAGE: ${{ steps.TOOLKIT_IMAGE.outputs.value }}
       MODEL_RUN_DATE: ${{ steps.MODEL_RUN_DATE.outputs.value}}
       RESTART_FILE_DATE: ${{ steps.RESTART_FILE_DATE.outputs.value}}
     steps:
