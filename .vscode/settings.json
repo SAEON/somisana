@@ -55,6 +55,7 @@
     "ULWAPPSWARM",
     "VENV",
     "virtualenv",
+    "vtransform",
     "WORKDIR",
     "xarray",
     "xzvf"

@@ -22,7 +22,7 @@ def csf(sc, theta_s, theta_b):
             return Cs
 
 
-def zlevs(h,zeta,theta_s,theta_b,hc,N,type,vtransform):
+def z_levels(h,zeta,theta_s,theta_b,hc,N,type,vtransform):
     """
     this provides a 3D grid of the depths of the sigma levels
     h = 2D bathymetry of your grid

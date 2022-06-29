@@ -47,8 +47,7 @@ chomp init
 ```
 
 ## Setup Python
-
-I'm sure there are lots of ways to setup Python. I'm currently following the `pyenv` approach.
+Please either use the `pyenv` + `pipenv` approach as outlined below, or alternatively engage to update the workflows. Ths current workflow requires a Pipfile.lock for all python scripts (provided via the `pipenv` tool) for provisioning the deployment environment.
 
 ### Install pyenv
 
@@ -58,8 +57,9 @@ I'm sure there are lots of ways to setup Python. I'm currently following the `py
 The automatic installer concludes with instructions on adding something to `.bashrc`. However, I found that I had to add the location of the `pyenv` installation to $PATH (`pyenv` installs a binary to `$HOME/.pyenv/`). So, I ignored the output instructions of the installer and instead adjusted `~/.bashrc` to include the following lines:
 
 ```sh
-# Make the pyenv CLI available via $PATH
+# Make the pyenv CLI available via $PATH, and set $PYENV_VERSION
 export PATH="$HOME/.pyenv/bin:$PATH"
+export PYENV_VERSION=3.8.10
 
 # Configure pyenv virtual environment on shell start
 eval "$(pyenv init --path)"

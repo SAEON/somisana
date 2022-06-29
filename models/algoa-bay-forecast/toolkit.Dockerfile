@@ -34,7 +34,7 @@ WORKDIR /home/somisana
 ENV PATH="/home/somisana/.local/bin:$PATH"
 ENV PIPENV_VENV_IN_PROJECT="enabled"
 ENV LANG="en_US.UTF-8"
-RUN pip install --user pipenv==2022.3.28
+RUN pip install --user pipenv
 
 COPY --chown=somisana:somisana toolkit/ .
 

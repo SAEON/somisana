@@ -1,8 +1,9 @@
 import xarray as xr
 import numpy as np
 from datetime import timedelta, datetime
-from depth_functions import zlevs
-from config import MODEL_OUTPUT_PATH, GRID_PATH, NC_OUTPUT_DIR
+from os import path
+from transform.depth_functions import z_levels
+from config import NC_INPUT_PATH, GRID_PATH, NC_OUTPUT_DIR
 
 # All dates in the CROCO output are represented
 # in seconds from 1 Jan 2000 (i.e. the reference date)
@@ -35,7 +36,7 @@ def u2rho_4d(var_u):
 # from grid pionts to real lat and lon data.
 
 def transform():
-    data = xr.open_dataset(MODEL_OUTPUT_PATH)
+    data = xr.open_dataset(NC_INPUT_PATH)
     data_grid = xr.open_dataset(GRID_PATH)
     #print(data)
 
@@ -90,7 +91,7 @@ def transform():
     m_rho = np.zeros(np.shape(temperature))
 
     for x in np.arange(np.size(temperature,0)):    
-        depth_temp = zlevs(h,ssh[x,:,:],theta_s,theta_b,hc,N,type_coordinate,vtransform)
+        depth_temp = z_levels(h,ssh[x,:,:],theta_s,theta_b,hc,N,type_coordinate,vtransform)
         m_rho[x,::] = depth_temp
 
     # Create new xarray dataset with selected variables 
@@ -113,5 +114,6 @@ def transform():
     )
 
     #Print output 
-    data_out.to_netcdf(NC_OUTPUT_DIR)
+    output = path.join(NC_OUTPUT_DIR, 'todo-name-file.nc')
+    data_out.to_netcdf(output)
     print(data_out)
