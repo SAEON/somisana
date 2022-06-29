@@ -67,12 +67,11 @@ jobs:
           PG_USERNAME: ${{ steps._PG_USERNAME_.outputs.uppercase }}
           PG_PASSWORD: ${{ steps._PG_PASSWORD_.outputs.uppercase }}
         run: |
-          echo ${{ secrets[env.PG_USERNAME] }}
-          echo "::set-output name=PG_HOST::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets.PG_HOST }}") | base64 -w0)"
-          echo "::set-output name=PG_PORT::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ env.PG_PORT }}") | base64 -w0)"
-          echo "::set-output name=PG_DB::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ env.PG_DB }}") | base64 -w0)"
-          echo "::set-output name=PG_USERNAME::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ env.PG_USERNAME }}") | base64 -w0)"
-          echo "::set-output name=PG_PASSWORD::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ env.PG_PASSWORD }}") | base64 -w0)"
+          echo "::set-output name=PG_HOST::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets.PG_HOST }}") | base64 -w0)"
+          echo "::set-output name=PG_PORT::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_PORT] }}") | base64 -w0)"
+          echo "::set-output name=PG_DB::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_DB] }}") | base64 -w0)"
+          echo "::set-output name=PG_USERNAME::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_USERNAME] }}") | base64 -w0)"
+          echo "::set-output name=PG_PASSWORD::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_PASSWORD] }}") | base64 -w0)"
       - name: Log environment
         run: |
           echo "BRANCH_REF ${{ steps.BRANCH_REF.outputs }}"
