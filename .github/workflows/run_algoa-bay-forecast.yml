@@ -1,6 +1,9 @@
 name: run_algoa-bay-forecast
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 2 * * *'
 
 env:
   REGISTRY: ghcr.io
@@ -29,16 +32,22 @@ jobs:
       - name: Set BRANCH_REF
         id: BRANCH_REF
         run: echo "::set-output name=value::${GITHUB_REF##*/}"
-      - name: Set ENVS
+      - name: Set envs
         id: ENVS
         run: |
           echo "::set-output name=CROCO_IMAGE::${{ github.repository }}_algoa_bay_forecast_croco_${{ steps.BRANCH_REF.outputs.value }}"
           echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_algoa-bay-forecast_toolkit_${{ steps.BRANCH_REF.outputs.value }}"
           echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
           echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date yesterday)"
-      - name: Set SECRETS
+      - name: Get branch-specific secrets
+        id: BRANCH_SECRETS
+        uses: ASzc/change-string-case-action@v2
+        with:
+          PG_PORT_SECRET_NAME: PG_PORT_${{ steps.BRANCH_REF.outputs.value }}
+      - name: Set secrets
         id: SECRET_ENVS
         run: |
+          echo ${{ steps.BRANCH_SECRETS.outputs.PG_PORT_SECRET_NAME.uppercase }}
           echo "::set-output name=PG_HOST::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets.PG_HOST }}") | base64 -w0)"
           echo "::set-output name=PG_PORT::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets.PG_PORT_NEXT }}") | base64 -w0)"
           echo "::set-output name=PG_DB::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets.PG_DB_NEXT }}") | base64 -w0)"
