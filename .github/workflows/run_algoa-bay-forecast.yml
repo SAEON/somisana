@@ -99,7 +99,7 @@ jobs:
     steps:
       - name: decrypt secret
         id: PG_HOST_DECRYPTED
-        run: echo "::set-output name=PG_HOST_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.PG_HOST_ENCRYPTED }}" | base64 --decode))"
+        run: echo "::set-output name=PG_HOST_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_HOST_ENCRYPTED }}" | base64 --decode))"
       - name: echo it
         run: echo ${{ steps.PG_HOST_DECRYPTED.outputs.PG_HOST_DECRYPTED }}
 
