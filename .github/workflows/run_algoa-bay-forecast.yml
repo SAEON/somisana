@@ -37,13 +37,13 @@ jobs:
         run: |
           echo "::set-output name=CROCO_IMAGE::${{ github.repository }}_algoa_bay_forecast_croco_${{ steps.BRANCH_REF.outputs.value }}"
           echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_algoa-bay-forecast_toolkit_${{ steps.BRANCH_REF.outputs.value }}"
-          echo "::set-output name=MODEL_RUN_DATE::'$(date +'%Y%m%d')'"
+          echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
           echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date yesterday)"
-      - name: Get PG_PORT secret name
-        id: _SECRET_PG_PORT_
-        uses: ASzc/change-string-case-action@v2
-        with:
-          string: PG_PORT_${{ steps.BRANCH_REF.outputs.value }}
+      # - name: Get PG_PORT secret name
+      #   id: _SECRET_PG_PORT_
+      #   uses: ASzc/change-string-case-action@v2
+      #   with:
+      #     string: PG_PORT_${{ steps.BRANCH_REF.outputs.value }}
       - name: Get PG_DB secret name
         id: _SECRET_PG_DB_
         uses: ASzc/change-string-case-action@v2
@@ -62,13 +62,13 @@ jobs:
       - name: Set secrets
         id: SECRET_ENVS
         env:
-          PG_PORT: ${{ steps._SECRET_PG_PORT_.outputs.uppercase }}
+          # PG_PORT: ${{ steps._SECRET_PG_PORT_.outputs.uppercase }}
           PG_DB: ${{ steps._SECRET_PG_DB_.outputs.uppercase }}
           PG_USERNAME: ${{ steps._PG_USERNAME_.outputs.uppercase }}
           PG_PASSWORD: ${{ steps._PG_PASSWORD_.outputs.uppercase }}
         run: |
           echo "::set-output name=PG_HOST::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets.PG_HOST }}") | base64 -w0)"
-          echo "::set-output name=PG_PORT::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_PORT] }}") | base64 -w0)"
+          echo "::set-output name=PG_PORT::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ 5432 }}") | base64 -w0)"
           echo "::set-output name=PG_DB::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_DB] }}") | base64 -w0)"
           echo "::set-output name=PG_USERNAME::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_USERNAME] }}") | base64 -w0)"
           echo "::set-output name=PG_PASSWORD::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_PASSWORD] }}") | base64 -w0)"
