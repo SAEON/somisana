@@ -32,7 +32,7 @@ jobs:
     steps:
       - name: Set BRANCH_REF
         id: BRANCH_REF
-        run: echo "::set-output name=BRANCH_REF::${GITHUB_REF##*/}"
+        run: echo "::set-output name=value::${GITHUB_REF##*/}"
       - name: Set CROCO_IMAGE
         id: CROCO_IMAGE
         run: echo  "::set-output name=value::${{ github.repository }}_algoa_bay_forecast_croco_${{ steps.BRANCH_REF.outputs.value }}"
@@ -41,7 +41,7 @@ jobs:
         run: echo "::set-output name=value::$(date +'%Y%m%d')"
       - name: Set RESTART_FILE_DATE
         id: RESTART_FILE_DATE
-        run: echo "::set-output name=value::$(date +'%Y%m%d' --date -1)"
+        run: echo "::set-output name=value::$(date +'%Y%m%d' --date yesterday)"
       - name: Log environment
         run: |
           echo ${{ steps.BRANCH_REF.outputs.value }}
