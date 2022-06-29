@@ -96,11 +96,10 @@ jobs:
   test:
     needs: [_secrets_]
     runs-on: ubuntu-latest
-    env:
-      PG_HOSTNAME: ${ echo $(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ _secrets_.PG_HOST_ENCRYPTED }}" | base64 --decode)) }
     steps:
-      - name: test echo
-        run: echo $PG_HOSTNAME 
+      - name: decrypt secret
+        id: $PG_HOST_DECRYPTED
+        run: echo "::set-output name=PG_HOST_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ _secrets_.PG_HOST_ENCRYPTED }}" | base64 --decode))"
 
   # # Compile CROCO model from customized source code (specific to the Algoa Bay forecast)
   # compile-model:
