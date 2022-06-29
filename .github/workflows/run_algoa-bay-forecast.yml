@@ -40,10 +40,10 @@ jobs:
         id: SECRET_ENVS
         run: |
           echo "::set-output name=PG_HOST::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets.PG_HOST }}") | base64 -w0)"
-          echo "::set-output name=PG_PORT::${{ secrets.PG_PORT_NEXT }}"
-          echo "::set-output name=PG_DB::${{ secrets.PG_DB_NEXT }}"
-          echo "::set-output name=PG_USERNAME::${{ secrets.PG_USERNAME_NEXT }}"
-          echo "::set-output name=PG_PASSWORD::${{ secrets.PG_PASSWORD_NEXT }}"
+          echo "::set-output name=PG_PORT::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets.PG_PORT_NEXT }}") | base64 -w0)"
+          echo "::set-output name=PG_DB::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets.PG_DB_NEXT }}") | base64 -w0)"
+          echo "::set-output name=PG_USERNAME::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets.PG_USERNAME_NEXT }}") | base64 -w0)"
+          echo "::set-output name=PG_PASSWORD::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets.PG_PASSWORD_NEXT }}") | base64 -w0)"
       - name: Log environment
         run: |
           echo "BRANCH_REF ${{ steps.BRANCH_REF.outputs }}"
