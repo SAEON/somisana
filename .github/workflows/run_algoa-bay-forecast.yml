@@ -61,7 +61,7 @@ jobs:
       #     string: PG_PASSWORD_${{ steps.BRANCH_REF.outputs.value }}
       - name: Set secrets
         id: SECRET_ENVS
-        env:
+        # env:
           # PG_PORT: ${{ steps._SECRET_PG_PORT_.outputs.uppercase }}
           # PG_DB: ${{ steps._SECRET_PG_DB_.outputs.uppercase }}
           # PG_USERNAME: ${{ steps._PG_USERNAME_.outputs.uppercase }}
