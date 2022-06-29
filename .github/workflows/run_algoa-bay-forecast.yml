@@ -36,7 +36,8 @@ jobs:
           echo $GITHUB_REF 
           echo ${GITHUB_REF##*/}
           echo "::set-output name=BRANCH_REF::${GITHUB_REF##*/}"
-          echo $BRANCH_REF
+      - name: Test
+        run: echo $BRANCH_REF
       - name: Log current branch
         run: echo "Running action on branch $BRANCH_REF"
       - name: Set MODEL_RUN_DATE string context
