@@ -12,78 +12,90 @@ env:
   GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
 jobs:
-  # Each run needs configuration for
-  # => branch-specific repository secrets
-  # => Timestamps for today and yesterday
-  envs:
+  branch-ref:
     runs-on: ubuntu-latest
     outputs:
-      BRANCH_REF: ${{ steps.BRANCH_REF.outputs.value }}
+      value: ${{ needs.branch-ref.outputs.value }}
+    steps:
+    - name: Set the BRANCH_REF
+      id: BRANCH_REF
+      run: echo "::set-output name=value::${GITHUB_REF##*/}"
+
+  envs:
+    needs: [branch-ref]
+    runs-on: ubuntu-latest
+    outputs:
       CROCO_IMAGE: ${{ steps.ENVS.outputs.CROCO_IMAGE }}
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}
       RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}
-      PG_HOST_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_HOST }}
-      # PG_PORT_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_PORT }}
-      # PG_DB_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_DB }}
-      # PG_USERNAME_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_USERNAME }}
-      # PG_PASSWORD_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_PASSWORD }}
     steps:
-      - name: Set BRANCH_REF
-        id: BRANCH_REF
-        run: echo "::set-output name=value::${GITHUB_REF##*/}"
       - name: Set envs
         id: ENVS
         run: |
-          echo "::set-output name=CROCO_IMAGE::${{ github.repository }}_algoa_bay_forecast_croco_${{ steps.BRANCH_REF.outputs.value }}"
-          echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_algoa-bay-forecast_toolkit_${{ steps.BRANCH_REF.outputs.value }}"
+          echo "::set-output name=CROCO_IMAGE::${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}"
+          echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_algoa-bay-forecast_toolkit_${{ needs.branch-ref.outputs.value }}"
           echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
           echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date yesterday)"
+
+  get-secret-names:
+    needs: [branch-ref]
+    runs-on: ubuntu-latest
+    outputs:
+      PG_HOST_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_HOST }}
+      PG_PORT_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_PORT }}
+      PG_DB_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_DB }}
+      PG_USERNAME_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_USERNAME }}
+      PG_PASSWORD_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_PASSWORD }}
+    steps:
       - name: Get PG_PORT secret name
         id: _SECRET_PG_PORT_
         uses: ASzc/change-string-case-action@v2
         with:
-          string: PG_PORT_${{ steps.BRANCH_REF.outputs.value }}
+          string: PG_PORT_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_DB secret name
         id: _SECRET_PG_DB_
         uses: ASzc/change-string-case-action@v2
         with:
-          string: PG_DB_${{ steps.BRANCH_REF.outputs.value }}
+          string: PG_DB_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
         uses: ASzc/change-string-case-action@v2
         with:
-          string: PG_USERNAME_${{ steps.BRANCH_REF.outputs.value }}
+          string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
         uses: ASzc/change-string-case-action@v2
         with:
-          string: PG_PASSWORD_${{ steps.BRANCH_REF.outputs.value }}
+          string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Set secrets
         id: SECRET_ENVS
-        # env:
-          # PG_PORT: ${{ steps._SECRET_PG_PORT_.outputs.uppercase }}
-          # PG_DB: ${{ steps._SECRET_PG_DB_.outputs.uppercase }}
-          # PG_USERNAME: ${{ steps._PG_USERNAME_.outputs.uppercase }}
-          # PG_PASSWORD: ${{ steps._PG_PASSWORD_.outputs.uppercase }}
+        env:
+          PG_PORT: ${{ steps._SECRET_PG_PORT_.outputs.uppercase }}
+          PG_DB: ${{ steps._SECRET_PG_DB_.outputs.uppercase }}
+          PG_USERNAME: ${{ steps._PG_USERNAME_.outputs.uppercase }}
+          PG_PASSWORD: ${{ steps._PG_PASSWORD_.outputs.uppercase }}
         run: |
-          echo "::set-output name=PG_HOST::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets.PG_HOST }}") | base64 -w0)"
-          # echo "::set-output name=PG_PORT::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_PORT] }}") | base64 -w0)"
-          # echo "::set-output name=PG_DB::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_DB] }}") | base64 -w0)"
-          # echo "::set-output name=PG_USERNAME::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_USERNAME] }}") | base64 -w0)"
-          # echo "::set-output name=PG_PASSWORD::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_PASSWORD] }}") | base64 -w0)"
+          echo "::set-output name=PG_HOST_ENCRYPTED::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets.PG_HOST }}") | base64 -w0)"
+          echo "::set-output name=PG_PORT_ENCRYPTED::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_PORT] }}") | base64 -w0)"
+          echo "::set-output name=PG_DB_ENCRYPTED::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_DB] }}") | base64 -w0)"
+          echo "::set-output name=PG_USERNAME_ENCRYPTED::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_USERNAME] }}") | base64 -w0)"
+          echo "::set-output name=PG_PASSWORD_ENCRYPTED::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_PASSWORD] }}") | base64 -w0)"
+      
+  log-env:
+    needs: [get-secret-names, envs]
+    runs-on: ubuntu-latest
+    steps:
       - name: Log environment
         run: |
-          echo "BRANCH_REF ${{ steps.BRANCH_REF.outputs }}"
           echo "CROCO_IMAGE ${{ steps.ENVS.outputs.CROCO_IMAGE }}"
           echo "MODEL_RUN_DATE ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}"
           echo "RESTART_FILE_DATE ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}"
-          # echo "PG_HOST ${{ steps.SECRET_ENVS.outputs.PG_HOST }}"
-          # echo "PG_PORT ${{ steps.SECRET_ENVS.outputs.PG_PORT }}"
-          # echo "PG_DB ${{ steps.SECRET_ENVS.outputs.PG_DB }}"
-          # echo "PG_USERNAME ${{ steps.SECRET_ENVS.outputs.PG_USERNAME }}"
-          # echo "PG_PASSWORD ${{ steps.SECRET_ENVS.outputs.PG_PASSWORD }}"
-
+          echo "PG_HOST ${{ steps.SECRET_ENVS.outputs.PG_HOST }}"
+          echo "PG_PORT ${{ steps.SECRET_ENVS.outputs.PG_PORT }}"
+          echo "PG_DB ${{ steps.SECRET_ENVS.outputs.PG_DB }}"
+          echo "PG_USERNAME ${{ steps.SECRET_ENVS.outputs.PG_USERNAME }}"
+          echo "PG_PASSWORD ${{ steps.SECRET_ENVS.outputs.PG_PASSWORD }}"
   # # Compile CROCO model from customized source code (specific to the Algoa Bay forecast)
   # compile-model:
   #   needs: [envs]
