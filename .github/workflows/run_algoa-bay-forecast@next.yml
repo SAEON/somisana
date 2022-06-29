@@ -104,7 +104,7 @@ jobs:
 
   # Create a tmp folder structure for mode run assets. The format is:
   ## YYYYMMDD/
-  ##  - download_inputs/
+  ##  - forcing-inputs/
   ##  - croco/
   ##     - forcing/
   ##     - forecast/
@@ -122,7 +122,7 @@ jobs:
           rm -rf /tmp/somisana/algoa-bay-forecast/next/$dirname \
           && mkdir \
             -p \
-            /tmp/somisana/algoa-bay-forecast/next/$dirname/{croco/{forcing,forecast,scratch},download_inputs} \
+            /tmp/somisana/algoa-bay-forecast/next/$dirname/{croco/{forcing,forecast,scratch},forcing-inputs,processed-output} \
           && chown \
             -R \
             :somisana \

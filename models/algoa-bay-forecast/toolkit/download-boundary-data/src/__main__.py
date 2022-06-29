@@ -6,7 +6,7 @@ from download_scripts.gfs import gfs
 from download_scripts.mercator import mercator
 
 TMP_DIRECTORY = '/tmp/somisana/current'
-DOWNLOADS_PATH = os.path.join(TMP_DIRECTORY, 'download_inputs/')
+DOWNLOADS_PATH = os.path.join(TMP_DIRECTORY, 'forcing-inputs/')
 MATLAB_ENV_PATH = os.path.join(TMP_DIRECTORY, '.env')
 
 # Params

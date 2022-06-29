@@ -2,7 +2,7 @@ name: run_algoa-bay-forecast@stable
 
 on:
   schedule:
-    - cron:  '0 4 * * *'
+    - cron:  '0 2 * * *'
 
 env:
   BRANCH_REF: stable
@@ -106,7 +106,7 @@ jobs:
 
   # Create a tmp folder structure for mode run assets. The format is:
   ## YYYYMMDD/
-  ##  - download_inputs/
+  ##  - forcing-inputs/
   ##  - croco/
   ##     - forcing/
   ##     - forecast/
@@ -124,7 +124,7 @@ jobs:
           rm -rf /tmp/somisana/algoa-bay-forecast/stable/$dirname \
           && mkdir \
             -p \
-            /tmp/somisana/algoa-bay-forecast/stable/$dirname/{croco/{forcing,forecast,scratch},download_inputs} \
+            /tmp/somisana/algoa-bay-forecast/stable/$dirname/{croco/{forcing,forecast,scratch},forcing-inputs,processed-output} \
           && chown \
             -R \
             :somisana \

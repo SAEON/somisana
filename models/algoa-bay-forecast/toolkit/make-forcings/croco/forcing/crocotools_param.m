@@ -134,7 +134,7 @@ CROCO_files_dir=[pwd,'/'];
 %  Global data directory (etopo, coads, datasets download from ftp, etc..)
 %  Directory where downloaded environmental data is stored make forcing files 
 %  make_OGCM_ocims.m and make_GFS_ocims.m are stored.
-DATADIR='/tmp/somisana/current/download_inputs/'
+DATADIR='/tmp/somisana/current/forcing-inputs/'
 %
 %  Forcing data directory (ncep, quikscat, datasets download with opendap, etc..)
 %  Directory where the forcing files (created daily) are stored  
