@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "::set-output name=CROCO_IMAGE::${{ github.repository }}_algoa_bay_forecast_croco_${{ steps.BRANCH_REF.outputs.value }}"
           echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_algoa-bay-forecast_toolkit_${{ steps.BRANCH_REF.outputs.value }}"
-          echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
+          echo "::set-output name=MODEL_RUN_DATE::'$(date +'%Y%m%d')'"
           echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date yesterday)"
       - name: Get PG_PORT secret name
         id: _SECRET_PG_PORT_
