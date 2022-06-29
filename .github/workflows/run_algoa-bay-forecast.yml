@@ -77,21 +77,6 @@ jobs:
           echo "::set-output name=PG_DB_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_DB_.outputs.uppercase] }}") | base64 -w0)"
           echo "::set-output name=PG_USERNAME_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_USERNAME_.outputs.uppercase] }}") | base64 -w0)"
           echo "::set-output name=PG_PASSWORD_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_PASSWORD_.outputs.uppercase] }}") | base64 -w0)"
-      
-  log-env:
-    needs: [_secrets_, envs]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Log environment
-        run: |
-          echo "CROCO_IMAGE ${{ needs.envs.outputs.CROCO_IMAGE }}"
-          echo "MODEL_RUN_DATE ${{ needs.envs.outputs.MODEL_RUN_DATE }}"
-          echo "RESTART_FILE_DATE ${{ needs.envs.outputs.RESTART_FILE_DATE }}"
-          echo "PG_HOST_ENCRYPTED ${{ needs._secrets_.outputs.PG_HOST_ENCRYPTED }}"
-          echo "PG_PORT_ENCRYPTED ${{ needs._secrets_.outputs.PG_PORT_ENCRYPTED }}"
-          echo "PG_DB_ENCRYPTED ${{ needs._secrets_.outputs.PG_DB_ENCRYPTED }}"
-          echo "PG_USERNAME_ENCRYPTED ${{ needs._secrets_.outputs.PG_USERNAME_ENCRYPTED }}"
-          echo "PG_PASSWORD_ENCRYPTED ${{ needs._secrets_.outputs.PG_PASSWORD_ENCRYPTED }}"
 
   # Compile CROCO model from customized source code (specific to the Algoa Bay forecast)
   compile-model:
@@ -146,7 +131,7 @@ jobs:
       - name: Check out source code (shared)
         uses: actions/checkout@v2
         with:
-          ref: $BRANCH_REF
+          ref: ${{ env.BRANCH_REF }}
       - name: Log in to the Container registry
         uses: docker/login-action@v1
         with:
@@ -236,7 +221,7 @@ jobs:
       - name: Check out source code (shared)
         uses: actions/checkout@v2
         with:
-          ref: $BRANCH_REF
+          ref: ${{ env.BRANCH_REF }}
       - name: Configure restart file
         run: |
           echo "TODO Move yesterdays rst file if possible - $RESTART_FILE_PATH"
@@ -267,7 +252,7 @@ jobs:
       - name: Check out source code (shared)
         uses: actions/checkout@v2
         with:
-          ref: $BRANCH_REF
+          ref: ${{ env.BRANCH_REF }}
       - name: Execute CROCO binary
         run: >-
           docker run \
