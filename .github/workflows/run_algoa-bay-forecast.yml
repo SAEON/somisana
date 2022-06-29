@@ -31,15 +31,9 @@ jobs:
     steps:
       - name: Get branch ref
         id: BRANCH_REF
-        run: |
-          echo hi
-          echo $GITHUB_REF 
-          echo ${GITHUB_REF##*/}
-          echo "::set-output name=BRANCH_REF::${GITHUB_REF##*/}"
-      - name: Test
-        run: echo ${{ steps.BRANCH_REF.outputs.BRANCH_REF }}
+        run: echo "::set-output name=BRANCH_REF::${GITHUB_REF##*/}"
       - name: Log current branch
-        run: echo "Running action on branch $BRANCH_REF"
+        run: echo "Running action on branch ${{ steps.BRANCH_REF.outputs.BRANCH_REF }}"
       - name: Set MODEL_RUN_DATE string context
         id: MODEL_RUN_DATE
         run: echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
@@ -47,40 +41,40 @@ jobs:
         id: RESTART_FILE_DATE
         run: echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date RESTART_FILE_DATE)"
 
-  # # Compile CROCO model from customized source code (specific to the Algoa Bay forecast)
-  # compile-model:
-  #   needs: [runtime-env]
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     BRANCH_REF: ${{ needs.runtime-env.outputs.BRANCH_REF }}
-  #   outputs:
-  #     image: ${{ steps.meta.outputs.tags }}
-  #   steps:
-  #     - name: Checkout source code
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: $BRANCH_REF
-  #     - name: Log in to the Container registry
-  #       uses: docker/login-action@v1
-  #       with:
-  #         registry: ${{ env.REGISTRY }}
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
-  #     - name: Extract metadata (tags, labels) for Docker
-  #       id: meta
-  #       uses: docker/metadata-action@v3
-  #       with:
-  #         images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
-  #         tags: |
-  #           type=sha
-  #     - name: Build and push
-  #       uses: docker/build-push-action@v2
-  #       with:
-  #         context: models/algoa-bay-forecast
-  #         file: models/algoa-bay-forecast/croco.Dockerfile
-  #         push: true
-  #         tags: ${{ steps.meta.outputs.tags }}
-  #         labels: ${{ steps.meta.outputs.labels }}
+  # Compile CROCO model from customized source code (specific to the Algoa Bay forecast)
+  compile-model:
+    needs: [runtime-env]
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_REF: ${{ needs.runtime-env.outputs.BRANCH_REF }}
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+        with:
+          ref: $BRANCH_REF
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
+          tags: |
+            type=sha
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: models/algoa-bay-forecast
+          file: models/algoa-bay-forecast/croco.Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   # # The SOMISANA toolkit is a suite of scripts to facilitate
   # # running SOMISANA models - for example the Algoa Bay Forecast.
