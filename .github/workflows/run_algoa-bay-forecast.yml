@@ -35,11 +35,11 @@ jobs:
           echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_algoa-bay-forecast_toolkit_${{ steps.BRANCH_REF.outputs.value }}"
           echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
           echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date yesterday)"
-          echo "::set-output name=PG_HOST::${{ secrets.PG_HOST }}
-          echo "::set-output name=PG_PORT::${{ secrets.PG_PORT_NEXT }}
-          echo "::set-output name=PG_DB::${{ secrets.PG_DB_NEXT }}
-          echo "::set-output name=PG_USERNAME::${{ secrets.PG_USERNAME_NEXT }}
-          echo "::set-output name=PG_PASSWORD::${{ secrets.PG_PASSWORD_NEXT }}
+          echo "::set-output name=PG_HOST::${{ secrets.PG_HOST }}"
+          echo "::set-output name=PG_PORT::${{ secrets.PG_PORT_NEXT }}"
+          echo "::set-output name=PG_DB::${{ secrets.PG_DB_NEXT }}"
+          echo "::set-output name=PG_USERNAME::${{ secrets.PG_USERNAME_NEXT }}"
+          echo "::set-output name=PG_PASSWORD::${{ secrets.PG_PASSWORD_NEXT }}"
       - name: Log environment
         run: |
           echo "BRANCH_REF ${{ steps.BRANCH_REF.outputs }}"
