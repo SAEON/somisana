@@ -39,9 +39,7 @@ jobs:
       - name: Set SECRETS
         id: SECRET_ENVS
         run: |
-          PG_HOST=encrypted_value=$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets.PG_HOST }}") | base64 -w0)
-          echo $PG_HOST
-          echo "::set-output name=PG_HOST::${{ secrets.PG_HOST }}"
+          echo "::set-output name=PG_HOST::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets.PG_HOST }}") | base64 -w0)"
           echo "::set-output name=PG_PORT::${{ secrets.PG_PORT_NEXT }}"
           echo "::set-output name=PG_DB::${{ secrets.PG_DB_NEXT }}"
           echo "::set-output name=PG_USERNAME::${{ secrets.PG_USERNAME_NEXT }}"
