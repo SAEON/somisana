@@ -35,7 +35,7 @@ jobs:
         run: echo "::set-output name=BRANCH_REF::${GITHUB_REF##*/}"
       - name: Set CROCO_IMAGE
         id: CROCO_IMAGE
-        run: echo  "::set-output name=value::${{ github.repository }}_algoa_bay_forecast_croco_${ steps.BRANCH_REF.outputs.BRANCH_REF }"
+        run: echo  "::set-output name=value::${{ github.repository }}_algoa_bay_forecast_croco_${{ steps.BRANCH_REF.outputs.value }}"
       - name: Set MODEL_RUN_DATE
         id: MODEL_RUN_DATE
         run: echo "::set-output name=value::$(date +'%Y%m%d')"
