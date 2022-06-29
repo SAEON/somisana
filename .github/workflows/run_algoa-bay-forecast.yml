@@ -303,11 +303,6 @@ jobs:
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.working-directory.outputs.WORKDIR }}
-      PG_HOST: ${{ steps.decrypt-secrets.outputs.PG_HOST_DECRYPTED }}
-      PG_PORT: ${{ steps.decrypt-secrets.outputs.PG_PORT_DECRYPTED }}
-      PG_DB: ${{ steps.decrypt-secrets.outputs.PG_DB_DECRYPTED }}
-      PG_USERNAME: ${{ steps.decrypt-secrets.outputs.PG_USERNAME_DECRYPTED }}
-      PG_PASSWORD: ${{ steps.decrypt-secrets.outputs.PG_PASSWORD_DECRYPTED }}
     steps:
       - name: Decrypt secrets
         id: decrypt-secrets
@@ -320,6 +315,12 @@ jobs:
       - name: Archive NetCDF files
         run: |
           echo "Where should we put the NetCDF (avg.nc) files?"
-      - name: Publish Cloud Optimized GeoTIFF
+      - name: Update PostGIS
+        env:
+          PG_HOST: ${{ steps.decrypt-secrets.outputs.PG_HOST_DECRYPTED }}
+          PG_PORT: ${{ steps.decrypt-secrets.outputs.PG_PORT_DECRYPTED }}
+          PG_DB: ${{ steps.decrypt-secrets.outputs.PG_DB_DECRYPTED }}
+          PG_USERNAME: ${{ steps.decrypt-secrets.outputs.PG_USERNAME_DECRYPTED }}
+          PG_PASSWORD: ${{ steps.decrypt-secrets.outputs.PG_PASSWORD_DECRYPTED }}
         run: |
-          echo "Should this be done?"
+          echo "TODO"
