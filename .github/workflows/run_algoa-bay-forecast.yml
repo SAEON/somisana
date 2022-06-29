@@ -25,24 +25,29 @@ jobs:
   runtime-env:
     runs-on: ubuntu-latest
     outputs:
-      MODEL_RUN_DATE: ${{ steps.MODEL_RUN_DATE.outputs.MODEL_RUN_DATE}}
-      RESTART_FILE_DATE: ${{ steps.RESTART_FILE_DATE.outputs.RESTART_FILE_DATE}}
-      BRANCH_REF: ${{ steps.BRANCH_REF.outputs.BRANCH_REF }}
+      BRANCH_REF: ${{ steps.BRANCH_REF.outputs.value }}
+      CROCO_IMAGE: ${{ steps.CROCO_IMAGE.outputs.value }}
+      MODEL_RUN_DATE: ${{ steps.MODEL_RUN_DATE.outputs.value}}
+      RESTART_FILE_DATE: ${{ steps.RESTART_FILE_DATE.outputs.value}}
     steps:
       - name: Set BRANCH_REF
         id: BRANCH_REF
         run: echo "::set-output name=BRANCH_REF::${GITHUB_REF##*/}"
       - name: Set CROCO_IMAGE
-        run: echo  "::set-output name=CROCO_IMAGE::${{ github.repository }}_algoa_bay_forecast_croco_${ steps.BRANCH_REF.outputs.BRANCH_REF }"
+        id: CROCO_IMAGE
+        run: echo  "::set-output name=value::${{ github.repository }}_algoa_bay_forecast_croco_${ steps.BRANCH_REF.outputs.BRANCH_REF }"
       - name: Set MODEL_RUN_DATE
         id: MODEL_RUN_DATE
-        run: echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
+        run: echo "::set-output name=value::$(date +'%Y%m%d')"
       - name: Set RESTART_FILE_DATE
         id: RESTART_FILE_DATE
-        run: echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date RESTART_FILE_DATE)"
+        run: echo "::set-output name=value::$(date +'%Y%m%d' --date -1)"
       - name: Log environment
         run: |
-          echo ${{ outputs }}
+          echo ${{ steps.BRANCH_REF.outputs.value }}
+          echo ${{ steps.CROCO_IMAGE.outputs.value }}
+          echo ${{ steps.MODEL_RUN_DATE.outputs.value }}
+          echo ${{ steps.RESTART_FILE_DATE.outputs.value }}
 
   # # Compile CROCO model from customized source code (specific to the Algoa Bay forecast)
   # compile-model:
