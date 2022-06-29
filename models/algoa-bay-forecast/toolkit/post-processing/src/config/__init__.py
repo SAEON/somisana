@@ -13,3 +13,5 @@ MONGO_USERNAME = env.str('MONGO_USERNAME', 'admin')
 MONGO_PASSWORD = env.str('MONGO_PASSWORD', 'password')
 
 MODEL_OUTPUT_PATH = env.str('MODEL_OUTPUT_PATH', 'avg.nc output file path')
+GRID_PATH = env.str('GRID_PATH','grd.nc model grid file path')
+NC_OUTPUT_DIR = env.str('NC_OUTPUT_DIR', 'avg_transformed.nc transformed output file path')
