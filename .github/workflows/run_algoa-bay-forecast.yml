@@ -4,11 +4,6 @@ on: workflow_dispatch
 
 env:
   REGISTRY: ghcr.io
-  PG_HOST: ${{ secrets.PG_HOST }}
-  PG_PORT: ${{ secrets.PG_PORT_NEXT }}
-  PG_DB: ${{ secrets.PG_DB_NEXT }}
-  PG_USERNAME: ${{ secrets.PG_USERNAME_NEXT }}
-  PG_PASSWORD: ${{ secrets.PG_PASSWORD_NEXT }}
   COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
   COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
 
@@ -24,6 +19,11 @@ jobs:
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE}}
       RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE}}
+      PG_HOST: ${{ secrets.PG_HOST }}
+      PG_PORT: ${{ secrets.PG_PORT_NEXT }}
+      PG_DB: ${{ secrets.PG_DB_NEXT }}
+      PG_USERNAME: ${{ secrets.PG_USERNAME_NEXT }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD_NEXT }}
     steps:
       - name: Set BRANCH_REF
         id: BRANCH_REF
@@ -35,13 +35,22 @@ jobs:
           echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_algoa-bay-forecast_toolkit_${{ steps.BRANCH_REF.outputs.value }}"
           echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
           echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date yesterday)"
+          echo "::set-output name=PG_HOST::${{ secrets.PG_HOST }}
+          echo "::set-output name=PG_PORT::${{ secrets.PG_PORT }}
+          echo "::set-output name=PG_DB::${{ secrets.PG_DB }}
+          echo "::set-output name=PG_USERNAME::${{ secrets.PG_USERNAME }}
+          echo "::set-output name=PG_PASSWORD::${{ secrets.PG_PASSWORD }}
       - name: Log environment
         run: |
-          echo "ENVS ${{ steps.ENVS.outputs }}"
           echo "BRANCH_REF ${{ steps.BRANCH_REF.outputs }}"
           echo "CROCO_IMAGE ${{ steps.ENVS.outputs.CROCO_IMAGE }}"
           echo "MODEL_RUN_DATE ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}"
           echo "RESTART_FILE_DATE ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}"
+          echo "PG_HOST ${{ steps.ENVS.outputs.PG_HOST }}"
+          echo "PG_PORT ${{ steps.ENVS.outputs.PG_PORT }}"
+          echo "PG_DB ${{ steps.ENVS.outputs.PG_DB }}"
+          echo "PG_USERNAME ${{ steps.ENVS.outputs.PG_USERNAME }}"
+          echo "PG_PASSWORD ${{ steps.ENVS.outputs.PG_PASSWORD }}"
 
   # # Compile CROCO model from customized source code (specific to the Algoa Bay forecast)
   # compile-model:
