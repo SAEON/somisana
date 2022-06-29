@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       BRANCH_REF: ${{ steps.BRANCH_REF.outputs.value }}
-      TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
+      CROCO_IMAGE: ${{ steps.ENVS.outputs.CROCO_IMAGE }}
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE}}
       RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE}}
@@ -31,12 +31,13 @@ jobs:
       - name: Set ENVS
         id: ENVS
         run: |
-          echo  "::set-output name=CROCO_IMAGE::${{ github.repository }}_algoa_bay_forecast_croco_${{ steps.BRANCH_REF.outputs.value }}"
-          echo  "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_algoa-bay-forecast_toolkit_${{ steps.BRANCH_REF.outputs.value }}"
+          echo "::set-output name=CROCO_IMAGE::${{ github.repository }}_algoa_bay_forecast_croco_${{ steps.BRANCH_REF.outputs.value }}"
+          echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_algoa-bay-forecast_toolkit_${{ steps.BRANCH_REF.outputs.value }}"
           echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
           echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date yesterday)"
       - name: Log environment
         run: |
+          echo ${{ toJSON(steps.ENVS.outputs) }}
           echo "BRANCH_REF ${{ steps.BRANCH_REF.outputs }}"
           echo "CROCO_IMAGE ${{ steps.ENVS.outputs.CROCO_IMAGE }}"
           echo "MODEL_RUN_DATE ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}"
