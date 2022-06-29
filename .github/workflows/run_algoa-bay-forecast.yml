@@ -46,8 +46,11 @@ jobs:
           string: PG_PORT_${{ steps.BRANCH_REF.outputs.value }}
       - name: Set secrets
         id: SECRET_ENVS
+        env:
+          x: hi
         run: |
-          echo ${{ steps.BRANCH_SECRET_PG_PORT.outputs.string.uppercase }}
+          echo $x
+          echo ${{ steps.BRANCH_SECRET_PG_PORT.outputs.uppercase }}
           echo "::set-output name=PG_HOST::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets.PG_HOST }}") | base64 -w0)"
           echo "::set-output name=PG_PORT::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets.PG_PORT_NEXT }}") | base64 -w0)"
           echo "::set-output name=PG_DB::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets.PG_DB_NEXT }}") | base64 -w0)"
