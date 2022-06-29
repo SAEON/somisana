@@ -37,7 +37,7 @@ jobs:
           echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date yesterday)"
       - name: Log environment
         run: |
-          echo ${{ toJSON(steps.ENVS.outputs) }}
+          echo "ENVS ${{ steps.ENVS.outputs }}"
           echo "BRANCH_REF ${{ steps.BRANCH_REF.outputs }}"
           echo "CROCO_IMAGE ${{ steps.ENVS.outputs.CROCO_IMAGE }}"
           echo "MODEL_RUN_DATE ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}"
