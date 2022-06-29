@@ -4,8 +4,6 @@ on: workflow_dispatch
 
 env:
   REGISTRY: ghcr.io
-  CROCO_IMAGE: ${{ github.repository }}_algoa_bay_forecast_croco_next
-  TOOLKIT_IMAGE: ${{ github.repository }}_algoa-bay-forecast_toolkit_next
   PG_HOST: ${{ secrets.PG_HOST }}
   PG_PORT: ${{ secrets.PG_PORT_NEXT }}
   PG_DB: ${{ secrets.PG_DB_NEXT }}
@@ -22,11 +20,12 @@ jobs:
   # Each run needs configuration for
   # => branch-specific repository secrets
   # => Timestamps for today and yesterday
-  runtime-env:
+  envs:
     runs-on: ubuntu-latest
     outputs:
       BRANCH_REF: ${{ steps.BRANCH_REF.outputs.value }}
       CROCO_IMAGE: ${{ steps.CROCO_IMAGE.outputs.value }}
+      TOOLKIT_IMAGE: {{ steps.TOOLKIT_IMAGE.outputs.value }}
       MODEL_RUN_DATE: ${{ steps.MODEL_RUN_DATE.outputs.value}}
       RESTART_FILE_DATE: ${{ steps.RESTART_FILE_DATE.outputs.value}}
     steps:
@@ -36,6 +35,9 @@ jobs:
       - name: Set CROCO_IMAGE
         id: CROCO_IMAGE
         run: echo  "::set-output name=value::${{ github.repository }}_algoa_bay_forecast_croco_${{ steps.BRANCH_REF.outputs.value }}"
+      - name: Set TOOLKIT_IMAGE
+        id: TOOLKIT_IMAGE
+        run: echo  "::set-output name=value::${{ github.repository }}_algoa-bay-forecast_toolkit_${{ steps.BRANCH_REF.outputs.value }}"
       - name: Set MODEL_RUN_DATE
         id: MODEL_RUN_DATE
         run: echo "::set-output name=value::$(date +'%Y%m%d')"
@@ -44,45 +46,46 @@ jobs:
         run: echo "::set-output name=value::$(date +'%Y%m%d' --date yesterday)"
       - name: Log environment
         run: |
-          echo ${{ steps.BRANCH_REF.outputs.value }}
-          echo ${{ steps.CROCO_IMAGE.outputs.value }}
-          echo ${{ steps.MODEL_RUN_DATE.outputs.value }}
-          echo ${{ steps.RESTART_FILE_DATE.outputs.value }}
+          echo "BRANCH_REF ${{ steps.BRANCH_REF.outputs }}"
+          echo "CROCO_IMAGE ${{ steps.CROCO_IMAGE.outputs.value }}"
+          echo "MODEL_RUN_DATE ${{ steps.MODEL_RUN_DATE.outputs.value }}"
+          echo "RESTART_FILE_DATE ${{ steps.RESTART_FILE_DATE.outputs.value }}"
 
-  # # Compile CROCO model from customized source code (specific to the Algoa Bay forecast)
-  # compile-model:
-  #   needs: [runtime-env]
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     BRANCH_REF: ${{ needs.runtime-env.outputs.BRANCH_REF }}
-  #   outputs:
-  #     image: ${{ steps.meta.outputs.tags }}
-  #   steps:
-  #     - name: Checkout source code
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ env.BRANCH_REF }}
-  #     - name: Log in to the Container registry
-  #       uses: docker/login-action@v1
-  #       with:
-  #         registry: ${{ env.REGISTRY }}
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
-  #     - name: Extract metadata (tags, labels) for Docker
-  #       id: meta
-  #       uses: docker/metadata-action@v3
-  #       with:
-  #         images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
-  #         tags: |
-  #           type=sha
-  #     - name: Build and push
-  #       uses: docker/build-push-action@v2
-  #       with:
-  #         context: models/algoa-bay-forecast
-  #         file: models/algoa-bay-forecast/croco.Dockerfile
-  #         push: true
-  #         tags: ${{ steps.meta.outputs.tags }}
-  #         labels: ${{ steps.meta.outputs.labels }}
+  # Compile CROCO model from customized source code (specific to the Algoa Bay forecast)
+  compile-model:
+    needs: [envs]
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+      CROCO_IMAGE: ${{ needs.envs.outputs.CROCO_IMAGE }}
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.BRANCH_REF }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
+          tags: |
+            type=sha
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: models/algoa-bay-forecast
+          file: models/algoa-bay-forecast/croco.Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   # # The SOMISANA toolkit is a suite of scripts to facilitate
   # # running SOMISANA models - for example the Algoa Bay Forecast.
@@ -90,12 +93,13 @@ jobs:
   # # scripts is part of the development workflow, the toolkit needs
   # # to be compiled on every run
   # bundle-python-toolkit:
-  #   needs: [runtime-env]
+  #   needs: [envs]
   #   runs-on: ubuntu-latest
   #   outputs:
   #     image: ${{ steps.meta.outputs.tags }}
   #   env:
-  #     BRANCH_REF: ${{ needs.runtime-env.outputs.BRANCH_REF }}
+  #     BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+  #     TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
   #   steps:
   #     - name: Check out source code (shared)
   #       uses: actions/checkout@v2
@@ -131,12 +135,12 @@ jobs:
   # ##     - forecast/
   # ##     - scratch/
   # working-directory:
-  #   needs: [runtime-env]
+  #   needs: [envs]
   #   runs-on: github-runner.saeon.int
   #   outputs:
   #     WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
   #   env:
-  #     dirname: ${{ needs.runtime-env.outputs.MODEL_RUN_DATE }}
+  #     dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
   #   steps:
   #     - name: Create /tmp/somisana/algoa-bay-forecast/next/<model run date> directory structure
   #       run: >-
@@ -179,12 +183,12 @@ jobs:
   # # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
   # make-forcings:
-  #   needs: [download-boundary-data, working-directory, runtime-env]
+  #   needs: [download-boundary-data, working-directory, envs]
   #   runs-on: github-runner.saeon.int
   #   env:
   #     WORKDIR: ${{ needs.working-directory.outputs.WORKDIR }}
-  #     RESTART_FILE_PATH: does_this_${{ needs.runtime-env.outputs.RESTART_FILE_DATE }}_work?
-  #     BRANCH_REF: ${{ needs.runtime-env.outputs.BRANCH_REF }}
+  #     RESTART_FILE_PATH: does_this_${{ needs.envs.outputs.RESTART_FILE_DATE }}_work?
+  #     BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
   #   steps:
   #     - name: Check out source code (shared)
   #       uses: actions/checkout@v2
@@ -210,12 +214,12 @@ jobs:
   # # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image.
   # # As such the CROCO model run must be in the context of a container instantiated from that Docker image
   # run-model:
-  #   needs: [compile-model, make-forcings, runtime-env, working-directory]
+  #   needs: [compile-model, make-forcings, envs, working-directory]
   #   runs-on: github-runner.saeon.int
   #   env:
-  #     dirname: ${{ needs.runtime-env.outputs.MODEL_RUN_DATE }}
+  #     dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
   #     WORKDIR: ${{ needs.working-directory.outputs.WORKDIR }}
-  #     BRANCH_REF: ${{ needs.runtime-env.outputs.BRANCH_REF }}
+  #     BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
   #   steps:
   #     - name: Check out source code (shared)
   #       uses: actions/checkout@v2
@@ -230,8 +234,8 @@ jobs:
   #           ${{ needs.compile-model.outputs.image }} \
   #             ./run_croco.bash \
   #               /algoa-bay-forecast/current \
-  #               ${{ needs.runtime-env.outputs.MODEL_RUN_DATE }} \
-  #               ${{ needs.runtime-env.outputs.RESTART_FILE_DATE }}
+  #               ${{ needs.envs.outputs.MODEL_RUN_DATE }} \
+  #               ${{ needs.envs.outputs.RESTART_FILE_DATE }}
 
   # # The CROCO model outputs NetCDF data that represents ocean conditions of an
   # # area mapped to a grid. The post-processing step is for extracting data into
