@@ -97,7 +97,7 @@ jobs:
     needs: [_secrets_]
     runs-on: ubuntu-latest
     env:
-      PG_HOSTNAME: echo $(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ _secrets_.PG_HOST_ENCRYPTED }}" | base64 --decode))
+      PG_HOSTNAME: ${ echo $(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ _secrets_.PG_HOST_ENCRYPTED }}" | base64 --decode)) }
     steps:
       - name: test echo
         run: echo $PG_HOSTNAME 
