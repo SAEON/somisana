@@ -38,7 +38,7 @@ jobs:
           echo "::set-output name=MODEL_RUN_DATE::$(date +'%Y%m%d')"
           echo "::set-output name=RESTART_FILE_DATE::$(date +'%Y%m%d' --date yesterday)"
 
-  get-secret-names:
+  secret-names:
     needs: [branch-ref]
     runs-on: ubuntu-latest
     outputs:
@@ -83,19 +83,20 @@ jobs:
           echo "::set-output name=PG_PASSWORD_ENCRYPTED::$(gpg --symmetric --batch --passphrase "GPG_PASSPHRASE" --output - <(echo "${{ secrets[env.PG_PASSWORD] }}") | base64 -w0)"
       
   log-env:
-    needs: [get-secret-names, envs]
+    needs: [secret-names, envs]
     runs-on: ubuntu-latest
     steps:
       - name: Log environment
         run: |
-          echo "CROCO_IMAGE ${{ steps.ENVS.outputs.CROCO_IMAGE }}"
-          echo "MODEL_RUN_DATE ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}"
-          echo "RESTART_FILE_DATE ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}"
-          echo "PG_HOST ${{ steps.SECRET_ENVS.outputs.PG_HOST }}"
-          echo "PG_PORT ${{ steps.SECRET_ENVS.outputs.PG_PORT }}"
-          echo "PG_DB ${{ steps.SECRET_ENVS.outputs.PG_DB }}"
-          echo "PG_USERNAME ${{ steps.SECRET_ENVS.outputs.PG_USERNAME }}"
-          echo "PG_PASSWORD ${{ steps.SECRET_ENVS.outputs.PG_PASSWORD }}"
+          echo "CROCO_IMAGE ${{ needs.envs.outputs.CROCO_IMAGE }}"
+          echo "MODEL_RUN_DATE ${{ needs.envs.outputs.MODEL_RUN_DATE }}"
+          echo "RESTART_FILE_DATE ${{ needs.envs.outputs.RESTART_FILE_DATE }}"
+          echo "PG_HOST_ENCRYPTED ${{ needs.secret-names.outputs.PG_HOST_ENCRYPTED }}"
+          echo "PG_PORT_ENCRYPTED ${{ needs.secret-names.outputs.PG_PORT_ENCRYPTED }}"
+          echo "PG_DB_ENCRYPTED ${{ needs.secret-names.outputs.PG_DB_ENCRYPTED }}"
+          echo "PG_USERNAME_ENCRYPTED ${{ needs.secret-names.outputs.PG_USERNAME_ENCRYPTED }}"
+          echo "PG_PASSWORD_ENCRYPTED ${{ needs.secret-names.outputs.PG_PASSWORD_ENCRYPTED }}"
+
   # # Compile CROCO model from customized source code (specific to the Algoa Bay forecast)
   # compile-model:
   #   needs: [envs]
