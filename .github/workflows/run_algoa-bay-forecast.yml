@@ -43,12 +43,17 @@ jobs:
     needs: [branch-ref]
     runs-on: ubuntu-latest
     outputs:
-      PG_HOST_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_HOST_ENCRYPTED }}
-      PG_PORT_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_PORT_ENCRYPTED }}
-      PG_DB_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_DB_ENCRYPTED }}
-      PG_USERNAME_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_USERNAME_ENCRYPTED }}
-      PG_PASSWORD_ENCRYPTED: ${{ steps.SECRET_ENVS.outputs.PG_PASSWORD_ENCRYPTED }}
+      PG_HOST_ENCRYPTED: ${{ steps.set-secrets.outputs.PG_HOST_ENCRYPTED }}
+      PG_PORT_ENCRYPTED: ${{ steps.set-secrets.outputs.PG_PORT_ENCRYPTED }}
+      PG_DB_ENCRYPTED: ${{ steps.set-secrets.outputs.PG_DB_ENCRYPTED }}
+      PG_USERNAME_ENCRYPTED: ${{ steps.set-secrets.outputs.PG_USERNAME_ENCRYPTED }}
+      PG_PASSWORD_ENCRYPTED: ${{ steps.set-secrets.outputs.PG_PASSWORD_ENCRYPTED }}
     steps:
+      - name: Get PG_HOST secret name
+        id: _PG_HOST_
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: PG_HOST_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PORT secret name
         id: _PG_PORT_
         uses: ASzc/change-string-case-action@v2
@@ -70,9 +75,9 @@ jobs:
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Set secrets
-        id: SECRET_ENVS
+        id: set-secrets
         run: |
-          echo "::set-output name=PG_HOST_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets.PG_HOST }}") | base64 -w0)"
+          echo "::set-output name=PG_HOST_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_HOST_.outputs.uppercase] }}") | base64 -w0)"
           echo "::set-output name=PG_PORT_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_PORT_.outputs.uppercase] }}") | base64 -w0)"
           echo "::set-output name=PG_DB_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_DB_.outputs.uppercase] }}") | base64 -w0)"
           echo "::set-output name=PG_USERNAME_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_USERNAME_.outputs.uppercase] }}") | base64 -w0)"
