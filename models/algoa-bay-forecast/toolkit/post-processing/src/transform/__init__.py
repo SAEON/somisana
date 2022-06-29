@@ -1,7 +1,8 @@
 import xarray as xr
 import numpy as np
 from datetime import timedelta, datetime
-from config import MODEL_OUTPUT_PATH
+from depth_functions import zlevs
+from config import MODEL_OUTPUT_PATH, GRID_PATH, NC_OUTPUT_DIR
 
 # All dates in the CROCO output are represented
 # in seconds from 1 Jan 2000 (i.e. the reference date)
@@ -35,13 +36,14 @@ def u2rho_4d(var_u):
 
 def transform():
     data = xr.open_dataset(MODEL_OUTPUT_PATH)
-
-    print(data)
+    data_grid = xr.open_dataset(GRID_PATH)
+    #print(data)
 
     # Dimensions that need to be transformed
     time = data.time.values
     lon_rho = data.lon_rho.values
     lat_rho = data.lat_rho.values
+    s_rho = data.s_rho.values
 
     # Convert time to human readable 
     dates = []
@@ -53,8 +55,16 @@ def transform():
     # Variables used in the visualtions
     temperature = data.temp.values
     salt = data.salt.values
+    ssh = data.zeta.values
     u = data.u.values
     v = data.v.values
+
+    #Variables used to calculate depth levels
+    theta_s = data.theta_s
+    theta_b = data.theta_b
+
+    #Variables used to calculate depth levels from grid (bathmetry)
+    h = data_grid.h.values
 
     # Convert u and v current components to the rho grid
     # use the function u2rho_4d and v2rho_4d
@@ -69,21 +79,39 @@ def transform():
     u[np.where(u == 0)] = np.nan
     v[np.where(v == 0)] = np.nan
 
-    # Create new xarray dataset with selected variable 
+    # Variables hard coded set during model configuration
+    # Relative to each model 
+    hc = 200
+    N = np.shape(data.s_rho)[0]
+    type_coordinate = 'rho'
+    vtransform = 2
+
+    # m_rho refers to the depth level in meters
+    m_rho = np.zeros(np.shape(temperature))
+
+    for x in np.arange(np.size(temperature,0)):    
+        depth_temp = zlevs(h,ssh[x,:,:],theta_s,theta_b,hc,N,type_coordinate,vtransform)
+        m_rho[x,::] = depth_temp
+
+    # Create new xarray dataset with selected variables 
     data_out = xr.Dataset(
         data_vars=dict(
-            temperature=(["time","lat", "lon"], temperature[:,0,:,:]),
-            salt=(["time","lat", "lon"], salt[:,0,:,:]),
-            u=(["time","lat", "lon"], u_rho[:,0,:,:]),
-            v=(["time","lat", "lon"], v_rho[:,0,:,:]),
+            temperature=(["time","depth","lat", "lon"], temperature[:,:,:,:]),
+            salt=(["time","depth","lat", "lon"], salt[:,:,:,:]),
+            u=(["time","depth","lat", "lon"], u_rho[:,:,:,:]),
+            v=(["time","depth","lat", "lon"], v_rho[:,:,:,:]),
+            m_rho= (["time","depth","lat","lon"],m_rho)
+
         ),
         coords=dict(
             lon_rho=(["lat", "lon"], lon_rho),
             lat_rho=(["lat", "lon"], lat_rho),
+            depth=s_rho,
             time=dates,
         ),
         attrs=dict(description="CROCO output from algoa Bay model transformed lon/lat/depth/time"),
     )
 
     #Print output 
+    data_out.to_netcdf(NC_OUTPUT_DIR)
     print(data_out)
