@@ -173,7 +173,7 @@ jobs:
       WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
     env:
       dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      branch_ref: ${{ needs.env.outputs.BRANCH_REF }}
+      branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Create /tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} directory structure
         run: >-
