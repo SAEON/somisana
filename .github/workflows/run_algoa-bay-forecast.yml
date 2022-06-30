@@ -2,6 +2,11 @@ name: run_algoa-bay-forecast
 
 on:
   workflow_dispatch:
+    inputs:
+      run_date:
+        description: "The date of the model run in the format yyyymmdd (i.e. 19880221). default is today"
+        required: false
+        default: ''
   schedule:
     - cron:  '0 2 * * *'
 
@@ -264,6 +269,7 @@ jobs:
             --rm \
             -v $WORKDIR:/algoa-bay-forecast/current \
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
+            --cpus 10 \
             ${{ needs.compile-model.outputs.image }} \
               ./run_croco.bash \
                 /algoa-bay-forecast/current \
