@@ -54,7 +54,7 @@ def u2rho_4d(var_u):
 
 def transform():
     data = xr.open_dataset(NC_INPUT_PATH)
-    data_grid = xr.open_dataset(GRID_INPUT_PATH+'grd.nc')
+    data_grid = xr.open_dataset(GRID_INPUT_PATH)
     #print(data)
 
     # Dimensions that need to be transformed
