@@ -275,10 +275,11 @@ jobs:
   # a PostGIS instance where it is useful in the context of web applications
   # (specifically as the backend of a WMS server)
   process-model-output:
-    needs: [bundle-python-toolkit, run-model, working-directory]
+    needs: [bundle-python-toolkit, run-model, envs, working-directory]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.working-directory.outputs.WORKDIR }}
+      RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
       - name: Algoa Bay forecast (post processing)
         run: >-
@@ -286,7 +287,11 @@ jobs:
             --rm \
             -v $WORKDIR:/tmp/somisana/current \
             ${{ needs.bundle-python-toolkit.outputs.image }} \
-              post-processing
+              post-processing \
+              -g /tmp/somisana/current/croco/forcings/grd.nc \
+              -i /tmp/somisana/current/croco/scratch/avg.nc \
+              -o /tmp/somisana/current/forecast/${{ env.RUN_DATE }}-processed.nc
+              
 
   handle-processed-data:
     needs: [process-model-output, working-directory, _secrets_]

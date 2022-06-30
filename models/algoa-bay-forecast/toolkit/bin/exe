@@ -2,7 +2,7 @@
 
 if [ "$1" == "post-processing" ]; then
   cd post-processing
-  pipenv run script
+  pipenv run script $2 $3 $4 $5 $6 $7
 elif [ "$1" == "download-boundary-data" ]; then
   cd download-boundary-data
   pipenv run script
