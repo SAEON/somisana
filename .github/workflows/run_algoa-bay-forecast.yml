@@ -175,23 +175,23 @@ jobs:
       dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
       branch_ref: ${{ needs.env.outputs.BRANCH_REF }}
     steps:
-      - name: Create /tmp/somisana/algoa-bay-forecast/$branch_ref/$dirname directory structure
+      - name: Create /tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} directory structure
         run: >-
-          rm -rf /tmp/somisana/algoa-bay-forecast/$branch_ref/$dirname \
+          rm -rf /tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} \
           && mkdir \
             -p \
-            /tmp/somisana/algoa-bay-forecast/$branch_ref/$dirname/{croco/{forcing,forecast,scratch},forcing-inputs,processed-output} \
+            /tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch},forcing-inputs,processed-output} \
           && chown \
             -R \
             :somisana \
-            /tmp/somisana/algoa-bay-forecast/$branch_ref/$dirname \
+            /tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} \
           && chmod \
             -R \
             774 \
-            /tmp/somisana/algoa-bay-forecast/$branch_ref/$dirname
+            /tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
       - name: Set $WORKDIR
         id: WORKDIR
-        run: echo "::set-output name=WORKDIR::/tmp/somisana/algoa-bay-forecast/$branch_ref/$dirname"
+        run: echo "::set-output name=WORKDIR::/tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}"
 
   # Download environmental data used to constrain model boundaries.
   # These downloads are used to create forcing files that are fed as input to the CROCO model

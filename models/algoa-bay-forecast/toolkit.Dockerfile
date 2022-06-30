@@ -55,4 +55,4 @@ WORKDIR /home/somisana
 RUN echo $PATH
 
 ENTRYPOINT [ "bin/exe" ]
-CMD [ "default" ]
+CMD [ "$@" ]
