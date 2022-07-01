@@ -196,8 +196,10 @@ jobs:
     runs-on: github-runner.saeon.int
     outputs:
       WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
+      WORKDIR_YESTERDAY: ${{ steps.WORKDIR.outputs.WORKDIR_YESTERDAY }}
     env:
       dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      dirname_yesterday: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
       branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Create /tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} directory structure
@@ -214,9 +216,11 @@ jobs:
             -R \
             774 \
             /tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
-      - name: Set $WORKDIR
+      - name: Set WORKDIRs
         id: WORKDIR
-        run: echo "::set-output name=WORKDIR::/tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}"
+        run: |
+          echo "::set-output name=WORKDIR::/tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}"
+          echo "::set-output name=WORKDIR_YESTERDAY::/tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}"
 
   # Download environmental data used to constrain model boundaries.
   # These downloads are used to create forcing files that are fed as input to the CROCO model
@@ -245,7 +249,7 @@ jobs:
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.working-directory.outputs.WORKDIR }}
-      RESTART_FILE_PATH: does_this_${{ needs.envs.outputs.RESTART_FILE_DATE }}_work?
+      RESTART_FILE_PATH: ${{ needs.working-directory.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Check out source code
@@ -254,7 +258,7 @@ jobs:
           ref: ${{ env.BRANCH_REF }}
       - name: Configure restart file
         run: |
-          echo "TODO Move yesterdays rst file if possible - $RESTART_FILE_PATH"
+          echo $RESTART_FILE_PATH
       - name: Make forcing files
         run: >-
           docker run \
