@@ -249,6 +249,7 @@ jobs:
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.working-directory.outputs.WORKDIR }}
+      RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
       RESTART_FILE_PATH: ${{ needs.working-directory.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
@@ -258,7 +259,8 @@ jobs:
           ref: ${{ env.BRANCH_REF }}
       - name: Configure restart file
         run: |
-          echo $RESTART_FILE_PATH
+          echo Looking for restart file at $RESTART_FILE_PATH
+          mv $RESTART_FILE_PATH $WORKDIR/croco/forcing/rst_RESTART_FILE_DATE.nc 1&>2
       - name: Make forcing files
         run: >-
           docker run \
