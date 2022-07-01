@@ -191,7 +191,7 @@ jobs:
   ##     - forcing/
   ##     - forecast/
   ##     - scratch/
-  working-directory:
+  workdir:
     needs: [envs]
     runs-on: github-runner.saeon.int
     outputs:
@@ -227,10 +227,10 @@ jobs:
   # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
   # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
   download-boundary-data:
-    needs: [bundle-python-toolkit, working-directory]
+    needs: [bundle-python-toolkit, workdir]
     runs-on: github-runner.saeon.int
     env:
-      WORKDIR: ${{ needs.working-directory.outputs.WORKDIR }}
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
     steps:
       - name: Download Algoa-bay forcing input
         run: >-
@@ -245,12 +245,12 @@ jobs:
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
   make-forcings:
-    needs: [download-boundary-data, working-directory, envs]
+    needs: [download-boundary-data, workdir, envs]
     runs-on: github-runner.saeon.int
     env:
-      WORKDIR: ${{ needs.working-directory.outputs.WORKDIR }}
-      RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
-      RESTART_FILE_PATH: ${{ needs.working-directory.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+      WORKDIR_YESTERDAY: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}
+      RESTART_FILE_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Check out source code
@@ -259,8 +259,7 @@ jobs:
           ref: ${{ env.BRANCH_REF }}
       - name: Configure restart file
         run: |
-          mv $RESTART_FILE_PATH $WORKDIR/croco/forcing/rst_$RESTART_FILE_DATE.nc 2>/dev/null
-          echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_$RESTART_FILE_DATE.nc" >> $WORKDIR/.env
+          echo "RESTART_FILE_PATH=/tmp/somisana/yesterday/croco/scratch/rst.nc" >> ${{ env.WORKDIR }}/.env
       - name: Make forcing files
         run: >-
           docker run \
@@ -270,6 +269,7 @@ jobs:
             -v $(pwd)/models/algoa-bay-forecast/toolkit/make-forcings:/crocotools/ \
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
             -v $WORKDIR:/tmp/somisana/current \
+            -v $WORKDIR_YESTERDAY:/tmp/somisana/yesterday \
             -e MLM_LICENSE_FILE=/licenses/license.lic \
             ghcr.io/saeon/somisana_matlab:r2022a \
               -batch "run('/crocotools/run.m')"
@@ -278,10 +278,10 @@ jobs:
   # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image.
   # As such the CROCO model run must be in the context of a container instantiated from that Docker image
   run-model:
-    needs: [compile-model, make-forcings, envs, working-directory]
+    needs: [compile-model, make-forcings, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
-      WORKDIR: ${{ needs.working-directory.outputs.WORKDIR }}
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Check out source code
@@ -306,10 +306,10 @@ jobs:
   # a PostGIS instance where it is useful in the context of web applications
   # (specifically as the backend of a WMS server)
   process-model-output:
-    needs: [bundle-python-toolkit, run-model, envs, working-directory]
+    needs: [bundle-python-toolkit, run-model, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
-      WORKDIR: ${{ needs.working-directory.outputs.WORKDIR }}
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
       - name: Check out source code
@@ -333,10 +333,10 @@ jobs:
   # TODO - this will likely be to move the processed nc file
   # to another server and configure WMS layers from it
   handle-processed-data:
-    needs: [process-model-output, working-directory, _secrets_]
+    needs: [process-model-output, workdir, _secrets_]
     runs-on: github-runner.saeon.int
     env:
-      WORKDIR: ${{ needs.working-directory.outputs.WORKDIR }}
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
     steps:
       - name: Decrypt secrets
         id: decrypt-secrets
