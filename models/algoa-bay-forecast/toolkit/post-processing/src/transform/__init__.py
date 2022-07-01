@@ -1,8 +1,6 @@
-from email.policy import default
 import xarray as xr
 import numpy as np
 from datetime import timedelta, datetime
-from os import path
 from transform.depth_functions import z_levels
 import optparse
 
@@ -18,8 +16,11 @@ NC_OUTPUT_PATH = options.NC_OUTPUT_PATH
 NC_INPUT_PATH = options.NC_INPUT_PATH
 GRID_INPUT_PATH = options.GRID_INPUT_PATH
 
-print(options.NC_OUTPUT_PATH)
-print(options.NC_INPUT_PATH)
+print('== Running Algoa Bay Forecast post-processing ==')
+print('NC_INPUT_PATH', options.NC_INPUT_PATH)
+print('GRID_INPUT_PATH', options.GRID_INPUT_PATH)
+print('NC_OUTPUT_PATH', options.NC_OUTPUT_PATH)
+
 
 # All dates in the CROCO output are represented
 # in seconds from 1 Jan 2000 (i.e. the reference date)
@@ -47,14 +48,12 @@ def u2rho_4d(var_u):
       var_rho[:,:,:,L]=var_rho[:,:,:,L-1]
       return var_rho
 
-# Model variables use the dimesions time (time from reference date),
+# Model variables use the dimensions time (time from reference date),
 # eta_rho (lat) and xi_rho (lon). We are changing eta_rho and xi_rho 
-# from grid pionts to real lat and lon data.
-
+# from grid points to real lat and lon data.
 def transform():
     data = xr.open_dataset(NC_INPUT_PATH)
     data_grid = xr.open_dataset(GRID_INPUT_PATH)
-    #print(data)
 
     # Dimensions that need to be transformed
     time = data.time.values
@@ -69,7 +68,7 @@ def transform():
         date_round = hour_rounder(date_now)
         dates.append(date_round)
 
-    # Variables used in the visualtions
+    # Variables used in the visualisations
     temperature = data.temp.values
     salt = data.salt.values
     ssh = data.zeta.values
@@ -80,7 +79,7 @@ def transform():
     theta_s = data.theta_s
     theta_b = data.theta_b
 
-    #Variables used to calculate depth levels from grid (bathmetry)
+    #Variables used to calculate depth levels from grid (bathymetry)
     h = data_grid.h.values
 
     # Convert u and v current components to the rho grid
@@ -130,6 +129,5 @@ def transform():
     )
 
     #Print output 
-    output = path.join(NC_OUTPUT_PATH)
-    data_out.to_netcdf(output)
-    print(data_out)
+    data_out.to_netcdf(NC_OUTPUT_PATH)
+    print('Complete! If you don\'t see this message there was a problem')

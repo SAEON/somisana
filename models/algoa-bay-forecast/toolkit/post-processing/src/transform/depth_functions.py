@@ -1,25 +1,25 @@
 import numpy as np
 
 def csf(sc, theta_s, theta_b):
-            '''
-            Allows use of theta_b > 0 (July 2009)
-            is required in zlevs.py
-            '''
-            one64 = np.float64(1)
+    '''
+    Allows use of theta_b > 0 (July 2009)
+    is required in zlevs.py
+    '''
+    one64 = np.float64(1)
 
-            if theta_s > 0.:
-                csrf = ((one64 - np.cosh(theta_s * sc)) /
-                        (np.cosh(theta_s) - one64))
-            else:
-                csrf = -sc ** 2
-            sc1 = csrf + one64
-            if theta_b > 0.:
-                Cs = ((np.exp(theta_b * sc1) - one64) /
-                      (np.exp(theta_b) - one64) - one64)
-            else:
-                Cs = csrf
-                
-            return Cs
+    if theta_s > 0.:
+        csrf = ((one64 - np.cosh(theta_s * sc)) /
+                (np.cosh(theta_s) - one64))
+    else:
+        csrf = -sc ** 2
+    sc1 = csrf + one64
+    if theta_b > 0.:
+        Cs = ((np.exp(theta_b * sc1) - one64) /
+                (np.exp(theta_b) - one64) - one64)
+    else:
+        Cs = csrf
+        
+    return Cs
 
 
 def z_levels(h,zeta,theta_s,theta_b,hc,N,type,vtransform):
@@ -35,7 +35,6 @@ def z_levels(h,zeta,theta_s,theta_b,hc,N,type,vtransform):
     vtransform = 1 (OLD) or 2 (NEW)
     
     this is adapted (by J.Veitch - Feb 2022) from zlevs.m in roms_tools (by P. Penven)
-
     """
 
 
@@ -123,7 +122,6 @@ def hlev(var,z,depth):
     depth = the horizontal depth you want (should be negative)
     
     Adapted (by J.Veitch) from vinterp.m in roms_tools (by P.Penven)
-    
     """
     [N,Mp,Lp]=np.shape(z)
 
