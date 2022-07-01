@@ -23,8 +23,7 @@ delta_days_gfs=double(delta_days_gfs);
 
 % check if we can restart from yesterday's run, otherwise if the restart file
 % doesn't exist then make an ini file interpolated from the mercator data
-rst_filename = strcat(string(pwd),"/rst_",string(sprintf('%02d',date_yesterday_year)),...
-	string(sprintf('%02d',date_yesterday_month)),string(sprintf('%02d',date_yesterday_day)),".nc")
+rst_filename = RESTART_FILE_PATH
 
 if isfile(rst_filename)
      disp("Restart file exists")
