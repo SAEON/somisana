@@ -12,17 +12,10 @@ run = '''
 [[task]]
 name = 'doc'
 run = '''
-  doctoc README.md
-  doctoc web/README.md
+  doctoc *.md
+  doctoc web/*.md
   doctoc models/**/*.md
   doctoc models/**/**/*.md
   doctoc models/**/**/**/*.md
+  doctoc docker/**/*.md
 '''
-
-[[task]]
-name = 'prettier'
-run = 'prettier --write "./**/*.@(js|jsx|json|mjs|cjs|graphql|yml)"'
-
-[[task]]
-name = 'prettier:quick'
-run = 'pretty-quick'
