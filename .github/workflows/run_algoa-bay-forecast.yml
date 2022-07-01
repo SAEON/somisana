@@ -53,8 +53,6 @@ jobs:
       - name: Set envs
         id: ENVS
         run: |
-          echo ${{ steps.run_date.outputs.value }}
-          echo ${{ steps.restart_date.outputs.value }}
           echo "::set-output name=CROCO_IMAGE::${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}"
           echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_algoa-bay-forecast_toolkit_${{ needs.branch-ref.outputs.value }}"
           echo "::set-output name=MODEL_RUN_DATE::${{ steps.run_date.outputs.value }}"
