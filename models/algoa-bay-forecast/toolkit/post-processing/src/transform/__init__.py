@@ -5,7 +5,6 @@ from datetime import timedelta, datetime
 from os import path
 from transform.depth_functions import z_levels
 import optparse
-#from config import NC_INPUT_PATH, GRID_PATH, NC_OUTPUT_PATH
 
 # Importing file paths from bash script bin/exe
 p = optparse.OptionParser()

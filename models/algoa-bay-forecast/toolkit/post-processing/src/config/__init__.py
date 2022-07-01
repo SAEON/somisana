@@ -11,7 +11,3 @@ MONGO_HOST = env.str('MONGO_HOST', 'localhost:27017')
 MONGO_DB = env.str('MONGO_DB', 'somisana_local') 
 MONGO_USERNAME = env.str('MONGO_USERNAME', 'admin')
 MONGO_PASSWORD = env.str('MONGO_PASSWORD', 'password')
-
-NC_INPUT_PATH = env.str('NC_INPUT_PATH', 'avg.nc output file path')
-GRID_PATH = env.str('GRID_PATH','grd.nc model grid file path')
-NC_OUTPUT_PATH = env.str('NC_OUTPUT_PATH', 'avg_transformed.nc transformed output directory (excluding file name)')

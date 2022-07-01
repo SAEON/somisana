@@ -294,10 +294,10 @@ jobs:
             -v $WORKDIR:/tmp/somisana/current \
             ${{ needs.bundle-python-toolkit.outputs.image }} \
               post-processing \
-              -g /tmp/somisana/current/croco/forcings/grd.nc \
-              -i /tmp/somisana/current/croco/scratch/avg.nc \
-              -o /tmp/somisana/current/forecast/${{ env.RUN_DATE }}-processed.nc
-              
+                -g /tmp/somisana/current/croco/forcing/grd.nc \
+                -i /tmp/somisana/current/croco/scratch/avg.nc \
+                -o /tmp/somisana/current/croco/forecast/${{ env.RUN_DATE }}-processed.nc
+
 
   handle-processed-data:
     needs: [process-model-output, working-directory, _secrets_]
