@@ -49,15 +49,15 @@ mercator(
 
 # MatLab is configured via a .env file
 print('Configuring MatLab...')
-env = open(MATLAB_ENV_PATH, "w")
-env.write("""RUN_DATE={0}
+with open(MATLAB_ENV_PATH, 'w+') as env:
+    env.write("""RUN_DATE={0}
 DELTA_DAYS_GFS={1}
 """
     .format(
         str(date.today()),
         str(delta_days_gfs)
     ))
-env.close()
+os.chmod(MATLAB_ENV_PATH, '0o777')
 
 # Script complete
 print('Complete!')
