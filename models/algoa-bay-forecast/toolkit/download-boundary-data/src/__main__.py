@@ -57,7 +57,7 @@ DELTA_DAYS_GFS={1}
         str(date.today()),
         str(delta_days_gfs)
     ))
-os.chmod(MATLAB_ENV_PATH, '0o777')
+os.chmod(MATLAB_ENV_PATH, 0o777)
 
 # Script complete
 print('Complete!')
