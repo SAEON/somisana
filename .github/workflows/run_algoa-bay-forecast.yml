@@ -6,7 +6,7 @@ on:
       run_date:
         description: Run date "yyyymmdd". Default is today
         required: false
-        default: ${  $(date +'%Y%m%d') }
+        default: ${{  $(date +'%Y%m%d') }}
   schedule:
     - cron:  '0 2 * * *'
 
