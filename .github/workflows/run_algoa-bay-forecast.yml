@@ -259,7 +259,7 @@ jobs:
           ref: ${{ env.BRANCH_REF }}
       - name: Configure restart file
         run: |
-          mv $RESTART_FILE_PATH $WORKDIR/croco/forcing/rst_$RESTART_FILE_DATE.nc 1&>2
+          mv $RESTART_FILE_PATH $WORKDIR/croco/forcing/rst_$RESTART_FILE_DATE.nc 2>/dev/null
           echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_$RESTART_FILE_DATE.nc" >> $WORKDIR/.env
       - name: Make forcing files
         run: >-
