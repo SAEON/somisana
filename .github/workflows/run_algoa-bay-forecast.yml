@@ -259,8 +259,8 @@ jobs:
           ref: ${{ env.BRANCH_REF }}
       - name: Configure restart file
         run: |
-          mv $RESTART_FILE_PATH $WORKDIR/croco/forcing/rst_RESTART_FILE_DATE.nc 1&>2
-          echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_RESTART_FILE_DATE.nc" >> $WORKDIR/.env
+          mv $RESTART_FILE_PATH $WORKDIR/croco/forcing/rst_$RESTART_FILE_DATE.nc 1&>2
+          echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_$RESTART_FILE_DATE.nc" >> $WORKDIR/.env
       - name: Make forcing files
         run: >-
           docker run \
