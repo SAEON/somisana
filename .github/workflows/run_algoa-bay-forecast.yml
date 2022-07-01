@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       run_date:
-        description: Run date - "yyyymmdd". Default is today
+        description: Run date "yyyymmdd". Default is today
         required: false
         default: ''
   schedule:
