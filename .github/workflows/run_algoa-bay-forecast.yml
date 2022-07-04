@@ -257,10 +257,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ env.BRANCH_REF }}
-      - name: Configure restart file
-        run: |
-          cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/ini_MERCATOR_${{ env.MODEL_RUN_DATE }}.nc 2>/dev/null
-          echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/ini_MERCATOR_${{ env.MODEL_RUN_DATE}}.nc" >> ${{ env.WORKDIR }}/.env
+      - name: Copy yesterday's restart file (if it exists)
+        continue-on-error: true
+        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/ini_MERCATOR_${{ env.MODEL_RUN_DATE }}.nc 2>/dev/null
+      - name: Configure MatLab env restart file path
+        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/ini_MERCATOR_${{ env.MODEL_RUN_DATE}}.nc" >> ${{ env.WORKDIR }}/.env
       - name: Make forcing files
         run: >-
           docker run \
