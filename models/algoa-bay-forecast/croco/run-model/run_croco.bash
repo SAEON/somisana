@@ -115,12 +115,11 @@ while [ $LEVEL != $NLEVEL ]; do
   #echo "Getting ${MODEL}_frcst.in${ENDF} from $RUNDIR"
   cp -f $INDIR/${MODEL}_frcst.in${ENDF} $SCRATCHDIR
   # check to see if a restart file exists to initialise from
-  # otherwise we initialise from the global model
-  # (I guess I could have used the make_ini variable as an input
-  # to this script but I already had this code which seems to work fine) 
-  if test -f "$FORECASTDIR/${RSTFILE}.nc${ENDF}"; then
+  # otherwise we initialise from the global model (ini)
+  # The rst file moved to the croco/forcing directory (INPUTDIR_BRY)
+  if test -f "$INPUTDIR_BRY/${RSTFILE}.nc${ENDF}"; then
     echo "Using initial condition from $FORECASTDIR/${RSTFILE}.nc${ENDF}"
-    ln -sf $FORECASTDIR/${RSTFILE}.nc${ENDF} ${INIFILE}.nc${ENDF}
+    ln -sf $INPUTDIR_BRY/${RSTFILE}.nc${ENDF} ${INIFILE}.nc${ENDF}
     RST=1
   else
     echo "Using initial condition from ${INPUTDIR_BRY}/${INIFILE}_${OGCM}_${TIME}.nc${ENDF}"
