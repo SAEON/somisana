@@ -1,4 +1,4 @@
-name: deploy_web@stable
+name: Deploy somisana.ac.za
 
 on: workflow_dispatch
 

@@ -1,4 +1,4 @@
-name: deploy_geoserver@stable
+name: Deploy maps.somisana.ac.za
 
 on: workflow_dispatch
 

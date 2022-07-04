@@ -1,4 +1,4 @@
-name: build_matlab-r2022a@stable
+name: Build MatLab r2022a Docker image
 
 on:
   workflow_dispatch:

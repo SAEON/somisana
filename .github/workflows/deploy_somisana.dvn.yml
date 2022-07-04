@@ -1,4 +1,4 @@
-name: deploy_web@next
+name: Deploy somisana.dvn
 
 on: workflow_dispatch
 

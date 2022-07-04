@@ -1,4 +1,4 @@
-name: build_geopython@stable
+name: Build Python Docker image (with GDAL)
 
 on:
   workflow_dispatch:

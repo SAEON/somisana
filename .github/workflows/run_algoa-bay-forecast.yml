@@ -1,4 +1,4 @@
-name: run_algoa-bay-forecast
+name: Run Algoa Bay Forecast model
 
 on:
   workflow_dispatch:
