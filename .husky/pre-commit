@@ -2,8 +2,3 @@
 . "$(dirname "$0")/_/husky.sh"
 
 chomp doc
-git add ./*.md
-git add ./**/*.md
-git add ./**/**/*.md
-git add ./**/**/**/*.md
-git add ./**/**/**/**/*.md
