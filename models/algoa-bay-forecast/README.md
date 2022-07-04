@@ -4,7 +4,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Deployment](#deployment)
-  - [Server setup](#server-setup)
+  - [Server requirements](#server-requirements)
+  - [Server configuration](#server-configuration)
   - [TODO](#todo)
   - [Clean up tmp directory](#clean-up-tmp-directory)
 
