@@ -3,7 +3,10 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [TODO](#todo)
+- [Deployment](#deployment)
+  - [Server setup](#server-setup)
+  - [TODO](#todo)
+  - [Clean up tmp directory](#clean-up-tmp-directory)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
