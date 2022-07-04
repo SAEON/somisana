@@ -30,11 +30,17 @@ deps = [
   'node.importmap'
 ]
 run = """
-prettier \
-  --ignore-path ../.prettierignore \
-  --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
-  --write "loaders/**/*.js"
-node --trace-warnings --loader @node-loader/core server
+nodemon \
+    --exec 'prettier \
+        --cache \
+        --cache-strategy metadata \
+        --ignore-path ../.prettierignore \
+        --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
+        --write "loaders/**/*.js" \
+            && node \
+                --trace-warnings \
+                --loader @node-loader/core \
+                server'
 """
 
 [[task]]
@@ -102,6 +108,8 @@ rimraf server/ssr/*.js
 name = 'prettier'
 run = """
 prettier \
+  --cache \
+  --cache-strategy metadata \
   --ignore-path ../.prettierignore \
   --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
   --write "common/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
