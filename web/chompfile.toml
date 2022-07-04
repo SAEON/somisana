@@ -36,11 +36,11 @@ nodemon \
         --cache-strategy metadata \
         --ignore-path ../.prettierignore \
         --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
-        --write "loaders/**/*.js" \
-            && node \
-                --trace-warnings \
-                --loader @node-loader/core \
-                server'
+        --write "loaders/**/*.js" && \
+          node \
+            --trace-warnings \
+            --loader @node-loader/core \
+            server'
 """
 
 [[task]]
