@@ -258,8 +258,8 @@ jobs:
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Copy yesterday's restart file (if it exists)
-        continue-on-error: true
-        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/ini_MERCATOR_${{ env.MODEL_RUN_DATE }}.nc 2>/dev/null
+        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/ini_MERCATOR_${{ env.MODEL_RUN_DATE }}.nc
+        continue-on-error: true # Allow for the case where the restart file doesn't exist
       - name: Configure MatLab env restart file path
         run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/ini_MERCATOR_${{ env.MODEL_RUN_DATE}}.nc" >> ${{ env.WORKDIR }}/.env
       - name: Make forcing files
