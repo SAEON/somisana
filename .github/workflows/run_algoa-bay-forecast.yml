@@ -250,6 +250,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
       RESTART_FILE_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
@@ -258,10 +259,10 @@ jobs:
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Copy yesterday's restart file (if it exists)
-        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/ini_MERCATOR_${{ env.MODEL_RUN_DATE }}.nc
+        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc
         continue-on-error: true # Allow for the case where the restart file doesn't exist
       - name: Configure MatLab env restart file path
-        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/ini_MERCATOR_${{ env.MODEL_RUN_DATE}}.nc" >> ${{ env.WORKDIR }}/.env
+        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
       - name: Make forcing files
         run: >-
           docker run \

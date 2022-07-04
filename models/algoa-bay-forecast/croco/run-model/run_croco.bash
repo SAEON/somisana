@@ -8,7 +8,7 @@ TIME_prev=$3 # i.e. 20220606  set as env variable called RESTART_FILE_DATE in .y
 
 HDAYS=5   # Fixed value in this context
 FDAYS=5
-NH_AVG=6  # The temporal average of the output file in hours 
+NH_AVG=1  # The temporal average of the output file in hours edited to save every hour
 NH_AVGSURF=1  # The temporal average of the output file (only surface variables) in hours 
 NDAYS=$((HDAYS + FDAYS)) 
 INDIR=$(pwd)  # where the croco_frcst.in file is stored, in the current setup it is in the same directory
@@ -115,12 +115,11 @@ while [ $LEVEL != $NLEVEL ]; do
   #echo "Getting ${MODEL}_frcst.in${ENDF} from $RUNDIR"
   cp -f $INDIR/${MODEL}_frcst.in${ENDF} $SCRATCHDIR
   # check to see if a restart file exists to initialise from
-  # otherwise we initialise from the global model
-  # (I guess I could have used the make_ini variable as an input
-  # to this script but I already had this code which seems to work fine) 
-  if test -f "$FORECASTDIR/${RSTFILE}.nc${ENDF}"; then
+  # otherwise we initialise from the global model (ini)
+  # The rst file moved to the croco/forcing directory (INPUTDIR_BRY)
+  if test -f "$INPUTDIR_BRY/${RSTFILE}.nc${ENDF}"; then
     echo "Using initial condition from $FORECASTDIR/${RSTFILE}.nc${ENDF}"
-    ln -sf $FORECASTDIR/${RSTFILE}.nc${ENDF} ${INIFILE}.nc${ENDF}
+    ln -sf $INPUTDIR_BRY/${RSTFILE}.nc${ENDF} ${INIFILE}.nc${ENDF}
     RST=1
   else
     echo "Using initial condition from ${INPUTDIR_BRY}/${INIFILE}_${OGCM}_${TIME}.nc${ENDF}"
