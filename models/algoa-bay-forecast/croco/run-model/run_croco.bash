@@ -8,7 +8,7 @@ TIME_prev=$3 # i.e. 20220606  set as env variable called RESTART_FILE_DATE in .y
 
 HDAYS=5   # Fixed value in this context
 FDAYS=5
-NH_AVG=6  # The temporal average of the output file in hours 
+NH_AVG=1  # The temporal average of the output file in hours edited to save every hour
 NH_AVGSURF=1  # The temporal average of the output file (only surface variables) in hours 
 NDAYS=$((HDAYS + FDAYS)) 
 INDIR=$(pwd)  # where the croco_frcst.in file is stored, in the current setup it is in the same directory
