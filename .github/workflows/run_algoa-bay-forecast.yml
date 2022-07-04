@@ -302,6 +302,13 @@ jobs:
                 ${{ needs.envs.outputs.MODEL_RUN_DATE }} \
                 ${{ needs.envs.outputs.RESTART_FILE_DATE }}
 
+  archive-model-output:
+    needs: [run-model]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Move model output
+        run: 'TBD where model output is archived and for how long'  
+
   # The CROCO model outputs NetCDF data that represents ocean conditions of an
   # area mapped to a grid. The post-processing step is for extracting data into
   # a PostGIS instance where it is useful in the context of web applications
