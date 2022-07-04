@@ -308,7 +308,7 @@ jobs:
     runs-on: github-runner.saeon.int
     steps:
       - name: Move model output
-        run: 'TBD where model output is archived and for how long'  
+        run: echo "TODO" 
 
   # The CROCO model outputs NetCDF data that represents ocean conditions of an
   # area mapped to a grid. The post-processing step is for extracting data into
