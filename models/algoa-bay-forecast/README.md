@@ -11,8 +11,10 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Deployment
-## Server setup
-Setup a VM and configure the following:
+## Server requirements
+Setup a VM with at least 8GB of memory and 8 CPUS
+
+## Server configuration
 
 - Create a group called `runners` with an ID of 1998
 - Install a self-hosted GitHub actions runner under a limited permissions user
