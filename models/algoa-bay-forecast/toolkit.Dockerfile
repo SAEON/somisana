@@ -26,15 +26,12 @@ ENV COPERNICUS_PASSWORD=$COPERNICUS_PASSWORD
 
 # Setup a non-root user (Python complains about this)
 RUN groupadd -g 1999 runners \
-  && adduser \
-    -m \
+  && useradd \
     -u 1998 \
-    -gid 1999 \
-    --shell /bin/bash \
-    --gecos "" \
-    somisana \
-  && echo "somisana ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/somisana \
-  && chmod 0440 /etc/sudoers.d/somisana
+    -g 1999 \
+    -m \
+    -s /bin/bash \
+    somisana
 
 USER somisana
 WORKDIR /home/somisana
