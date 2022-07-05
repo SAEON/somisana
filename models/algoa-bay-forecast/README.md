@@ -6,8 +6,9 @@
 - [Deployment](#deployment)
   - [Server requirements](#server-requirements)
   - [Server configuration](#server-configuration)
-  - [TODO](#todo)
-  - [Clean up tmp directory](#clean-up-tmp-directory)
+    - [Configure MatLab user](#configure-matlab-user)
+    - [Create tmp directory](#create-tmp-directory)
+  - [Server maintenance](#server-maintenance)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
