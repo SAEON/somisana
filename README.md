@@ -6,21 +6,9 @@ SOMISANA-related tooling
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Quick start](#quick-start)
-  - [Setup repository tooling](#setup-repository-tooling)
-  - [Setup Python](#setup-python)
+  - [Setup the repository for local development](#setup-the-repository-for-local-development)
+  - [Install Python](#install-python)
     - [Install pyenv](#install-pyenv)
-    - [Set global Python version](#set-global-python-version)
-    - [Install pipenv (for dependency management/locks)](#install-pipenv-for-dependency-managementlocks)
-- [The SOMISANA Toolkit](#the-somisana-toolkit)
-  - [Forecast mode](#forecast-mode)
-- [Publishing](#publishing)
-  - [saeon/somisana_geopython](#saeonsomisana_geopython)
-  - [saeon/somisana_toolkit](#saeonsomisana_toolkit)
-- [Deployment](#deployment)
-  - [Docker](#docker)
-  - [saeon/somisana_geopython](#saeonsomisana_geopython-1)
-  - [saeon/somisana_toolkit](#saeonsomisana_toolkit-1)
-  - [saeon/somisana_web](#saeonsomisana_web)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -71,5 +59,8 @@ pyenv install 3.8.10
 pyenv global 3.8.10
 ```
 
-
-
+# Deployment
+## Deploy model-run workflows
+TODO
+## Deploy the visualization website
+TODO
