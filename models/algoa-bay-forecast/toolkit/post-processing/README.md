@@ -52,17 +52,31 @@ sudo cmake --build . --target install
 sudo cp -a proj-9.0.0/build/lib/. /usr/lib/
 ```
 
-### Setup script for development
+### Install pipenv (for dependency management/locks)
 
 ```sh
-# Setup this directory as a virtual environment and install dependencies
+pip install --user pipenv
+```
+
+And then update `~/.bashrc`
+
+```sh
+export PATH="$HOME/.local/bin:$PATH"
+export PIPENV_VENV_IN_PROJECT="enabled"
+```
+
+Run `source ~/.bashrc` so that changes to your shell environment take effect.
+
+### Run the script
+```sh
+# First install python dependencies
 pipenv install
 
-# Execute the post-processing script (running the script via pipenv doesn't require activating the venv)
+# And then you can run the script
 pipenv run script
 ```
 
-### Setup your environment variables
+### Setup script-environment variables 
 
 Run this command `cp .env.example .env`, and the adjust the environment variables accordingly in the `.env` file
 

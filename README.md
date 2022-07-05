@@ -28,31 +28,22 @@ SOMISANA-related tooling
 
 Follow this guide to setup the source code on your local computer for development
 
-## Setup repository tooling
-
-I'm fond of the NPM tooling for managing source code - including README formatting/table-of-contents, etc. As such please install Node.js so that you can use the tools associated with managing this repository (refer to `package.json.dependencies` for more information).
+## Setup the repository for local development
 
 ```sh
-# Install nvm (Node.js version manager)
-# Install Node.js (16.14.2, via nvm)
+# Install Node.js 16.14.2 (exactly this version). I recommend doing this via nvm (https://github.com/nvm-sh/nvm)
 
-# Install chomp via NPM (or install chomp via RUST (not recommended)
-# NOTE - The chomp binary downloads in the background after installing
-# If chomp commands hang after the npm install, just wait a little while
-# The binary is about 60mb
+# Install chomp
 npm install -g chomp
 
 # Initialize repository
 chomp init
 ```
 
-## Setup Python
-Please either use the `pyenv` + `pipenv` approach as outlined below, or alternatively engage to update the workflows. Ths current workflow requires a Pipfile.lock for all python scripts (provided via the `pipenv` tool) for provisioning the deployment environment.
+## Install Python
 
 ### Install pyenv
-
-- Follow the instructions for [installing prerequisites](https://github.com/pyenv/pyenv#installation)
-- Install pyenv via the [Automatic installer](https://github.com/pyenv/pyenv#automatic-installer)
+First, follow the instructions for [installing pyenv dependencies](https://github.com/pyenv/pyenv#installation). Then install `pyenv` via the [Automatic installer](https://github.com/pyenv/pyenv#automatic-installer). *Note - `pypenv` is NOT the same as `pyvenv`. See [this Stack Overflow answer](https://stackoverflow.com/a/41573588/3114742)*
 
 The automatic installer concludes with instructions on adding something to `.bashrc`. However, I found that I had to add the location of the `pyenv` installation to $PATH (`pyenv` installs a binary to `$HOME/.pyenv/`). So, I ignored the output instructions of the installer and instead adjusted `~/.bashrc` to include the following lines:
 
@@ -72,8 +63,6 @@ alias pip="pyenv exec pip"
 
 Run `source ~/.bashrc` so that changes to your shell environment take effect.
 
-### Set global Python version
-
 Install and set a Python version via `pyenv` to use
 
 ```sh
@@ -82,72 +71,5 @@ pyenv install 3.8.10
 pyenv global 3.8.10
 ```
 
-### Install pipenv (for dependency management/locks)
 
-```sh
-pip install --user pipenv
-```
 
-And then update `~/.bashrc`
-
-```sh
-export PATH="$HOME/.local/bin:$PATH"
-export PIPENV_VENV_IN_PROJECT="enabled"
-```
-
-Run `source ~/.bashrc` so that changes to your shell environment take effect.
-
-# The SOMISANA Toolkit
-
-## Forecast mode
-
-```txt
--5 -4 -3 -2 -1 +0 +1 +2 +3 +4 +5
-   -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
-      -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
-         -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
-            -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
-               -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
-                  -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
-                     -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
-                        -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
-                           -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
-                              -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
-                                 -5 -4 -3- 2 -1 +0 +1 +2 +3 +4 +5
-```
-
-# Publishing
-
-Code is bundled as Docker images. To publish versions of the tooling in this repository tag and push code appropriately.
-
-- All the python scripts are packed as a single Docker image. Whenever the Python scripts change, a new version of the saeon/somisana_toolkit Docker image must be pushed
-- The Python scripts base image should only need to be updated when a new version of python is desired
-
-## saeon/somisana_geopython
-
-The tag format is `geopython.v*`
-
-## saeon/somisana_toolkit
-
-The tag format is `toolkit.v*`
-
-# Deployment
-
-## [Docker](docker/)
-
-All Dockerfiles are defined in the [docker/](docker/) directory of this repository.
-
-## saeon/somisana_geopython
-
-## saeon/somisana_toolkit
-
-All python scripts are bundled to the same Docker image. To execute these scripts, run a Docker container from this image and specify the name of the script to run as an environment variables
-
-```sh
-docker run \
-  --rm \
-  ghcr.io/saeon/somisana_toolkit:latest \
-    <script name>
-```
-
-## saeon/somisana_web
