@@ -2,25 +2,6 @@ import xarray as xr
 import numpy as np
 from datetime import timedelta, datetime
 from transform.depth_functions import z_levels
-import optparse
-
-# Importing file paths from bash script bin/exe
-p = optparse.OptionParser()
-p.add_option('--NC_OUTPUT_PATH', '-o', default="./")
-p.add_option('--NC_INPUT_PATH', '-i', default="./input.nc")
-p.add_option('--GRID_INPUT_PATH', '-g', default="./grd.nc")
-options, arguments = p.parse_args()
-
-#Setting the paths using the bash input 
-NC_OUTPUT_PATH = options.NC_OUTPUT_PATH
-NC_INPUT_PATH = options.NC_INPUT_PATH
-GRID_INPUT_PATH = options.GRID_INPUT_PATH
-
-print('== Running Algoa Bay Forecast post-processing ==')
-print('NC_INPUT_PATH', options.NC_INPUT_PATH)
-print('GRID_INPUT_PATH', options.GRID_INPUT_PATH)
-print('NC_OUTPUT_PATH', options.NC_OUTPUT_PATH)
-
 
 # All dates in the CROCO output are represented
 # in seconds from 1 Jan 2000 (i.e. the reference date)
@@ -51,9 +32,19 @@ def u2rho_4d(var_u):
 # Model variables use the dimensions time (time from reference date),
 # eta_rho (lat) and xi_rho (lon). We are changing eta_rho and xi_rho 
 # from grid points to real lat and lon data.
-def transform():
-    data = xr.open_dataset(NC_INPUT_PATH)
-    data_grid = xr.open_dataset(GRID_INPUT_PATH)
+def transform(options, arguments):
+    #Setting the paths using the bash input 
+    nc_output_path = options.nc_output_path
+    nc_input_path = options.nc_input_path
+    grid_input_path = options.grid_input_path
+
+    print('== Running Algoa Bay Forecast post-processing ==')
+    print('nc-input-path', options.nc_input_path)
+    print('grid-input-path', options.grid_input_path)
+    print('nc-output-path', options.nc_output_path)
+
+    data = xr.open_dataset(nc_input_path)
+    data_grid = xr.open_dataset(grid_input_path)
 
     # Dimensions that need to be transformed
     time = data.time.values
@@ -129,5 +120,5 @@ def transform():
     )
 
     #Print output 
-    data_out.to_netcdf(NC_OUTPUT_PATH)
+    data_out.to_netcdf(nc_output_path)
     print('Complete! If you don\'t see this message there was a problem')

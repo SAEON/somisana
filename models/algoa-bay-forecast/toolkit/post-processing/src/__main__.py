@@ -1,16 +1,33 @@
-# from mongo import connection as mongoConnection
-# from postgis import connection as pgConnection
-from transform import transform
+from transform import transform as transformModelOutput
+from load import load as loadRaster
+from optparse import OptionParser
 
-transform()
+p = OptionParser()
+p.add_option('--transform', '-t', action="store_true", default = False)
+p.add_option('--load', '-l', action="store_true", default = False)
 
-# # Test mongo connection
-# mongoConnection['some-collection'].insert_one({"hello": "world"})
-# print('Mongo working')
+# BOTH CLIs
+p.add_option('--nc-input-path', '-i', default="./input.nc")
 
-# # Test postgres connection
-# cursor = pgConnection.cursor()
-# cursor.execute("create table if not exists test (i int not null);")
-# print('PG connection')
+# TRANSFORM CLI
+p.add_option('--nc-output-path', '-o', default="./")
+p.add_option('--grid-input-path', '-g', default="./grd.nc")
 
-# print("If you don't see this message there was an error")
+# LOAD CLI
+# (no specific options yet)
+
+options, arguments = p.parse_args()
+
+if (options.transform and options.load):
+  raise Exception('Both transform (-t) and load (-l) mode specified')
+
+if not (options.transform or options.load):
+  raise Exception('Specify either load (-l) or transform (-t) mode')
+
+if (options.transform):
+  transformModelOutput(options, arguments)
+  exit(0)
+
+if (options.load):
+  loadRaster(options, arguments)
+  exit(0)
