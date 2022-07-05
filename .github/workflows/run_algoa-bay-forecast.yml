@@ -303,13 +303,6 @@ jobs:
                 ${{ needs.envs.outputs.MODEL_RUN_DATE }} \
                 ${{ needs.envs.outputs.RESTART_FILE_DATE }}
 
-  archive-model-output:
-    needs: [run-model]
-    runs-on: github-runner.saeon.int
-    steps:
-      - name: Move model output
-        run: 'TBD where model output is archived and for how long'  
-
   # The CROCO model outputs NetCDF data that represents ocean conditions of an
   # area mapped to a grid. The post-processing step is for extracting data into
   # a PostGIS instance where it is useful in the context of web applications
@@ -326,7 +319,7 @@ jobs:
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Move CROCO output
-        run: mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/avg-${{ env.RUN_DATE }}.nc
+        run: mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc
       - name: Algoa Bay forecast (post processing)
         run: >-
           docker run \
@@ -336,8 +329,8 @@ jobs:
             ${{ needs.bundle-python-toolkit.outputs.image }} \
               post-processing \
                 -g /tmp/somisana/current/croco/forcing/grd.nc \
-                -i /tmp/somisana/current/croco/forecast/avg-${{ env.RUN_DATE }}.nc \
-                -o /tmp/somisana/current/croco/forecast/avg-${{ env.RUN_DATE }}-processed.nc
+                -i /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
+                -o /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-normalized.nc
 
   # TODO - this will likely be to move the processed nc file
   # to another server and configure WMS layers from it
