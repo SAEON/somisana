@@ -31,7 +31,6 @@ RUN groupadd -g 1999 runners \
     -u 1998 \
     -gid 1999 \
     --shell /bin/bash \
-    --disabled-password \
     --gecos "" \
     somisana \
   && echo "somisana ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/somisana \
