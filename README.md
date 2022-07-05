@@ -9,6 +9,9 @@ SOMISANA-related tooling
   - [Setup the repository for local development](#setup-the-repository-for-local-development)
   - [Install Python](#install-python)
     - [Install pyenv](#install-pyenv)
+- [Deployment](#deployment)
+  - [Deploy model-run workflows](#deploy-model-run-workflows)
+  - [Deploy the visualization website](#deploy-the-visualization-website)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
