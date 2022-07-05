@@ -210,7 +210,7 @@ jobs:
             /tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch},forcing-inputs} \
           && chown \
             -R \
-            :somisana \
+            :runners \
             /tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} \
           && chmod \
             -R \

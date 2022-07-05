@@ -2,7 +2,6 @@ FROM ghcr.io/saeon/somisana_geopython:3.8.10
 
 # BUILD TIME
 
-ARG SOMISANA_USER_ID=1999
 ARG PG_HOST
 ARG PG_PORT=5432
 ARG PG_USERNAME=admin
@@ -26,7 +25,18 @@ ENV COPERNICUS_USERNAME=$COPERNICUS_USERNAME
 ENV COPERNICUS_PASSWORD=$COPERNICUS_PASSWORD
 
 # Setup a non-root user (Python complains about this)
-RUN useradd -u ${SOMISANA_USER_ID} -m -s /bin/bash somisana
+RUN groupadd -g 1999 runners \
+  && adduser \
+    -m \
+    -u 1998 \
+    -gid 1999 \
+    --shell /bin/bash \
+    --disabled-password \
+    --gecos "" \
+    somisana \
+  && echo "somisana ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/somisana \
+  && chmod 0440 /etc/sudoers.d/somisana
+
 USER somisana
 WORKDIR /home/somisana
 
