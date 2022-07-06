@@ -26,6 +26,7 @@ def load(options, arguments):
         -t auto \
         -R \
         -F \
+        -s 4326 \
         NETCDF:"{0}":{1} \
         public.algoa_bay_forecast \
         | psql \
