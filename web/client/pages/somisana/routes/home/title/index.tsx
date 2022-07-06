@@ -1,7 +1,7 @@
 import Translate from '../../../../../modules/i18n/translate'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import { alpha } from '@mui/material/styles'
+import { alpha } from '@mui/system/colorManipulator'
 
 const Title = () => {
   return (

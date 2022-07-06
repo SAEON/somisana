@@ -9,7 +9,7 @@ export default ({ contentBase = '/', routes }) => {
   const normalizedPathname = pathname.replace(contentBase, '/')
 
   const _pathname = normalizedPathname.match(/\/records\/./)
-    ? ['', 'records', ...new Set(normalizedPathname.split('/records/')).filter(_ => _)]
+    ? ['', 'records', ...new Set(normalizedPathname.split('/records/'))].filter(_ => _)
     : [...new Set(normalizedPathname.split('/'))]
 
   const tree = _pathname.map(p => {
@@ -17,7 +17,7 @@ export default ({ contentBase = '/', routes }) => {
       routes.find(({ to }) => {
         to = to.replace(contentBase, '').replace('/', '')
         return to === p
-      }) || { label: p?.titleize() || '404 (Not found)' }
+      }) || { label: '404 (Not found)' }
     )
   })
 

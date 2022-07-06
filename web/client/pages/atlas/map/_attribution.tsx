@@ -1,6 +1,6 @@
 import Typography from '@mui/material/Typography'
 import Link from '@mui/material/Link'
-import { alpha } from '@mui/material/styles'
+import { alpha} from '@mui/system/colorManipulator'
 
 export default () => {
   return (

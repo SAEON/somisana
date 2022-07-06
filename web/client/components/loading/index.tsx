@@ -1,5 +1,5 @@
 import LinearProgress from '@mui/material/LinearProgress'
-import { styled } from '@mui/material/styles'
+import styled from '@mui/material/styles/styled'
 
 const Loading = props => <LinearProgress style={{ zIndex: 1099 }} {...props} />
 

@@ -2,10 +2,10 @@ import { lazy, Suspense } from 'react'
 import Loading from '../../../components/loading'
 import { Home, Contract, Map, About, Github, License, Link } from '../../../components/icons'
 import HomePage from './home'
-import VisualizationsPage from './visualizations'
 
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
 const AboutPage = lazy(() => import('../../../modules/about'))
+const VisualizationsPage = lazy(() => import('./visualizations'))
 
 export default [
   {
@@ -15,7 +15,7 @@ export default [
     Icon: Home,
     includeInNavMenu: true,
     includeInFooter: true,
-    element: props => <HomePage {...props} />,
+    element: props =><HomePage {...props} />,
   },
 
   {
@@ -25,7 +25,7 @@ export default [
     Icon: Map,
     includeInNavMenu: true,
     includeInFooter: true,
-    element: props => <VisualizationsPage {...props} />,
+    element: props =><Suspense fallback={<Loading />}> <VisualizationsPage {...props} />  </Suspense>,
   },
 
   {

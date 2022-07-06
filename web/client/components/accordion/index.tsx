@@ -1,5 +1,5 @@
 import MuiAccordion from '@mui/material/Accordion'
-import { AccordionProps } from '@mui/material'
+import type { AccordionProps } from '@mui/material'
 
 const Accordion = (props: AccordionProps) => (
   <MuiAccordion

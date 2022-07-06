@@ -87,8 +87,8 @@ export const SettingPanel = ({ forceLanguage, open, setOpen }) => {
         >
           <Button
             color="inherit"
-            onClick={async () => {
-              await updateSetting({ accepted: true })
+            onClick={() => {
+              updateSetting({ accepted: true })
               setOpen(false)
             }}
             variant="text"
