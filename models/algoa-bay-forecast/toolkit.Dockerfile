@@ -57,8 +57,5 @@ RUN pipenv sync
 # Set the base working directory for all scripts
 WORKDIR /home/somisana
 
-# For testing
-RUN echo $PATH
-
 ENTRYPOINT [ "bin/exe" ]
 CMD [ "$@" ]
