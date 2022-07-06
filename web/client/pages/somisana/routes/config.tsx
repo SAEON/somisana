@@ -15,7 +15,7 @@ export default [
     Icon: Home,
     includeInNavMenu: true,
     includeInFooter: true,
-    element: props =><HomePage {...props} />,
+    element: props => <HomePage {...props} />,
   },
 
   {
@@ -25,7 +25,12 @@ export default [
     Icon: Map,
     includeInNavMenu: true,
     includeInFooter: true,
-    element: props =><Suspense fallback={<Loading />}> <VisualizationsPage {...props} />  </Suspense>,
+    element: props => (
+      <Suspense fallback={<Loading />}>
+        {' '}
+        <VisualizationsPage {...props} />{' '}
+      </Suspense>
+    ),
   },
 
   {
