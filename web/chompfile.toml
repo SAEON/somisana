@@ -31,16 +31,17 @@ deps = [
 ]
 run = """
 nodemon \
-    --exec 'prettier \
-        --cache \
-        --cache-strategy metadata \
-        --ignore-path ../.prettierignore \
-        --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
-        --write "loaders/**/*.js" && \
-          node \
-            --trace-warnings \
-            --loader @node-loader/core \
-            server'
+  --delay 50ms \
+  --exec 'prettier \
+      --cache \
+      --cache-strategy metadata \
+      --ignore-path ../.prettierignore \
+      --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
+      --write "loaders/**/*.js" && \
+        node \
+          --trace-warnings \
+          --loader @node-loader/core \
+          server'
 """
 
 [[task]]
