@@ -1,5 +1,5 @@
-from transform import transform as transformModelOutput
-from load import load as loadRaster
+from cli.transform import transform as transformModelOutput
+from cli.load import load as loadRaster
 from optparse import OptionParser
 
 p = OptionParser()

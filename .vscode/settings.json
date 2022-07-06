@@ -39,6 +39,7 @@
     "numpy",
     "Parens",
     "pgdata",
+    "pgsql",
     "pipenv",
     "pipfile",
     "POSTGIS",

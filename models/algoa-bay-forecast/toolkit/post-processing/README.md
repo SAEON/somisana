@@ -5,7 +5,7 @@
 
 - [Quick start](#quick-start)
   - [Setup your local dev environment](#setup-your-local-dev-environment)
-    - [Install binaries](#install-binaries)
+    - [Install 3rd party dependencies](#install-3rd-party-dependencies)
     - [Install pipenv (for dependency management/locks)](#install-pipenv-for-dependency-managementlocks)
     - [Run the script](#run-the-script)
     - [Setup script-environment variables](#setup-script-environment-variables)
@@ -23,7 +23,7 @@ First follow the instructions in the root of this repository to setup a Python e
 
 The python libraries included in this project require binaries that need to be installed explicitly. Apparently... conda does this for you (I'll believe it when I see it!). Here are the steps to setup a local dev environment
 
-### Install binaries
+### Install 3rd party dependencies
 
 ```sh
 # Install required binaries
@@ -51,6 +51,9 @@ sudo cmake --build . --target install
 
 # Then I had to copy the build libraries to /usr/lib so that Python can use them
 sudo cp -a proj-9.0.0/build/lib/. /usr/lib/
+
+# Install PostGIS (for the raster2pgsql CLI)
+sudo apt install postgis
 ```
 
 ### Install pipenv (for dependency management/locks)

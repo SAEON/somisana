@@ -1,7 +1,7 @@
 import xarray as xr
 import numpy as np
 from datetime import timedelta, datetime
-from transform.depth_functions import z_levels
+from cli.transform.depth_functions import z_levels
 
 # All dates in the CROCO output are represented
 # in seconds from 1 Jan 2000 (i.e. the reference date)

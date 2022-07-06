@@ -7,3 +7,8 @@ connection = MongoClient(
     username=MONGO_USERNAME,
     password=MONGO_PASSWORD
 )[MONGO_DB]
+
+# Example usage
+# from mongo import connection as mongoConnection
+# mongoConnection['some-collection'].insert_one({"hello": "world"})
+# print('Mongo working')
