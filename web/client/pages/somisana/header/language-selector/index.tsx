@@ -1,8 +1,7 @@
-import { useContext, useState, useEffect, Suspense, lazy } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { ctx as siteSettingsContext } from '../../../../modules/site-settings'
+import SettingsPanel from '../../../../modules/site-settings/settings-panel'
 import Button from '@mui/material/Button'
-
-const SettingPanel = lazy(() => import('../../../../modules/site-settings/settings-panel'))
 
 export default () => {
   const [shouldRender, setShouldRender] = useState(false)
@@ -36,11 +35,7 @@ export default () => {
           {language.toUpperCase()}
         </Button>
 
-        {open && (
-          <Suspense fallback={null}>
-            <SettingPanel forceLanguage open={open} setOpen={setOpen} />
-          </Suspense>
-        )}
+        <SettingsPanel forceLanguage open={open} setOpen={setOpen} />
       </>
     )
   }

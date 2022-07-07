@@ -1,105 +1,22 @@
-import { useContext, Suspense, lazy } from 'react'
-import { ctx as siteSettingsContext } from '../_provider'
-import AppBar from '@mui/material/AppBar'
-import Toolbar from '@mui/material/Toolbar'
-import IconButton from '@mui/material/IconButton'
-import SwipeableDrawer from '@mui/material/SwipeableDrawer'
-import Typography from '@mui/material/Typography'
-import { Close, CheckAll } from '../../../components/icons'
-import { Linear as Loading } from '../../../components/loading'
-import Button from '@mui/material/Button'
-import Fade from '@mui/material/Fade'
-
-const DrawerContent = lazy(() => import('./_content'))
+import Drawer from '@mui/material/Drawer'
+import LazyLoader from './_lazy-loader'
 
 export const SettingPanel = ({ forceLanguage, open, setOpen }) => {
-  const { updateSetting } = useContext(siteSettingsContext)
-
   return (
-    <SwipeableDrawer
+    <Drawer
       sx={{
         display: 'flex',
       }}
       variant="temporary"
       ModalProps={{
-        keepMounted: true,
+        keepMounted: false,
       }}
       anchor="right"
       open={open}
       onClose={() => setOpen(false)}
-      onOpen={() => setOpen(true)}
     >
-      <AppBar elevation={0} variant="outlined" position="relative">
-        <Toolbar
-          variant="dense"
-          disableGutters
-          sx={{
-            padding: theme => theme.spacing(1),
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Typography>Site settings</Typography>
-          <IconButton color="inherit" onClick={() => setOpen(false)} size="small">
-            <Close />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-
-      <Suspense
-        fallback={
-          <Loading
-            sx={theme => ({
-              [theme.breakpoints.up('sm')]: {
-                display: 'block',
-                width: 400,
-              },
-            })}
-          />
-        }
-      >
-        <Fade in key="lazy-loaded-drawer-content">
-          <DrawerContent
-            forceLanguage
-            sx={theme => ({
-              overflow: 'auto',
-              height: '100%',
-              [theme.breakpoints.up('sm')]: {
-                maxWidth: 400,
-              },
-            })}
-          />
-        </Fade>
-      </Suspense>
-
-      <AppBar elevation={0} variant="outlined" position="relative" sx={{ marginTop: 'auto' }}>
-        <Toolbar
-          disableGutters
-          variant="dense"
-          sx={{
-            padding: theme => theme.spacing(1),
-            display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'row-reverse',
-            marginTop: 'auto',
-          }}
-        >
-          <Button
-            color="inherit"
-            onClick={() => {
-              updateSetting({ accepted: true })
-              setOpen(false)
-            }}
-            variant="text"
-            size="small"
-            startIcon={<CheckAll />}
-          >
-            Accept
-          </Button>
-        </Toolbar>
-      </AppBar>
-    </SwipeableDrawer>
+      <LazyLoader forceLanguage={forceLanguage} setOpen={setOpen} />
+    </Drawer>
   )
 }
 

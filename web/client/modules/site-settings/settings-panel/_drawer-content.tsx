@@ -6,16 +6,29 @@ const LanguageSettings = lazy(() => import('./language'))
 const ThemeSettings = lazy(() => import('./theme'))
 const CookieSettings = lazy(() => import('./cookies'))
 
+const StyledLoading = () => {
+  return (
+    <Loading
+      sx={theme => ({
+        [theme.breakpoints.up('sm')]: {
+          display: 'block',
+          width: 400,
+        },
+      })}
+    />
+  )
+}
+
 const DrawerContent = forwardRef(({ forceLanguage, ...props }, ref) => {
   return (
     <Box ref={ref} {...props}>
-      <Suspense fallback={<Loading />}>
-        <LanguageSettings forceLanguage />
+      <Suspense fallback={<StyledLoading />}>
+        <LanguageSettings forceLanguage={forceLanguage} />
       </Suspense>
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<StyledLoading />}>
         <CookieSettings />
       </Suspense>
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<StyledLoading />}>
         <ThemeSettings />
       </Suspense>
     </Box>

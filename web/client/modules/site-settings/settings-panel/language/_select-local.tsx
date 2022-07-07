@@ -33,10 +33,14 @@ const SelectLocale = memo(
     if (loading) {
       return (
         <Loading
-          sx={{
+          sx={theme => ({
             width: '100%',
-            mt: theme => theme.spacing(2),
-          }}
+            mt: theme.spacing(2),
+            [theme.breakpoints.up('sm')]: {
+              display: 'block',
+              width: 400,
+            },
+          })}
         />
       )
     }

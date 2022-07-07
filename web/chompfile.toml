@@ -85,9 +85,16 @@ integrity = false
 
 [[task]]
 target = '.cache'
-dep = 'client/**/*'
+deps = ['client/**/*', 'common/**/*']
 run = """
-rollup --config rollup/client.config.js
+prettier \
+  --cache \
+  --cache-strategy metadata \
+  --ignore-path ../.prettierignore \
+  --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
+  --write "common/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
+  && rollup \
+    --config rollup/client.config.js
 """
 
 # First delete and recreate the cache
