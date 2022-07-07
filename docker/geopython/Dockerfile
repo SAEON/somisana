@@ -1,4 +1,4 @@
-FROM osgeo/gdal:ubuntu-full-3.5.0
+FROM osgeo/gdal:ubuntu-full-3.5.1
 
 # Disable apt prompts for the duration of the build only
 ARG DEBIAN_FRONTEND=noninteractive
