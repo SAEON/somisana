@@ -31,6 +31,7 @@ deps = [
 ]
 run = """
 prettier \
+  --loglevel warn \
   --cache \
   --cache-strategy metadata \
   --ignore-path ../.prettierignore \
@@ -88,6 +89,7 @@ target = '.cache'
 deps = ['client/**/*', 'common/**/*']
 run = """
 prettier \
+  --loglevel warn \
   --cache \
   --cache-strategy metadata \
   --ignore-path ../.prettierignore \
