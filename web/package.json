@@ -16,15 +16,15 @@
     "@emotion/styled": "^11.9.3",
     "@graphql-tools/schema": "^8.5.0",
     "@jspm/generator": "^1.0.0-beta.31",
-    "@koa/router": "^11.0.0",
+    "@koa/router": "^11.0.1",
     "@mdi/js": "^6.9.96",
-    "@mui/material": "^5.8.6",
+    "@mui/material": "^5.8.7",
     "@mui/system": "^5.8.7",
     "@node-loader/core": "^2.0.0",
     "@node-loader/import-maps": "^1.0.3",
     "@rollup/plugin-replace": "^4.0.0",
     "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.208",
+    "@swc/core": "^1.2.210",
     "apollo-server-core": "^3.9.0",
     "apollo-server-koa": "^3.9.0",
     "browserslist": "^4.21.1",
@@ -57,8 +57,8 @@
     "wkt": "^0.1.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.18",
-    "npm-check-updates": "^15.0.2",
+    "nodemon": "^2.0.19",
+    "npm-check-updates": "^15.2.0",
     "prettier": "^2.7.1"
   },
   "prettier": {
