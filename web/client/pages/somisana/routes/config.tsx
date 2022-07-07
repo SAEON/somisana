@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import Loading from '../../../components/loading'
+import { Linear as Loading } from '../../../components/loading'
 import { Home, Contract, Map, About, Github, License, Link } from '../../../components/icons'
 import HomePage from './home'
 

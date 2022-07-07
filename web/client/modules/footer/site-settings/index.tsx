@@ -1,9 +1,11 @@
-import { useState, useContext, useEffect } from 'react'
-import { ctx as siteSettingsContext, SettingPanel } from '../../site-settings'
+import { useState, useContext, useEffect, lazy, Suspense } from 'react'
+import { ctx as siteSettingsContext } from '../../site-settings'
 import { Cog } from '../../../components/icons'
 import MuiIcon from '@mui/material/Icon'
 import Typography from '@mui/material/Typography'
 import MuiLink from '@mui/material/Link'
+
+const SettingPanel = lazy(() => import('../../site-settings/settings-panel'))
 
 const SiteSettingsPanel = () => {
   const { updateSetting, ...settings } = useContext(siteSettingsContext)
@@ -46,7 +48,11 @@ const SiteSettingsPanel = () => {
       </Typography>
 
       {/* DRAWER */}
-      <SettingPanel open={open} setOpen={setOpen} />
+      {open && (
+        <Suspense fallback={null}>
+          <SettingPanel forceLanguage={false} open={open} setOpen={setOpen} />
+        </Suspense>
+      )}
     </>
   )
 }

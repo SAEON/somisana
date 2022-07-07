@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 import Typography from '@mui/material/Typography'
 import { Close, CheckAll } from '../../../components/icons'
-import Loading from '../../../components/loading'
+import { Linear as Loading } from '../../../components/loading'
 import Button from '@mui/material/Button'
 import Fade from '@mui/material/Fade'
 

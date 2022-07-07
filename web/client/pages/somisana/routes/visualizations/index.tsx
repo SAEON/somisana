@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
 import Div from '../../../../components/div'
-import Loading from '../../../../components/loading'
+import { Linear as Loading } from '../../../../components/loading'
 
 const Atlas = lazy(() => import('../../../atlas/ssr'))
 

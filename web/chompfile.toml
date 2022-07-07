@@ -30,18 +30,16 @@ deps = [
   'node.importmap'
 ]
 run = """
-nodemon \
-  --delay 50ms \
-  --exec 'prettier \
-      --cache \
-      --cache-strategy metadata \
-      --ignore-path ../.prettierignore \
-      --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
-      --write "loaders/**/*.js" && \
-        node \
-          --trace-warnings \
-          --loader @node-loader/core \
-          server'
+prettier \
+  --cache \
+  --cache-strategy metadata \
+  --ignore-path ../.prettierignore \
+  --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
+  --write "loaders/**/*.js" && \
+    node \
+      --trace-warnings \
+      --loader @node-loader/core \
+      server
 """
 
 [[task]]
@@ -82,8 +80,8 @@ template = 'jspm'
 [task.template-options]
 env = ['browser', 'development', 'module']
 default-provider = 'jspm'
-preload = true
-integrity = true
+preload = false
+integrity = false
 
 [[task]]
 target = '.cache'

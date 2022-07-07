@@ -1,7 +1,7 @@
 import { useContext, memo } from 'react'
 import { ctx as siteSettingsContext } from '../../_provider'
 import ComboBox from '../../../../components/combo-box'
-import Loading from '../../../../components/loading'
+import { Linear as Loading } from '../../../../components/loading'
 import Tooltip from '@mui/material/Tooltip'
 import { gql, useQuery } from '@apollo/client'
 import Box from '@mui/material/Box'

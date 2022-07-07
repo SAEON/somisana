@@ -1,5 +1,5 @@
 import { Suspense, lazy, forwardRef } from 'react'
-import Loading from '../../../components/loading'
+import { Linear as Loading } from '../../../components/loading'
 import Box from '@mui/material/Box'
 
 const LanguageSettings = lazy(() => import('./language'))
