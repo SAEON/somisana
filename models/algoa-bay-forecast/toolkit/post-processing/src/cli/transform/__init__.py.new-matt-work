@@ -1,6 +1,7 @@
 import xarray as xr
 import numpy as np
 from datetime import timedelta, datetime
+import xesmf as xe #Function for regridding not sure how easy it is to add to pipenv
 from cli.transform.depth_functions import z_levels
 
 # All dates in the CROCO output are represented
@@ -119,6 +120,32 @@ def transform(options, arguments):
         attrs=dict(description="CROCO output from algoa Bay model transformed lon/lat/depth/time"),
     )
 
+    # Getting max lon and lat to define corners of new regular grid
+    lonmax = np.nanmax(lon_rho)
+    lonmin = np.nanmin(lon_rho)
+    latmax = np.nanmax(lat_rho)
+    latmin = np.nanmin(lat_rho)
+
+    #Step size of new grid ~1km
+    stepsize = 0.01
+
+    # Creating output grid in the form of a dataset
+    ds_out = xr.Dataset(
+        data_vars=dict(
+        ),
+        coords=dict(
+            time=dates,
+            depth=s_rho,
+            longitude=(["longitude"], np.arange(lonmin,lonmax,stepsize)),
+            latitude=(["latitude"],  np.arange(latmin,latmax,stepsize)),
+        ),
+        attrs=dict(description="CROCO output from algoa Bay model transformed lon/lat/depth/time"),
+    )
+
+    # Perform gridding from data_out to new dataset dr_out using the ds_out grid 
+    regridder = xe.Regridder(data_out, ds_out, "bilinear")
+    dr_out = regridder(data_out)
+
     #Print output 
-    data_out.to_netcdf(nc_output_path)
+    dr_out.to_netcdf(nc_output_path)
     print('Complete! If you don\'t see this message there was a problem')
