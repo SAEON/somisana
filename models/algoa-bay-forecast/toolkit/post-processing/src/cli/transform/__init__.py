@@ -107,8 +107,10 @@ def transform(options, arguments):
             salt=(["time","depth","lat", "lon"], salt[:,:,:,:]),
             u=(["time","depth","lat", "lon"], u_rho[:,:,:,:]),
             v=(["time","depth","lat", "lon"], v_rho[:,:,:,:]),
-            m_rho= (["time","depth","lat","lon"],m_rho)
-
+            m_rho= (["time","depth","lat","lon"],m_rho),
+            longitude=(["lat", "lon"], lon_rho),
+            latitude=(["lat", "lon"], lat_rho),
+            datetimes=dates,
         ),
         coords=dict(
             lon_rho=(["lat", "lon"], lon_rho),
