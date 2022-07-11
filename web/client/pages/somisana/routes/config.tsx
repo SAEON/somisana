@@ -7,6 +7,8 @@ const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
 const AboutPage = lazy(() => import('../../../modules/about'))
 const VisualizationsPage = lazy(() => import('./visualizations'))
 
+const L = () => <Loading sx={{ width: '100%' }} />
+
 export default [
   {
     to: '/',
@@ -26,8 +28,7 @@ export default [
     includeInNavMenu: true,
     includeInFooter: true,
     element: props => (
-      <Suspense fallback={<Loading />}>
-        {' '}
+      <Suspense fallback={<L />}>
         <VisualizationsPage {...props} />{' '}
       </Suspense>
     ),
@@ -41,7 +42,7 @@ export default [
     includeInNavMenu: true,
     includeInFooter: true,
     element: props => (
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<L />}>
         <AboutPage {...props} />
       </Suspense>
     ),
@@ -56,7 +57,7 @@ export default [
     includeInNavMenu: false,
     Icon: Contract,
     element: props => (
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<L />}>
         <PrivacyPolicyPage {...props} />
       </Suspense>
     ),
