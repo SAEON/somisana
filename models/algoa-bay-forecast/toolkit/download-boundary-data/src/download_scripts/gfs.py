@@ -77,7 +77,7 @@ def gfs(date_now, hdays, fdays, domain, dirout):
                 # but it does create a small and useless fileout.
                 # So check the size of fileout and delete it if it is 'small'
                 if Path(fileout).stat().st_size < 1000:  # using 1kB as the check
-                    print('WARNING: '+fname+' could not be downloaded')
+                    print('WARNING: '+fname+' could not be downloaded', open(fileout, 'r').read())
                     os.remove(fileout)
 
         date_hist = date_hist + timedelta(hours=6)
@@ -104,7 +104,7 @@ def gfs(date_now, hdays, fdays, domain, dirout):
             # but it does create a small and useless fileout.
             # So check the size of fileout and delete it if it is 'small'
             if Path(fileout).stat().st_size < 1000:  # using 1kB as the check
-                print('WARNING: '+fname+' could not be downloaded')
+                print('WARNING: '+fname+' could not be downloaded', open(fileout, 'r').read())
                 os.remove(fileout)
 
     print('GFS download completed (in '+str(datetime.now() - startTime)+' h:m:s)')
