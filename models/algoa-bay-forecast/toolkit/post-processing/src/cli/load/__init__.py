@@ -3,7 +3,7 @@ from re import sub
 from numpy import var
 import xarray as xr
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME
-from postgis import connection as pgConnection
+from postgis import connect as connectPg
 
 def load(options, arguments):
   nc_input_path = options.nc_input_path
@@ -11,17 +11,16 @@ def load(options, arguments):
 
   netcdf = xr.open_dataset(nc_input_path)
   variables = list(netcdf.keys())
-  # print(variables)
-  # print(netcdf)
-  # exit()
-  
-  for i, variable in enumerate(variables):
-    p, filename =  os.path.split("""{0}:{1}""".format(str(nc_input_path), str(variable)))
+  coords = list(netcdf.coords)
+  data = list(set(variables + coords))
+
+  for dataset in data:
+    p, filename =  os.path.split("""{0}:{1}""".format(str(nc_input_path), str(dataset)))
 
     # Delete the entry for this raster (to make the function idempotent)
     mode = '-a'
     try:
-      pgConnection.cursor().execute("""delete from public.{0} where filename = %s""".format(table), (filename, ))
+      connectPg().cursor().execute("""delete from public.{0} where filename = %s""".format(table), (filename, ))
     except:
       mode = '-d'
 
@@ -41,7 +40,7 @@ def load(options, arguments):
           postgres://{4}:{5}@{6}:{7}/{8}""".format(
             str(mode),
             str(nc_input_path),
-            str(variable),
+            str(dataset),
             str(table),
             str(PG_USERNAME),
             str(PG_PASSWORD),
@@ -50,8 +49,9 @@ def load(options, arguments):
             str(PG_DB)
           )
         
-    print("""\nLoading variable {0}:""".format(str(variable)), sub(' +', ' ', cmd))
-    os.system(cmd)
+    print("""\nLoading variable {0}:""".format(str(dataset)), sub(' +', ' ', cmd))
+    if os.system(cmd) != 0:
+      raise Exception('raster2pgsql cmd failed: ' + sub(' +', ' ', cmd))
 
   print('\nNetCDF data registered as out-db successfully!!')
 

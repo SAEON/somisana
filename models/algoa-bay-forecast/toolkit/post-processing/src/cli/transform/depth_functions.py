@@ -147,7 +147,6 @@ def hlev(var,z,depth):
 
             vnew[m,l]=(((v1-v2)*depth+v2*z1-v1*z2)/(z1-z2))
 
-
         vnew=vnew*mask
         
     return vnew   
