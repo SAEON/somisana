@@ -6,8 +6,7 @@ export default () => {
     <Box
       sx={{
         flexGrow: 1,
-        background: theme =>
-          `linear-gradient(to top, ${theme.palette.primary.light}, ${theme.palette.grey[100]}, ${theme.palette.common.white})`,
+        background: theme => theme.palette.grey[100],
       }}
     >
       <Map />
