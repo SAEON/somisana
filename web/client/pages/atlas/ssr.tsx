@@ -7,6 +7,7 @@ export default () => {
       sx={{
         flexGrow: 1,
         background: theme => theme.palette.grey[100],
+        transition: theme => theme.transitions.create(['background-color']),
       }}
     >
       <Map />
