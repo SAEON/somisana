@@ -11,7 +11,7 @@ p.add_option('--nc-input-path', '-i', default="./input.nc")
 
 # TRANSFORM CLI
 p.add_option('--nc-output-path', '-o', default="./")
-p.add_option('--grid-input-path', '-g', default="./grd.nc")
+p.add_option('--grid-input-path', '-g', default="../../lib/grd.nc")
 
 # LOAD CLI
 # (no specific options yet)

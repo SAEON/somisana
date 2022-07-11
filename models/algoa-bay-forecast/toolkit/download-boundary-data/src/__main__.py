@@ -12,7 +12,6 @@ MATLAB_ENV_PATH = os.path.join(TMP_DIRECTORY, '.env')
 # Params
 date_now = date.today() # using date(), not datetime() as we use 00:00:00 as the reference time by definition
 date_yesterday = date_now + timedelta(days=-1) # Needed to check for restart file
-parent_dir = os.getcwd()
 hdays = 5 # x days into the past
 fdays = 5 # x days into the future
 domain = [22, 31, -37, -31] # Subset downloads with this extent [west, east, south, north]
@@ -22,7 +21,6 @@ varsOfInterest = ['so', 'thetao', 'zos', 'uo', 'vo'] # Mercator
 depths = [0.493, 5727.918] # [min, max] Mercator
 
 # write the user defined input to the log file
-print('working directory: ' + parent_dir)
 print('date: ' + str(date_now))
 print('hindcast days: ' + str(hdays))
 print('forecast days: ' + str(fdays))
