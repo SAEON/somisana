@@ -45,6 +45,7 @@ jobs:
           build-args: |
             API=https://somisana.dvn
             NODE_ENV=development
+            DEPLOYMENT_ENV=development
             TZ=utc
             TECHNICAL_CONTACT=zd.smith@saeon.nrf.ac.za
           file: web/Dockerfile
