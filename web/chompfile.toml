@@ -26,8 +26,9 @@ name = 'server'
 env = { TZ='UTC', NODE_ENV='development', NODE_LOADER_CONFIG='loaders/config.js' }
 serial = true
 deps = [
-  'server/ssr/index.js',
-  'node.importmap'
+  'rollup:ssr',
+  'node.importmap',
+  'server/**/*.js',
 ]
 run = """
 prettier \
@@ -35,6 +36,7 @@ prettier \
   --cache \
   --cache-strategy metadata \
   --ignore-path ../.prettierignore \
+  --write "ssr/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
   --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
   --write "loaders/**/*.js" && \
     node \
@@ -45,8 +47,7 @@ prettier \
 
 [[task]]
 name = 'rollup:ssr'
-target = 'server/ssr/#.js'
-dep = 'server/ssr/src/#.jsx'
+deps = ['ssr/**/*.jsx']
 run = 'rollup -c rollup/server.config.js'
 
 ############################# 
@@ -104,7 +105,7 @@ name = 'clear-cache'
 run = """
 rimraf node.importmap
 rimraf .cache
-rimraf server/ssr/*.js
+rimraf .ssr
 """
 
 ############################# 

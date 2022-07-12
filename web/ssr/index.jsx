@@ -1,22 +1,23 @@
-import { renderToString } from 'react-dom/server'
 import { join, normalize } from 'path'
 import fs from 'fs/promises'
-import dirname from '../../lib/dirname.js'
+import dirname from '../server/lib/dirname.js'
 import { createReadStream } from 'fs'
-import { createEmotionCache } from '../../../common/app'
+import { createEmotionCache } from '../common/app'
 import emotionServer from '@emotion/server/create-instance'
 import Layout from './_layout.jsx'
 
-const { default: createEmotionServer } = emotionServer
-
-const __dirname = dirname(import.meta)
-
-const files = normalize(join(__dirname, '../../.cache'))
+/**
+ * Emotion doesn't support stream-rendering yet
+ * Once it does, please update
+ */
+import { renderToString } from 'react-dom/server'
 
 const INDEX_NAME = 'somisana'
-
+const { default: createEmotionServer } = emotionServer
+const __dirname = dirname(import.meta)
+const files = normalize(join(__dirname, '../.cache'))
 const APP_ENTRIES = await fs
-  .readdir(normalize(join(__dirname, '../../client/html')))
+  .readdir(normalize(join(__dirname, '../client/html')))
   .then(files => files.filter(f => f.includes('.html')))
   .then(files => files.map(f => f.replace('.html', '')))
 
@@ -39,13 +40,10 @@ export default async ctx => {
     ctx.set('Content-type', 'text/html')
 
     const entry = ctx.request.url.replace('.html', '').replace('/', '')
-
     const page = entry ? (APP_ENTRIES.includes(entry) ? entry : INDEX_NAME) : INDEX_NAME
-
     const htmlUtf8 = await fs.readFile(normalize(join(files, `${page}.html`)), {
       encoding: 'utf-8',
     })
-
     const SsrEntry = await import(normalize(join(files, `ssr.${page}.js`))).then(
       ({ default: C }) => C
     )

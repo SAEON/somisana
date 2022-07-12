@@ -7,14 +7,14 @@ import extensions from './plugins/extensions.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-rimraf.sync(join(__dirname, '../server/ssr/index.js'))
+rimraf.sync(join(__dirname, '../.ssr/index.js'))
 
 export default {
-  input: [join(__dirname, '../server/ssr/src/index.jsx')],
+  input: [join(__dirname, '../ssr/index.jsx')],
   output: [
     {
       exports: 'auto',
-      dir: join(__dirname, '../server/ssr'),
+      dir: join(__dirname, '../.ssr'),
       format: 'esm',
       compact: false,
     },

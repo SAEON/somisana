@@ -11,7 +11,7 @@ import restrictCors from './middleware/restrict-cors.js'
 // import openCors from './middleware/open-cors.js'
 import blacklist from './middleware/blacklist.js'
 import whitelist from './middleware/whitelist.js'
-import ssr from './ssr/index.js'
+import ssr from '../.ssr/index.js'
 import graphql from './graphql/index.js'
 import createRequestCtx from './middleware/ctx.js'
 
