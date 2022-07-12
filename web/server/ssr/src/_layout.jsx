@@ -1,6 +1,6 @@
 import { StaticRouter } from 'react-router-dom/server'
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client'
-import fetch from 'node-fetch'
+import fetch from 'make-fetch-happen'
 import App from '../../../common/app'
 
 export default ({ children, ctx, emotionCache }) => {

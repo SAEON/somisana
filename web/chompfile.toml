@@ -68,7 +68,6 @@ ignore = [
   'apollo-server-core',
   'apollo-server-koa',
   'koa-bodyparser',
-  'node-fetch',
   'http-errors'
 ]
 

@@ -6,26 +6,87 @@ import Tooltip from '@mui/material/Tooltip'
 import { gql, useQuery } from '@apollo/client'
 import Box from '@mui/material/Box'
 
-const LANGUAGES = ['en']
+const SelectLocale = ({ updateSetting, language, LANGUAGES }) => {
+  const { error, loading, data } = useQuery(
+    gql`
+      query locales($languages: [Language!]) {
+        locales(languages: $languages) {
+          id
+          ... on Locale {
+            name
+            code
+            language
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        languages: LANGUAGES,
+      },
+    }
+  )
 
-const SelectLocale = memo(
-  ({ updateSetting, language }) => {
+  if (loading) {
+    return (
+      <Loading
+        sx={theme => ({
+          width: '100%',
+          mt: theme.spacing(2),
+          [theme.breakpoints.up('sm')]: {
+            display: 'block',
+            width: 400,
+          },
+        })}
+      />
+    )
+  }
+
+  if (error) {
+    throw error
+  }
+
+  return (
+    <Tooltip title="Select language" placement="left">
+      <ComboBox
+        getOptionLabel={option => option.name}
+        label="language"
+        autoHighlight
+        value={data.locales.find(option => option.language === language)}
+        onChange={(e, option) => updateSetting({ language: option.language })}
+        options={data.locales}
+        renderOption={(props, option) => (
+          <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+            <img
+              loading="lazy"
+              width="20"
+              src={`https://flagcdn.com/w20/${option.code.split('_')[1].toLowerCase()}.png`}
+              srcSet={`https://flagcdn.com/w40/${option.code.split('_')[1].toLowerCase()}.png 2x`}
+              alt=""
+            />
+            {option.name}
+          </Box>
+        )}
+      />
+    </Tooltip>
+  )
+}
+
+const Locales = memo(
+  props => {
     const { error, loading, data } = useQuery(
       gql`
-        query locales($languages: [Language!]) {
-          locales(languages: $languages) {
-            id
-            ... on Locale {
+        query languageLocales($name: String!) {
+          __type(name: $name) {
+            enumValues {
               name
-              code
-              language
             }
           }
         }
       `,
       {
         variables: {
-          languages: LANGUAGES,
+          name: 'Language',
         },
       }
     )
@@ -33,14 +94,10 @@ const SelectLocale = memo(
     if (loading) {
       return (
         <Loading
-          sx={theme => ({
+          sx={{
             width: '100%',
-            mt: theme.spacing(2),
-            [theme.breakpoints.up('sm')]: {
-              display: 'block',
-              width: 400,
-            },
-          })}
+            mt: theme => theme.spacing(2),
+          }}
         />
       )
     }
@@ -49,36 +106,13 @@ const SelectLocale = memo(
       throw error
     }
 
-    return (
-      <Tooltip title="Select language" placement="left">
-        <ComboBox
-          getOptionLabel={option => option.name}
-          label="language"
-          autoHighlight
-          value={data.locales.find(option => option.language === language)}
-          onChange={(e, option) => updateSetting({ language: option.language })}
-          options={data.locales}
-          renderOption={(props, option) => (
-            <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-              <img
-                loading="lazy"
-                width="20"
-                src={`https://flagcdn.com/w20/${option.code.split('_')[1].toLowerCase()}.png`}
-                srcSet={`https://flagcdn.com/w40/${option.code.split('_')[1].toLowerCase()}.png 2x`}
-                alt=""
-              />
-              {option.name}
-            </Box>
-          )}
-        />
-      </Tooltip>
-    )
+    return <SelectLocale LANGUAGES={data.__type.enumValues.map(({ name }) => name)} {...props} />
   },
-  () => false
+  () => false // Needed for now - otherwise the dropdown has incorrect state
 )
 
 export default () => {
   const { updateSetting, language } = useContext(siteSettingsContext)
 
-  return <SelectLocale updateSetting={updateSetting} language={language} />
+  return <Locales updateSetting={updateSetting} language={language} />
 }
