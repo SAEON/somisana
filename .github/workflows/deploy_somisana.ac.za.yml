@@ -44,7 +44,7 @@ jobs:
           context: .
           build-args: |
             API=https://somisana.ac.za
-            NODE_ENV=production
+            NODE_ENV=development
             DEPLOYMENT_ENV=production
             TZ=utc
             TECHNICAL_CONTACT=zd.smith@saeon.nrf.ac.za
