@@ -23,7 +23,7 @@ cp -r public/* .cache/
 
 [[task]]
 name = 'server'
-env = { TZ='UTC', NODE_ENV='development', NODE_LOADER_CONFIG='loaders/config.js' }
+env = { TZ='UTC', NODE_LOADER_CONFIG='loaders/config.js' }
 serial = true
 deps = [
   'rollup:ssr',
@@ -48,6 +48,7 @@ prettier \
 [[task]]
 name = 'rollup:ssr'
 deps = ['ssr/**/*.jsx']
+env = { TZ='UTC' }
 run = 'rollup -c rollup/server.config.js'
 
 ############################# 
@@ -62,7 +63,7 @@ target = 'node.importmap'
 template = 'jspm'
 [task.template-options]
 default-provider = 'jspm'
-env = ['node', 'development', 'module']
+env = ['node', 'production', 'module']
 ignore = [
   'mongodb',
   'graphql',
@@ -79,7 +80,7 @@ deps = ['client/html/#.html', '.cache']
 target = '.cache/#.html'
 template = 'jspm'
 [task.template-options]
-env = ['browser', 'development', 'module']
+env = ['browser', 'production', 'module']
 default-provider = 'jspm'
 preload = false
 integrity = false
@@ -87,6 +88,7 @@ integrity = false
 [[task]]
 target = '.cache'
 deps = ['client/**/*', 'common/**/*']
+env = { TZ='UTC'}
 run = """
 prettier \
   --loglevel warn \

@@ -101,7 +101,6 @@ EXPOSE 3000
 
 # Start command
 CMD \
-  NODE_ENV=$NODE_ENV \
   DEPLOYMENT_ENV=$DEPLOYMENT_ENV \
   TZ=$TZ \
   NODE_LOADER_CONFIG=loaders/config.js \
