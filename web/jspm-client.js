@@ -5,21 +5,22 @@ import mkdirp from 'mkdirp'
 import { dirname } from 'path'
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
+const DEP = process.env.DEP
+const TARGET = process.env.TARGET
 
 const generator = new Generator({
-  mapUrl: pathToFileURL(process.env.TARGET),
+  mapUrl: pathToFileURL(TARGET),
   env: ['browser', NODE_ENV, 'module'],
   defaultProvider: 'jspm',
 })
 
-const htmlSource = await readFile(process.env.DEP, 'utf-8')
+const htmlSource = await readFile(DEP, 'utf-8')
 
-mkdirp.sync(dirname(process.env.TARGET))
-await writeFile(
-  process.env.TARGET,
-  await generator.htmlGenerate(htmlSource, {
-    htmlUrl: pathToFileURL(process.env.TARGET),
-    preload: false,
-    integrity: false,
-  })
-)
+const html = await generator.htmlGenerate(htmlSource, {
+  htmlUrl: pathToFileURL(TARGET),
+  preload: false,
+  integrity: false,
+})
+
+mkdirp.sync(dirname(TARGET))
+await writeFile(TARGET, html)

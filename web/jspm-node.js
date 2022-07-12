@@ -4,6 +4,8 @@ import mkdirp from 'mkdirp'
 import { dirname } from 'path'
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
+const DEPS = process.env.DEPS
+const TARGET = process.env.TARGET
 
 const generator = new Generator({
   mapUrl: import.meta.url,
@@ -19,7 +21,7 @@ const generator = new Generator({
   ],
 })
 
-await Promise.all(process.env.DEPS.split(':').map(dep => generator.traceInstall('./' + dep)))
+await Promise.all(DEPS.split(':').map(dep => generator.traceInstall('./' + dep)))
 
-mkdirp.sync(dirname(process.env.TARGET))
-await writeFile(process.env.TARGET, JSON.stringify(generator.getMap(), null, 2))
+mkdirp.sync(dirname(TARGET))
+await writeFile(TARGET, JSON.stringify(generator.getMap(), null, 2))
