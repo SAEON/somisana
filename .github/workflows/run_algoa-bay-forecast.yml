@@ -325,15 +325,16 @@ jobs:
       - name: Load PostgreSQL credentials
         id: pg-env
         run: |
+          echo "::add-mask::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_HOST_ENCRYPTED }}" | base64 --decode))"
           echo "::set-output name=PG_HOST_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_HOST_ENCRYPTED }}" | base64 --decode))"
+          echo "::add-mask::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_PORT_ENCRYPTED }}" | base64 --decode))"
           echo "::set-output name=PG_PORT_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_PORT_ENCRYPTED }}" | base64 --decode))"
+          echo "::add-mask::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_DB_ENCRYPTED }}" | base64 --decode))"
           echo "::set-output name=PG_DB_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_DB_ENCRYPTED }}" | base64 --decode))"
+          echo "::add-mask::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_USERNAME_ENCRYPTED }}" | base64 --decode))"
           echo "::set-output name=PG_USERNAME_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_USERNAME_ENCRYPTED }}" | base64 --decode))"
+          echo "::add-mask::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_PASSWORD_ENCRYPTED }}" | base64 --decode))"
           echo "::set-output name=PG_PASSWORD_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_PASSWORD_ENCRYPTED }}" | base64 --decode))"
-      - name: Test masking env variables
-        run: |
-          echo "::add-mask::${{ env.PG_HOST }}"
-          echo "::add-mask::${{ env.PG_PASSWORD }}"
       - name: Test that PG env is received correctly
         env:
           PG_HOST: ${{ steps.pg-env.outputs.PG_HOST_DECRYPTED }}
