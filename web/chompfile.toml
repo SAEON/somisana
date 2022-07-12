@@ -1,15 +1,15 @@
 version = 0.1
 default-task = 'start'
-extensions = ['chomp@0.1:jspm', 'chomp@0.1:swc']
-
-############################# 
-#############################
-#############################
 
 [[task]]
 name = 'start'
+deps = [
+    '.cache',
+    '.cache/*.html',
+    'copy-static-files',
+    'server',
+]
 serial = true
-deps = ['.cache', '.cache/*.html', 'copy-static-files', 'server']
 
 #############################
 #############################
@@ -17,9 +17,9 @@ deps = ['.cache', '.cache/*.html', 'copy-static-files', 'server']
 
 [[task]]
 name = 'copy-static-files'
-run = """
+run = '''
 cp -r public/* .cache/
-"""
+'''
 
 [[task]]
 name = 'server'
@@ -58,36 +58,31 @@ run = 'rollup -c rollup/server.config.js'
 # Create an import map for node
 [[task]]
 name = 'jspm:node'
-deps = ['index.importmap.js', '.cache']
-target = 'node.importmap'
-template = 'jspm'
-[task.template-options]
-default-provider = 'jspm'
-env = ['node', 'production', 'module']
-ignore = [
-  'mongodb',
-  'graphql',
-  'apollo-server-core',
-  'apollo-server-koa',
-  'koa-bodyparser',
-  'http-errors'
+targets = ['node.importmap']
+deps = [
+    'index.importmap.js',
+    '.cache'
 ]
+invalidation = 'always'
+run = "node jspm-node.js"
 
 # Transpile HTML + js => HTML / import map
 [[task]]
 name = 'jspm:client'
-deps = ['client/html/#.html', '.cache']
-target = '.cache/#.html'
-template = 'jspm'
-[task.template-options]
-env = ['browser', 'production', 'module']
-default-provider = 'jspm'
-preload = false
-integrity = false
+targets = ['.cache/#.html']
+deps = [
+    'client/html/#.html',
+    '.cache'
+]
+invalidation = 'always'
+run = "node jspm-client.js"
 
 [[task]]
 target = '.cache'
-deps = ['client/**/*', 'common/**/*']
+deps = [
+  'client/**/*',
+  'common/**/*'
+]
 env = { TZ='UTC'}
 run = """
 prettier \
@@ -101,18 +96,18 @@ prettier \
     --config rollup/client.config.js
 """
 
-# First delete and recreate the cache
 [[task]]
 name = 'clear-cache'
-run = """
+run = '''
 rimraf node.importmap
 rimraf .cache
 rimraf .ssr
-"""
+'''
 
 ############################# 
 #############################
 #############################
+
 
 [[task]]
 name = 'prettier'
@@ -129,8 +124,6 @@ prettier \
   --write "./*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)"
 """
 
-# DEPENDENCY MANAGEMNT
-
 [[task]]
 name = 'reset'
 run = 'find . -name node_modules -type d -exec rm -rv {} + && find . -name package-lock.json -type f -delete'
@@ -141,8 +134,7 @@ run = 'ncu'
 
 [[task]]
 name = 'ncu:u'
-run = """
+run = '''
 ncu -u
 npm install
-"""
-
+'''
