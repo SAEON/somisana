@@ -2,10 +2,13 @@ import os
 from re import sub
 from numpy import var
 import xarray as xr
+from datetime import timedelta, datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME
 from postgis import connect as connectPg
 
 def load(options, arguments):
+  now = datetime.now()
+  print('TODO time logging')
   nc_input_path = options.nc_input_path
   table = 'algoa_bay_forecast'
 
