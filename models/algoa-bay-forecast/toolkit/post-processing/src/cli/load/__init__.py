@@ -24,14 +24,14 @@ def load(options, arguments):
     except:
       mode = '-d'
 
-    # Register this raster
+    # Register this raster as an in-db raster
+    # Add back -R flag for out-db raster
     cmd = """
       raster2pgsql \
         {0} \
         -q \
         -I \
         -t auto \
-        -R \
         -F \
         -s 4326 \
         NETCDF:"{1}":{2} \
