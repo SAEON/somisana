@@ -128,7 +128,18 @@ def transform(options, arguments):
     )
     print('-> Generated NetCDF dataset', str(datetime.now() - now))
 
-    #Print output 
-    data_out.to_netcdf(nc_output_path)
+    # Print output 
+    data_out.to_netcdf(nc_output_path, encoding = {
+        'temperature': { },
+        'salt': { },
+        'u': { },
+        'v': { },
+        'm_rho': { },
+        'lon_rho': { },
+        'lat_rho': { },
+        'depth': { },
+        'time': { 'dtype': 'i4' }
+    })
+
     print('-> Output NetCDF data to disk', str(datetime.now() - now))
     print('\nComplete! If you don\'t see this message there was a problem')
