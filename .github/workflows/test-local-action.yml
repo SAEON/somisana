@@ -18,6 +18,7 @@ jobs:
       - name: Install node_modules for action
         run: |
           source ~/.bashrc
+          nvm use 16.14.2
           npm ci --only production --prefix .github/actions/hello-world/
       - name: Hello world action step
         id: hello

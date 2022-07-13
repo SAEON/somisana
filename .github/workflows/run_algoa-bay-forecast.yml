@@ -223,6 +223,7 @@ jobs:
           echo "::set-output name=WORKDIR_YESTERDAY::/tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}"
 
   # Download environmental data used to constrain model boundaries.
+  # This job is retried if it fails, since the failure can be due to upstream errors
   # These downloads are used to create forcing files that are fed as input to the CROCO model
   # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
   # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
@@ -233,11 +234,13 @@ jobs:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
     steps:
       - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
-        run: source ~/.bashrc
+        run: |
+          source ~/.bashrc
+          nvm use 16.14.2
       - name: Download Algoa-bay forcing input
         uses: nick-fields/retry@v2
         with:
-          timeout_minutes: 20 # Script is considered failed if this limit is reached
+          timeout_minutes: 30 # Script is considered failed if this limit is reached
           retry_wait_seconds: 600 # Wait 10 minutes and try again
           max_attempts: 10
           retry_on: any
