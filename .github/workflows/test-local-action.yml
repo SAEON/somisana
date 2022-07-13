@@ -3,6 +3,9 @@ name: Test local action
 on: 
   workflow_dispatch:
 
+env:
+  BRANCH_REF: next
+
 jobs:
   hello_world_job:
     runs-on: ubuntu-latest
