@@ -1,7 +1,6 @@
 // https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action
-
-const core = require('@actions/core')
-const github = require('@actions/github')
+import core from '@actions/core'
+import github from '@actions/github'
 
 try {
   // `who-to-greet` input defined in action metadata file
