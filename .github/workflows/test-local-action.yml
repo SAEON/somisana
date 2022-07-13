@@ -1,4 +1,4 @@
-name: Test local action
+name: Actions tester
 
 on: 
   workflow_dispatch:
@@ -16,7 +16,9 @@ jobs:
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Install node_modules for action
-        run: npm ci --only production --prefix .github/actions/hello-world/
+        run: |
+          source ~/.bashrc
+          npm ci --only production --prefix .github/actions/hello-world/
       - name: Hello world action step
         id: hello
         uses: ./.github/actions/hello-world
