@@ -12,7 +12,7 @@ def load(options, arguments):
   netcdf = xr.open_dataset(nc_input_path)
   variables = list(netcdf.keys())
   coords = list(netcdf.coords)
-  data = list(set(variables + coords))
+  data = list(set(variables + coords)).sort()
 
   for dataset in data:
     p, filename =  os.path.split("""{0}:{1}""".format(str(nc_input_path), str(dataset)))
@@ -31,7 +31,7 @@ def load(options, arguments):
         {0} \
         -q \
         -I \
-        -t auto \
+        -t 19x53 \
         -F \
         -s 4326 \
         NETCDF:"{1}":{2} \
