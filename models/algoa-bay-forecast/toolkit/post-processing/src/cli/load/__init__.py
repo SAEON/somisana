@@ -2,7 +2,7 @@ import os
 from re import sub
 from numpy import var
 import xarray as xr
-from datetime import timedelta, datetime
+from datetime import datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME
 from postgis import connect as connectPg
 
