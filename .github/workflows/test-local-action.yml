@@ -17,7 +17,7 @@ jobs:
           ref: ${{ env.BRANCH_REF }}
       - name: Install node_modules for action
         run: |
-          nvm use 16.14.2
+          source ~/.bashrc
           npm ci --only production --prefix .github/actions/hello-world/
       - name: Hello world action step
         id: hello
