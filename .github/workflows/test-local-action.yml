@@ -36,4 +36,4 @@ jobs:
           continue_on_error: false
           command: >- 
             echo "The time was ${{ steps.hello.outputs.time }}" \
-              && asdad
+              && docker --version
