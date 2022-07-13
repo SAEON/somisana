@@ -8,7 +8,7 @@ on:
         required: false
         default:
   schedule:
-    - cron:  '0 2 * * *'
+    - cron:  '0 0 * * *' # 0200 SAST
 
 env:
   REGISTRY: ghcr.io
@@ -233,14 +233,24 @@ jobs:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
     steps:
       - name: Download Algoa-bay forcing input
-        run: >-
-          docker run \
-            --rm \
-            -v $WORKDIR/:/tmp/somisana/current \
-            -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
-            -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-            ${{ needs.python.outputs.image }} \
-               download-boundary-data
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 20 # Script is considered failed if this limit is reached
+          retry_wait_seconds: 600 # Wait 10 minutes and try again
+          max_attempts: 10
+          retry_on: any
+          warning_on_retry: true
+          shell: bash
+          continue_on_error: false
+          on_retry_command: rm -f $WORKDIR/forcing-inputs/*
+          command: >-
+            docker run \
+              --rm \
+              -v $WORKDIR/:/tmp/somisana/current \
+              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+              ${{ needs.python.outputs.image }} \
+                download-boundary-data
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/

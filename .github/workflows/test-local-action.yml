@@ -23,4 +23,15 @@ jobs:
         with:
           who-to-greet: 'SOMISANA locally defined action'
       - name: Get the output time
-        run: echo "The time was ${{ steps.hello.outputs.time }}"
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 1
+          retry_wait_seconds: 1 # Wait 10 minutes and try again
+          max_attempts: 3
+          retry_on: any
+          warning_on_retry: true
+          shell: bash
+          continue_on_error: false
+          command: >- 
+            echo "The time was ${{ steps.hello.outputs.time }}" \
+              && echo hi
