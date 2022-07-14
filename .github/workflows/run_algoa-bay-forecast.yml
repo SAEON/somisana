@@ -350,13 +350,6 @@ jobs:
           echo "::set-output name=PG_USERNAME_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_USERNAME_ENCRYPTED }}" | base64 --decode))"
           echo "::add-mask::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_PASSWORD_ENCRYPTED }}" | base64 --decode))"
           echo "::set-output name=PG_PASSWORD_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_PASSWORD_ENCRYPTED }}" | base64 --decode))"
-      - name: Test that PG env is received correctly
-        env:
-          PG_HOST: ${{ steps.pg-env.outputs.PG_HOST_DECRYPTED }}
-        run: |
-          echo $PG_HOST
-          echo ${{ env.PG_HOST }}
-          echo ${{ steps.pg-env.outputs.PG_HOST_DECRYPTED }}
       - name: Normalize the model output
         run: >-
           docker run \

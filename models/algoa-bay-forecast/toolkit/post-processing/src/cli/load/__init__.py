@@ -7,17 +7,20 @@ from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME
 from postgis import connect as connectPg
 
 def load(options, arguments):
+  print('\n== Running Algoa Bay Forecast post-processing ==')
   now = datetime.now()
-  print('TODO time logging')
   nc_input_path = options.nc_input_path
   table = 'algoa_bay_forecast'
 
   netcdf = xr.open_dataset(nc_input_path)
   variables = list(netcdf.keys())
   coords = list(netcdf.coords)
-  data = list(set(variables + coords)).sort()
+  data = list(set(variables + coords))
+  data.sort()
+  print('\n-> Loading variables', data, str(datetime.now() - now))
 
   for dataset in data:
+    print('\n-> Loading dataset', dataset, str(datetime.now() - now))
     p, filename =  os.path.split("""{0}:{1}""".format(str(nc_input_path), str(dataset)))
 
     # Delete the entry for this raster (to make the function idempotent)
@@ -55,6 +58,6 @@ def load(options, arguments):
     print("""\nLoading variable {0}:""".format(str(dataset)), sub(' +', ' ', cmd))
     if os.system(cmd) != 0:
       raise Exception('raster2pgsql cmd failed: ' + sub(' +', ' ', cmd))
-
-  print('\nNetCDF data registered as out-db successfully!!')
+  
+  print('\nNetCDF data registered as out-db successfully!!', str(datetime.now() - now))
 
