@@ -72,12 +72,15 @@ def gfs(date_now, hdays, fdays, domain, dirout):
                     str(frcst).zfill(3)+url2+url3
                 cmd = 'curl -silent \'' + url + '\'' + ' -o ' + fileout
                 print('download = ', fileout)
-                os.system(cmd)
-                # unfortunately this doesn't actually throw an error if the file to be downloaded does not exist,
-                # but it does create a small and useless fileout.
-                # So check the size of fileout and delete it if it is 'small'
+
+                # If the cURL command fails, then throw an error
+                if os.system(cmd) != 0:
+                    raise Exception('GFS download failed (via cURL). ' + fname + ' could not be downloaded. ' + cmd)
+
+                # Small files indicate that the download succeeded, but that the requested resource doesn't exist
+                # The model should still run in in these cases
                 if Path(fileout).stat().st_size < 1000:  # using 1kB as the check
-                    print('WARNING: '+fname+' could not be downloaded', open(fileout, 'r').read())
+                    print('WARNING: '+ fname + ' could not be downloaded', open(fileout, 'r').read())
                     os.remove(fileout)
 
         date_hist = date_hist + timedelta(hours=6)
@@ -99,10 +102,13 @@ def gfs(date_now, hdays, fdays, domain, dirout):
                 str(frcst).zfill(3)+url2+url3
             cmd = 'curl --silent \'' + url + '\'' + ' -o ' + fileout
             print('download = ', fileout)
-            os.system(cmd)
-            # unfortunately this doesn't actually throw an error if the file to be downloaded does not exist,
-            # but it does create a small and useless fileout.
-            # So check the size of fileout and delete it if it is 'small'
+            
+            # If the cURL command fails, then throw an error
+            if os.system(cmd) != 0:
+                raise Exception('GFS download failed (via cURL). ' + fname + ' could not be downloaded. ' + cmd)
+            
+            # Small files indicate that the download succeeded, but that the requested resource doesn't exist
+            # The model should still run in in these cases
             if Path(fileout).stat().st_size < 1000:  # using 1kB as the check
                 print('WARNING: '+fname+' could not be downloaded', open(fileout, 'r').read())
                 os.remove(fileout)
