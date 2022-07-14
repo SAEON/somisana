@@ -55,7 +55,7 @@ def load(options, arguments):
             str(PG_DB)
           )
         
-    print("""\nLoading variable {0}:""".format(str(dataset)), sub(' +', ' ', cmd))
+    print("""\nCommand:""".format(str(dataset)), sub(' +', ' ', cmd))
     if os.system(cmd) != 0:
       raise Exception('raster2pgsql cmd failed: ' + sub(' +', ' ', cmd))
   
