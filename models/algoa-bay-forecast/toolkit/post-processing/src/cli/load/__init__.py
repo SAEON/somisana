@@ -6,6 +6,18 @@ from datetime import datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME
 from postgis import connect as connectPg
 
+t = {
+  "temperature": "76x53",
+  "salt": "76x53",
+  "v": "76x53",
+  "u": "76x53",
+  "m_rho": "76x53",
+  "lon_rho": "76x53",
+  "lat_rho": "76x53",
+  "time": "240x1",
+  "depth": "20x1"
+}
+
 def load(options, arguments):
   print('\n== Running Algoa Bay Forecast post-processing ==')
   now = datetime.now()
@@ -20,8 +32,15 @@ def load(options, arguments):
   print('\n-> Loading variables', data, str(datetime.now() - now))
 
   for dataset in data:
-    print('\n-> Loading dataset', dataset, str(datetime.now() - now))
+    print('\n->', dataset, str(datetime.now() - now))
     p, filename =  os.path.split("""{0}:{1}""".format(str(nc_input_path), str(dataset)))
+    
+    # raster2pgsql -t auto value defaults to the grid size (156x106)
+    # This is too large for in-db rasters. Not sure about out-db
+    # rasters
+    tileDimensions = t[dataset]
+    if not tileDimensions:
+      raise Exception('Tile dimensions not specified for', dataset, 'Please update this in the source code manually above')
 
     # Delete the entry for this raster (to make the function idempotent)
     mode = '-a'
@@ -37,14 +56,16 @@ def load(options, arguments):
         {0} \
         -q \
         -I \
-        -t 76x53 \
+        -t {1} \
         -F \
+        -R \
         -s 4326 \
-        NETCDF:"{1}":{2} \
-        public.{3} \
+        NETCDF:"{2}":{3} \
+        public.{4} \
         | psql \
-          postgres://{4}:{5}@{6}:{7}/{8}""".format(
+          postgres://{5}:{6}@{7}:{8}/{9}""".format(
             str(mode),
+            str(tileDimensions),
             str(nc_input_path),
             str(dataset),
             str(table),
@@ -55,7 +76,7 @@ def load(options, arguments):
             str(PG_DB)
           )
         
-    print("""\nCommand:""".format(str(dataset)), sub(' +', ' ', cmd))
+    print("""Command:""".format(str(dataset)), sub(' +', ' ', cmd))
     if os.system(cmd) != 0:
       raise Exception('raster2pgsql cmd failed: ' + sub(' +', ' ', cmd))
   
