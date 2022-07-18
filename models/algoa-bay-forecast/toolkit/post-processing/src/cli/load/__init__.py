@@ -37,7 +37,7 @@ def load(options, arguments):
         {0} \
         -q \
         -I \
-        -t auto \
+        -t 76x53 \
         -F \
         -s 4326 \
         NETCDF:"{1}":{2} \
