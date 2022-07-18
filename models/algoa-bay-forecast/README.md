@@ -63,8 +63,8 @@ Update the server root-crontab (`sudo su && crontab -e`) with the following:
 
 ```sh
 # Prune Algoa Bay Forecast model runs (stable)
-0 0 * * 0 find /tmp/somisana/algoa-bay-forecast/stable/* -type d -ctime +7 -exec rm -rf {} \;
+0 0 * * 0 find /tmp/somisana/algoa-bay-forecast/stable/* -maxdepth 0 -type d -ctime +7 -exec rm -rf {} \;
 
 # Prune Algoa Bay Forecast model runs (next)
-0 0 * * 0 find /tmp/somisana/algoa-bay-forecast/next/* -type d -ctime +3 -exec rm -rf {} \;
+0 0 * * 0 find /tmp/somisana/algoa-bay-forecast/next/* -maxdepth 0 -type d -ctime +3 -exec rm -rf {} \;
 ```
