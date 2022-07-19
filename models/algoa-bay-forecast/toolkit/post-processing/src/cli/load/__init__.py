@@ -6,6 +6,10 @@ from datetime import datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME
 from postgis import connect as connectPg
 
+"""
+Source grid
+152x106
+"""
 t = {
   "temperature": "38x53",
   "salt": "38x53",
