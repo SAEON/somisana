@@ -58,7 +58,6 @@ def load(options, arguments):
         -I \
         -t {1} \
         -F \
-        -R \
         -s 4326 \
         NETCDF:"{2}":{3} \
         public.{4} \
