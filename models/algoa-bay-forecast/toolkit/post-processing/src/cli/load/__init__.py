@@ -7,13 +7,13 @@ from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME
 from postgis import connect as connectPg
 
 t = {
-  "temperature": "76x53",
-  "salt": "76x53",
-  "v": "76x53",
-  "u": "76x53",
-  "m_rho": "76x53",
-  "lon_rho": "76x53",
-  "lat_rho": "76x53",
+  "temperature": "38x53",
+  "salt": "38x53",
+  "v": "38x53",
+  "u": "38x53",
+  "m_rho": "38x53",
+  "lon_rho": "38x53",
+  "lat_rho": "38x53",
   "time": "240x1",
   "depth": "20x1"
 }
