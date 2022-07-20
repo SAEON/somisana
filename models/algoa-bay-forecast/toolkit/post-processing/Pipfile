@@ -11,6 +11,10 @@ netcdf4 = "*"
 pymongo = "*"
 environs= "*"
 psycopg2-binary = "*"
+requests = "*"
+pathlib = "*"
+motuclient = "*"
+pydap = "*"
 
 [dev-packages]
 
