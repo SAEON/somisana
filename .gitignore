@@ -2,6 +2,8 @@
 gfs/
 mercator/
 
+external-projects/croco_tools/*
+
 # NetCDF binary files
 *.nc
 
