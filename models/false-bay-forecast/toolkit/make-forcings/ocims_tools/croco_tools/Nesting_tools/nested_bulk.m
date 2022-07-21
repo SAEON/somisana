@@ -151,9 +151,9 @@ disp(' Done ')
 %
 % Make a plot
 %
-disp(' ')
-disp(' Make a plot...')
-figure(1)
-plot_nestbulk(child_blk,'tair',[1 6],1)
-figure(2)
-plot_nestbulk(child_blk,'wspd',[1 6],1)
+%disp(' ')
+%disp(' Make a plot...')
+%figure(1)
+%plot_nestbulk(child_blk,'tair',[1 6],1)
+%figure(2)
+%plot_nestbulk(child_blk,'wspd',[1 6],1)
