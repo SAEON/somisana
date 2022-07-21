@@ -125,23 +125,23 @@ makeplot     = 0;                 % 1: create a few graphics after each preproce
 % 2 - Generic file and directory names 
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %
 %  CROCOTOOLS directory
-%
+%  CROCOTOOLS directory (where the crocotools are stored) is set in start.m 
 CROCOTOOLS_dir = '../tools/';
 %
 %  CROCO input netcdf files directory
-%
+%  Not used in Algoa Bay simulation but potential used in future
 CROCO_files_dir=[pwd,'/'];
 %
 %  Global data directory (etopo, coads, datasets download from ftp, etc..)
-%
-DATADIR='../../'; 
+%  Directory where downloaded environmental data is stored make forcing files 
+%  make_OGCM_ocims.m and make_GFS_ocims.m are stored.
+DATADIR='/tmp/somisana/current/forcing-inputs/'
 %
 %  Forcing data directory (ncep, quikscat, datasets download with opendap, etc..)
-%
-FORC_DATA_DIR =[pwd,'/'];
+%  Directory where the forcing files (created daily) are stored  
+FORC_DATA_DIR ='/tmp/somisana/current/croco/forcing/';
 %
 % eval(['!mkdir ',CROCO_files_dir])
 %
@@ -163,8 +163,8 @@ Zbryname = [CROCO_files_dir,'bry_Z.nc']; % for boundary data processing
 %
 % Generic forcing file root names for interannual simulations (NCEP/GFS)
 %
-frc_prefix=[CROCO_files_dir,'frc'];      % forcing file name 
-blk_prefix=[CROCO_files_dir,'blk'];      % bulk file name
+frc_prefix=[FORC_DATA_DIR,'frc'];      % forcing file name 
+blk_prefix=[FORC_DATA_DIR,'blk'];      % bulk file name
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -381,7 +381,7 @@ Get_My_DataOGCM = 1;
 %My_ECCO_dir  = [DATADIR,'ECCO/'];
 %My_HYCOM_dir     = [DATADIR,'hycom/'];
 %My_BLUELINK_dir     = [DATADIR,'bluelink/'];
-My_MERCATOR_dir     = [DATADIR,'mercator/'];
+%My_MERCATOR_dir     = [DATADIR,'mercator/'];
 %
 %--------------------------------------------
 % Options for make_NCEP and make_QSCAT_daily
@@ -441,9 +441,9 @@ makeblk      = 1;       % 1: create bulk files
 OGCM        = 'MERCATOR';        % Select the OGCM: SODA, ECCO, HYCOM, BLUELINK, GLORYS
 %
 OGCM_dir    = [FORC_DATA_DIR,OGCM,'_',CROCO_config,'/']; % OGCM data directory
-bry_prefix  = [CROCO_files_dir,'bry_',OGCM,'_'];    % generic boundary file name
-clm_prefix  = [CROCO_files_dir,'clm_',OGCM,'_'];    % generic climatology file name
-ini_prefix  = [CROCO_files_dir,'ini_',OGCM,'_'];    % generic initial file name
+bry_prefix  = [FORC_DATA_DIR,'bry_',OGCM,'_'];    % generic boundary file name
+clm_prefix  = [FORC_DATA_DIR,'clm_',OGCM,'_'];    % generic climatology file name
+ini_prefix  = [FORC_DATA_DIR,'ini_',OGCM,'_'];    % generic initial file name
 OGCM_prefix = [OGCM,'_'];                               % generic OGCM file name 
 %
 % Number of OGCM bottom levels to remove 
@@ -469,7 +469,7 @@ rmdepth     = 0;
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-FRCST_dir = FORC_DATA_DIR;  % path to local OGCM data directory
+%FRCST_dir = FORC_DATA_DIR;  % path to local OGCM data directory
 %
 % Number of hindcast/forecast days
 %
