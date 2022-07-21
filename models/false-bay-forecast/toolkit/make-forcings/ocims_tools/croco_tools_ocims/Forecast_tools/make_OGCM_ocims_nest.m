@@ -44,7 +44,7 @@ function make_OGCM_ocims_nest(NY,NM,ND,RSTY,RSTM,RSTD,makeini)
 %
 % Common parameters
 %
-crocotools_param
+crocotools_param;
 %
 % Setting nest level (maybe shouldn't be hardcoded in the future) 
 nest_level=1;

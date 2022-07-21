@@ -43,7 +43,7 @@ function make_GFS_nest_ocims(NY,NM,ND)
 %
 % Common parameters
 %
-crocotools_param
+crocotools_param;
 %
 % Setting nest level (maybe shouldn't be hardcoded in the future) 
 nest_level=1;
