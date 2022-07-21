@@ -1,0 +1,11 @@
+make_OGCM.m is a way to get initial and boundary conditions
+for CROCO simulations from different global oceanic models.
+for the moment it works with SODA and ECCO. 
+it uses DODS to extract the subgrids.
+
+Pierrick 2006/1/19.
+
+Update:
+Now it use the ECCO2 data, every 3 days
+
+Gildas 2014/2/14

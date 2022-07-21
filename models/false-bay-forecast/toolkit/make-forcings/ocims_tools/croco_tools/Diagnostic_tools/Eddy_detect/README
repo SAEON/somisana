@@ -1,0 +1,60 @@
+
+	EDDY DETECTION TOOLBOX
+
+Detect the geostrophic eddies from altimetry and ocean models
+sea surface height (SSH).
+Detection method : a combination of detecting the largest closed 
+contours in SSH and the positive values of an Okubo-Weiss parameter. 
+This require less tunable parameters in comparison to 
+previous methods. This is usefull for the comparisons between 
+different products, such as models and altimetry.
+
+Use the different program files in the following order:
+
+./DATA/rename_aviso.csh : 
+create a link with Aviso SSH files with
+standard names (such as /DATA/AVISO/madt_20100106.nc).
+
+eddy_detect_aviso.m : 
+Detect the eddies in a series of Aviso SSH 
+files (such as /DATA/AVISO/madt_20100106.nc). Save the outputs in 
+a NetCDF file.
+
+eddy_detect_croco.m : 
+Detect the eddies in a series of CROCO model 
+solution files. Save the outputs in a NetCDF file.
+
+eddy_select.m : 
+Read the eddy NetCDF file. Select the eddies with
+correct properties (minimum or maximum size, minimum amplitude).
+Save the outputs in another NetCDF file.
+
+eddy_tracking.m : 
+Read the eddy NetCDF file and get from 1 time
+step to the other the eddies which are the closest in terms of
+spatial distance, shape or strength (i.e. minimizing a generalized
+distance). This is the same eddy that have evolved in time.
+This eddy will have the same ID number.
+If this eddy travels at a unphysical speed. It is considered as 
+an eddy which as disapeared and a new eddy is created (with
+a new ID).
+
+eddy_animate_aviso.m : 
+Create an animation following the eddies
+(mpeg, gif or fli format).
+
+eddy_stats_eulerian_yearly.m : 
+Compute the statistics of eddies 
+for each year.  The statistics are made in an Eulerian approach:
+counting all the eddies in one domain for each given time
+(this is usefull to compare the energy of eddies with observed
+eke from altimetry).
+
+eddy_stats_lagrangian_yearly.m : 
+Compute the statistics of eddies 
+for each year.  The statistics are made in an Lagrangian approach:
+each individual eddy is counted only once (even if it has a long 
+duration).
+
+Pierrick Penven, IRD, August 2011.
+

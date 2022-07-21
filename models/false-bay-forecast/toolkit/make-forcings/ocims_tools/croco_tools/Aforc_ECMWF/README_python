@@ -1,0 +1,44 @@
+
+
+Access ECMWF Public Datasets
+
+from https://software.ecmwf.int/wiki/display/WEBAPI/Access+ECMWF+Public+Datasets
+
+Prerequisites: 
+	- python (see below for installation)
+
+
+1- Install ECMWF KEY:
+
+    Register at https://apps.ecmwf.int/registration/
+    Login at https://apps.ecmwf.int/auth/login/
+    Retrieve your key at https://api.ecmwf.int/v1/key/
+    Copy the information of this page and paste it in the file $HOME/.ecmwfapirc as follow:
+	{
+	    "url"   : "https://api.ecmwf.int/v1",
+	    "key"   : "XXXXXXXXXXXXXXXXXXXXXX",
+	    "email" : "john.smith@example.com"
+	}
+
+
+2- Install client libraries - Python:
+    
+    Install the ecmwfapi python library by running:
+        sudo pip install https://software.ecmwf.int/wiki/download/attachments/56664858/ecmwf-api-client-python.tgz
+
+3- In the file ERA-Interim_request.py:
+	Complete the 'Parameters' paragraph to match your configuration
+
+
+4- Launch the program in directory Aforc_ECMWF:
+	./ERA-Interim_request.py
+
+
+
+
+
+
+ 
+
+
+

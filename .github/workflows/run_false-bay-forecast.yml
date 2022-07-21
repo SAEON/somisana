@@ -227,69 +227,70 @@ jobs:
   # These downloads are used to create forcing files that are fed as input to the CROCO model
   # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
   # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
-  # boundary-data:
-  #   needs: [python, workdir]
-  #   runs-on: github-runner.saeon.int
-  #   env:
-  #     WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-  #   steps:
-  #     - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
-  #       run: |
-  #         source ~/.bashrc
-  #         nvm use 16.14.2
-  #     - name: Download False-bay forcing input
-  #       uses: nick-fields/retry@v2
-  #       with:
-  #         timeout_minutes: 30 # Script is considered failed if this limit is reached
-  #         retry_wait_seconds: 600 # Wait 10 minutes and try again
-  #         max_attempts: 10
-  #         retry_on: any
-  #         warning_on_retry: true
-  #         shell: bash
-  #         continue_on_error: false
-  #         on_retry_command: rm -f $WORKDIR/forcing-inputs/*
-  #         command: >-
-  #           docker run \
-  #             --rm \
-  #             -v $WORKDIR/:/tmp/somisana/current \
-  #             -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
-  #             -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-  #             ${{ needs.python.outputs.image }} \
-  #               download-boundary-data
+  boundary-data:
+    needs: [python, workdir]
+    runs-on: github-runner.saeon.int
+    env:
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+    steps:
+      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
+        run: |
+          source ~/.bashrc
+          nvm use 16.14.2
+      - name: Download False-bay forcing input
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 30 # Script is considered failed if this limit is reached
+          retry_wait_seconds: 600 # Wait 10 minutes and try again
+          max_attempts: 10
+          retry_on: any
+          warning_on_retry: true
+          shell: bash
+          continue_on_error: false
+          on_retry_command: rm -f $WORKDIR/forcing-inputs/*
+          command: >-
+            docker run \
+              --rm \
+              -v $WORKDIR/:/tmp/somisana/current \
+              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+              ${{ needs.python.outputs.image }} \
+                download-boundary-data
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
-  # crocotools:
-  #   needs: [boundary-data, workdir, envs]
-  #   runs-on: github-runner.saeon.int
-  #   env:
-  #     WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-  #     MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-  #     RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
-  #     RESTART_FILE_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
-  #     BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-  #   steps:
-  #     - name: Check out source code
-  #       uses: actions/checkout@v2
-  #       with:
-  #         ref: ${{ env.BRANCH_REF }}
-  #     - name: Copy yesterday's restart file (if it exists)
-  #       run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc
-  #       continue-on-error: true # Allow for the case where the restart file doesn't exist
-  #     - name: Configure MatLab env restart file path
-  #       run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
-  #     - name: Make forcing files
-  #       run: >-
-  #         docker run \
-  #           --rm \
-  #           --mac-address 02:42:ff:ff:ff:ff \
-  #           -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
-  #           -v $(pwd)/models/false-bay-forecast/toolkit/make-forcings:/crocotools/ \
-  #           -v $(pwd)/models/false-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
-  #           -v $WORKDIR:/tmp/somisana/current \
-  #           -e MLM_LICENSE_FILE=/licenses/license.lic \
-  #           ghcr.io/saeon/somisana_matlab:r2022a \
-  #             -batch "run('/crocotools/run.m')"
+  crocotools:
+    needs: [boundary-data, workdir, envs]
+    runs-on: github-runner.saeon.int
+    env:
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
+      RESTART_FILE_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH_REF }}
+      - name: Copy yesterday's restart file (if it exists)
+        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc
+        continue-on-error: true # Allow for the case where the restart file doesn't exist
+      - name: Configure MatLab env restart file path
+        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
+      - name: Make forcing files
+        run: >-
+          docker run \
+            --rm \
+            --mac-address 02:42:ff:ff:ff:ff \
+            -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
+            -v $(pwd)/models/false-bay-forecast/toolkit/make-forcings:/crocotools/ \
+            -v $(pwd)/models/false-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
+            -v $(pwd)/models/false-bay-forecast/lib/grd.nc.1:/crocotools/croco/forcing/grd.nc.1 \
+            -v $WORKDIR:/tmp/somisana/current \
+            -e MLM_LICENSE_FILE=/licenses/license.lic \
+            ghcr.io/saeon/somisana_matlab:r2022a \
+              -batch "run('/crocotools/run.m')"
 
   # Execute the CROCO model using the forcing files created previously
   # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image.

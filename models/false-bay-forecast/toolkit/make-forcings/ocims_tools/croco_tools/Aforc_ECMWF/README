@@ -1,0 +1,18 @@
+Here is a set of matlab and python routines allowing to download ERA-INTERIM data and create daily CROCO frc and blk files (similar to NCEP ones).
+
+--> First the user need to download the ERA-INTERIM data using a python script located in Aforc_ECMWF. To do so, he/she needs to follow the instructions written in Aforc_ECMWF/README_python, i.e. : 
+  1- Install an ECMWF KEY
+  2- Install client libraries - Python
+  3- Complete the parameters in the ERA-Interim_request.py script
+  4- Launch the python script (./ERA-Interim_request.py)
+
+   - By default, downloaded data will be stored in Run/DATA/ERAI.
+   - By default these data are NetCDF files interpolated on a 0.25x0.25 grid. Resolution can be changed easely in the python script.
+   --> See example of ECMWF requests at https://software.ecmwf.int/wiki/display/WEBAPI/Python+ERA-interim+examples
+
+--> Then, the user need to adapt the crocotools_param.m section :
+%--------------------------------------------------
+%  Options for make_ECMWF and make_ECMWF_daily  
+%--------------------------------------------------
+
+--> Finally, executing make_ECMWF_daily under matlab should work fine.
