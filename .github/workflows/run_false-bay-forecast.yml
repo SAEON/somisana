@@ -295,32 +295,33 @@ jobs:
   # Execute the CROCO model using the forcing files created previously
   # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image.
   # As such the CROCO model run must be in the context of a container instantiated from that Docker image
-  # croco:
-  #   needs: [compile-croco, crocotools, envs, workdir]
-  #   runs-on: github-runner.saeon.int
-  #   env:
-  #     WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-  #     BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-  #     RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-  #   steps:
-  #     - name: Check out source code
-  #       uses: actions/checkout@v2
-  #       with:
-  #         ref: ${{ env.BRANCH_REF }}
-  #     - name: Execute CROCO binary
-  #       run: >-
-  #         docker run \
-  #           --rm \
-  #           -v $WORKDIR:/false-bay-forecast/current \
-  #           -v $(pwd)/models/false-bay-forecast/lib/grd.nc:/false-bay-forecast/current/croco/forcing/grd.nc \
-  #           --cpus 10 \
-  #           ${{ needs.compile-croco.outputs.image }} \
-  #             ./run_croco.bash \
-  #               /false-bay-forecast/current \
-  #               ${{ needs.envs.outputs.MODEL_RUN_DATE }} \
-  #               ${{ needs.envs.outputs.RESTART_FILE_DATE }}
-  #     - name: Move CROCO output
-  #       run: mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc
+  croco:
+    needs: [compile-croco, crocotools, envs, workdir]
+    runs-on: github-runner.saeon.int
+    env:
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+      RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH_REF }}
+      - name: Execute CROCO binary
+        run: >-
+          docker run \
+            --rm \
+            -v $WORKDIR:/false-bay-forecast/current \
+            -v $(pwd)/models/false-bay-forecast/lib/grd.nc:/false-bay-forecast/current/croco/forcing/grd.nc \
+            -v $(pwd)/models/false-bay-forecast/lib/grd.nc.1:/false-bay-forecast/current/croco/forcing/grd.nc.1 \
+            --cpus 10 \
+            ${{ needs.compile-croco.outputs.image }} \
+              ./run_croco.bash \
+                /false-bay-forecast/current \
+                ${{ needs.envs.outputs.MODEL_RUN_DATE }} \
+                ${{ needs.envs.outputs.RESTART_FILE_DATE }}
+      - name: Move CROCO output
+        run: mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc
 
   # The CROCO model outputs NetCDF data that represents ocean conditions of an
   # area mapped to a grid. The post-processing step:

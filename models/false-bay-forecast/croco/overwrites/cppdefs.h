@@ -56,7 +56,7 @@
 # define False_bay_forecast
                       /* Parallelization */
 # undef  OPENMP
-# undef  MPI
+# define  MPI
 # undef  MPI_NOLAND
                       /* I/O server */
 # undef  XIOS
