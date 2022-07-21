@@ -47,6 +47,4 @@ make_GFS_ocims_nest(date_now_year,date_now_month,date_now_day)
 make_OGCM_ocims(date_now_year,date_now_month,date_now_day,hdays,makeini);
 
 % Run function to create ocean forcing (mercator) for a nested domain
-function make_OGCM_ocims_nest(date_now_year,date_now_month,date_now_day,date_yesterday_year,date_yesterday_month,date_yesterday_day,makeini);
-
-
+make_OGCM_ocims_nest(date_now_year,date_now_month,date_now_day,date_yesterday_year,date_yesterday_month,date_yesterday_day,makeini);

@@ -1,4 +1,4 @@
-function nested_restart(child_grd,parent_rst,child_rst,...
+function nested_restart(child_grd,parent_grd,parent_rst,child_rst,...
                         vertical_correc,extrapmask)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -125,7 +125,7 @@ disp(title)
 disp(' ')
 disp(' Read in the embedded grid...')
 nc=netcdf(child_grd);
-parent_grd=nc.parent_grid(:);
+%parent_grd=nc.parent_grid(:);
 imin=nc{'grd_pos'}(1);
 imax=nc{'grd_pos'}(2);
 jmin=nc{'grd_pos'}(3);
@@ -247,14 +247,14 @@ end
 %
 % Make a plot
 %
-if ~isempty(thetime)
-  disp(' ')
-  disp(' Make a plot...')
-  figure(1)
-  plot_nestclim(child_rst,child_grd,'temp',1)
-else
-  disp(' ')
-  disp(' Warning : no restart variable to plot...')
-end
+%if ~isempty(thetime)
+%   disp(' ')
+%   disp(' Make a plot...')
+%   figure(1)
+%   plot_nestclim(child_rst,child_grd,'temp',1)
+% else
+%   disp(' ')
+%   disp(' Warning : no restart variable to plot...')
+% end
 
-return
+% return

@@ -54,6 +54,7 @@ nc_suffix_nest=['.nc.',num2str(nest_level)];
 % Get the child grid
 %
 childgrid = [grdname,'.',num2str(nest_level)]
+parent_grd = [grdname]
 %
 % Check if child grid exists
 if  exist(childgrid)
@@ -96,5 +97,5 @@ else
 	parent_rst = rst_filename
 	child_rst=[rst_filename,'.1']
 	%Run the function nested restart
-	nested_restart(childgrid,parent_rst,child_rst,vertical_correc,extrapmask)
+	nested_restart(childgrid,parent_grd,parent_rst,child_rst,vertical_correc,extrapmask)
 end
