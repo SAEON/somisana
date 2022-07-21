@@ -25,8 +25,6 @@ with longitudes as (
       where
         filename like '%lon%'
     ) lon
-  order by
-    pixel desc
 ),
 latitudes as (
   select
@@ -47,8 +45,26 @@ latitudes as (
       where
         filename like '%lat%'
     ) lon
-  order by
-    pixel desc
+),
+temperature as (
+  select
+    x,
+    y,
+    geom pixel,
+    val temperature,
+    extent
+  from
+    (
+      select
+        distinct rid,
+        (regexp_match(filename, '[^:]*$')) [1] variable,
+        st_metadata(rast) extent,
+        (ST_PixelAsCentroids(rast, 1)).*
+      from
+        algoa_bay_forecast
+      where
+        filename like '%temperature%'
+    ) temp
 )
 select
   lng.extent,
@@ -57,7 +73,9 @@ select
   lng.pixel,
   lng.longitude,
   lat.latitude,
+  temp.temperature,
   st_point(lng.longitude, lat.latitude, 4326) coord
 from
   longitudes lng
   join latitudes lat on lat.pixel = lng.pixel
+  join temperature temp on temp.pixel = lng.pixel
