@@ -90,7 +90,7 @@ if makeini==1
 	child_ini=[ini_prefix,num2str(NY),num2str(NM,'%02.f'),num2str(ND,'%02.f'),nc_suffix_nest];
 	disp(['Writing child ini file',child_ini])
 	%Created child inital using nested_inital function 
-	nested_initial(childgrid,parent_ini,child_ini,...
+	nested_initial(childgrid,parent_grd,parent_ini,child_ini,...
 		vertical_correc,extrapmask,biol,bioebus,pisces)
 else
 	% Gettting the name of the parent restart file		

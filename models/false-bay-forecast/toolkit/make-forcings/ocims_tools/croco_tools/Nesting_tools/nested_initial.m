@@ -1,4 +1,4 @@
-function nested_initial(child_grd,parent_ini,child_ini,...
+function nested_initial(child_grd,parent_grd,parent_ini,child_ini,...
                         vertical_correc,extrapmask,biol,bioebus,pisces)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -135,7 +135,7 @@ end
 disp(' ')
 disp(' Read in the embedded grid...')
 nc=netcdf(child_grd);
-parent_grd=nc.parent_grid(:);
+%parent_grd=nc.parent_grid(:);
 imin=nc{'grd_pos'}(1);
 imax=nc{'grd_pos'}(2);
 jmin=nc{'grd_pos'}(3);
