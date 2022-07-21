@@ -78,25 +78,25 @@ addpath(genpath(['../../ocims_tools/nctoolbox-master']))
 %
 % Get the path to the mexcdf (it depends on the architecture)
 % Comment  all these lines if you don't want to pass in these tests
-!uname -m > .mysystem
-fid=fopen('.mysystem');
-mysystem=fscanf(fid,'%s');
+% !uname -m > .mysystem
+% fid=fopen('.mysystem');
+% mysystem=fscanf(fid,'%s');
 
-if ( strcmp(mysystem(end-1:end),'86') )
- mysystem2='32';
-elseif ( strcmp(mysystem(end-1:end),'64') )
- mysystem2='64';
-end
+% if ( strcmp(mysystem(end-1:end),'86') )
+%  mysystem2='32';
+% elseif ( strcmp(mysystem(end-1:end),'64') )
+%  mysystem2='64';
+% end
 
-fclose(fid); 
+% fclose(fid); 
 matversion=version('-release');
 myversion=str2num(matversion(1:2));
-!rm -f .mysystem
-disp(['Arch : ',mysystem,' - Matlab version : ',matversion])
+% !rm -f .mysystem
+% disp(['Arch : ',mysystem,' - Matlab version : ',matversion])
 
 
 if ((myversion > 13)    )
-  disp(['Use of mexnc and loaddap in ',mysystem2,' bits.'])
+%  disp(['Use of mexnc and loaddap in ',mysystem2,' bits.'])
   addpath([myutilpath,'mexcdf/mexnc'])   % 32 and 64 bits version of mexnc 
 %
 % - If these directories are already in your matlab native path, 
