@@ -91,12 +91,10 @@ if makeini==1
 	%Created child inital using nested_inital function 
 	nested_initial(childgrid,parent_ini,child_ini,...
 		vertical_correc,extrapmask,biol,bioebus,pisces)
-%else
-	% Gettting the name of the parent restart file
-%	rst_dir='../forecast/';			
-%	parent_rst=[rst_dir,'rst_',num2str(RSTY),num2str(RSTM,'%02.f'),num2str(RSTD,'%02.f'),nc_suffix]
-%	child_rst=[rst_dir,'rst_',num2str(RSTY),num2str(RSTM,'%02.f'),num2str(RSTD,'%02.f'),nc_suffix_nest]
-	%parent_rst=parent_dir+'croco/forecast/rst_'+date_croco_yesterday+'.nc'
+else
+	% Gettting the name of the parent restart file		
+	parent_rst = rst_filename
+	child_rst=[rst_filename,'.1']
 	%Run the function nested restart
-%	nested_restart(childgrid,parent_rst,child_rst,vertical_correc,extrapmask)
+	nested_restart(childgrid,parent_rst,child_rst,vertical_correc,extrapmask)
 end
