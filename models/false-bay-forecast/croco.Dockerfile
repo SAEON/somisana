@@ -26,6 +26,7 @@ COPY croco/overwrites/ .
 WORKDIR /false-bay-forecast/croco-1.1
 RUN tar -xf croco-v1.1.tar.gz \
   && rm croco-v1.1.tar.gz \
+  && ls \
   && chmod +x jobcomp \
   && ./jobcomp > jobcomp.log
 
