@@ -109,40 +109,40 @@ jobs:
           echo "::set-output name=PG_PASSWORD_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_PASSWORD_.outputs.uppercase] }}") | base64 -w0)"
 
   # Compile CROCO model for the False Bay forecast
-  #compile-croco:
-  #  needs: [envs]
-  #  runs-on: ubuntu-latest
-  #  env:
-  #    BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-  #    CROCO_IMAGE: ${{ needs.envs.outputs.CROCO_IMAGE }}
-  #  outputs:
-  #    image: ${{ steps.meta.outputs.tags }}
-  #  steps:
-  #    - name: Checkout source code
-  #      uses: actions/checkout@v3
-  #      with:
-  #        ref: ${{ env.BRANCH_REF }}
-  #    - name: Log in to the Container registry
-  #      uses: docker/login-action@v1
-  #      with:
-  #        registry: ${{ env.REGISTRY }}
-  #        username: ${{ github.actor }}
-  #        password: ${{ secrets.GITHUB_TOKEN }}
-  #    - name: Extract metadata (tags, labels) for Docker
-  #      id: meta
-  #      uses: docker/metadata-action@v3
-  #      with:
-  #        images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
-  #        tags: |
-  #          type=sha
-  #    - name: Build and push
-  #      uses: docker/build-push-action@v2
-  #      with:
-  #        context: models/false-bay-forecast
-  #        file: models/false-bay-forecast/croco.Dockerfile
-  #        push: true
-  #        tags: ${{ steps.meta.outputs.tags }}
-  #        labels: ${{ steps.meta.outputs.labels }}
+  compile-croco:
+   needs: [envs]
+   runs-on: ubuntu-latest
+   env:
+     BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+     CROCO_IMAGE: ${{ needs.envs.outputs.CROCO_IMAGE }}
+   outputs:
+     image: ${{ steps.meta.outputs.tags }}
+   steps:
+     - name: Checkout source code
+       uses: actions/checkout@v3
+       with:
+         ref: ${{ env.BRANCH_REF }}
+     - name: Log in to the Container registry
+       uses: docker/login-action@v1
+       with:
+         registry: ${{ env.REGISTRY }}
+         username: ${{ github.actor }}
+         password: ${{ secrets.GITHUB_TOKEN }}
+     - name: Extract metadata (tags, labels) for Docker
+       id: meta
+       uses: docker/metadata-action@v3
+       with:
+         images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
+         tags: |
+           type=sha
+     - name: Build and push
+       uses: docker/build-push-action@v2
+       with:
+         context: models/false-bay-forecast
+         file: models/false-bay-forecast/croco.Dockerfile
+         push: true
+         tags: ${{ steps.meta.outputs.tags }}
+         labels: ${{ steps.meta.outputs.labels }}
 
   # The SOMISANA toolkit is a suite of scripts to facilitate
   # running SOMISANA models - for example the False Bay Forecast.
