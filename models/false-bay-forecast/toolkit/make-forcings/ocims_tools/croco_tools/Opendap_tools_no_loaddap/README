@@ -1,0 +1,19 @@
+Opendap_tools_no_loaddap
+
+matlab scripts to be used only with matlab >= 2012a
+To use these tools, a test on matlab version has to be satisfied :
+    -->  ~verLessThan('matlab','7.14')
+
+These scripts reproduce the old Opendap_tools behavior but 
+they use built-in support for OPeNDAP from Matlab >= 2012a
+see: http://www.opendap.org/user/jimg/blog/matlab_2012a
+You do not need to install libdap and loaddap library.
+Note that you can also access to local data.
+
+getdap.m  : Download a data subsets from an OPENDAP server (or local data).
+readattribute.m : Get the attribute of an OPENDAP dataset (or local data).
+readdap.m : Reproduce the loaddods behavior; retry (100 times) 
+            in case of network failure.
+
+Serena Illig 2015/11/30
+ 

@@ -1,0 +1,17 @@
+# Logs and databases #
+######################
+*.log
+*.output
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store*
+
+# Misc               #
+######################
+doc/build
+
+UTILITIES/m_map1.4f/private/*.b
+UTILITIES/m_map1.4f/private/*.TXT

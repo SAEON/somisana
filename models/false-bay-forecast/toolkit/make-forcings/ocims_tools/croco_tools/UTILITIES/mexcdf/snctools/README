@@ -1,0 +1,141 @@
+The Short And Sweet Of It...
++-----------------------------------------------------------------------
+SNCTOOLS is a set of MATLAB tools primarily for reading and writing 
+classic model netCDF-3 and netCDF-4 files.  It can use up to three 
+backends for this:
+
+    1) tmw, the MathWorks native netCDF package
+    2) mexnc, the original open source mex-file
+    3) netcdf-java from Unidata
+
+For most cases, snctools <default> support for various read/write 
+configurations is summarized in the table below.  
+
+
+       | netcdf-3 | netcdf-3 | netcdf-4 | netcdf-4 | netcdf-4 | netcdf-4
+       | classic  | classic  | classic  | classic  | enhanced | enhanced
+       | read     | write    | read     | write    | read     | write
+-------+----------+----------+----------+----------+----------+----------
+R2011b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
+R2011a | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
+R2010b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
+R2010a | tmw      | tmw      | java     | -        | java     | - 
+R2009b | tmw      | tmw      | java     | -        | java     | - 
+R2009a | tmw      | tmw      | java     | -        | java     | - 
+R2008b | tmw      | tmw      | java     | -        | java     | - 
+R2008a | java     | mexnc    | java     | -        | java     | - 
+R2007b | java     | mexnc    | java     | -        | java     | - 
+R2007a | java     | mexnc    | java     | -        | java     | - 
+R2006b | java     | mexnc    | java     | -        | java     | - 
+R2006a | java     | mexnc    | java     | -        | java     | - 
+R14    | java     | mexnc    | -        | -        | -        | - 
+
+
+There are two exceptions to note.  The mexnc backend is only required
+for write support on R14 through R2008a.  If you only need to read
+netcdf files, the java backend will work without the mexnc backend.
+The second exception is on the win64 platform, as there is no mexnc
+backend.  That means that SNCTOOLS cannot write netcdf files on
+win64 unless you have R2008b or higher.  You can still use the java
+backend on win64 to read netcdf files, though.
+
+"Reading" netcdf-4 enhanced files currently means that you can read
+atomic datatypes (such as double and int32) on R2006a through 2011a.
+On R2011b, you can also read most enhanced model datatypes.  
+
+If you have R2011a and have never used SNCTOOLS, you may be interested
+to know that R2011a has new high-level netcdf support.  Please check
+that out before proceeding with SNCTOOLS.
+
+Please add this directory to your matlab path.  You must also have 
+mexnc on your path in order for snctools to work.
+
+SNCTOOLS is not supported at all on version R13 of MATLAB or earlier.
+
+
++-----------------------------------------------------------------------
+BASIC INSTALLATION AND USAGE
+
+In order to download SNCTOOLS, please refer to the website, 
+http://mexcdf.sourceforge.net/
+
++-----------------------------------------------------------------------
+SNCTOOLS PREFERENCES
+
+PRESERVE_FVD
+    Way back in the old days, when mexnc/mexcdf was the only game
+    in town, data was always transposed when reading/writing netCDF
+    data thru MATLAB.  The reason for this was seemingly to make the
+    data look consistent with the way that the netcdf tools such as
+    "ncdump" presented the metadata.  "ncdump" is compiled in C, so
+    it is therefore a row-major-order application, whereas MATLAB 
+    presents data in column-major order.
+    
+    Transposing large datasets can be a costly operation, however, and
+    it really isn't necessary in all cases.  SNCTOOLS can be told to
+    not transpose data by setting the PRESERVE_FVD preference
+
+        >> clear all 
+        >> setpref('SNCTOOLS','PRESERVE_FVD',true);
+
+    By default this preference is false.  If you set it to true,
+    you may see a big performance boost for large datasets, but you
+    might also end up breaking existing code that expected the data
+    to be permuted to row-major order, so you need to be careful
+    when using this.
+
+    For efficiency purposes, rather than physically retrieve the
+    preference every time it is needed, the preference is stored
+    internally as a persistent variable.  In order to change this
+    preference, you therefore must invoke CLEAR ALL first.
+
++-----------------------------------------------------------------------
+BUG Reports You Should Know About
+
+1)  Experimental GRIB2 Support
+
+     If you have the netcdf-java jar file on your matlab javaclasspath,
+     you can try read GRIB2 files as if they were netcdf files.  This is
+     a bit experimental, though.  And if your version of MATLAB is R2008a
+     or below, you should take a look at Technical Solution 1-2Z4RS7 on
+     the Mathworks web site, http://www.mathworks.com.  This describes a
+     workaround for dealing with a conflict with the ucarunits.jar file
+     that used to ship with MATLAB until R2008b.  As of March 25, 2010,
+     the URL for this technical solution was at
+
+     http://www.mathworks.com/support/solutions/en/data/1-2Z4RS7/?solution=1-2Z4RS7
+
+2)  Segfaults on certain strided read operations.  
+
+    Affects versions R2008a and R2009a.  Please consult this URL.
+
+    http://www.mathworks.com/support/bugreports/522794
+
+3)  Empty Attributes
+
+    MATLAB versions R2008b thru R2009b incorrectly disallowed the creation
+    of empty attributes, which are quite clearly legal.  The bug is
+    fixed in 2010a, but fixes for 2008b thru 2009b are available.
+    Please consult this URL
+
+    http://www.mathworks.com/support/bugreports/609383
+
+4)  Out-of-memory error with negative indices.  Affects R2008b through
+    R2010a, but this only affects those who would use mexnc or the native
+    netcdf package directly, not snctools users.  Please consult this URL.
+
+    http://www.mathworks.com/support/bugreports/618322
+
+5)  HDF4 SD files are tentatively supported in read-only mode on R2006a
+    and more recent.
+
++-----------------------------------------------------------------------
+Of all the routines in this m-file collection, the most useful (in my
+humble opinion) are as follows
+    
+    1. nc_varget    - reads a netcdf variable
+    2. nc_varput    - writes to a netcdf variable
+    3. nc_attget    - reads a netcdf attribute
+    4. nc_attput    - writes a netcdf attribute
+    6. nc_dump      - prints netcdf metadata
+
