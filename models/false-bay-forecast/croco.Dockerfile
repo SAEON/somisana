@@ -25,15 +25,16 @@ COPY croco/overwrites/ .
 # Compile the model
 WORKDIR /false-bay-forecast/croco-1.1
 RUN tar -xf croco-v1.1.tar.gz \
-  && rm croco-v1.1.tar.gz \
-  && chmod +x jobcomp \
-  && ./jobcomp > jobcomp.log
+    && ls
+#  && rm croco-v1.1.tar.gz \
+#  && chmod +x jobcomp \
+#  && ./jobcomp > jobcomp.log
 
 # Move the compiled outputs
-WORKDIR /false-bay-forecast
-RUN mv \
-  croco-1.1/croco \
-  croco-1.1/Compile \
-  croco-1.1/jobcomp.log \
-  ./ \
-  && rm -rf croco-1.1
+#WORKDIR /false-bay-forecast
+#RUN mv \
+#  croco-1.1/croco \
+#  croco-1.1/Compile \
+#  croco-1.1/jobcomp.log \
+#  ./ \
+#  && rm -rf croco-1.1

@@ -227,35 +227,35 @@ jobs:
   # These downloads are used to create forcing files that are fed as input to the CROCO model
   # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
   # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
-  boundary-data:
-    needs: [python, workdir]
-    runs-on: github-runner.saeon.int
-    env:
-      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-    steps:
-      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
-        run: |
-          source ~/.bashrc
-          nvm use 16.14.2
-      - name: Download False-bay forcing input
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 30 # Script is considered failed if this limit is reached
-          retry_wait_seconds: 600 # Wait 10 minutes and try again
-          max_attempts: 10
-          retry_on: any
-          warning_on_retry: true
-          shell: bash
-          continue_on_error: false
-          on_retry_command: rm -f $WORKDIR/forcing-inputs/*
-          command: >-
-            docker run \
-              --rm \
-              -v $WORKDIR/:/tmp/somisana/current \
-              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
-              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-              ${{ needs.python.outputs.image }} \
-                download-boundary-data
+  # boundary-data:
+  #   needs: [python, workdir]
+  #   runs-on: github-runner.saeon.int
+  #   env:
+  #     WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+  #   steps:
+  #     - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
+  #       run: |
+  #         source ~/.bashrc
+  #         nvm use 16.14.2
+  #     - name: Download False-bay forcing input
+  #       uses: nick-fields/retry@v2
+  #       with:
+  #         timeout_minutes: 30 # Script is considered failed if this limit is reached
+  #         retry_wait_seconds: 600 # Wait 10 minutes and try again
+  #         max_attempts: 10
+  #         retry_on: any
+  #         warning_on_retry: true
+  #         shell: bash
+  #         continue_on_error: false
+  #         on_retry_command: rm -f $WORKDIR/forcing-inputs/*
+  #         command: >-
+  #           docker run \
+  #             --rm \
+  #             -v $WORKDIR/:/tmp/somisana/current \
+  #             -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+  #             -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+  #             ${{ needs.python.outputs.image }} \
+  #               download-boundary-data
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
