@@ -46,10 +46,9 @@ function make_GFS_ocims(NY,NM,ND,delta_days,hdays,fdays)
 %
 % Common parameters
 %
-crocotools_param
+crocotools_param;
 
-gfs_grb_dir=[DATADIR,'gfs/'];
-
+%gfs_grb_dir=[DATADIR,'gfs/'];
 %
 frc_prefix=[frc_prefix,'_GFS_'];
 blk_prefix=[blk_prefix,'_GFS_'];
@@ -64,12 +63,12 @@ today=datenum(NY,NM,ND,0,0,0);
 %
 % GFS data name
 %
-gfs_name=[FRCST_dir,'GFS_',num2str(NY),num2str(NM,'%02.f'),num2str(ND,'%02.f'),'.nc'];
+gfs_name=[FORC_DATA_DIR,'GFS_',num2str(NY),num2str(NM,'%02.f'),num2str(ND,'%02.f'),'.nc'];
 %
-% Extract data from an already downloaded file and write into a more
-% croco_tools friendly format
-%
-extract_GFS(gfs_grb_dir,today,delta_days,hdays,fdays,Yorig,gfs_name)
+% Extract data from the already downloaded enviromental data files and write 
+% into a more croco_tools friendly format. Store the output in the forcing temp
+% directory created everyday.
+extract_GFS(DATADIR,today,delta_days,hdays,fdays,Yorig,gfs_name)
 %
 if level==0
   nc_suffix='.nc';

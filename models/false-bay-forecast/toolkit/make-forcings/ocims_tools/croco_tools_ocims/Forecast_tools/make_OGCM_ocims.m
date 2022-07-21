@@ -44,13 +44,15 @@ function make_OGCM_ocims(NY,NM,ND,hdays,makeini)
 %
 % Common parameters
 %
-crocotools_param
+crocotools_param;
 %
-% name of raw downloaded file for this day
-MERCATOR_name_raw=[My_MERCATOR_dir,'mercator_',num2str(NY),num2str(NM,'%02.f'),num2str(ND,'%02.f'),'.nc'];
+% name of raw downloaded enviromental data file for this day. This file should be in DATADIR 
+% where all downloaded enviromental data is stored.
+MERCATOR_name_raw=[DATADIR,'mercator_',num2str(NY),num2str(NM,'%02.f'),num2str(ND,'%02.f'),'.nc'];
 %
-% write it into a more croco_tools friendly format
-MERCATOR_name=[FRCST_dir,OGCM_prefix,num2str(NY),num2str(NM,'%02.f'),num2str(ND,'%02.f'),'.cdf'];
+% write it into a more croco_tools friendly format. The output goes to forcing file folder FORC_DATA_DIR
+% where dynamic forcing files are created
+MERCATOR_name=[FORC_DATA_DIR,OGCM_prefix,num2str(NY),num2str(NM,'%02.f'),num2str(ND,'%02.f'),'.cdf'];
 write_mercator_ocims(MERCATOR_name,MERCATOR_name_raw,Yorig);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
