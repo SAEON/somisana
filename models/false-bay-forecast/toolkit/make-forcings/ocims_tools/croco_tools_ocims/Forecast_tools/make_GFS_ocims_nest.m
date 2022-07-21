@@ -56,6 +56,7 @@ blk_prefix=[blk_prefix,'_GFS_'];
 % Get the child grid
 %
 childgrid = [grdname,'.',num2str(nest_level)]
+parent_grd = [grdname]
 %
 % time (in matlab time)
 %
@@ -87,7 +88,7 @@ childblk=[blk_prefix,num2str(NY),num2str(NM,'%02.f'),num2str(ND,'%02.f'),nc_suff
 disp(['Writing blk file',childblk])
 %
 % Making the blk for child grid
-nested_bulk(childgrid,parentblk,childblk)
+nested_bulk(childgrid,parent_grd,parentblk,childblk)
 %
 %
 %     

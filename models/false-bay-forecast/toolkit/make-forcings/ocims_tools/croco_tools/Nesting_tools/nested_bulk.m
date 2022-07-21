@@ -1,6 +1,8 @@
-function nested_bulk(child_grd,parent_blk,child_blk)
+function nested_bulk(child_grd,parent_grd,parent_blk,child_blk)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+%  edited so that parent grid is defined in the function not
+%  from child grid nc 
 %  compute the bulk file of the embedded grid
 %
 %  Further Information:  
@@ -41,7 +43,7 @@ disp(title)
 disp(' ')
 disp(' Read in the embedded grid...')
 nc=netcdf(child_grd);
-parent_grd=nc.parent_grid(:);
+%parent_grd=nc.parent_grid(:);
 imin=nc{'grd_pos'}(1);
 imax=nc{'grd_pos'}(2);
 jmin=nc{'grd_pos'}(3);
