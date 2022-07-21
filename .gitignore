@@ -5,7 +5,7 @@ mercator/
 external-projects/croco_tools/*
 
 # NetCDF binary files
-*.nc
+#*.nc
 
 ##### Python
 # Byte-compiled / optimized / DLL files
