@@ -52,9 +52,9 @@ RUN rm -rf .venv && mkdir .venv
 RUN pipenv sync
 
 # Install "post-processing"
-WORKDIR /home/somisana/post-processing
-RUN rm -rf .venv && mkdir .venv
-RUN pipenv sync
+#WORKDIR /home/somisana/post-processing
+#RUN rm -rf .venv && mkdir .venv
+#RUN pipenv sync
 
 # Set the base working directory for all scripts
 WORKDIR /home/somisana

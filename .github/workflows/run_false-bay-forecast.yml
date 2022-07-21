@@ -144,7 +144,7 @@ jobs:
   #        tags: ${{ steps.meta.outputs.tags }}
   #        labels: ${{ steps.meta.outputs.labels }}
 
- # The SOMISANA toolkit is a suite of scripts to facilitate
+  # The SOMISANA toolkit is a suite of scripts to facilitate
   # running SOMISANA models - for example the False Bay Forecast.
   # In the context of a testing environment, where updates to these
   # scripts is part of the development workflow, the toolkit needs
