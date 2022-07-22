@@ -14,7 +14,7 @@ date_now = date.today() # using date(), not datetime() as we use 00:00:00 as the
 date_yesterday = date_now + timedelta(days=-1) # Needed to check for restart file
 hdays = 5 # x days into the past
 fdays = 5 # x days into the future
-domain = [16, 24, -36.5, -33.5] # Subset downloads with this extent [west, east, south, north] for false bay region
+domain = [15, 24.5, -37, -31] # Subset downloads with this extent [west, east, south, north] for false bay region
 date_start = date_now + timedelta(days=-hdays)
 date_end = date_now + timedelta(days=fdays)
 varsOfInterest = ['so', 'thetao', 'zos', 'uo', 'vo'] # Mercator
