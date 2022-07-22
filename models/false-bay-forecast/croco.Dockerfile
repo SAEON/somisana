@@ -20,7 +20,7 @@ COPY croco/overwrites/ croco-1.1/
 COPY croco/overwrites/ .
 
 # Create the entrypoint to run the compiled model
-#COPY croco/run-model/ .
+COPY croco/run-model/ .
 
 # Compile the model
 WORKDIR /false-bay-forecast/croco-1.1
