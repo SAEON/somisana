@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+xarray = "*"
+cython = "*"
+netcdf4 = "*"
+pymongo = "*"
+environs= "*"
+psycopg2-binary = "*"
+requests = "*"
+pathlib = "*"
+motuclient = "*"
+pydap = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8.10"
+
+[scripts]
+script = "python src/__main__.py"
