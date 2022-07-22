@@ -15,7 +15,7 @@ INDIR=$(pwd)  # where the croco_frcst.in file is stored, in the current setup it
 MPI_NUM_PROCS=8 # TODO - can this be done dynamically? What about parallel computing?
 EXEDIR=$(pwd)
 INPUTDIR=$RUNDIR/croco/forcing
-AGRIF_FILE=$RUNDIR/croco/forcing/AGRIF_FixedGrids.in
+AGRIF_FILE=$INDIR/AGRIF_FixedGrids.in #The nested run needs the AGRIF.in file
 SCRATCHDIR=$RUNDIR/croco/scratch
 BULK_FILES=1
 FORCING_FILES=0
@@ -65,31 +65,23 @@ while [ $LEVEL != $NLEVEL ]; do
   else
     ENDF=.${LEVEL}
   fi
-  #echo "Getting ${GRDFILE}.nc${ENDF} from ${INPUTDIR_BRY}"
-  ln -sf ${INPUTDIR_BRY}/${GRDFILE}.nc${ENDF} $SCRATCHDIR
-  #echo "Getting ${MODEL}_frcst.in${ENDF} from $RUNDIR"
-  cp -f $RUNDIR/croco_frcst.in${ENDF} $SCRATCHDIR
-  # check to see if a restart file exists to initialise from
-  # otherwise we initialise from the global model
-  # (I guess I could have used the make_ini variable as an input
-  # to this script but I already had this code which seems to work fine) 
-  if test -f "$FORECASTDIR/${RSTFILE}.nc${ENDF}"; then
-    echo "Using initial condition from $FORECASTDIR/${RSTFILE}.nc${ENDF}"
-    ln -sf $FORECASTDIR/${RSTFILE}.nc${ENDF} ${INIFILE}.nc${ENDF}
+  ln -sf ${INPUTDIR}/${GRDFILE}.nc${ENDF} $SCRATCHDIR
+  cp -f $INDIR/croco_frcst.in${ENDF} $SCRATCHDIR
+  # Use the restart file if available
+  if test -f "$INPUTDIR/${RSTFILE}.nc${ENDF}"; then
+    echo "Using initial condition from $INPUTDIR/${RSTFILE}.nc${ENDF}"
+    ln -sf $INPUTDIR/${RSTFILE}.nc${ENDF} ${INIFILE}.nc${ENDF}
     RST=1
   else
-    echo "Using initial condition from ${INPUTDIR_BRY}/${INIFILE}_${OGCM}_${TIME}.nc${ENDF}"
-    ln -sf ${INPUTDIR_BRY}/${INIFILE}_${OGCM}_${TIME}.nc${ENDF} ${INIFILE}.nc${ENDF}
+    # Otherwise initialise from the global model (ini)
+    echo "Using initial condition from ${INPUTDIR}/${INIFILE}_${OGCM}_${TIME}.nc${ENDF}"
+    ln -sf ${INPUTDIR}/${INIFILE}_${OGCM}_${TIME}.nc${ENDF} ${INIFILE}.nc${ENDF}
     RST=0
   fi
   LEVEL=$((LEVEL + 1))
 done
-###########################################################
-#  Compute
-###########################################################
-#
-# Get forcing and clim for this time
-#
+
+# Create the atomsphere and ocean forcing symlinks
 LEVEL=0
 while [ $LEVEL != $NLEVEL ]; do
   if [[ ${LEVEL} == 0 ]]; then
@@ -98,27 +90,23 @@ while [ $LEVEL != $NLEVEL ]; do
     ENDF=.${LEVEL}
   fi
   if [[ ${FORCING_FILES} == 1 ]]; then
-    #echo "Getting ${FRCFILE}_${ATMOS_FRC}_${TIME}.nc${ENDF} from ${INPUTDIR_SRF}"
-    ln -sf ${INPUTDIR_SRF}/${FRCFILE}_${ATMOS_FRC}_${TIME}.nc${ENDF} ${FRCFILE}.nc${ENDF}
+    ln -sf ${INPUTDIR}/${FRCFILE}_${ATMOS_FRC}_${TIME}.nc${ENDF} ${FRCFILE}.nc${ENDF}
   fi
   if [[ ${BULK_FILES} == 1 ]]; then
-    #echo "Getting ${BLKFILE}_${ATMOS_BULK}_${TIME}.nc${ENDF} from ${INPUTDIR_SRF}"
-    ln -sf ${INPUTDIR_SRF}/${BLKFILE}_${ATMOS_BULK}_${TIME}.nc${ENDF} ${BLKFILE}.nc${ENDF}
+    ln -sf ${INPUTDIR}/${BLKFILE}_${ATMOS_BULK}_${TIME}.nc${ENDF} ${BLKFILE}.nc${ENDF}
   fi
   LEVEL=$((LEVEL + 1))
 done
-#
-# No child climatology or boundary files
-#
+
+# False Bay forecast uses clim forcing
 if [[ ${CLIMATOLOGY_FILES} == 1 ]]; then
-  #echo "Getting ${CLMFILE}_${OGCM}_${TIME}.nc from ${INPUTDIR_BRY}"
-  ln -sf ${INPUTDIR_BRY}/${CLMFILE}_${OGCM}_${TIME}.nc ${CLMFILE}.nc
+  ln -sf ${INPUTDIR}/${CLMFILE}_${OGCM}_${TIME}.nc ${CLMFILE}.nc
 fi
+
+# False bay doesnot use bry 
 if [[ ${BOUNDARY_FILES} == 1 ]]; then
-  #echo "Getting ${BRYFILE}_${OGCM}_${TIME}.nc from ${INPUTDIR_BRY}"
-  ln -sf ${INPUTDIR_BRY}/${BRYFILE}_${OGCM}_${TIME}.nc ${BRYFILE}.nc
+  ln -sf ${INPUTDIR}/${BRYFILE}_${OGCM}_${TIME}.nc ${BRYFILE}.nc
 fi
-#
 
 DT=$DT0
 
@@ -146,8 +134,8 @@ NUMSTA=$((NUMSTA / DT))
 echo "Baroclinic timestep = $DT s"
 echo "Output frequency for full domain = $NH_AVG hrs"
 echo "Output frequency for surface layer = $NH_AVGSURF hrs"
-# 
-#echo "Writing in ${MODEL}_${TIME}.in"
+
+# Configure the model run
 LEVEL=0
 while [[ $LEVEL != $NLEVEL ]]; do
   if [[ ${LEVEL} == 0 ]]; then
@@ -163,20 +151,15 @@ while [[ $LEVEL != $NLEVEL ]]; do
     NUMHISSURF=$((T_REF * NUMHISSURF))
     NUMSTA=$((T_REF * NUMSTA))
   fi
-  #echo "USING NUMTIMES = $NUMTIMES"
   sed -e 's/DTNUM/'$DT'/' -e 's/NUMDTFAST/'$NUMDTFAST'/' -e 's/NUMTIMES/'$NUMTIMES'/' -e 's/NUMRST/'$NUMRST'/' -e 's/NUMHISSURF/'$NUMHISSURF'/' -e 's/NUMAVGSURF/'$NUMAVGSURF'/' -e 's/NUMHIS/'$NUMHIS'/' -e 's/NUMAVG/'$NUMAVG'/' -e 's/NUMSTA/'$NUMSTA'/' < croco_frcst.in${ENDF} > croco_${TIME}.in${ENDF}
   LEVEL=$((LEVEL + 1))
 done
 
-#
-#  COMPUTE
-#
-#date
+# Run the model
 mpirun -np $MPI_NUM_PROCS ./croco croco_${TIME}.in > croco_${TIME}.out
-#date
-#
-# Test if the simulation finised properly
-#echo "Test ${MODEL}_${TIME}.out"
+
+# Check that the model run correctly 
+
 status=`tail -2 croco_${TIME}.out | grep DONE | wc -l`
 if [[ $status == 1 ]]; then
   echo
