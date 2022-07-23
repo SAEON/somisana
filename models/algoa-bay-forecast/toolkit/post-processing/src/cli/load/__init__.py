@@ -5,6 +5,7 @@ import xarray as xr
 from datetime import datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME
 from postgis import connect as connectPg
+from cli.load.setup_db import setup as install_schema
 
 """
 Source grid
@@ -27,6 +28,9 @@ def load(options, arguments):
   now = datetime.now()
   nc_input_path = options.nc_input_path
   table = 'algoa_bay_forecast'
+
+  print('\n-> Installing PostGIS schema', str(datetime.now() - now))
+  install_schema()
 
   netcdf = xr.open_dataset(nc_input_path)
   variables = list(netcdf.keys())
@@ -84,4 +88,6 @@ def load(options, arguments):
       raise Exception('raster2pgsql cmd failed: ' + sub(' +', ' ', cmd))
   
   print('\nNetCDF data registered as out-db successfully!!', str(datetime.now() - now))
+
+  print('\n-> Indexing data', str(datetime.now() - now))
 
