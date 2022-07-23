@@ -29,4 +29,4 @@ services:
     ports:
       - 7009:7800
     networks:
-      - geoserver
+      - pg_tileserv
