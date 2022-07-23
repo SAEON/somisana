@@ -7,7 +7,7 @@ env:
   DEPLOY_SOURCE: deploy/pg_tileserv/stack.yml
   STACK_COMPOSE_PATH: /home/runner/somisana/deploy/pg_tileserv/stack.yml
   STACK_CONFIG_PATH: /home/runner/somisana/deploy/pg_tileserv/stack.env
-  PG_HOST: ${{ secrets.PG_HOST }}
+  PG_HOST: ${{ secrets.PG_HOST_STABLE }}
   PG_PORT: ${{ secrets.PG_PORT_STABLE }}
   PG_DB: ${{ secrets.PG_DB_STABLE }}
   PG_USERNAME: ${{ secrets.PG_USERNAME_STABLE }}
