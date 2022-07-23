@@ -8,7 +8,7 @@ networks:
 
 services:
   pg_tileserv:
-    image: $IMAGE
+    image: pramsey/pg_tileserv:20220623
     deploy:
       replicas: 1
       rollback_config:

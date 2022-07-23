@@ -3,8 +3,6 @@ name: Deploy maps.somisana.ac.za
 on: workflow_dispatch
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE: pramsey/pg_tileserv:20220623
   BRANCH_REF: stable
   DEPLOY_SOURCE: deploy/pg_tileserv/stack.yml
   STACK_COMPOSE_PATH: /home/runner/somisana/deploy/pg_tileserv/stack.yml
@@ -40,6 +38,5 @@ jobs:
           password: ${{ secrets.ULWAPPSWARM01_HOST_PASSWORD }}
           port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
           script: |
-            echo "IMAGE=${{ env.IMAGE }}" > ${{ env.STACK_CONFIG_PATH }}
-            echo "DATABASE_URL=postgres://${{ env.PG_USERNAME }}:${{ env.PG_PASSWORD }}@${{ env.PG_HOST }}:${{ env.PG_PORT }}/${{ env.PG_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "DATABASE_URL=postgres://${{ env.PG_USERNAME }}:${{ env.PG_PASSWORD }}@${{ env.PG_HOST }}:${{ env.PG_PORT }}/${{ env.PG_DB }}" > ${{ env.STACK_CONFIG_PATH }}
             sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} pg_tileserv
