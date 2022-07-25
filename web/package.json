@@ -16,12 +16,12 @@
     "@emotion/styled": "^11.9.3",
     "@graphql-tools/schema": "^8.5.0",
     "@jspm/generator": "^1.0.0-beta.33",
-    "@koa/router": "^11.0.1",
-    "@mdi/js": "^6.9.96",
-    "@mui/material": "^5.9.0",
-    "@mui/system": "^5.9.0",
+    "@koa/router": "^12.0.0",
+    "@mdi/js": "^7.0.96",
+    "@mui/material": "^5.9.1",
+    "@mui/system": "^5.9.1",
     "@node-loader/core": "^2.0.0",
-    "@node-loader/import-maps": "^1.0.3",
+    "@node-loader/import-maps": "^1.1.0",
     "@rollup/plugin-replace": "^4.0.0",
     "@swc/cli": "^0.1.57",
     "@swc/core": "^1.2.218",
@@ -39,10 +39,10 @@
     "koa-compress": "^5.1.0",
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
-    "make-fetch-happen": "^10.1.8",
+    "make-fetch-happen": "^10.2.0",
     "mkdirp": "^1.0.4",
     "mongodb": "^4.8.0",
-    "ol": "^6.14.1",
+    "ol": "^6.15.1",
     "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -57,7 +57,7 @@
     "wkt": "^0.1.1"
   },
   "devDependencies": {
-    "npm-check-updates": "^15.3.4"
+    "npm-check-updates": "^16.0.0"
   },
   "prettier": {
     "printWidth": 100,
