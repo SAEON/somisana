@@ -7,8 +7,6 @@
  */
 ;
 
-drop materialized view if exists coordinates;
-
 create materialized view coordinates as with longitudes as (
   select
     x,
@@ -21,7 +19,7 @@ create materialized view coordinates as with longitudes as (
         distinct (regexp_match(filename, '[^:]*$')) [1] variable,
         (ST_PixelAsCentroids(rast, 1)).*
       from
-        algoa_bay_forecast
+        rasters
       where
         filename like '%lon%'
     ) lon
@@ -38,7 +36,7 @@ latitudes as (
         distinct (regexp_match(filename, '[^:]*$')) [1] variable,
         (ST_PixelAsCentroids(rast, 1)).*
       from
-        algoa_bay_forecast
+        rasters
       where
         filename like '%lat%'
     ) lon
