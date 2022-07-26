@@ -5,49 +5,53 @@
  *
  * The coordinates don't change between days
  */
-;
+drop materialized view if exists coordinates;
 
-create materialized view coordinates as with longitudes as (
+create materialized view coordinates as with lon as (
   select
-    x,
-    y,
+    m.id modelId,
+    variable,
     geom pixel,
     val longitude
   from
     (
       select
-        distinct (regexp_match(filename, '[^:]*$')) [1] variable,
+        distinct (regexp_match(filename, '.*?(?=-\d)')) [1] model,
+        (regexp_match(filename, '[^:]*$')) [1] variable,
         (ST_PixelAsCentroids(rast, 1)).*
       from
         rasters
       where
-        filename like '%lon%'
+        filename like '%lon_rho'
     ) lon
+    join models m on m.name = lon.model
 ),
-latitudes as (
+lat as (
   select
-    x,
-    y,
+    m.id modelId,
+    variable,
     geom pixel,
     val latitude
   from
     (
       select
-        distinct (regexp_match(filename, '[^:]*$')) [1] variable,
+        distinct (regexp_match(filename, '.*?(?=-\d)')) [1] model,
+        (regexp_match(filename, '[^:]*$')) [1] variable,
         (ST_PixelAsCentroids(rast, 1)).*
       from
         rasters
       where
-        filename like '%lat%'
-    ) lon
+        filename like '%lat_rho'
+    ) lat
+    join models m on m.name = lat.model
 )
 select
-  lng.x,
-  lng.y,
-  lng.pixel,
-  lng.longitude,
+  lon.modelId,
+  lon.pixel,
+  lon.longitude,
   lat.latitude,
-  st_point(lng.longitude, lat.latitude, 4326) coord
+  st_point(lon.longitude, lat.latitude, 4326) coord
 from
-  longitudes lng
-  join latitudes lat on lat.pixel = lng.pixel
+  lon
+  join lat on lat.pixel = lon.pixel
+  and lat.modelId = lon.modelId

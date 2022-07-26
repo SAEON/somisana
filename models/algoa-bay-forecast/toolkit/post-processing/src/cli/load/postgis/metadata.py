@@ -1,9 +1,9 @@
 from postgis import connect
 
-sql_path = 'src/cli/load/postgis/sql/extensions.sql'
+sql_path = 'src/cli/load/postgis/sql/metadata.sql'
 
-# Setup PostGIS schema and WMS views
-def activate():
+# Setup view that summarizes models
+def setup():
     schema = open(sql_path, 'r')
     schemaSql = schema.read()
     schema.close()

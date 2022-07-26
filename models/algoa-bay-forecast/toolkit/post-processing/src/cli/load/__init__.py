@@ -1,9 +1,9 @@
 import xarray as xr
 from datetime import datetime
-from cli.load.postgis.extensions import activate as activate_extensions
+from cli.load.postgis import __ini__
 from cli.load.postgis.coordinates import create_view as index_coordinates
 from cli.load.postgis.raster2pgsql import register as raster2pgsql
-from cli.load.postgis.models import setup as register_models_view
+from cli.load.postgis.metadata import setup as register_metadata_view
 
 
 def load(options, arguments):
@@ -16,9 +16,6 @@ def load(options, arguments):
   now = datetime.now()
   print('\n-> Installing PostGIS schema', str(datetime.now() - now))
 
-  # Ensure that PostGIS extensions are activated
-  activate_extensions()
-
   # Get a list of the raster paths in the NetCDF file
   netcdf = xr.open_dataset(nc_input_path)
   variables = list(netcdf.keys())
@@ -28,8 +25,8 @@ def load(options, arguments):
 
   # Load rasters into PostGIS - one at a time
   print('\n-> Loading variables', rasters, str(datetime.now() - now))
-  for raster in rasters:
-    raster2pgsql(now, nc_input_path, raster)
+  # for raster in rasters:
+  #   raster2pgsql(now, nc_input_path, raster)
   
   # All rasters loaded!
   print('\nNetCDF data registered as out-db successfully!!', str(datetime.now() - now))
@@ -40,5 +37,5 @@ def load(options, arguments):
 
   # If the models view doesn't already exist create it
   print('\n-> Setting up models view', str(datetime.now() - now))
-  register_models_view()
+  register_metadata_view()
 

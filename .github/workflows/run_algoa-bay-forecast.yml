@@ -361,7 +361,7 @@ jobs:
                 -t \
                 -g /tmp/somisana/current/croco/forcing/grd.nc \
                 -i /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
-                -o /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-normalized.nc
+                -o /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc
       - name: Load normalized NetCDF output to PostGIS
         env:
           PG_HOST: ${{ steps.pg-env.outputs.PG_HOST_DECRYPTED }}
@@ -381,4 +381,4 @@ jobs:
             ${{ needs.python.outputs.image }} \
               post-processing \
                 -l \
-                -i /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-normalized.nc
+                -i /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc
