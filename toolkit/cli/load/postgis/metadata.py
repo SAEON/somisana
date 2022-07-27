@@ -1,6 +1,6 @@
 from postgis import connect
 
-sql_path = 'src/cli/load/postgis/sql/metadata.sql'
+sql_path = 'cli/load/postgis/sql/metadata.sql'
 
 # Setup view that summarizes models
 def setup():

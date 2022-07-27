@@ -22,4 +22,4 @@ pydap = "*"
 python_version = "3.8.10"
 
 [scripts]
-script = "python src/__main__.py"
+script = "python __main__.py"

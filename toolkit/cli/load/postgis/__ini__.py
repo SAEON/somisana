@@ -2,7 +2,7 @@ from postgis import connect
 
 print('Initialising PostGIS schema and database')
 
-sql_path = 'src/cli/load/postgis/sql/schema.sql'
+sql_path = 'cli/load/postgis/sql/schema.sql'
 schema = open(sql_path, 'r')
 schemaSql = schema.read()
 schema.close()

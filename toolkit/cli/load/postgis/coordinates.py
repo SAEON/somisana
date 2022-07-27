@@ -1,6 +1,6 @@
 from postgis import connect
 
-sql_path = 'src/cli/load/postgis/sql/coordinates.sql'
+sql_path = 'cli/load/postgis/sql/coordinates.sql'
 
 # Setup the materialized view of coordinates
 # This view should never need refreshing
