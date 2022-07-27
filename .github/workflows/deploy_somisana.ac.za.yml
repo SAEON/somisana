@@ -14,6 +14,11 @@ env:
   MONGO_DB: ${{ secrets.MONGO_DB_STABLE }}
   MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STABLE }}
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }}
+  PG_HOST: ${{ secrets.PG_HOST_STABLE }}
+  PG_PORT: ${{ secrets.PG_PORT_STABLE }}
+  PG_DB: ${{ secrets.PG_DB_STABLE }}
+  PG_USERNAME: ${{ secrets.PG_USERNAME_STABLE }}
+  PG_PASSWORD: ${{ secrets.PG_PASSWORD_STABLE }}
 
 jobs:
   build:
@@ -119,4 +124,5 @@ jobs:
             echo "MONGO_DB=${{ env.MONGO_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
             echo "MONGO_USERNAME=${{ env.MONGO_USERNAME }}" >> ${{ env.STACK_CONFIG_PATH }}
             echo "MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "PG_DATABASE_URL=postgres://${{ env.PG_USERNAME }}:${{ env.PG_PASSWORD }}@${{ env.PG_HOST }}:${{ env.PG_PORT }}/${{ env.PG_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
             sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} somisana_stable

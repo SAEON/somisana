@@ -15,17 +15,14 @@ create extension if not exists address_standardizer_data_us;
 
 create extension if not exists postgis_tiger_geocoder;
 
-set
-  postgis.gdal_enabled_drivers = 'ENABLE_ALL';
+set postgis.gdal_enabled_drivers = 'ENABLE_ALL';
 
-set
-  postgis.enable_outdb_rasters = 1;
+set postgis.enable_outdb_rasters = 1;
 
 -- Allow access to external data and formats permnently
 -- alter database somisana_local set postgis.enable_outdb_rasters = true;
 -- alter database somisana_local SET postgis.gdal_enabled_drivers TO 'ENABLE_ALL';
 /*********************************************************/
-
 create table if not exists models (
   id serial,
   name varchar(255),
@@ -34,7 +31,9 @@ create table if not exists models (
 );
 
 insert into public.models ("name")
-values
-  ('algoa-bay-forecast'),
-  ('false-bay-forecast')
-on conflict on constraint models_unique_col do nothing;;
+  values ('algoa-bay-forecast'), ('false-bay-forecast')
+on conflict on constraint models_unique_col
+  do nothing;
+
+;
+
