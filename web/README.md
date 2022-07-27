@@ -5,6 +5,8 @@
 
 - [Quick start](#quick-start)
   - [Start a local MongoDB server](#start-a-local-mongodb-server)
+  - [Start a local PostGIS server](#start-a-local-postgis-server)
+  - [Start a local `pg_tileserv` server](#start-a-local-pg_tileserv-server)
   - [Add an HTML page to the app](#add-an-html-page-to-the-app)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
