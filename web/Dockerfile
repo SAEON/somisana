@@ -4,34 +4,38 @@ FROM node:16.14.2
 # BUILD CONFIG
 ##############
 
-ARG API
-ARG NODE_ENV
-ARG DEPLOYMENT_ENV
-ARG TZ
 ARG ALLOWED_ORIGINS
-ARG MONGO_HOST
+ARG API
+ARG DEPLOYMENT_ENV
 ARG MONGO_DB
-ARG MONGO_USERNAME
+ARG MONGO_HOST
 ARG MONGO_PASSWORD
-ARG TECHNICAL_CONTACT
+ARG MONGO_USERNAME
+ARG NODE_ENV
 ARG NODE_LOADER_CONFIG=loaders/config.js
+ARG TECHNICAL_CONTACT
+ARG TZ
 
 ##############
 # RUNTIME
 ##############
 
 ENV ALLOWED_ORIGINS=$ALLOWED_ORIGINS
-ENV MONGO_HOST=$MONGO_HOST
+ENV DEPLOYMENT_ENV=$DEPLOYMENT_ENV
 ENV MONGO_DB=$MONGO_DB
-ENV MONGO_USERNAME=$MONGO_USERNAME
+ENV MONGO_HOST=$MONGO_HOST
 ENV MONGO_PASSWORD=$MONGO_PASSWORD
-
+ENV MONGO_USERNAME=$MONGO_USERNAME
+ENV NODE_ENV=$NODE_ENV
+ENV NODE_LOADER_CONFIG=$NODE_LOADER_CONFIG
+ENV TZ=$TZ
 
 ##############
 # SOMISANA WEB
 ##############
 
 WORKDIR /somisana
+
 COPY . .
 
 # Configure client (build time only)
@@ -41,8 +45,8 @@ RUN echo "TECHNICAL_CONTACT=${TECHNICAL_CONTACT}" >> .env
 RUN echo "DEPLOYMENT_ENV=${DEPLOYMENT_ENV}" >> .env
 
 # Install deps
-RUN npm install -g chomp
-RUN npm ci --only=production
+RUN npm install -g chomp \
+  & npm ci --only=production
 
 # Build app using chomp
 RUN chomp build:deployment
@@ -51,4 +55,5 @@ RUN chomp build:deployment
 EXPOSE 3000
 
 # Start command
-CMD node --loader @node-loader/core server
+ENTRYPOINT [ "node" ]
+CMD ["--loader", "@node-loader/core", "server"]

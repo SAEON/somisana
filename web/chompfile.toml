@@ -5,7 +5,7 @@ default-task = 'start'
 name = 'build:deployment'
 deps = [
   'clear-cache',
-  '.cach',
+  'rollup:client',
   'rollup:ssr',
   'jspm:client',
   'jspm:node',
@@ -90,12 +90,20 @@ invalidation = 'always'
 run = "node jspm-client.js"
 
 [[task]]
+name = "rollup:client"
 target = '.cache'
+env = { TZ='UTC'}
+deps = ['prettier']
+run = """
+rollup --config rollup/client.config.js
+"""
+
+[[task]]
+name = 'prettier'
 deps = [
   'client/**/*',
   'common/**/*'
 ]
-env = { TZ='UTC'}
 run = """
 prettier \
   --loglevel warn \
@@ -104,9 +112,12 @@ prettier \
   --ignore-path ../.prettierignore \
   --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
   --write "common/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
-  && rollup \
-    --config rollup/client.config.js
+  --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" \
+  --write "loaders/**/*.js" \
+  --write "rollup/**/*.js" \
+  --write "./*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)"
 """
+
 
 [[task]]
 name = 'clear-cache'
@@ -119,22 +130,6 @@ rimraf .ssr
 ############################# 
 #############################
 #############################
-
-
-[[task]]
-name = 'prettier'
-run = """
-prettier \
-  --cache \
-  --cache-strategy metadata \
-  --ignore-path ../.prettierignore \
-  --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
-  --write "common/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
-  --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" \
-  --write "loaders/**/*.js" \
-  --write "rollup/**/*.js" \
-  --write "./*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)"
-"""
 
 [[task]]
 name = 'reset'
@@ -149,14 +144,3 @@ find . \
       -type f \
       -delete
 """
-
-[[task]]
-name = 'ncu'
-run = 'ncu'
-
-[[task]]
-name = 'ncu:u'
-run = '''
-ncu -u
-npm install
-'''
