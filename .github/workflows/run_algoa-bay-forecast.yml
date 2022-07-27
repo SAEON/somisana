@@ -240,7 +240,7 @@ jobs:
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 30 # Script is considered failed if this limit is reached
-          retry_wait_seconds: 600 # Wait 10 minutes and try again
+          retry_wait_seconds: 10 # Wait 10 minutes and try again
           max_attempts: 10
           retry_on: any
           warning_on_retry: true

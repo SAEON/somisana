@@ -1,6 +1,6 @@
 import xarray as xr
 from datetime import datetime
-from cli.load.postgis import __ini__
+from postgis import setup as installDb
 from cli.load.postgis.coordinates import create_view as index_coordinates
 from cli.load.postgis.raster2pgsql import register as raster2pgsql
 from cli.load.postgis.metadata import setup as register_metadata_view
@@ -8,6 +8,7 @@ from cli.load.postgis.metadata import setup as register_metadata_view
 
 def load(options, arguments):
   print('\n== Running Algoa Bay Forecast post-processing ==')
+  installDb()
   
   # Parse CLI options
   nc_input_path = options.nc_input_path

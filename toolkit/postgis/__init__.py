@@ -18,3 +18,11 @@ def connect():
         _connection_.autocommit = True
     return _connection_
 
+def setup():
+    print('Initialising PostGIS schema and database')
+    sql_path = 'postgis/schema.sql'
+    schema = open(sql_path, 'r')
+    schemaSql = schema.read()
+    schema.close()
+    cursor = connect().cursor()
+    cursor.execute(schemaSql)
