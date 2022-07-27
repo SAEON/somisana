@@ -46,15 +46,11 @@ ENV PIPENV_VENV_IN_PROJECT="enabled"
 ENV LANG="en_US.UTF-8"
 RUN pip install --user pipenv
 
-COPY --chown=somisana:somisana toolkit/ .
+COPY --chown=somisana:somisana . .
 
 # Install "post-processing"
-WORKDIR /home/somisana/post-processing
 RUN rm -rf .venv && mkdir .venv
 RUN pipenv sync
-
-# Set the base working directory for all scripts
-WORKDIR /home/somisana
 
 ENTRYPOINT [ "bin/exe" ]
 CMD [ "$@" ]

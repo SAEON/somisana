@@ -178,8 +178,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: models/algoa-bay-forecast
-          file: models/algoa-bay-forecast/toolkit.Dockerfile
+          context: models/algoa-bay-forecast/toolkit
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -256,8 +255,7 @@ jobs:
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
               -e DOWNLOADS_DIRECTORY=/tmp/somisana/current \
               ${{ needs.python.outputs.image }} \
-                post-processing \
-                  -d
+                -d
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
@@ -286,7 +284,7 @@ jobs:
             --rm \
             --mac-address 02:42:ff:ff:ff:ff \
             -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
-            -v $(pwd)/models/algoa-bay-forecast/toolkit/make-forcings:/crocotools/ \
+            -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
             -v $WORKDIR:/tmp/somisana/current \
             -e MLM_LICENSE_FILE=/licenses/license.lic \
@@ -359,11 +357,10 @@ jobs:
             -v $WORKDIR:/tmp/somisana/current \
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/tmp/somisana/current/croco/forcing/grd.nc \
             ${{ needs.python.outputs.image }} \
-              post-processing \
-                -t \
-                -g /tmp/somisana/current/croco/forcing/grd.nc \
-                -i /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
-                -o /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc
+              -t \
+              -g /tmp/somisana/current/croco/forcing/grd.nc \
+              -i /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
+              -o /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc
       - name: Load normalized NetCDF output to PostGIS
         env:
           PG_HOST: ${{ steps.pg-env.outputs.PG_HOST_DECRYPTED }}
@@ -381,6 +378,5 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.python.outputs.image }} \
-              post-processing \
-                -l \
-                -i /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc
+              -l \
+              -i /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc

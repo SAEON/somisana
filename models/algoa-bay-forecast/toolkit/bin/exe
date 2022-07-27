@@ -1,8 +1,2 @@
 #!/bin/bash
-
-if [ "$1" == "post-processing" ]; then
-  cd post-processing
-  pipenv run script $2 $3 $4 $5 $6 $7 $8
-else 
-  echo "Unknown script specified: $1"
-fi
+pipenv run script $1 $2 $3 $4 $5 $6 $7 $8
