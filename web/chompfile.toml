@@ -126,7 +126,17 @@ prettier \
 
 [[task]]
 name = 'reset'
-run = 'find . -name node_modules -type d -exec rm -rv {} + && find . -name package-lock.json -type f -delete'
+run = """
+rm -rf node_modules
+find . \
+  -name node_modules \
+  -type d \
+  -exec rm -rv {} + \
+    && find . \
+      -name package-lock.json \
+      -type f \
+      -delete
+"""
 
 [[task]]
 name = 'ncu'
