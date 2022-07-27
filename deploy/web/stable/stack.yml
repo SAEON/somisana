@@ -27,7 +27,7 @@ services:
       MONGO_USERNAME: $MONGO_USERNAME
       MONGO_PASSWORD: $MONGO_PASSWORD
     ports:
-      - 7008:80
+      - 7008:3000
     networks:
       - somisana_stable
 
