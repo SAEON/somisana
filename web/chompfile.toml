@@ -2,30 +2,29 @@ version = 0.1
 default-task = 'start'
 
 [[task]]
-name = 'build:deployment'
-deps = [
-  'clear-cache',
-  'rollup:client',
-  'rollup:ssr',
-  'jspm:client',
-  'jspm:node',
-  'copy-static-files'
-]
+name = 'start'
+env = { TZ='UTC', NODE_LOADER_CONFIG='loaders/config.js' }
 serial = true
+deps = [
+  'client',
+  'rollup:server',
+  'node.importmap'
+]
+run = """
+node \
+  --trace-warnings \
+  --loader @node-loader/core \
+  server
+"""
 
 [[task]]
-name = 'start'
-deps = [
-    '.cache',
-    '.cache/*.html',
-    'copy-static-files',
-    'server',
-]
+name = 'client'
 serial = true
-
-#############################
-#############################
-#############################
+deps = [
+  '.cache',
+  '.cache/*.html',
+  'copy-static-files',
+]
 
 [[task]]
 name = 'copy-static-files'
@@ -34,40 +33,16 @@ cp -r public/* .cache/
 '''
 
 [[task]]
-name = 'server'
-env = { TZ='UTC', NODE_LOADER_CONFIG='loaders/config.js' }
-serial = true
-deps = [
-  'rollup:ssr',
-  'node.importmap',
-  'server/**/*.js',
-]
-run = """
-prettier \
-  --loglevel warn \
-  --cache \
-  --cache-strategy metadata \
-  --ignore-path ../.prettierignore \
-  --write "ssr/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
-  --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
-  --write "loaders/**/*.js" && \
-    node \
-      --trace-warnings \
-      --loader @node-loader/core \
-      server
-"""
-
-[[task]]
-name = 'rollup:ssr'
-deps = ['ssr/**/*.jsx']
-env = { TZ='UTC' }
+name = 'rollup:server'
+deps = ['prettier:server']
 run = 'rollup -c rollup/server.config.js'
 
-############################# 
-#############################
-#############################
+[[task]]
+name = "rollup:client"
+target = '.cache'
+deps = ['prettier:client']
+run = 'rollup --config rollup/client.config.js'
 
-# Create an import map for node
 [[task]]
 name = 'jspm:node'
 targets = ['node.importmap']
@@ -78,7 +53,6 @@ deps = [
 invalidation = 'always'
 run = "node jspm-node.js"
 
-# Transpile HTML + js => HTML / import map
 [[task]]
 name = 'jspm:client'
 targets = ['.cache/#.html']
@@ -90,16 +64,11 @@ invalidation = 'always'
 run = "node jspm-client.js"
 
 [[task]]
-name = "rollup:client"
-target = '.cache'
-env = { TZ='UTC'}
-deps = ['prettier']
-run = """
-rollup --config rollup/client.config.js
-"""
+name = 'prettier'
+deps = ['prettier:server', 'prettier:client', 'prettier:other']
 
 [[task]]
-name = 'prettier'
+name = 'prettier:client'
 deps = [
   'client/**/*',
   'common/**/*'
@@ -111,13 +80,38 @@ prettier \
   --cache-strategy metadata \
   --ignore-path ../.prettierignore \
   --write "client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
-  --write "common/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)" \
+  --write "common/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)"
+"""
+
+[[task]]
+name = 'prettier:server'
+deps = [
+  'server/**/*',
+  'loaders/**/*',
+  'ssr/**/*'
+]
+run = """
+prettier \
+  --loglevel warn \
+  --cache \
+  --cache-strategy metadata \
+  --ignore-path ../.prettierignore \
+  --write "ssr/**/*.@(js|json|geojson|cjs|mjs|graphql|ts|tsx|jsx)" \
   --write "server/**/*.@(js|json|geojson|cjs|mjs|graphql)" \
-  --write "loaders/**/*.js" \
+  --write "loaders/**/*.js"
+"""
+
+[[task]]
+name = 'prettier:other'
+run = """
+prettier \
+  --loglevel warn \
+  --cache \
+  --cache-strategy metadata \
+  --ignore-path ../.prettierignore \
   --write "rollup/**/*.js" \
   --write "./*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)"
 """
-
 
 [[task]]
 name = 'clear-cache'
@@ -126,10 +120,6 @@ rimraf node.importmap
 rimraf .cache
 rimraf .ssr
 '''
-
-############################# 
-#############################
-#############################
 
 [[task]]
 name = 'reset'
@@ -144,3 +134,19 @@ find . \
       -type f \
       -delete
 """
+
+############################# 
+#############################
+#############################
+
+[[task]]
+name = 'build:deployment'
+deps = [
+  'clear-cache',
+  'rollup:client',
+  'rollup:server',
+  'jspm:client',
+  'jspm:node',
+  'copy-static-files'
+]
+serial = true
