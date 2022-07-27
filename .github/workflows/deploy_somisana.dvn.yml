@@ -5,7 +5,6 @@ on: workflow_dispatch
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_web_next
-  NGINX_IMAGE_NAME: ${{ github.repository }}_nginx_next
   BRANCH_REF: next
   DEPLOY_SOURCE: deploy/web/next/stack.yml
   STACK_COMPOSE_PATH: /home/runner/somisana/deploy/web/next/stack.yml
@@ -58,41 +57,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  build-nginx:
-    runs-on: ubuntu-latest
-    outputs:
-      image: ${{ steps.meta.outputs.tags }}
-    steps:
-      - name: Check out source code (shared)
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_REF }}
-      - name: Log in to the Container registry
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.NGINX_IMAGE_NAME }}
-          tags: |
-            type=sha
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          build-args: |
-            NGINX_CONFIG=docker/nginx/config/next
-          file: docker/nginx/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
   deploy:
-    needs: [build, build-nginx]
+    needs: [build]
     runs-on: github-runner.saeon.int
     steps:
       - name: Check out source code (shared)
@@ -119,7 +85,6 @@ jobs:
           port: ${{ secrets.ULWAPPSWARM01_HOST_SSH_PORT }}
           script: |
             echo "DOCKER_IMAGE=${{ needs.build.outputs.image }}" > ${{ env.STACK_CONFIG_PATH }}
-            echo "NGINX_IMAGE=${{ needs.build-nginx.outputs.image }}" >> ${{ env.STACK_CONFIG_PATH }}
             echo "MONGO_HOST=${{ env.MONGO_HOST }}" >> ${{ env.STACK_CONFIG_PATH }}
             echo "MONGO_DB=${{ env.MONGO_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
             echo "MONGO_USERNAME=${{ env.MONGO_USERNAME }}" >> ${{ env.STACK_CONFIG_PATH }}
