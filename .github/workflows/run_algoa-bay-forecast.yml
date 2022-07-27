@@ -233,7 +233,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
     steps:
-      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
+      - name: Source ~/.bashrc (for NVM - required for non-interactive shells). This is required for the retry
         run: |
           source ~/.bashrc
           nvm use 16.14.2
@@ -254,8 +254,9 @@ jobs:
               -v $WORKDIR/:/tmp/somisana/current \
               -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+              -e DOWNLOADS_DIRECTORY=/tmp/somisana/current \
               ${{ needs.python.outputs.image }} \
-                download-boundary-data
+                -d
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/

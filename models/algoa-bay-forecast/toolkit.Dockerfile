@@ -48,11 +48,6 @@ RUN pip install --user pipenv
 
 COPY --chown=somisana:somisana toolkit/ .
 
-# Install "download-boundary-data"
-WORKDIR /home/somisana/download-boundary-data
-RUN rm -rf .venv && mkdir .venv
-RUN pipenv sync
-
 # Install "post-processing"
 WORKDIR /home/somisana/post-processing
 RUN rm -rf .venv && mkdir .venv
