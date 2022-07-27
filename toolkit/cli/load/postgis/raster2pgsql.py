@@ -22,7 +22,7 @@ t = {
   "depth": "20x1"
 }
 
-def register(now, nc_input_path, raster):
+def register(now, nc_input_path, raster, model):
   print('\n->', raster, str(datetime.now() - now))
   p, filename =  os.path.split("""{0}:{1}""".format(str(nc_input_path), str(raster)))
   
@@ -72,5 +72,8 @@ def register(now, nc_input_path, raster):
         )
       
   print("""Command:""".format(str(raster)), sub(' +', ' ', cmd))
-  if os.system(cmd) != 0:
-    raise Exception('raster2pgsql cmd failed: ' + sub(' +', ' ', cmd))
+  # if os.system(cmd) != 0:
+  #   raise Exception('raster2pgsql cmd failed: ' + sub(' +', ' ', cmd))
+
+  # TODO associate filename with the mode
+  

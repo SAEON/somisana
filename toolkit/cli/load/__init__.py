@@ -15,9 +15,10 @@ def load(options, arguments):
 
   # Ensure the user-specified model exists
   cursor = connect().cursor()
-  cursor.execute()
-
-
+  cursor.execute("""select 1 where exists (select * from models where "name" = %s)""", (model, ))
+  model_exists = len(cursor.fetchall())
+  if not model_exists:
+    raise Exception('Specified model does not exist exist - ' + model)
   
   print("""\n== Loading PostGIS data ({0} model) ==""".format(model))
   
@@ -37,8 +38,8 @@ def load(options, arguments):
 
   # Load rasters into PostGIS - one at a time
   print('\n-> Loading variables', rasters, str(datetime.now() - now))
-  # for raster in rasters:
-  #   raster2pgsql(now, nc_input_path, raster)
+  for raster in rasters:
+    raster2pgsql(now, nc_input_path, raster, model)
   
   # All rasters loaded!
   print('\nNetCDF data registered as out-db successfully!!', str(datetime.now() - now))

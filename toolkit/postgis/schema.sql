@@ -23,10 +23,17 @@ set postgis.enable_outdb_rasters = 1;
 -- alter database somisana_local set postgis.enable_outdb_rasters = true;
 -- alter database somisana_local SET postgis.gdal_enabled_drivers TO 'ENABLE_ALL';
 /*********************************************************/
-create table if not exists models (
+create table if not exists public.rasters (
+  rid serial4 not null,
+  rast public.raster null,
+  filename text null,
+  constraint rasters_pkey primary key (rid)
+);
+
+create table if not exists public.models (
   id serial,
   name varchar(255),
-  constraint models_pkey primary key (id),
+  constraint models_pk primary key (id),
   constraint models_unique_col unique ("name")
 );
 
@@ -35,3 +42,9 @@ insert into public.models ("name")
 on conflict on constraint models_unique_col
   do nothing;
 
+create table if not exists public.raster_xref_filename (
+  id serial,
+  rasterId int,
+  filename varchar(255),
+  constraint raster_xref_filename_pk primary key (id),
+  constraint raster_xref_filename)
