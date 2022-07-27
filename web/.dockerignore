@@ -1,0 +1,9 @@
+.github
+.git
+.husky
+**/.venv/**
+**/__pycache__/**
+**/node_modules/**
+**/.cache/**
+**/node.importmap
+**/.env
