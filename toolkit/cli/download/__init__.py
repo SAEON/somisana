@@ -50,8 +50,9 @@ def download(options, arguments):
   # MatLab is configured via a .env file
   print('Configuring MatLab...')
   with open(MATLAB_ENV_PATH, 'w+') as env:
-    env.write("RUN_DATE=" + str(date.today()))
-    env.write("DELTA_DAYS_GFS=" + str(delta_days_gfs))
+    env.write('RUN_DATE=' + str(date.today()))
+    env.write('\n')
+    env.write('DELTA_DAYS_GFS=' + str(delta_days_gfs))
   os.chmod(MATLAB_ENV_PATH, 0o777)
 
   # Script complete

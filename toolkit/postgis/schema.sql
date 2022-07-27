@@ -35,5 +35,3 @@ insert into public.models ("name")
 on conflict on constraint models_unique_col
   do nothing;
 
-;
-

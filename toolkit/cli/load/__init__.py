@@ -1,14 +1,25 @@
 import xarray as xr
 from datetime import datetime
-from postgis import setup as installDb
+from postgis import setup as installDb, connect
 from cli.load.postgis.coordinates import create_view as index_coordinates
 from cli.load.postgis.raster2pgsql import register as raster2pgsql
 from cli.load.postgis.metadata import setup as register_metadata_view
 
 
 def load(options, arguments):
-  print('\n== Running Algoa Bay Forecast post-processing ==')
+  model = options.model
+
+  # Ensure that the database schema is installed
+  # In most cases this should not apply changes to the DB
   installDb()
+
+  # Ensure the user-specified model exists
+  cursor = connect().cursor()
+  cursor.execute()
+
+
+  
+  print("""\n== Loading PostGIS data ({0} model) ==""".format(model))
   
   # Parse CLI options
   nc_input_path = options.nc_input_path
