@@ -1,4 +1,4 @@
-function make_OGCM_ocims_nest(NY,NM,ND,RSTY,RSTM,RSTD,makeini)
+function make_OGCM_ocims_nest(NY,NM,ND,RSTY,RSTM,RSTD,makeini,rst_filename)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
