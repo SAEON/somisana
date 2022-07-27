@@ -2,6 +2,18 @@ version = 0.1
 default-task = 'start'
 
 [[task]]
+name = 'build:deployment'
+deps = [
+  'clear-cache',
+  '.cach',
+  'rollup:ssr',
+  'jspm:client',
+  'jspm:node',
+  'copy-static-files'
+]
+serial = true
+
+[[task]]
 name = 'start'
 deps = [
     '.cache',
