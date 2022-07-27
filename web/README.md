@@ -36,9 +36,23 @@ chomp --watch
 2. Link the transpiled source code to the HTML entry points using `JSPM` (look at the `html` task in [chompfile.toml](chompfile.toml))
 3. Start the `Koa` app (Node.js)
 
-## Start a local MongoDB server
+## [Start a local MongoDB server](https://github.com/SAEON/mongo#local-development)
 
-Follow instructions to [set up a locally running MongoDB server via Docker](https://github.com/SAEON/mongo#local-development) (or, just generally speaking, a locally running MongoDB docker container is required).
+## [Start a local PostGIS server](https://github.com/SAEON/postgis#local-development)
+
+## Start a local `pg_tileserv` server
+Assuming you have a PostGIS server running as a docker container with the name `postgis` on a network called `postgis`:
+
+```sh
+docker run \
+  -dt \
+  --restart always \
+  --name pg_tileserv \
+  -p 7800:7800 \
+  --net postgis \
+  -e DATABASE_URL=postgres://admin:password@postgis:5432/somisana_local \
+  pramsey/pg_tileserv:latest
+```
 
 ## Add an HTML page to the app
 
