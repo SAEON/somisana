@@ -32,10 +32,10 @@ create table if not exists public.rasters (
 create table if not exists public.models (
   id serial primary key,
   name varchar(255),
-  constraint models_unique_name unique ("name")
+  constraint models_unique_name unique (name)
 );
 
-insert into public.models ("name")
+insert into public.models (name)
   values ('algoa-bay-forecast'), ('false-bay-forecast')
 on conflict on constraint models_unique_name
   do nothing;
@@ -44,6 +44,6 @@ create table if not exists public.raster_xref_model (
   id serial primary key,
   rasterId int references rasters (rid),
   modelId int references models (id),
-  constraint raster_xref_filename_unique unique ("rasterId", "modelId")
+  constraint raster_xref_filename_unique unique (rasterId, modelId)
 );
 

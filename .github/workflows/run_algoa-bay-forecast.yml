@@ -379,4 +379,5 @@ jobs:
             -e PG_DB=$PG_DB \
             ${{ needs.python.outputs.image }} \
               -l \
-              -i /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc
+              -i /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+              -m algoa-bay-forecast
