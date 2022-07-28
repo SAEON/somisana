@@ -57,7 +57,7 @@ def register(now, nc_input_path, raster, model):
     else:
       cursor = connectPg().cursor()
       cursor.execute("""
-        select 1 where exists (select * from public.rasters where filename = %s)
+        select 1 where exists ( select * from public.rasters where filename = %s )
       """, (filename, ))
       exists = not len(cursor.fetchall()) == 0
       if exists:
@@ -108,5 +108,12 @@ def register(now, nc_input_path, raster, model):
   print("""Command:""".format(str(raster)), sub(' +', ' ', cmd))
   if os.system(cmd) != 0: raise Exception('raster2pgsql cmd failed: ' + sub(' +', ' ', cmd))
 
-  # TODO associate filename with the mode
+  """
+  Explicitly associate individual rasters with a model
+  """
+  with open('cli/load/raster2pgsql/update-raster_xref_model.sql') as file:
+    sql = file.read()
+    cursor = connectPg().cursor()
+    cursor.execute(sql, (filename, model,))
+    print(cursor.statusmessage)
   
