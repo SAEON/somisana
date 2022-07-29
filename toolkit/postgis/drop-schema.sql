@@ -1,8 +1,7 @@
 -- VIEWS
-drop view if exists public.raster_grid;
+drop view if exists public.raster_grid cascade;
 
--- MATERIALIZED VIEWS
-drop materialized view if exists public.metadata cascade;
+drop view if exists public.metadata cascade;
 
 -- TABLES
 drop table if exists public.coordinates cascade;

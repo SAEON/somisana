@@ -3,14 +3,15 @@ from datetime import datetime
 from postgis import setup as installDb, drop as dropSchema, connect
 from config import PY_ENV
 from cli.load.raster2pgsql import register as raster2pgsql
-from cli.load.coordinates import create_view as index_coordinates
-from cli.load.metadata import create_view as index_metadata
+from cli.load.coordinates import merge as index_coordinates
+from cli.load.temperature import merge as index_temperatures
 
 
 def load(options, arguments):
   now = datetime.now()
   model = options.model
   nc_input_path = options.nc_input_path
+  run_date = options.run_date
   
   """
   Check CLI options are specified correctly
@@ -19,8 +20,18 @@ def load(options, arguments):
   if not nc_input_path: raise Exception('Please specify the file input name (-i)')
 
   """
+  Check that the correct run_date is specified
+  The default is today, but if a bad format is
+  passed that must be raised
+  """
+  try:
+    datetime.strptime(run_date, '%Y%m%d')
+  except:
+    raise Exception("Expected date format for --run-date is %Y%m%d")
+
+  """
   In development mode when the schema changes a lot, it's
-  usefule to be able to drop and recreate the schema
+  useful to be able to drop and recreate the schema
   """
   if options.drop_db:
     if not PY_ENV == 'development':
@@ -29,7 +40,7 @@ def load(options, arguments):
       dropSchema()
 
   """
-  On every run the DB schema DDL is run. This won't change the schmema
+  On every run the DB schema DDL is run. This won't change the schema
   object if they already exist - changes to the schema won't automatically
   reflect
   """
@@ -74,6 +85,6 @@ def load(options, arguments):
   index_coordinates(model)
 
   # If the models view doesn't already exist create it
-  print('\n-> Setting up models view', str(datetime.now() - now))
-  index_metadata(model)
+  print('\n-> Calculating temperature contours', str(datetime.now() - now))
+  index_temperatures(model, run_date)
 
