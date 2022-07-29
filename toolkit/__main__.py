@@ -3,6 +3,9 @@ from cli.transform import transform as transformModelOutput
 from cli.load import load as loadRaster
 from cli.download import download as downloadBoundaryData
 from optparse import OptionParser
+from datetime import datetime
+
+now = datetime.now().strftime('%Y%m%d')
 
 p = OptionParser()
 
@@ -21,6 +24,7 @@ p.add_option('--grid-input-path', '-g', default="../../lib/grd.nc")
 # Load specific options
 p.add_option('--model', '-m', default='')
 p.add_option('--drop-db', '-D', action="store_true", default = False)
+p.add_option('--run-date', '-r', default = now)
 
 # LOAD CLI
 # (no specific options yet)

@@ -81,3 +81,25 @@ where
   st_geometrytype (grid_envelope) = 'ST_Polygon'
   and st_geometrytype (grid_convex_hull) = 'ST_Polygon';
 
+create or replace view metadata as
+select
+  modelId,
+  min_x,
+  max_x,
+  min_y,
+  max_y,
+  st_convexhull (coords)::geometry(Polygon, 4326) convexhull,
+  st_makeenvelope (min_x, min_y, max_x, max_y, 4326)::geometry(Polygon, 4326) envelope
+from (
+  select
+    c.modelId,
+    min(c.longitude) min_x,
+    max(c.longitude) max_x,
+    max(c.latitude) max_y,
+    min(c.latitude) min_y,
+    st_collect (coord) coords
+  from
+    coordinates c
+  group by
+    modelId) t;
+
