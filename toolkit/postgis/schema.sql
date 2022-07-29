@@ -23,20 +23,34 @@ create table if not exists public.rasters (
 );
 
 create table if not exists public.models (
-  id serial primary key,
-  name varchar(255),
-  constraint models_unique_name unique (name)
+  id serial not null primary key,
+  name varchar(255) not null unique
 );
 
-insert into public.models (name)
-  values ('algoa-bay-forecast'), ('false-bay-forecast')
-on conflict on constraint models_unique_name
-  do nothing;
+merge into public.models t
+using (
+  select
+    'algoa-bay-forecast' name
+  union
+    select
+      'false-bay-forecast' name) s on s.name = t.name
+when not matched then
+  insert (name)
+    values (s.name);
 
 create table if not exists public.raster_xref_model (
-  id serial primary key,
-  rasterid int references rasters (rid) on delete cascade,
-  modelid int references models (id) on delete cascade,
-  constraint raster_xref_filename_unique_rasterid unique (rasterid)
+  id serial not null primary key,
+  rasterid int not null unique references rasters (rid) on delete cascade,
+  modelid int not null references models (id) on delete cascade
+);
+
+create table if not exists public.coordinates (
+  id serial not null primary key,
+  modelid int not null references models (id) on delete cascade,
+  pixel geometry not null,
+  coord geometry not null,
+  longitude float not null,
+  latitude float not null,
+  constraint unique_coordinates unique (modelid, pixel)
 );
 

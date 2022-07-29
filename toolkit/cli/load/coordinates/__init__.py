@@ -1,11 +1,11 @@
 from postgis import connect
 
 """
-Either create the view, or if the view exists, either
-refresh the view if it's a new model value, or do nothing.
-I couldn't figure out how to parametize the model string value
-using the psycog2 module. So instead I'm just checking that the
-value exists as a string in the models table. This should be safe
+Update the coordinates table whenever a
+new model is used. The assumption is that
+once a model is run once, the grid is fixed
+in terms of XY and doesn't need further
+updates
 """
 def create_view(model):
     cursor = connect().cursor()
@@ -18,6 +18,6 @@ def create_view(model):
       raise Exception('Cannot refresh coordinates for a model that doesn\'t exist')
     
     with open('cli/load/coordinates/coordinates.sql', 'r') as file:
-      sql = file.read().replace('%s', "'" + model + "'") # TODO!!! escape properly
+      sql = file.read()
       cursor = connect().cursor()
-      cursor.execute(sql)
+      cursor.execute(sql, (model, model))
