@@ -16,14 +16,16 @@ else
     max_x,
     min_y,
     max_y,
-    st_makeenvelope (min_x, min_y, max_x, max_y, 4326) extent
+    st_convexhull (coords)::geometry(Polygon, 4326) convexhull,
+    st_makeenvelope (min_x, min_y, max_x, max_y, 4326)::geometry(Polygon, 4326) envelope
   from (
     select
       c.modelId,
       min(c.longitude) min_x,
       max(c.longitude) max_x,
       max(c.latitude) max_y,
-      min(c.latitude) min_y
+      min(c.latitude) min_y,
+      st_collect (coord) coords
     from
       coordinates c
     group by

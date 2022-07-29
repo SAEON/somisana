@@ -15,6 +15,7 @@ requests = "*"
 pathlib = "*"
 motuclient = "*"
 pydap = "*"
+pyyaml = "*"
 
 [dev-packages]
 

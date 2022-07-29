@@ -1,39 +1,25 @@
+from curses.ascii import NUL
 import os
 from re import sub
 from postgis import connect as connectPg
+from yaml import Loader, load
 from datetime import datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME, RELOAD_EXISTING_DATA, PY_ENV
-
-"""
-SOURCE
-======
-XY space: 152x106
-Time: 240 steps (hourly)
-Depth: 20 steps (integer-based indexing)
-
-TARGET
-======
-XY is Translated to 4 800 bands (20 x 240)
-Each band is a flat XY grid
-band number % 240 = time step
-(band number % 240) % 20 = depth level at a particular time step
-"""
-t = {
-  "temperature": "38x53",
-  "salt": "38x53",
-  "v": "38x53",
-  "u": "38x53",
-  "m_rho": "38x53",
-  "lon_rho": "38x53",
-  "lat_rho": "38x53",
-  "time": "240x1",
-  "depth": "20x1"
-}
 
 def register(now, nc_input_path, raster, model):
   print('\n->', raster, str(datetime.now() - now))
   p, filename =  os.path.split("""{0}:{1}""".format(str(nc_input_path), str(raster)))
-  
+
+  """
+  Config is to define how to split raster bands into smaller tiles
+  when inserting into PostGIS
+  """
+  config = NUL
+  with open('cli/load/raster2pgsql/models.yml') as file:
+    config = load(file, Loader)['models']
+    if not config[model]: raise Exception('No raster2pgsql configuration for model', model)
+    if not config[model][raster]: raise Exception('No raster2pgsql configuration for model', model, 'variable', raster)
+
   """
   raster2pgsql -t auto value defaults to the grid size (156x106) which
   is too large for in-db rasters. This seems to work with out-db rasters,
@@ -41,7 +27,7 @@ def register(now, nc_input_path, raster, model):
   sizes. However, the tile sizes then need to be set explicitly for each
   variable
   """
-  tileDimensions = t[raster]
+  tileDimensions = config[model][raster]['tile_size']
   if not tileDimensions:
     raise Exception('Tile dimensions not specified for', raster, 'Please update this in the source code manually above')
 

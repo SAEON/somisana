@@ -22,6 +22,8 @@ create table if not exists public.rasters (
   filename text null
 );
 
+create index if not exists rasters_rast_st_convexhull_idx on public.rasters using gist (ST_ConvexHull (rast));
+
 create table if not exists public.models (
   id serial not null primary key,
   name varchar(255) not null unique
@@ -47,10 +49,35 @@ create table if not exists public.raster_xref_model (
 create table if not exists public.coordinates (
   id serial not null primary key,
   modelid int not null references models (id) on delete cascade,
-  pixel geometry not null,
-  coord geometry not null,
+  lon_rasterid int not null references rasters (rid) on delete cascade,
+  lat_rasterid int not null references rasters (rid) on delete cascade,
+  pixel geometry(point, 0) not null,
+  coord geometry(point, 4326) not null,
   longitude float not null,
   latitude float not null,
   constraint unique_coordinates unique (modelid, pixel)
 );
+
+create or replace view raster_grid as
+with polys as (
+  select
+    modelid,
+    st_envelope (st_collect (coord)) grid_envelope,
+    st_convexhull (st_collect (coord)) grid_convex_hull
+  from
+    coordinates c
+  group by
+    modelid,
+    lon_rasterid,
+    lat_rasterid
+)
+select
+  modelid,
+  grid_envelope::geometry(Polygon, 4326),
+  grid_convex_hull::geometry(Polygon, 4326)
+from
+  polys
+where
+  st_geometrytype (grid_envelope) = 'ST_Polygon'
+  and st_geometrytype (grid_convex_hull) = 'ST_Polygon';
 

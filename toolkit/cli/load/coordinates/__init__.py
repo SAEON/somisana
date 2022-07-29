@@ -20,4 +20,4 @@ def create_view(model):
     with open('cli/load/coordinates/coordinates.sql', 'r') as file:
       sql = file.read()
       cursor = connect().cursor()
-      cursor.execute(sql, (model, model))
+      cursor.execute(sql, (model, ))
