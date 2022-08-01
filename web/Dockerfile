@@ -14,6 +14,7 @@ ARG MONGO_USERNAME
 ARG NODE_ENV
 ARG NODE_LOADER_CONFIG=loaders/config.js
 ARG TECHNICAL_CONTACT
+ARG TILESERV_BASE_URL
 ARG TZ
 
 ##############
@@ -43,6 +44,7 @@ RUN echo "API=${API}" > .env
 RUN echo "NODE_ENV=${NODE_ENV}" >> .env
 RUN echo "TECHNICAL_CONTACT=${TECHNICAL_CONTACT}" >> .env
 RUN echo "DEPLOYMENT_ENV=${DEPLOYMENT_ENV}" >> .env
+RUN echo "TILESERV_BASE_URL=${TILESERV_BASE_URL}" >> .env
 
 # Install deps
 RUN npm install -g chomp \

@@ -1,8 +1,7 @@
 import Typography from '@mui/material/Typography'
-import Link from '@mui/material/Link'
 import { alpha } from '@mui/system/colorManipulator'
 
-export default () => {
+export default ({ children }) => {
   return (
     <Typography
       variant="caption"
@@ -16,15 +15,7 @@ export default () => {
         zIndex: 1,
       }}
     >
-      ©{' '}
-      <Link
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.openstreetmap.org/copyright"
-      >
-        OpenStreetMap
-      </Link>{' '}
-      contributors
+      {children}
     </Typography>
   )
 }

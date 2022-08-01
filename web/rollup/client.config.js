@@ -14,6 +14,7 @@ rimraf.sync(join(__dirname, '../.cache/*.js'))
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
 const API = process.env.API || 'http://localhost:3000'
+const TILESERV_BASE_URL = process.env.TILESERV_BASE_URL || 'http://localhost:7800'
 const TECHNICAL_CONTACT =
   process.env.TECHNICAL_CONTACT || 'Missing configuration (TECHNICAL_CONTACT)'
 
@@ -55,6 +56,7 @@ export default {
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
       'process.env.API': JSON.stringify(API),
       'process.env.TECHNICAL_CONTACT': JSON.stringify(TECHNICAL_CONTACT),
+      'process.env.TILESERV_BASE_URL': JSON.stringify(TILESERV_BASE_URL)
     }),
     css({
       output: 'index.css',

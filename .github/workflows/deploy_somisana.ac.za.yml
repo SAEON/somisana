@@ -52,6 +52,7 @@ jobs:
             DEPLOYMENT_ENV=production
             TZ=utc
             TECHNICAL_CONTACT=zd.smith@saeon.nrf.ac.za
+            TILESERV_BASE_URL=https://maps.somisana.ac.za
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
