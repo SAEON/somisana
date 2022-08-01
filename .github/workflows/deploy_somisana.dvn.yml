@@ -53,6 +53,7 @@ jobs:
             TZ=utc
             TECHNICAL_CONTACT=zd.smith@saeon.nrf.ac.za
             TILESERV_BASE_URL=https://maps.somisana.dvn
+            ESRI_API_KEY=${{ secrets.ESRI_API_KEY }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

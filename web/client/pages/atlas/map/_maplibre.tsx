@@ -5,14 +5,16 @@ import useTheme from '@mui/material/styles/useTheme'
 import maplibre from 'maplibre-gl'
 
 export default ({ Attribution }) => {
-  const { TILESERV_BASE_URL } = useContext(configContext)
+  const { TILESERV_BASE_URL, ESRI_API_KEY } = useContext(configContext)
   const theme = useTheme()
   const ref = useRef(null)
 
   useEffect(() => {
+    const basemapEnum = 'ArcGIS:Oceans'
+
     const map = new maplibre.Map({
       container: ref.current,
-      style: 'https://api.maptiler.com/maps/voyager/style.json?key=Ahq5ZorUyvbxSA7shjIP',
+      style: `https://basemaps-api.arcgis.com/arcgis/rest/services/styles/${basemapEnum}?type=style&token=${ESRI_API_KEY}`,
       center: [25, -31],
       zoom: 5.5,
     })

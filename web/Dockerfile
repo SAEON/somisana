@@ -15,6 +15,7 @@ ARG NODE_ENV
 ARG NODE_LOADER_CONFIG=loaders/config.js
 ARG TECHNICAL_CONTACT
 ARG TILESERV_BASE_URL
+ARG ESRI_API_KEY
 ARG TZ
 
 ##############
@@ -45,6 +46,7 @@ RUN echo "NODE_ENV=${NODE_ENV}" >> .env
 RUN echo "TECHNICAL_CONTACT=${TECHNICAL_CONTACT}" >> .env
 RUN echo "DEPLOYMENT_ENV=${DEPLOYMENT_ENV}" >> .env
 RUN echo "TILESERV_BASE_URL=${TILESERV_BASE_URL}" >> .env
+RUN echo "ESRI_API_KEY=${ESRI_API_KEY}" >> .env
 
 # Install deps
 RUN npm install -g chomp \
