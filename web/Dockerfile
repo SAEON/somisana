@@ -56,4 +56,4 @@ EXPOSE 3000
 
 # Start command
 ENTRYPOINT [ "node" ]
-CMD ["--loader", "@node-loader/core", "server"]
+CMD ["--no-warnings", "--loader", "@node-loader/core", "server"]

@@ -3,7 +3,7 @@ import fs from 'fs/promises'
 import dirname from '../server/lib/dirname.js'
 import { createReadStream } from 'fs'
 import { createEmotionCache } from '../common/app'
-import emotionServer from '@emotion/server/create-instance'
+import createEmotionServer from '@emotion/server/create-instance'
 import Layout from './_layout.jsx'
 
 /**
@@ -13,7 +13,6 @@ import Layout from './_layout.jsx'
 import { renderToString } from 'react-dom/server'
 
 const INDEX_NAME = 'somisana'
-const { default: createEmotionServer } = emotionServer
 const __dirname = dirname(import.meta)
 const files = normalize(join(__dirname, '../.cache'))
 const APP_ENTRIES = await fs
