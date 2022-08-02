@@ -12,6 +12,7 @@ import {
   mdiLicense,
   mdiFileSign,
   mdiInformationVariant,
+  mdiInformation,
   mdiApi,
   mdiGithub,
   mdiLink,
@@ -45,6 +46,12 @@ export const Github = styled((props: any) => (
 export const About = styled((props: any) => (
   <SvgIcon {...props}>
     <path d={mdiInformationVariant} />
+  </SvgIcon>
+))({})
+
+export const AboutCircle = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiInformation} />
   </SvgIcon>
 ))({})
 
