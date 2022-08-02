@@ -5,12 +5,12 @@ import useTheme from '@mui/material/styles/useTheme'
 import maplibre from 'maplibre-gl'
 
 export default ({ Attribution }) => {
-  const { TILESERV_BASE_URL, ESRI_API_KEY } = useContext(configContext)
+  const { TILESERV_BASE_URL, ESRI_API_KEY, NODE_ENV } = useContext(configContext)
   const theme = useTheme()
   const ref = useRef(null)
 
   useEffect(() => {
-    const basemapEnum = 'ArcGIS:Oceans'
+    const basemapEnum = 'ArcGIS:Terrain'
 
     const map = new maplibre.Map({
       container: ref.current,
@@ -19,23 +19,46 @@ export default ({ Attribution }) => {
       zoom: 5.5,
     })
 
+    if (NODE_ENV !== 'production') {
+      window.map = map
+    }
+
     map.on('load', () => {
-      map.addSource('coordinates', {
+      map.addSource('metadata', {
         type: 'vector',
-        tiles: [`${TILESERV_BASE_URL}/public.coordinates/{z}/{x}/{y}.pbf`],
-        url: `${TILESERV_BASE_URL}/public.coordinates.json`,
+        tiles: [`${TILESERV_BASE_URL}/public.metadata/{z}/{x}/{y}.pbf`],
+        url: `${TILESERV_BASE_URL}/public.metadata.json`,
+        promoteId: 'id',
       })
 
       map.addLayer({
-        id: 'points',
-        type: 'circle',
-        source: 'coordinates',
-        'source-layer': 'public.coordinates',
+        id: 'models',
+        type: 'fill',
+        source: 'metadata',
+        'source-layer': 'public.metadata',
         paint: {
-          'circle-color': theme.palette.primary.dark,
-          'circle-opacity': 0.9,
-          'circle-radius': 2,
+          'fill-color': theme.palette.primary.dark,
+          'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.6, 0.2],
+          'fill-outline-color': theme.palette.primary.dark,
         },
+      })
+
+      let featureHoveredId = null
+      map.on('mouseenter', 'models', ({ features }) => {
+        featureHoveredId = features[0].id
+        map.getCanvas().style.cursor = 'pointer'
+        map.setFeatureState(
+          { source: 'metadata', id: featureHoveredId, sourceLayer: 'public.metadata' },
+          { hover: true }
+        )
+      })
+
+      map.on('mouseleave', 'models', ({ features }) => {
+        map.getCanvas().style.cursor = ''
+        map.setFeatureState(
+          { source: 'metadata', id: featureHoveredId, sourceLayer: 'public.metadata' },
+          { hover: false }
+        )
       })
     })
   }, [])
