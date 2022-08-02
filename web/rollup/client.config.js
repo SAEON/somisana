@@ -59,7 +59,7 @@ export default {
       'process.env.API': JSON.stringify(API),
       'process.env.TECHNICAL_CONTACT': JSON.stringify(TECHNICAL_CONTACT),
       'process.env.TILESERV_BASE_URL': JSON.stringify(TILESERV_BASE_URL),
-      'process.env.ESRI_API_KEY': JSON.stringify(ESRI_API_KEY)
+      'process.env.ESRI_API_KEY': JSON.stringify(ESRI_API_KEY),
     }),
     css({
       output: 'index.css',

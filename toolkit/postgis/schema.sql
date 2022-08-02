@@ -83,7 +83,7 @@ where
 
 create or replace view metadata as
 select
-  modelId,
+  modelId id,
   min_x,
   max_x,
   min_y,

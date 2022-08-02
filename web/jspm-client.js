@@ -15,11 +15,13 @@ const generator = new Generator({
 })
 
 const htmlSource = await readFile(DEP, 'utf-8')
-
-const html = await generator.htmlGenerate(htmlSource, {
-  htmlUrl: pathToFileURL(TARGET),
+const pins = await generator.addMappings(htmlSource)
+const html = await generator.htmlInject(htmlSource, {
+  trace: true,
+  pins,
   preload: false,
   integrity: false,
+  esModuleShims: true,
 })
 
 mkdirp.sync(dirname(TARGET))
