@@ -1,4 +1,5 @@
 import { createContext, useEffect, useRef, useContext, useState } from 'react'
+import MapView from '@arcgis/core/views/MapView'
 import { ctx as configContext } from '../../../modules/config'
 import useTheme from '@mui/material/styles/useTheme'
 import Div from '../../../components/div'
@@ -6,6 +7,8 @@ import Span from '../../../components/span'
 import maplibre from 'maplibre-gl'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/system/colorManipulator'
+
+console.log(MapView)
 
 const Attribution = () => {
   return (

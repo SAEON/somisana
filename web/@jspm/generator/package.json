@@ -1,0 +1,78 @@
+{
+  "name": "@jspm/generator",
+  "description": "Package Import Map Generation Tool",
+  "license": "MIT",
+  "version": "1.0.0-beta.34",
+  "types": "src/generator.ts",
+  "type": "module",
+  "scripts": {
+    "prepublishOnly": "chomp build"
+  },
+  "imports": {
+    "#fetch": {
+      "source": {
+        "vscode": "./lib/common/fetch-vscode.js",
+        "deno": "./lib/common/fetch-deno.js",
+        "node": "./lib/common/fetch-node.js",
+        "default": "./lib/common/fetch-native.js"
+      },
+      "default": {
+        "vscode": "./dist/fetch-vscode.js",
+        "deno": "./dist/fetch-deno.js",
+        "node": "./dist/fetch-node.js",
+        "default": "./dist/fetch-native.js"
+      }
+    },
+    "#test/*": {
+      "source": "./test/*.js"
+    }
+  },
+  "exports": {
+    "source": "./lib/generator.js",
+    "default": "./dist/generator.js"
+  },
+  "dependencies": {
+    "@babel/core": "^7.18.2",
+    "@babel/plugin-syntax-import-assertions": "^7.17.12",
+    "@babel/preset-typescript": "^7.17.2",
+    "@jspm/core": "^2.0.0-beta.8",
+    "@jspm/import-map": "^1.0.4",
+    "es-module-lexer": "^0.10.4",
+    "ipfs-client": "^0.7.1",
+    "make-fetch-happen": "^8.0.3",
+    "sver": "^1.8.3"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "1.2.174",
+    "chalk": "^4.1.1",
+    "cross-env": "^7.0.2",
+    "kleur": "^4.1.4",
+    "lit-element": "^2.5.1",
+    "mocha": "^9.0.0",
+    "open": "^8.2.0",
+    "rollup": "^2.44.0",
+    "typedoc": "^0.22.8"
+  },
+  "files": [
+    "dist",
+    "src",
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jspm/generator.git"
+  },
+  "keywords": [
+    "jspm",
+    "import maps",
+    "es modules",
+    "cdn",
+    "package manager"
+  ],
+  "author": "Guy Bedford",
+  "bugs": {
+    "url": "https://github.com/jspm/generator/issues"
+  },
+  "homepage": "https://github.com/jspm/generator#readme"
+}
