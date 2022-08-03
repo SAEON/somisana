@@ -57,7 +57,7 @@ export default ({ children }) => {
         sources: {
           models: {
             type: 'vector',
-            tiles: ['http://localhost:7800/public.metadata/{z}/{x}/{y}.pbf'],
+            tiles: [`${TILESERV_BASE_URL}/public.metadata/{z}/{x}/{y}.pbf`],
           },
         },
         layers: [
@@ -81,6 +81,7 @@ export default ({ children }) => {
 
     const map = new Map({
       basemap: ESRI_BASEMAP,
+      layers: [metadata],
     })
 
     const view = new SceneView({
@@ -89,11 +90,6 @@ export default ({ children }) => {
       zoom: 6,
       container: ref.current,
     })
-
-    setTimeout(() => {
-      map.add(metadata)
-      console.log('working')
-    }, 3000)
 
     if (NODE_ENV !== 'production') {
       window.map = map
