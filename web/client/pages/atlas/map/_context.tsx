@@ -1,5 +1,5 @@
 import { createContext, useEffect, useRef, useContext, useState } from 'react'
-import SceneView from '@arcgis/core/views/SceneView'
+import MapView from '@arcgis/core/views/MapView'
 import Map from '@arcgis/core/Map'
 import esriConfig from '@arcgis/core/config'
 import VectorTileLayer from '@arcgis/core/layers/VectorTileLayer'
@@ -84,7 +84,7 @@ export default ({ children }) => {
       layers: [metadata],
     })
 
-    const view = new SceneView({
+    const view = new MapView({
       map,
       center: [25, -31],
       zoom: 6,
