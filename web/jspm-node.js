@@ -17,7 +17,8 @@ const generator = new Generator({
     'apollo-server-core',
     'apollo-server-koa',
     'koa-bodyparser',
-    'http-errors']
+    'http-errors',
+  ],
 })
 
 await Promise.all(DEPS.split(':').map(dep => generator.traceInstall('./' + dep)))

@@ -27,7 +27,10 @@ export default {
     .map(name =>
       fs
         .readdirSync(join(__dirname, `../client/pages/${name}`))
-        .filter(n => fs.lstatSync(join(__dirname, `../client/pages/${name}/${n}`)).isFile())
+        .filter(n => {
+          const p = join(__dirname, `../client/pages/${name}/${n}`)
+          return fs.lstatSync(p).isFile() && !p.endsWith('.html')
+        })
         .map(f => join(__dirname, `../client/pages/${name}/${f}`))
     )
     .flat(),

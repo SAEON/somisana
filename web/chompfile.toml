@@ -38,12 +38,6 @@ deps = ['prettier:server']
 run = 'rollup -c rollup/server.config.js'
 
 [[task]]
-name = "rollup:client"
-target = '.cache'
-deps = ['prettier:client']
-run = 'rollup --config rollup/client.config.js'
-
-[[task]]
 name = 'jspm:node'
 targets = ['node.importmap']
 deps = [
@@ -62,6 +56,12 @@ deps = [
 ]
 invalidation = 'always'
 run = "node jspm-client.js"
+
+[[task]]
+name = "rollup:client"
+target = '.cache'
+deps = ['prettier:client']
+run = 'rollup --config rollup/client.config.js'
 
 [[task]]
 name = 'prettier'
