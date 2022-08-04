@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react'
 import Div from '../../../../components/div'
 import { Linear as Loading } from '../../../../components/loading'
 
-const Atlas = lazy(() => import('../../../atlas/ssr'))
+const Atlas = lazy(() => import('../../../maplibre-atlas/ssr'))
 
 export default () => {
   return (

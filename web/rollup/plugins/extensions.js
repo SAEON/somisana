@@ -63,6 +63,7 @@ function resolveFilePath(file, extensions, resolveIndex) {
   }
   return null
 }
+
 const DEFAULT_EXTENSIONS = ['.mjs', '.js']
 export default function extensions({ extensions = DEFAULT_EXTENSIONS, resolveIndex = true } = {}) {
   if (extensions == null || extensions.length <= 0) {

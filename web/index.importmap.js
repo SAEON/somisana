@@ -7,7 +7,13 @@ import './server/index.js'
 import './.cache/ssr.algoa-bay-forecast.js'
 import './.cache/ssr.false-bay-forecast.js'
 import './.cache/ssr.somisana.js'
-import './.cache/ssr.atlas.js'
+import './.cache/ssr.esri-atlas.js'
+import './.cache/ssr.maplibre-atlas.js'
+
+/**
+ * NOTE
+ * Currently jspm/generator doesn't support string evaluation
+ */
 
 // readdir('./.cache')
 //   .then(files => files.filter(f => f.startsWith('ssr.')))

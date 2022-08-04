@@ -67,7 +67,7 @@ export default {
     css({
       output: 'index.css',
       alwaysOutput: true,
-      minify: false,
+      minify: NODE_ENV === 'production' ? true : false,
       transform: null,
     }),
     swc({ configFile: join(__dirname, '../.swcrc') }),

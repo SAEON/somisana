@@ -5,8 +5,6 @@ import App from '../../../common/app'
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
 import { BrowserRouter as Router } from 'react-router-dom'
 
-if (!window.ResizeObserver) install()
-
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache({}),
   link: new HttpLink({

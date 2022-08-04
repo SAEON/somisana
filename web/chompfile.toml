@@ -79,7 +79,7 @@ template = 'prettier'
 [task.template-options]
 ignore-path = '../.prettierignore'
 loglevel = 'warn'
-files = 'client/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx) common/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)'
+files = 'client/**/*.@(js|jsx|json|mjs|cjs|graphql|html|yml|ts|tsx) common/**/*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)'
 
 [[task]]
 name = 'prettier:server'
