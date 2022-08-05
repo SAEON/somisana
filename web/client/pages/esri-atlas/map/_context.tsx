@@ -10,7 +10,7 @@ import Div from '../../../components/div'
 export const ctx = createContext(null)
 
 export default ({ children }) => {
-  const { TILESERV_BASE_URL, ESRI_API_KEY, NODE_ENV } = useContext(configContext)
+  const { TILESERV_BASE_URL, ESRI_API_KEY } = useContext(configContext)
   const theme = useTheme()
   const ref = useRef(null)
   const mapRef = useRef(null)
@@ -59,9 +59,9 @@ export default ({ children }) => {
       container: ref.current,
     })
 
-    if (NODE_ENV !== 'production') {
-      window.map = map
-      window.view = view
+    window.esri = {
+      map,
+      view,
     }
   }, [])
 

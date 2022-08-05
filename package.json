@@ -4,20 +4,6 @@
   "description": "SOMISANA-related tooling, scripts, software, etc",
   "author": "zd.smith@saeon.nrf.ac.za",
   "license": "MIT",
-  "prettier": {
-    "printWidth": 100,
-    "semi": false,
-    "singleQuote": true,
-    "arrowParens": "avoid",
-    "overrides": [
-      {
-        "files": "*.cjs",
-        "options": {
-          "parser": "babel"
-        }
-      }
-    ]
-  },
   "devDependencies": {
     "doctoc": "^2.1.0",
     "husky": "^7.0.4",

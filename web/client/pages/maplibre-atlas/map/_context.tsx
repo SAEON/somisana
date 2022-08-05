@@ -39,7 +39,7 @@ export const ctx = createContext(null)
 const ESRI_BASEMAP = 'ArcGIS:Terrain'
 
 export default ({ children }) => {
-  const { TILESERV_BASE_URL, ESRI_API_KEY, NODE_ENV } = useContext(configContext)
+  const { TILESERV_BASE_URL, ESRI_API_KEY } = useContext(configContext)
   const theme = useTheme()
   const ref = useRef(null)
   const mapRef = useRef(null)
@@ -53,8 +53,8 @@ export default ({ children }) => {
       attributionControl: false,
     })
 
-    if (NODE_ENV !== 'production') {
-      window.map = map
+    window.maplibre = {
+      map,
     }
 
     map.on('load', () => {
