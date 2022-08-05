@@ -28,3 +28,8 @@ html, body, #root {
   box-sizing: border-box;
   border: 2px solid red !important;
 }
+
+/* TODO - file this as an issue on maplibre github repository - should not be required */
+.mapboxgl-ctrl-bottom-right, .maplibregl-ctrl-bottom-right {
+  min-height: 44px;
+}

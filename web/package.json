@@ -4,10 +4,6 @@
   "type": "module",
   "description": "SOMISANA web stack",
   "author": "zd.smith@saeon.nrf.ac.za",
-  "scripts": {
-    "rollup:client": "rollup --config rollup/client.config.js",
-    "rollup:ssr": "rollup --config rollup/server.config.js"
-  },
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@arcgis/core": "^4.24.7",

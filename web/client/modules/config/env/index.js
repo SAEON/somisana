@@ -7,3 +7,18 @@ export const API_HTTP = `${API}/http`
 export const API_GQL = `${API}/graphql`
 export const TECHNICAL_CONTACT =
   process.env.TECHNICAL_CONTACT || 'Missing configuration value [TECHNICAL_CONTACT]'
+
+let importMap = undefined
+let packageJson = undefined
+
+try {
+  packageJson = JSON.parse(process.env.PACKAGE_JSON)
+  importMap = JSON.parse(
+    [...document.getElementsByTagName('script')].find(({ type }) => type === 'importmap').innerHTML
+  )
+} catch (error) {
+  console.warn('Might be better to avoid this error rather than catch it', error)
+}
+
+export const IMPORT_MAP = importMap
+export const PACKAGE_JSON = packageJson

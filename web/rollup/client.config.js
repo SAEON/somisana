@@ -1,9 +1,9 @@
 import swc from 'rollup-plugin-swc'
 import replace from '@rollup/plugin-replace'
-import { dirname } from 'path'
+import { dirname, normalize } from 'path'
 import { fileURLToPath } from 'url'
 import { join } from 'path'
-import fs from 'fs'
+import { readdirSync, lstatSync, readFileSync } from 'fs'
 import rimraf from 'rimraf'
 import extensions from './plugins/extensions.js'
 import css from 'rollup-plugin-import-css'
@@ -13,6 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 rimraf.sync(join(__dirname, '../.cache/*.js'))
 
+const PACKAGE_JSON = readFileSync(normalize(join(__dirname, '../package.json'))).toString('utf8')
 const NODE_ENV = process.env.NODE_ENV || 'development'
 const API = process.env.API || 'http://localhost:3000'
 const TILESERV_BASE_URL = process.env.TILESERV_BASE_URL || 'http://localhost:7800'
@@ -21,15 +22,13 @@ const TECHNICAL_CONTACT =
   process.env.TECHNICAL_CONTACT || 'Missing configuration (TECHNICAL_CONTACT)'
 
 export default {
-  input: fs
-    .readdirSync(join(__dirname, '../client/pages'))
-    .filter(name => fs.lstatSync(join(__dirname, `../client/pages/${name}`)).isDirectory())
+  input: readdirSync(join(__dirname, '../client/pages'))
+    .filter(name => lstatSync(join(__dirname, `../client/pages/${name}`)).isDirectory())
     .map(name =>
-      fs
-        .readdirSync(join(__dirname, `../client/pages/${name}`))
+      readdirSync(join(__dirname, `../client/pages/${name}`))
         .filter(n => {
           const p = join(__dirname, `../client/pages/${name}/${n}`)
-          return fs.lstatSync(p).isFile() && !p.endsWith('.html')
+          return lstatSync(p).isFile() && !p.endsWith('.html')
         })
         .map(f => join(__dirname, `../client/pages/${name}/${f}`))
     )
@@ -63,6 +62,7 @@ export default {
       'process.env.TECHNICAL_CONTACT': JSON.stringify(TECHNICAL_CONTACT),
       'process.env.TILESERV_BASE_URL': JSON.stringify(TILESERV_BASE_URL),
       'process.env.ESRI_API_KEY': JSON.stringify(ESRI_API_KEY),
+      'process.env.PACKAGE_JSON': JSON.stringify(PACKAGE_JSON),
     }),
     css({
       output: 'index.css',

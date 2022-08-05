@@ -2,41 +2,11 @@ import { createContext, useEffect, useRef, useContext } from 'react'
 import { ctx as configContext } from '../../../modules/config'
 import useTheme from '@mui/material/styles/useTheme'
 import Div from '../../../components/div'
-import Span from '../../../components/span'
 import maplibre from 'maplibre-gl'
-import Typography from '@mui/material/Typography'
-import { alpha } from '@mui/system/colorManipulator'
-
-const Attribution = () => {
-  return (
-    <Typography
-      variant="caption"
-      sx={{
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        backgroundColor: theme => alpha(theme.palette.common.white, 0.5),
-        m: theme => theme.spacing(0),
-        p: theme => theme.spacing(0.5),
-        zIndex: 1,
-        fontSize: 12,
-      }}
-    >
-      <Span
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        Powered by Esri
-      </Span>
-    </Typography>
-  )
-}
 
 export const ctx = createContext(null)
 
-const ESRI_BASEMAP = 'ArcGIS:Terrain'
+const ESRI_BASEMAP = 'ArcGIS:ChartedTerritory'
 
 export default ({ children }) => {
   const { TILESERV_BASE_URL, ESRI_API_KEY } = useContext(configContext)
@@ -50,7 +20,7 @@ export default ({ children }) => {
       style: `https://basemaps-api.arcgis.com/arcgis/rest/services/styles/${ESRI_BASEMAP}?type=style&token=${ESRI_API_KEY}`,
       center: [25, -30],
       zoom: 5,
-      attributionControl: false,
+      attributionControl: true,
     })
 
     window.maplibre = {
@@ -115,19 +85,7 @@ export default ({ children }) => {
 
   return (
     <ctx.Provider value={{ map: mapRef.current }}>
-      <Div
-        ref={ref}
-        sx={{
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
-        }}
-      >
-        {' '}
-        <Attribution />
-      </Div>
+      <Div ref={ref} sx={{ display: 'flex', flexGrow: 1 }} />
       {children}
     </ctx.Provider>
   )
