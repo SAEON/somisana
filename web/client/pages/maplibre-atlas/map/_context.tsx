@@ -6,6 +6,7 @@ import maplibre from 'maplibre-gl'
 
 export const ctx = createContext(null)
 
+// const ESRI_BASEMAP = 'ArcGIS:Terrain'
 const ESRI_BASEMAP = 'ArcGIS:ChartedTerritory'
 
 export default ({ children }) => {
