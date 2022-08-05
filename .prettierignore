@@ -1,4 +1,3 @@
 **/.cache/**
 **/package-lock.json
-**/server/ssr/*.js
 **/.venv/**
