@@ -1,4 +1,6 @@
-html, body, #root {
+html,
+body,
+#root {
   display: flex;
   flex-direction: column;
   align-content: stretch;
@@ -29,7 +31,23 @@ html, body, #root {
   border: 2px solid red !important;
 }
 
-/* TODO - file this as an issue on maplibre github repository - should not be required */
-.mapboxgl-ctrl-bottom-right, .maplibregl-ctrl-bottom-right {
+/* TODO - file these adjustments as an issue on maplibre github repository - should not be required */
+
+.mapboxgl-ctrl-bottom-right,
+.maplibregl-ctrl-bottom-right {
   min-height: 44px;
+  max-width: 100%;
+  padding-left: 16px;
+}
+
+.mapboxgl-ctrl-attrib.mapboxgl-compact-show,
+.maplibregl-ctrl-attrib.maplibregl-compact-show {
+  max-width: inherit;
+}
+
+.maplibregl-ctrl-attrib-inner,
+.mapboxgl-ctrl-attrib-inner {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

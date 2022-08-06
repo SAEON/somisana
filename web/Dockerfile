@@ -53,7 +53,7 @@ RUN npm install -g chomp \
   & npm ci --only=production
 
 # Build app using chomp
-RUN chomp build:deployment
+RUN chomp build
 
 # Expose the Noode.js HTTP port
 EXPOSE 3000
