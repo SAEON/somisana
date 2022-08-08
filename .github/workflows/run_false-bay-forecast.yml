@@ -14,7 +14,6 @@ env:
   REGISTRY: ghcr.io
   COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
   COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
-  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
 jobs:
   # Dynamically set the branch ref to the currently executing branch
@@ -57,56 +56,6 @@ jobs:
           echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_false-bay-forecast_toolkit_${{ needs.branch-ref.outputs.value }}"
           echo "::set-output name=MODEL_RUN_DATE::${{ steps.run_date.outputs.value }}"
           echo "::set-output name=RESTART_FILE_DATE::${{ steps.restart_date.outputs.value }}"
-
-  # Some repository secrets are named according to the branch this action
-  # is executed from. As such the names of the secrets that need to be used
-  # in this workflow have to be set at runtime, using the current branch
-  # reference. But secrets can't be passed between jobs (since jobs may be
-  # executed on different servers). To allow for this, the secrets are 
-  # encrypted. Other jobs that use these secrets must decrypt them first
-  _secrets_:
-    needs: [branch-ref]
-    runs-on: ubuntu-latest
-    outputs:
-      PG_HOST_ENCRYPTED: ${{ steps.set-secrets.outputs.PG_HOST_ENCRYPTED }}
-      PG_PORT_ENCRYPTED: ${{ steps.set-secrets.outputs.PG_PORT_ENCRYPTED }}
-      PG_DB_ENCRYPTED: ${{ steps.set-secrets.outputs.PG_DB_ENCRYPTED }}
-      PG_USERNAME_ENCRYPTED: ${{ steps.set-secrets.outputs.PG_USERNAME_ENCRYPTED }}
-      PG_PASSWORD_ENCRYPTED: ${{ steps.set-secrets.outputs.PG_PASSWORD_ENCRYPTED }}
-    steps:
-      - name: Get PG_HOST secret name
-        id: _PG_HOST_
-        uses: ASzc/change-string-case-action@v2
-        with:
-          string: PG_HOST_${{ needs.branch-ref.outputs.value }}
-      - name: Get PG_PORT secret name
-        id: _PG_PORT_
-        uses: ASzc/change-string-case-action@v2
-        with:
-          string: PG_PORT_${{ needs.branch-ref.outputs.value }}
-      - name: Get PG_DB secret name
-        id: _PG_DB_
-        uses: ASzc/change-string-case-action@v2
-        with:
-          string: PG_DB_${{ needs.branch-ref.outputs.value }}
-      - name: Get PG_USERNAME secret name
-        id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@v2
-        with:
-          string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
-      - name: Get PG_PASSWORD secret name
-        id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@v2
-        with:
-          string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
-      - name: Set secrets
-        id: set-secrets
-        run: |
-          echo "::set-output name=PG_HOST_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_HOST_.outputs.uppercase] }}") | base64 -w0)"
-          echo "::set-output name=PG_PORT_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_PORT_.outputs.uppercase] }}") | base64 -w0)"
-          echo "::set-output name=PG_DB_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_DB_.outputs.uppercase] }}") | base64 -w0)"
-          echo "::set-output name=PG_USERNAME_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_USERNAME_.outputs.uppercase] }}") | base64 -w0)"
-          echo "::set-output name=PG_PASSWORD_ENCRYPTED::$(gpg --symmetric --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ secrets[steps._PG_PASSWORD_.outputs.uppercase] }}") | base64 -w0)"
 
   # Compile CROCO model for the False Bay forecast
   compile-croco:
@@ -328,6 +277,10 @@ jobs:
   # (1) Normalizes the model output to be CF-standards compliant (climate-forecast NetCDF standards)
   # (2) Registers the model output as an out-db raster in PostGIS
   # (3) Triggers PostGIS SQL-processes to load vectors into the GeoServer layer table
+  #
+  # Some repository secrets are named according to the branch this action
+  # is executed from. In this case names of branch-specific secrets need
+  # to be computer first, as is done here
   post-processing:
     needs: [croco, python, envs, workdir, _secrets_]
     runs-on: github-runner.saeon.int
@@ -339,19 +292,31 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ env.BRANCH_REF }}
-      - name: Load PostgreSQL credentials
-        id: pg-env
-        run: |
-          echo "::add-mask::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_HOST_ENCRYPTED }}" | base64 --decode))"
-          echo "::set-output name=PG_HOST_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_HOST_ENCRYPTED }}" | base64 --decode))"
-          echo "::add-mask::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_PORT_ENCRYPTED }}" | base64 --decode))"
-          echo "::set-output name=PG_PORT_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_PORT_ENCRYPTED }}" | base64 --decode))"
-          echo "::add-mask::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_DB_ENCRYPTED }}" | base64 --decode))"
-          echo "::set-output name=PG_DB_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_DB_ENCRYPTED }}" | base64 --decode))"
-          echo "::add-mask::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_USERNAME_ENCRYPTED }}" | base64 --decode))"
-          echo "::set-output name=PG_USERNAME_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_USERNAME_ENCRYPTED }}" | base64 --decode))"
-          echo "::add-mask::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_PASSWORD_ENCRYPTED }}" | base64 --decode))"
-          echo "::set-output name=PG_PASSWORD_DECRYPTED::$(gpg --decrypt --quiet --batch --passphrase "${{ env.GPG_PASSPHRASE }}" --output - <(echo "${{ needs._secrets_.outputs.PG_PASSWORD_ENCRYPTED }}" | base64 --decode))"
+      - name: Get PG_HOST secret name
+        id: _PG_HOST_
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: PG_HOST_${{ needs.branch-ref.outputs.value }}
+      - name: Get PG_PORT secret name
+        id: _PG_PORT_
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: PG_PORT_${{ needs.branch-ref.outputs.value }}
+      - name: Get PG_DB secret name
+        id: _PG_DB_
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: PG_DB_${{ needs.branch-ref.outputs.value }}
+      - name: Get PG_USERNAME secret name
+        id: _PG_USERNAME_
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
+      - name: Get PG_PASSWORD secret name
+        id: _PG_PASSWORD_
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Normalize the model output
         run: >-
           docker run \
@@ -366,11 +331,11 @@ jobs:
                 -o /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc
       - name: Load normalized NetCDF output to PostGIS
         env:
-          PG_HOST: ${{ steps.pg-env.outputs.PG_HOST_DECRYPTED }}
-          PG_PORT: ${{ steps.pg-env.outputs.PG_PORT_DECRYPTED }}
-          PG_DB: ${{ steps.pg-env.outputs.PG_DB_DECRYPTED }}
-          PG_USERNAME: ${{ steps.pg-env.outputs.PG_USERNAME_DECRYPTED }}
-          PG_PASSWORD: ${{ steps.pg-env.outputs.PG_PASSWORD_DECRYPTED }}
+          PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
+          PG_PORT: ${{ secrets[steps._PG_PORT_.outputs.uppercase] }}
+          PG_DB: ${{ secrets[steps._PG_DB_.outputs.uppercase] }}
+          PG_USERNAME: ${{ secrets[steps._PG_USERNAME_.outputs.uppercase] }}
+          PG_PASSWORD: ${{ secrets[steps._PG_PASSWORD_.outputs.uppercase] }}
         run: >-
           docker run \
             --rm \
