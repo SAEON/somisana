@@ -22,6 +22,8 @@ export default ({ children }) => {
       center: [25, -30],
       zoom: 5,
       attributionControl: true,
+      pitch: 60,
+      bearing: -20,
     })
 
     window.maplibre = {
