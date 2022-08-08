@@ -17,8 +17,17 @@ export default () => {
     setIsClient(true)
   }, [])
 
+  /**
+   * ESRI CSS is named to minor arcgis.js
+   * version. But this approach may be too
+   * brittle - perhaps better to reference
+   * CSS version explicitly
+   */
   const arcGisVersion = useMemo(
-    () => IMPORT_MAP?.scopes['../']['@arcgis/core/Map'].match(/\@arcgis\/core@(.*)\/Map.js/)[1],
+    () =>
+      IMPORT_MAP?.scopes['../']['@arcgis/core/Map']
+        .match(/\@arcgis\/core@(.*)\/Map.js/)[1]
+        .match(/[^\.]*\.[^\.]*/)[0],
     []
   )
 

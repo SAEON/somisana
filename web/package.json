@@ -38,7 +38,7 @@
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
     "make-fetch-happen": "^10.2.0",
-    "maplibre-gl": "^2.1.9",
+    "maplibre-gl": "^2.2.0-pre.3",
     "mkdirp": "^1.0.4",
     "mongodb": "^4.8.1",
     "prettier": "^2.7.1",
