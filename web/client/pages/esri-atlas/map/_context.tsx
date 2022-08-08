@@ -14,7 +14,8 @@ export default ({ children }) => {
   const theme = useTheme()
   const ref = useRef(null)
   const mapRef = useRef(null)
-  const ESRI_BASEMAP = 'arcgis-terrain'
+  // const ESRI_BASEMAP = 'arcgis-terrain'
+  const ESRI_BASEMAP = 'arcgis-oceans'
 
   useEffect(() => {
     esriConfig.apiKey = ESRI_API_KEY
