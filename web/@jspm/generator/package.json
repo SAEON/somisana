@@ -5,6 +5,9 @@
   "version": "1.0.0-beta.34",
   "types": "src/generator.ts",
   "type": "module",
+  "scripts": {
+    "prepublishOnly": "chomp build"
+  },
   "imports": {
     "#fetch": {
       "source": {
@@ -25,8 +28,35 @@
     }
   },
   "exports": {
-    "source": "./lib/generator.js",
+    "source": {
+      "deno": "./lib/generator-deno.js",
+      "default": "./lib/generator.js"
+    },
+    "deno": "./dist/generator-deno.js",
     "default": "./dist/generator.js"
+  },
+  "dependencies": {
+    "@babel/core": "^7.18.2",
+    "@babel/plugin-syntax-import-assertions": "^7.17.12",
+    "@babel/preset-typescript": "^7.17.2",
+    "@jspm/core": "^2.0.0-beta.8",
+    "@jspm/import-map": "^1.0.4",
+    "es-module-lexer": "^1.0.2",
+    "ipfs-client": "^0.7.1",
+    "make-fetch-happen": "^8.0.3",
+    "sver": "^1.8.3"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "1.2.174",
+    "chalk": "^4.1.1",
+    "cross-env": "^7.0.2",
+    "kleur": "^4.1.4",
+    "lit-element": "^2.5.1",
+    "mocha": "^9.0.0",
+    "open": "^8.2.0",
+    "rollup": "^2.44.0",
+    "typedoc": "^0.22.8"
   },
   "files": [
     "dist",
