@@ -15,7 +15,7 @@ import HomePage from './home'
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
 const AboutPage = lazy(() => import('../../../modules/about'))
 const VisualizationsPage = lazy(() => import('./visualizations'))
-const EsriPage = lazy(() => import('../../esri-atlas/ssr'))
+const EsriPage = lazy(() => import('./model'))
 
 const L = () => <Loading sx={{ width: '100%' }} />
 

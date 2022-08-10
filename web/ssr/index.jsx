@@ -20,11 +20,21 @@ const APP_ENTRIES = await fs
   .then(files => files.filter(f => f.includes('.html')))
   .then(files => files.map(f => f.replace('.html', '')))
 
-export default async ctx => {
-  const { url } = ctx.request
+const rewrite = str =>
+  str.replace(/(visualizations)\/(.*)/, (match, g1, g2) => {
+    if (str.endsWith('.js')) {
+      return str.replace(`${g1}/`, '')
+    }
+    return match.replace(`${g1}/`, 'esri-atlas').replace(g2, '')
+  })
 
-  if (url.endsWith('.js')) {
-    console.log('js', entry, page)
+export default async ctx => {
+  const url = rewrite(ctx.request.url)
+
+  if (url.endsWith('.ico')) {
+    ctx.set('Content-type', 'image/x-icon')
+    ctx.body = createReadStream(normalize(join(files, url)))
+  } else if (url.endsWith('.js')) {
     ctx.set('Content-type', 'application/javascript; charset=utf-8')
     ctx.body = createReadStream(normalize(join(files, url)))
   } else if (url.endsWith('.png')) {
@@ -38,7 +48,6 @@ export default async ctx => {
     ctx.body = createReadStream(normalize(join(files, url)))
   } else {
     ctx.set('Content-type', 'text/html')
-    console.log('html', entry, page)
     const entry = ctx.request.url.replace('.html', '').replace('/', '')
     const page = entry ? (APP_ENTRIES.includes(entry) ? entry : INDEX_NAME) : INDEX_NAME
 

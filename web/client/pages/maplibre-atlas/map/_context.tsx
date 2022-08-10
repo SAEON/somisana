@@ -71,8 +71,8 @@ export default ({ children }) => {
       })
 
       map.on('click', 'models', ({ features: [feature] }) => {
-        const { id, min_x, min_y, max_x, max_y } = feature.properties
-        navigate(`/visualizations/${id}`)
+        const { id, name, min_x, min_y, max_x, max_y } = feature.properties
+        navigate(`/visualizations/${name}`)
         // map.fitBounds(
         //   [
         //     [min_x, max_y],
