@@ -1,11 +1,21 @@
 import { lazy, Suspense } from 'react'
 import { Linear as Loading } from '../../../components/loading'
-import { Home, Contract, Map, About, Github, License, Link } from '../../../components/icons'
+import {
+  Home,
+  Contract,
+  Map,
+  About,
+  Github,
+  License,
+  Link,
+  ChartTimelineVariantShimmer,
+} from '../../../components/icons'
 import HomePage from './home'
 
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
 const AboutPage = lazy(() => import('../../../modules/about'))
 const VisualizationsPage = lazy(() => import('./visualizations'))
+const EsriPage = lazy(() => import('../../esri-atlas/ssr'))
 
 const L = () => <Loading sx={{ width: '100%' }} />
 
@@ -21,6 +31,20 @@ export default [
   },
 
   {
+    to: '/visualizations/:id',
+    path: '/visualizations/:id',
+    label: 'Model',
+    Icon: ChartTimelineVariantShimmer,
+    includeInNavMenu: true,
+    includeInFooter: true,
+    element: props => (
+      <Suspense fallback={<L />}>
+        <EsriPage {...props} />
+      </Suspense>
+    ),
+  },
+
+  {
     to: '/visualizations',
     path: '/visualizations',
     label: 'Visualisations',
@@ -29,7 +53,7 @@ export default [
     includeInFooter: true,
     element: props => (
       <Suspense fallback={<L />}>
-        <VisualizationsPage {...props} />{' '}
+        <VisualizationsPage {...props} />
       </Suspense>
     ),
   },

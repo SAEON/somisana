@@ -3,7 +3,13 @@ import c from 'cookie'
 
 const COOKIE_KEY = 'SOMISANA_SITE_SETTINGS'
 
-const ENCODE = { path: '/', expires: new Date('10000') }
+Date.prototype.addDays = function (days) {
+  var date = new Date(this.valueOf())
+  date.setDate(date.getDate() + days)
+  return date
+}
+
+const ENCODE = { path: '/', expires: new Date().addDays(1000) }
 
 interface SiteSettings {
   accepted?: Boolean
@@ -49,6 +55,7 @@ export const Provider = ({ cookie, acceptLanguage, ...props }) => {
    * sync the state to a cookie
    */
   useEffect(() => {
+    console.log(siteSettings)
     document.cookie = c.serialize(COOKIE_KEY, JSON.stringify(siteSettings), ENCODE)
   }, [siteSettings])
 

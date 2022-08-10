@@ -1,4 +1,5 @@
 import { createContext, useEffect, useRef, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ctx as configContext } from '../../../modules/config'
 import useTheme from '@mui/material/styles/useTheme'
 import Div from '../../../components/div'
@@ -10,6 +11,7 @@ export const ctx = createContext(null)
 const ESRI_BASEMAP = 'ArcGIS:ChartedTerritory'
 
 export default ({ children }) => {
+  const navigate = useNavigate()
   const { TILESERV_BASE_URL, ESRI_API_KEY } = useContext(configContext)
   const theme = useTheme()
   const ref = useRef(null)
@@ -22,8 +24,8 @@ export default ({ children }) => {
       center: [25, -30],
       zoom: 5,
       attributionControl: true,
-      pitch: 60,
-      bearing: -20,
+      pitch: 0,
+      bearing: 0,
     })
 
     window.maplibre = {
@@ -69,19 +71,20 @@ export default ({ children }) => {
       })
 
       map.on('click', 'models', ({ features: [feature] }) => {
-        const { min_x, min_y, max_x, max_y } = feature.properties
-        map.fitBounds(
-          [
-            [min_x, max_y],
-            [max_x, min_y],
-          ],
-          {
-            linear: false,
-            padding: 48,
-            curve: 1,
-            speed: 1.5,
-          }
-        )
+        const { id, min_x, min_y, max_x, max_y } = feature.properties
+        navigate(`/visualizations/${id}`)
+        // map.fitBounds(
+        //   [
+        //     [min_x, max_y],
+        //     [max_x, min_y],
+        //   ],
+        //   {
+        //     linear: false,
+        //     padding: 48,
+        //     curve: 1,
+        //     speed: 1.5,
+        //   }
+        // )
       })
     })
   }, [])

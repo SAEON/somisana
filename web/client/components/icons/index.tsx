@@ -17,11 +17,18 @@ import {
   mdiGithub,
   mdiLink,
   mdiTranslate,
+  mdiChartTimelineVariantShimmer,
 } from '@mdi/js'
 
 export const Api = styled((props: any) => (
   <SvgIcon {...props}>
     <path d={mdiApi} />
+  </SvgIcon>
+))({})
+
+export const ChartTimelineVariantShimmer = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiChartTimelineVariantShimmer} />
   </SvgIcon>
 ))({})
 

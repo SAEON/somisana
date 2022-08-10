@@ -116,11 +116,20 @@ files = 'rollup/**/*.js ./*.@(js|jsx|json|mjs|cjs|graphql|yml|ts|tsx)'
 
 [[task]]
 name = 'clear-cache'
+deps = []
 run = '''
 rimraf node.importmap
 rimraf .cache
 rimraf .ssr
 '''
+
+[[task]]
+name = 'clear-jspm-cache'
+engine = 'node'
+run = """
+import { clearCache } from '@jspm/generator';
+clearCache();
+"""
 
 [[task]]
 name = 'reset'

@@ -24,6 +24,7 @@ export default async ctx => {
   const { url } = ctx.request
 
   if (url.endsWith('.js')) {
+    console.log('js', entry, page)
     ctx.set('Content-type', 'application/javascript; charset=utf-8')
     ctx.body = createReadStream(normalize(join(files, url)))
   } else if (url.endsWith('.png')) {
@@ -37,9 +38,10 @@ export default async ctx => {
     ctx.body = createReadStream(normalize(join(files, url)))
   } else {
     ctx.set('Content-type', 'text/html')
-
+    console.log('html', entry, page)
     const entry = ctx.request.url.replace('.html', '').replace('/', '')
     const page = entry ? (APP_ENTRIES.includes(entry) ? entry : INDEX_NAME) : INDEX_NAME
+
     const htmlUtf8 = await fs.readFile(normalize(join(files, `${page}.html`)), {
       encoding: 'utf-8',
     })
