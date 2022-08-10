@@ -7,6 +7,7 @@ import koaBody from 'koa-bodyparser'
 import koaCompress from 'koa-compress'
 import dirname from './lib/dirname.js'
 import { KEY, PORT } from './config/index.js'
+import globalError from './middleware/error.js'
 import restrictCors from './middleware/restrict-cors.js'
 // import openCors from './middleware/open-cors.js'
 import blacklist from './middleware/blacklist.js'
@@ -23,6 +24,7 @@ api.proxy = true
 
 // Configure middleware
 api
+  .use(globalError)
   .use(koaBody())
   .use(restrictCors)
   .use(

@@ -15,7 +15,7 @@ import HomePage from './home'
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
 const AboutPage = lazy(() => import('../../../modules/about'))
 const VisualizationsPage = lazy(() => import('./visualizations'))
-const EsriPage = lazy(() => import('./model'))
+const Model = lazy(() => import('./model'))
 
 const L = () => <Loading sx={{ width: '100%' }} />
 
@@ -35,11 +35,11 @@ export default [
     path: '/visualizations/:id',
     label: 'Model',
     Icon: ChartTimelineVariantShimmer,
-    includeInNavMenu: true,
-    includeInFooter: true,
+    includeInNavMenu: false,
+    includeInFooter: false,
     element: props => (
       <Suspense fallback={<L />}>
-        <EsriPage {...props} />
+        <Model {...props} />
       </Suspense>
     ),
   },

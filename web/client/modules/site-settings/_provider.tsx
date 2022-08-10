@@ -55,7 +55,6 @@ export const Provider = ({ cookie, acceptLanguage, ...props }) => {
    * sync the state to a cookie
    */
   useEffect(() => {
-    console.log(siteSettings)
     document.cookie = c.serialize(COOKIE_KEY, JSON.stringify(siteSettings), ENCODE)
   }, [siteSettings])
 

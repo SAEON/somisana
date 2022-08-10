@@ -4,11 +4,11 @@ import { Linear as Loading } from '../../../../components/loading'
 
 const Atlas = lazy(() => import('../../../esri-atlas/ssr'))
 
-export default () => {
+export default props => {
   return (
     <Div sx={{ height: 'calc(100vh - 48px)', display: 'flex', flex: 1 }}>
       <Suspense fallback={<Loading />}>
-        <Atlas />
+        <Atlas {...props} />
       </Suspense>
     </Div>
   )

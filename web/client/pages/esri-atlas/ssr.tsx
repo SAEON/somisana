@@ -9,7 +9,8 @@ import { Linear as Loading } from '../../components/loading'
 
 const Map = lazy(() => import('./map'))
 
-export default () => {
+export default props => {
+  console.log(props)
   const [isClient, setIsClient] = useState(false)
   const { IMPORT_MAP } = useContext(configContext)
 
