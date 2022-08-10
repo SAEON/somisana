@@ -282,7 +282,7 @@ jobs:
   # is executed from. In this case names of branch-specific secrets need
   # to be computer first, as is done here
   post-processing:
-    needs: [croco, python, envs, workdir]
+    needs: [branch-ref, croco, python, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
