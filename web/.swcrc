@@ -1,5 +1,5 @@
 {
-  "minify": true,
+  "minify": false,
   "jsc": {
     "target": "es2017",
     "parser": {

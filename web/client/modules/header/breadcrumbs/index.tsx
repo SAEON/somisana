@@ -3,6 +3,7 @@ import Breadcrumbs from '@mui/material/Breadcrumbs'
 import { Link, useLocation } from 'react-router-dom'
 import MuiIcon from '@mui/material/Icon'
 import MuiLink from '@mui/material/Link'
+import Span from '../../../components/span'
 
 export default ({ contentBase = '/', routes }) => {
   const { pathname } = useLocation() // Trigger re-render on location changes
@@ -12,13 +13,20 @@ export default ({ contentBase = '/', routes }) => {
     ? ['', 'records', ...new Set(normalizedPathname.split('/records/'))].filter(_ => _)
     : [...new Set(normalizedPathname.split('/'))]
 
-  const tree = _pathname.map(p => {
-    return (
-      routes.find(({ to }) => {
+  const tree = _pathname.map((p, i, array) => {
+    return {
+      p,
+      ...(routes.find(({ to }) => {
+        if (!isNaN(parseInt(p))) {
+          if (to.replace(contentBase, '').replace(':id', p) === `${array[i - 1]}/${p}`) {
+            return true
+          }
+        }
+
         to = to.replace(contentBase, '').replace('/', '')
-        return to === p
-      }) || { label: '404 (Not found)' }
-    )
+        return p === to
+      }) || { label: `${i}` }),
+    }
   })
 
   return (
@@ -27,7 +35,7 @@ export default ({ contentBase = '/', routes }) => {
         tree.slice(0, -1).map(({ label, Icon, BreadcrumbsIcon, breadcrumbsLabel, to }) => {
           Icon = BreadcrumbsIcon || Icon
           label = breadcrumbsLabel || label
-          label = label.replace('Home', 'SOMISANA')
+          label = label?.replace('Home', 'SOMISANA') || label
 
           return (
             <Typography
@@ -56,15 +64,28 @@ export default ({ contentBase = '/', routes }) => {
                   component={Icon}
                 />
               )}
-              {label}
+              <Span
+                sx={theme => ({
+                  display: 'none',
+                  [theme.breakpoints.up('md')]: {
+                    display: 'flex',
+                  },
+                })}
+              >
+                {label}
+              </Span>
             </Typography>
           )
         })}
 
-      {tree.slice(-1).map(({ label, breadcrumbsLabel, Icon, BreadcrumbsIcon } = {}) => {
+      {tree.slice(-1).map(({ label, breadcrumbsLabel, Icon, BreadcrumbsIcon, p } = {}) => {
         Icon = BreadcrumbsIcon || Icon
-        label = breadcrumbsLabel || label
-        label = label.replace('Home', 'SOMISANA')
+        label = breadcrumbsLabel
+          ? typeof breadcrumbsLabel === 'function'
+            ? breadcrumbsLabel(p)
+            : breadcrumbsLabel
+          : label
+        label = `${label || ''}`?.replace('Home', 'SOMISANA') || label
 
         return (
           <Typography

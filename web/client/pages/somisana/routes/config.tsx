@@ -35,6 +35,7 @@ export default [
     path: '/visualizations/:id',
     label: 'Model',
     Icon: ChartTimelineVariantShimmer,
+    breadcrumbsLabel: (pathname: any) => pathname.match(/\d+$/)?.[0] || '',
     includeInNavMenu: false,
     includeInFooter: false,
     element: props => (

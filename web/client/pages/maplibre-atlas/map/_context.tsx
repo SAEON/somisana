@@ -33,6 +33,15 @@ export default ({ children }) => {
     }
 
     map.on('load', () => {
+      map.addSource('terrain', {
+        type: 'raster-dem',
+        url: 'https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=Ahq5ZorUyvbxSA7shjIP',
+      })
+      map.setTerrain({
+        source: 'terrain',
+        exaggeration: 2.5,
+      })
+
       map.addSource('metadata', {
         type: 'vector',
         tiles: [`${TILESERV_BASE_URL}/public.metadata/{z}/{x}/{y}.pbf`],
@@ -72,7 +81,7 @@ export default ({ children }) => {
 
       map.on('click', 'models', ({ features: [feature] }) => {
         const { id, name, min_x, min_y, max_x, max_y } = feature.properties
-        navigate(`/visualizations/${name}`)
+        navigate(`/visualizations/${id}`)
         // map.fitBounds(
         //   [
         //     [min_x, max_y],

@@ -2,6 +2,7 @@
  * This page doesn't support SSR
  */
 import { useState, useEffect, lazy, Suspense, useContext, useMemo } from 'react'
+import { useParams } from 'react-router-dom'
 import { ctx as configContext } from '../../modules/config'
 import { createPortal } from 'react-dom'
 import Box from '@mui/material/Box'
@@ -9,8 +10,8 @@ import { Linear as Loading } from '../../components/loading'
 
 const Map = lazy(() => import('./map'))
 
-export default props => {
-  console.log(props)
+export default () => {
+  const { id } = useParams()
   const [isClient, setIsClient] = useState(false)
   const { IMPORT_MAP } = useContext(configContext)
 
@@ -54,7 +55,7 @@ export default props => {
             transition: theme => theme.transitions.create(['background-color']),
           }}
         >
-          <Map />
+          <Map id={id} />
         </Box>
       </Suspense>
     </>

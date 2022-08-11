@@ -102,9 +102,8 @@ export default ({ children }) => {
               weight: 'bold',
             },
           },
-          labelPlacement: 'above-center',
           labelExpressionInfo: {
-            expression: 'JSON.stringify($feature)',
+            expression: '$feature',
           },
         },
       ],
