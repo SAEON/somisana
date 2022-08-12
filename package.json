@@ -5,9 +5,9 @@
   "author": "zd.smith@saeon.nrf.ac.za",
   "license": "MIT",
   "devDependencies": {
-    "doctoc": "^2.1.0",
-    "husky": "^7.0.4",
-    "prettier": "^2.6.1",
+    "doctoc": "^2.2.0",
+    "husky": "^8.0.1",
+    "prettier": "^2.7.1",
     "pretty-quick": "^3.1.3"
   }
 }
