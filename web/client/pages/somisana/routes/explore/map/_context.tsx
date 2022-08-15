@@ -61,6 +61,7 @@ export default ({ children, models }) => {
       map,
       container: ref.current,
       qualityProfile: 'medium',
+      viewingMode: 'local',
       camera: {
         position: [31, -46, 1600000],
         heading: -20,

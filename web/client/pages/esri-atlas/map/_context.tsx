@@ -98,8 +98,7 @@ export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
       map,
       container: ref.current,
       qualityProfile: 'high',
-      viewingMode: 'global',
-      center: [(min_x + max_x) / 2, (min_y + max_y) / 2],
+      viewingMode: 'local',
       camera: {
         position: { x: 30, y: -45, z: 1400000 },
         heading: -20,
