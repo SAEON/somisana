@@ -15,8 +15,21 @@ type Locale implements Node {
 }
 
 type Model implements Node {
+  """
+  ID with table information added, so that table can be back-calculated
+  """
   id: ID!
+  """
+  Database ID
+  """
+  _id: Int!
   name: String!
+  min_x: Float!
+  max_x: Float!
+  min_y: Float!
+  max_y: Float!
+  convexhull: JSON!
+  envelope: JSON!
 }
 
 type PageInfo {

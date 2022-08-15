@@ -38,7 +38,7 @@ const ExaggeratedElevationLayer = BaseElevationLayer.createSubclass({
 
 export const ctx = createContext(null)
 
-export default ({ children }) => {
+export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
   const { TILESERV_BASE_URL, ESRI_API_KEY } = useContext(configContext)
   const theme = useTheme()
   const ref = useRef(null)
@@ -48,38 +48,6 @@ export default ({ children }) => {
 
   useEffect(() => {
     esriConfig.apiKey = ESRI_API_KEY
-
-    const metadata = new VectorTileLayer({
-      style: {
-        id: 'metadata',
-        version: 8,
-        sources: {
-          models: {
-            type: 'vector',
-            tiles: [`${TILESERV_BASE_URL}/public.metadata/{z}/{x}/{y}.pbf`],
-          },
-        },
-        layers: [
-          {
-            id: 'model-metadata',
-            type: 'fill',
-            source: 'models',
-            minzoom: 0,
-            maxzoom: 24,
-            'source-layer': 'public.metadata',
-            paint: {
-              'fill-color': theme.palette.primary.dark,
-              'fill-opacity': 0.2,
-              'fill-outline-color': theme.palette.primary.dark,
-            },
-          },
-        ],
-      },
-    })
-
-    const grid = new VectorTileLayer({
-      url: 'https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer',
-    })
 
     const gridOptions = {
       renderer: {
@@ -123,7 +91,6 @@ export default ({ children }) => {
           url: `https://services.arcgis.com/nGt4QxSblgDfeJn9/ArcGIS/rest/services/Graticule/FeatureServer/10`,
           ...gridOptions,
         }),
-        metadata,
       ],
     })
 
@@ -131,17 +98,18 @@ export default ({ children }) => {
       map,
       container: ref.current,
       qualityProfile: 'high',
-      viewingMode: 'local',
+      viewingMode: 'global',
+      center: [(min_x + max_x) / 2, (min_y + max_y) / 2],
       camera: {
-        position: [30, -45, 1200000],
+        position: { x: 30, y: -45, z: 1400000 },
         heading: -20,
         tilt: 50,
       },
       clippingArea: {
-        xmax: 27.76671028137207,
-        xmin: 24.820085525512695,
-        ymax: -33.07335662841797,
-        ymin: -34.85134506225586,
+        xmax: max_x,
+        xmin: min_x,
+        ymax: max_y,
+        ymin: min_y,
         spatialReference: {
           wkid: 4326,
         },

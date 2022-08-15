@@ -21,7 +21,7 @@ const APP_ENTRIES = await fs
   .then(files => files.map(f => f.replace('.html', '')))
 
 const rewrite = str =>
-  str.replace(/(visualizations)\/(.*)/, (match, g1, g2) => {
+  str.replace(/(explore)\/(.*)/, (match, g1, g2) => {
     if (str.endsWith('.js')) {
       return str.replace(`${g1}/`, '')
     }

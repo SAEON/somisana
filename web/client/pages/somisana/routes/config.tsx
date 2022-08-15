@@ -14,7 +14,7 @@ import HomePage from './home'
 
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
 const AboutPage = lazy(() => import('../../../modules/about'))
-const VisualizationsPage = lazy(() => import('./visualizations'))
+const ExplorePage = lazy(() => import('./explore'))
 const Model = lazy(() => import('./model'))
 
 const L = () => <Loading sx={{ width: '100%' }} />
@@ -31,8 +31,8 @@ export default [
   },
 
   {
-    to: '/visualizations/:id',
-    path: '/visualizations/:id',
+    to: '/explore/:id',
+    path: '/explore/:id',
     label: 'Model',
     Icon: ChartTimelineVariantShimmer,
     breadcrumbsLabel: (pathname: any) => pathname.match(/\d+$/)?.[0] || '',
@@ -46,15 +46,15 @@ export default [
   },
 
   {
-    to: '/visualizations',
-    path: '/visualizations',
-    label: 'Visualisations',
+    to: '/explore',
+    path: '/explore',
+    label: 'Explore',
     Icon: Map,
     includeInNavMenu: true,
     includeInFooter: true,
     element: props => (
       <Suspense fallback={<L />}>
-        <VisualizationsPage {...props} />
+        <ExplorePage {...props} />
       </Suspense>
     ),
   },

@@ -1,8 +1,10 @@
 export default {
-  __resolveType: ({ id }) => {
-    console.info('At the very least, this type resolver receives an ID', id)
-    throw new Error(
-      `This server doesn't support querying for interface types directly, as this requires resolving concrete types via ID specifiers and parsed query (difficult). Also if we do resolve the interface types, then other type resolvers need to resolve fields via database trips implemented per field resolver which is not needed right now`
-    )
+  __resolveType: ({ _gqlType }) => {
+    if (!_gqlType) {
+      throw new Error(
+        `Resolves must append a "_gqlType" field to every object so that the concrete type can be worked out when resolving objects that implement the Node interface`
+      )
+    }
+    return _gqlType
   },
 }
