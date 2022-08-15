@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 
-export default async (self, { id, languages }, ctx) => {
+export default async (self, { id = undefined, languages }, ctx) => {
   const { findLocales } = ctx.mongo.dataFinders
 
   const query = {}

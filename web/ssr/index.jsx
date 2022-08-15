@@ -14,7 +14,7 @@ import { renderToString } from 'react-dom/server'
 
 const INDEX_NAME = 'somisana'
 const __dirname = dirname(import.meta)
-const files = normalize(join(__dirname, '../.cache'))
+const files = normalize(join(__dirname, '../.client'))
 const APP_ENTRIES = await fs
   .readdir(normalize(join(__dirname, '../client/html')))
   .then(files => files.filter(f => f.includes('.html')))

@@ -1,26 +1,8 @@
-import collections from '../../../../mongo/collections/index.js'
-
-const types = Object.fromEntries(
-  Object.entries(collections).map(([, { name, gqlType }]) => {
-    if (!gqlType) {
-      throw new Error(
-        'All collections defined in ..../mongo/collections/index.js must have the field "gqlType"'
-      )
-    }
-    return [name, gqlType]
-  })
-)
-
 export default {
-  __resolveType: ({ __collection: collection }) => {
-    const type = types[collection]
-
-    if (!type) {
-      throw new Error(
-        'All mongo GraphQL queries should append a field "__collection" indicating the name of the collection being queried. Otherwise the Node interface can\'t be resolved'
-      )
-    }
-
-    return type
+  __resolveType: ({ id }) => {
+    console.info('At the very least, this type resolver receives an ID', id)
+    throw new Error(
+      `This server doesn't support querying for abstract types, as we can't resolve types via ID specifiers alone. Also if we do resolve abstract types then other type resolvers need to resolve fields via database trips`
+    )
   },
 }

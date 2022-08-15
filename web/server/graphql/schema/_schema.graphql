@@ -14,6 +14,11 @@ type Locale implements Node {
   code: String!
 }
 
+type Model implements Node {
+  id: ID!
+  name: String!
+}
+
 type PageInfo {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
@@ -28,7 +33,7 @@ enum Language {
 type Query {
   node(id: ID!): Node
   locales(id: ID, languages: [Language!]): [Node]!
-  test: Void
+  models(id: ID): [Node]!
 }
 
 type Mutation {

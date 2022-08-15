@@ -11,7 +11,7 @@ import 'dotenv/config'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-rimraf.sync(join(__dirname, '../.cache/*.js'))
+rimraf.sync(join(__dirname, '../.client/*.js'))
 
 const PACKAGE_JSON = readFileSync(normalize(join(__dirname, '../package.json'))).toString('utf8')
 const NODE_ENV = process.env.NODE_ENV || 'development'
@@ -36,7 +36,7 @@ export default {
   output: [
     {
       exports: 'auto',
-      dir: '.cache',
+      dir: '.client',
       format: 'esm',
       compact: false,
       entryFileNames: ({ facadeModuleId: id }) => {
