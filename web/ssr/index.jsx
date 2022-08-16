@@ -31,7 +31,10 @@ const rewrite = str =>
 export default async ctx => {
   const url = rewrite(ctx.request.url)
 
-  if (url.endsWith('.ico')) {
+  if (url.endsWith('.txt')) {
+    ctx.set('Content-type', 'text/plain')
+    ctx.body = createReadStream(normalize(join(files, url)))
+  } else if (url.endsWith('.ico')) {
     ctx.set('Content-type', 'image/x-icon')
     ctx.body = createReadStream(normalize(join(files, url)))
   } else if (url.endsWith('.js')) {
