@@ -18,11 +18,32 @@ import {
   mdiLink,
   mdiTranslate,
   mdiChartTimelineVariantShimmer,
+  mdiDatabase,
+  mdiEarth,
+  mdiDataMatrix,
 } from '@mdi/js'
 
 export const Api = styled((props: any) => (
   <SvgIcon {...props}>
     <path d={mdiApi} />
+  </SvgIcon>
+))({})
+
+export const DataMatrix = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiDataMatrix} />
+  </SvgIcon>
+))({})
+
+export const Earth = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiEarth} />
+  </SvgIcon>
+))({})
+
+export const Database = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiDatabase} />
   </SvgIcon>
 ))({})
 

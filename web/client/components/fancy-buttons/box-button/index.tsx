@@ -81,7 +81,9 @@ const FancyButton = ({
     <Div sx={{ width: '100%', height: '100%' }} {...props}>
       <Button
         component={onClick || href ? undefined : Link}
-        href={href}
+        href={onClick || href}
+        target={onClick || href ? '_blank' : undefined}
+        rel={onClick || href ? 'noopener noreferrer' : undefined}
         onClick={onClick}
         to={onClick ? undefined : href ? undefined : to}
         disabled={disabled}
