@@ -5,6 +5,7 @@ import { createReadStream } from 'fs'
 import { createEmotionCache } from '../common/app'
 import createEmotionServer from '@emotion/server/create-instance'
 import Layout from './_layout.jsx'
+import serve from './_serve.js.js'
 
 /**
  * Emotion doesn't support stream-rendering yet
@@ -33,22 +34,22 @@ export default async ctx => {
 
   if (url.endsWith('.txt')) {
     ctx.set('Content-type', 'text/plain')
-    ctx.body = createReadStream(normalize(join(files, url)))
+    await serve(ctx, { files, url })
   } else if (url.endsWith('.ico')) {
     ctx.set('Content-type', 'image/x-icon')
-    ctx.body = createReadStream(normalize(join(files, url)))
+    ctx.body = serve(ctx, { files, url })
   } else if (url.endsWith('.js')) {
     ctx.set('Content-type', 'application/javascript; charset=utf-8')
-    ctx.body = createReadStream(normalize(join(files, url)))
+    ctx.body = serve(ctx, { files, url })
   } else if (url.endsWith('.png')) {
     ctx.set('Content-type', 'image/png')
-    ctx.body = createReadStream(normalize(join(files, url)))
+    ctx.body = serve(ctx, { files, url })
   } else if (url.endsWith('.css')) {
     ctx.set('Content-type', 'text/css')
-    ctx.body = createReadStream(normalize(join(files, url)))
+    ctx.body = serve(ctx, { files, url })
   } else if (url.endsWith('site.webmanifest')) {
     ctx.set('Content-type', 'application/json; charset=utf-8')
-    ctx.body = createReadStream(normalize(join(files, url)))
+    ctx.body = serve(ctx, { files, url })
   } else {
     ctx.set('Content-type', 'text/html')
     const entry = ctx.request.url.replace('.html', '').replace('/', '')
@@ -57,6 +58,7 @@ export default async ctx => {
     const htmlUtf8 = await fs.readFile(normalize(join(files, `${page}.html`)), {
       encoding: 'utf-8',
     })
+
     const SsrEntry = await import(normalize(join(files, `ssr.${page}.js`))).then(
       ({ default: C }) => C
     )
