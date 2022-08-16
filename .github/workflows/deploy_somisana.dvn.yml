@@ -91,10 +91,10 @@ jobs:
             echo "MONGO_DB=${{ env.MONGO_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
             echo "MONGO_USERNAME=${{ env.MONGO_USERNAME }}" >> ${{ env.STACK_CONFIG_PATH }}
             echo "MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}" >> ${{ env.STACK_CONFIG_PATH }}
-            echo "PG_HOST=${{ env.PG_HOST }} >> ${{ env.STACK_CONFIG_PATH }}"
-            echo "PG_PORT=${{ env.PG_PORT }} >> ${{ env.STACK_CONFIG_PATH }}"
-            echo "PG_DB=${{ env.PG_DB }} >> ${{ env.STACK_CONFIG_PATH }}"
-            echo "PG_USERNAME=${{ env.PG_USERNAME }} >> ${{ env.STACK_CONFIG_PATH }}"
-            echo "PG_PASSWORD=${{ env.PG_PASSWORD }} >> ${{ env.STACK_CONFIG_PATH }}"            
+            echo "PG_HOST=${{ env.PG_HOST }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "PG_PORT=${{ env.PG_PORT }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "PG_DB=${{ env.PG_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "PG_USERNAME=${{ env.PG_USERNAME }}" >> ${{ env.STACK_CONFIG_PATH }}
+            echo "PG_PASSWORD=${{ env.PG_PASSWORD }}" >> ${{ env.STACK_CONFIG_PATH }}
             echo "PG_DATABASE_URL=postgres://${{ env.PG_USERNAME }}:${{ env.PG_PASSWORD }}@${{ env.PG_HOST }}:${{ env.PG_PORT }}/${{ env.PG_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
             sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} somisana_next
