@@ -26,6 +26,11 @@ services:
       MONGO_DB: $MONGO_DB
       MONGO_USERNAME: $MONGO_USERNAME
       MONGO_PASSWORD: $MONGO_PASSWORD
+      PG_HOST: $PG_HOST
+      PG_PORT: $PG_PORT
+      PG_DB: $PG_DB
+      PG_USERNAME: $PG_USERNAME
+      PG_PASSWORD: $PG_PASSWORD
     ports:
       - 6007:3000
     networks:
