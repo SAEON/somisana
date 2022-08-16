@@ -17,8 +17,9 @@ export default () => {
   return (
     <Box
       sx={{
-        height: 'calc(100vh - 48px)',
+        height: theme => `calc(100vh - ${theme.spacing(6)})`,
         display: 'flex',
+        position: 'relative',
         flex: 1,
       }}
     >

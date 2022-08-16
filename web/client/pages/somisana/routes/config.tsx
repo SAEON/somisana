@@ -15,7 +15,7 @@ import HomePage from './home'
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
 const AboutPage = lazy(() => import('../../../modules/about'))
 const ExplorePage = lazy(() => import('./explore'))
-const Model = lazy(() => import('./model'))
+const ExploreModelPage = lazy(() => import('./model'))
 
 const L = () => <Loading sx={{ width: '100%' }} />
 
@@ -40,7 +40,7 @@ export default [
     includeInFooter: false,
     element: props => (
       <Suspense fallback={<L />}>
-        <Model {...props} />
+        <ExploreModelPage {...props} />
       </Suspense>
     ),
   },

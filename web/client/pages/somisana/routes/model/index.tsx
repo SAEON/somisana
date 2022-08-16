@@ -6,7 +6,7 @@ const Atlas = lazy(() => import('../../../esri-atlas/ssr'))
 
 export default props => {
   return (
-    <Div sx={{ height: 'calc(100vh - 48px)', display: 'flex', flex: 1 }}>
+    <Div sx={{ height: theme => `calc(100vh - ${theme.spacing(6)})`, display: 'flex', flex: 1 }}>
       <Suspense fallback={<Loading />}>
         <Atlas {...props} />
       </Suspense>
