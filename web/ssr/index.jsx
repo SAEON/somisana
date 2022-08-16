@@ -34,7 +34,7 @@ export default async ctx => {
 
   if (url.endsWith('.txt')) {
     ctx.set('Content-type', 'text/plain')
-    await serve(ctx, { files, url })
+    ctx.body = serve(ctx, { files, url })
   } else if (url.endsWith('.ico')) {
     ctx.set('Content-type', 'image/x-icon')
     ctx.body = serve(ctx, { files, url })
