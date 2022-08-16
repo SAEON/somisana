@@ -3,6 +3,7 @@ export const API = process.env.API
 export const TILESERV_BASE_URL = process.env.TILESERV_BASE_URL
 export const ESRI_API_KEY = process.env.ESRI_API_KEY
 export const ORIGIN = API
+export const ESRI_BASEMAP = 'arcgis-oceans'
 export const API_HTTP = `${API}/http`
 export const API_GQL = `${API}/graphql`
 export const TECHNICAL_CONTACT =

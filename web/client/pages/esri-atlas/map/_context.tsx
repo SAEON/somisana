@@ -1,55 +1,23 @@
-import { createContext, useEffect, useRef, useContext } from 'react'
+import { createContext, useEffect, useRef, useContext, useMemo } from 'react'
 import SceneView from '@arcgis/core/views/SceneView'
 import Map from '@arcgis/core/Map'
 import esriConfig from '@arcgis/core/config'
-import VectorTileLayer from '@arcgis/core/layers/VectorTileLayer'
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer'
-import BaseElevationLayer from '@arcgis/core/layers/BaseElevationLayer'
-import ElevationLayer from '@arcgis/core/layers/ElevationLayer'
 import { ctx as configContext } from '../../../modules/config'
 import useTheme from '@mui/material/styles/useTheme'
 import Div from '../../../components/div'
-
-// https://developers.arcgis.com/javascript/latest/visualization/3d-visualization/terrain-rendering/
-const ExaggeratedElevationLayer = BaseElevationLayer.createSubclass({
-  properties: {
-    exaggeration: null,
-  },
-
-  load: function () {
-    this._elevation = new ElevationLayer({
-      url: 'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/TopoBathy3D/ImageServer',
-    })
-    this.addResolvingPromise(this._elevation.load())
-  },
-
-  fetchTile: function (level, row, col, options) {
-    return this._elevation.fetchTile(level, row, col, options).then(
-      function (data) {
-        var exaggeration = this.exaggeration
-        for (var i = 0; i < data.values.length; i++) {
-          data.values[i] = data.values[i] * exaggeration
-        }
-        return data
-      }.bind(this)
-    )
-  },
-})
+import ExaggeratedElevationLayer from '../../../modules/arcgis/exaggerated-elevation-layer'
 
 export const ctx = createContext(null)
 
 export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
-  const { TILESERV_BASE_URL, ESRI_API_KEY } = useContext(configContext)
+  const { ESRI_API_KEY, ESRI_BASEMAP } = useContext(configContext)
   const theme = useTheme()
   const ref = useRef(null)
-  const mapRef = useRef(null)
-  // const ESRI_BASEMAP = 'arcgis-terrain'
-  const ESRI_BASEMAP = 'arcgis-oceans'
+  esriConfig.apiKey = ESRI_API_KEY
 
-  useEffect(() => {
-    esriConfig.apiKey = ESRI_API_KEY
-
-    const gridOptions = {
+  const gridOptions = useMemo(
+    () => ({
       renderer: {
         type: 'simple',
         symbol: {
@@ -75,54 +43,66 @@ export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
           },
         },
       ],
-    }
+    }),
+    []
+  )
 
-    const map = new Map({
-      ground: {
-        layers: [new ExaggeratedElevationLayer({ exaggeration: 35 })],
-      },
-      basemap: ESRI_BASEMAP,
-      layers: [
-        new FeatureLayer({
-          url: `https://services.arcgis.com/nGt4QxSblgDfeJn9/ArcGIS/rest/services/Graticule/FeatureServer/5`,
-          ...gridOptions,
-        }),
-        new FeatureLayer({
-          url: `https://services.arcgis.com/nGt4QxSblgDfeJn9/ArcGIS/rest/services/Graticule/FeatureServer/10`,
-          ...gridOptions,
-        }),
-      ],
-    })
-
-    const view = new SceneView({
-      map,
-      container: ref.current,
-      qualityProfile: 'high',
-      viewingMode: 'local',
-      camera: {
-        position: { x: 30, y: -45, z: 1400000 },
-        heading: -20,
-        tilt: 50,
-      },
-      clippingArea: {
-        xmax: max_x,
-        xmin: min_x,
-        ymax: max_y,
-        ymin: min_y,
-        spatialReference: {
-          wkid: 4326,
+  const map = useMemo(
+    () =>
+      new Map({
+        ground: {
+          layers: [new ExaggeratedElevationLayer({ exaggeration: 35 })],
         },
-      },
-    })
+        basemap: ESRI_BASEMAP,
+        layers: [
+          new FeatureLayer({
+            url: `https://services.arcgis.com/nGt4QxSblgDfeJn9/ArcGIS/rest/services/Graticule/FeatureServer/5`,
+            ...gridOptions,
+          }),
+          new FeatureLayer({
+            url: `https://services.arcgis.com/nGt4QxSblgDfeJn9/ArcGIS/rest/services/Graticule/FeatureServer/10`,
+            ...gridOptions,
+          }),
+        ],
+      }),
+    [gridOptions]
+  )
 
-    window.esri = {
-      map,
-      view,
-    }
+  const view = useMemo(
+    () =>
+      new SceneView({
+        map,
+        qualityProfile: 'high',
+        viewingMode: 'local',
+        camera: {
+          position: { x: 30, y: -45, z: 1400000 },
+          heading: -20,
+          tilt: 50,
+        },
+        clippingArea: {
+          xmax: max_x,
+          xmin: min_x,
+          ymax: max_y,
+          ymin: min_y,
+          spatialReference: {
+            wkid: 4326,
+          },
+        },
+      }),
+    [map, max_x, min_x, max_y, min_y]
+  )
+
+  useEffect(() => {
+    view.container = ref.current
   }, [])
 
+  window.esri = {
+    map,
+    view,
+  }
+
   return (
-    <ctx.Provider value={{ map: mapRef.current }}>
+    <ctx.Provider value={{}}>
       <Div
         ref={ref}
         sx={{
