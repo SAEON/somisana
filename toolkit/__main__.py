@@ -1,8 +1,7 @@
-from email.policy import default
 from cli.transform import transform as transformModelOutput
 from cli.load import load as loadRaster
 from cli.download import download as downloadBoundaryData
-from optparse import OptionGroup, OptionParser, TitledHelpFormatter
+from optparse import OptionGroup, OptionParser
 from datetime import datetime
 
 VERSION = '0.0.1'
