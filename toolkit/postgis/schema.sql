@@ -43,7 +43,8 @@ when not matched then
 create table if not exists public.raster_xref_model (
   id serial not null primary key,
   rasterid int not null unique references rasters (rid) on delete cascade,
-  modelid int not null references models (id) on delete cascade
+  modelid int not null references models (id) on delete cascade,
+  run_date date not null
 );
 
 create table if not exists public.coordinates (

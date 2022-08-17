@@ -14,6 +14,7 @@ def load(options, arguments):
   run_date = options.run_date
   drop_db = options.drop_db
   reload_existing_data = options.reload_existing_data
+  run_date = options.run_date
   
   """
   Check CLI options are specified correctly
@@ -76,7 +77,7 @@ def load(options, arguments):
   rasters = list(set(variables + coords))
   rasters.sort()
   print('\n-> Loading variables', rasters, str(datetime.now() - now))
-  for raster in rasters: raster2pgsql(now, nc_input_path, raster, model, reload_existing_data)
+  for raster in rasters: raster2pgsql(now, nc_input_path, raster, model, reload_existing_data, run_date)
   print('\nNetCDF data loaded successfully!!', str(datetime.now() - now))
 
   """

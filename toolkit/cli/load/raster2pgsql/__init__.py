@@ -6,7 +6,7 @@ from yaml import Loader, load
 from datetime import datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME, PY_ENV
 
-def register(now, nc_input_path, raster, model, reload_existing_data):
+def register(now, nc_input_path, raster, model, reload_existing_data, run_date):
   print('\n->', raster, str(datetime.now() - now))
   p, filename =  os.path.split("""{0}:{1}""".format(str(nc_input_path), str(raster)))
 
@@ -98,6 +98,6 @@ def register(now, nc_input_path, raster, model, reload_existing_data):
   with open('cli/load/raster2pgsql/update-raster_xref_model.sql') as file:
     sql = file.read()
     cursor = connectPg().cursor()
-    cursor.execute(sql, (filename, model,))
+    cursor.execute(sql, (filename, model, run_date, ))
     print(cursor.statusmessage)
   
