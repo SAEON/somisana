@@ -349,3 +349,5 @@ jobs:
               post-processing \
                 -l \
                 -i /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc
+              -R \
+              -r ${{ env.RUN_DATE }}

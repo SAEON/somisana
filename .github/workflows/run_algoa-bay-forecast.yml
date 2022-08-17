@@ -345,4 +345,6 @@ jobs:
             ${{ needs.python.outputs.image }} \
               -l \
               -i /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-              -m algoa-bay-forecast
+              -m algoa-bay-forecast \
+              -R \
+              -r ${{ env.RUN_DATE }}

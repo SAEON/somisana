@@ -4,9 +4,9 @@ from re import sub
 from postgis import connect as connectPg
 from yaml import Loader, load
 from datetime import datetime
-from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME, RELOAD_EXISTING_DATA, PY_ENV
+from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME, PY_ENV
 
-def register(now, nc_input_path, raster, model):
+def register(now, nc_input_path, raster, model, reload_existing_data):
   print('\n->', raster, str(datetime.now() - now))
   p, filename =  os.path.split("""{0}:{1}""".format(str(nc_input_path), str(raster)))
 
@@ -37,14 +37,12 @@ def register(now, nc_input_path, raster, model):
   is very slow (unless an out-db raster solution is used in the future).
   This is only for development
   """
-  if not RELOAD_EXISTING_DATA:
+  if not reload_existing_data:
     if not PY_ENV == 'development':
       raise Exception('In production mode, raster data is ALWAYS re-inserted to the DB')
     else:
       cursor = connectPg().cursor()
-      cursor.execute("""
-        select 1 where exists ( select * from public.rasters where filename = %s )
-      """, (filename, ))
+      cursor.execute("""select 1 where exists ( select * from public.rasters where filename = %s )""", (filename, ))
       exists = not len(cursor.fetchall()) == 0
       if exists:
         print('skipping (raster already exists in DB)')

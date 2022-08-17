@@ -4,7 +4,7 @@ from postgis import setup as installDb, drop as dropSchema, connect
 from config import PY_ENV
 from cli.load.raster2pgsql import register as raster2pgsql
 from cli.load.coordinates import merge as index_coordinates
-from cli.load.temperature import merge as index_temperatures
+from cli.load.values import merge as index_values
 
 
 def load(options, arguments):
@@ -12,6 +12,8 @@ def load(options, arguments):
   model = options.model
   nc_input_path = options.nc_input_path
   run_date = options.run_date
+  drop_db = options.drop_db
+  reload_existing_data = options.reload_existing_data
   
   """
   Check CLI options are specified correctly
@@ -33,7 +35,7 @@ def load(options, arguments):
   In development mode when the schema changes a lot, it's
   useful to be able to drop and recreate the schema
   """
-  if options.drop_db:
+  if drop_db:
     if not PY_ENV == 'development':
       raise Exception('Dropping database schema is only supported when PY_ENV == "development"')
     else:
@@ -74,17 +76,17 @@ def load(options, arguments):
   rasters = list(set(variables + coords))
   rasters.sort()
   print('\n-> Loading variables', rasters, str(datetime.now() - now))
-  for raster in rasters: raster2pgsql(now, nc_input_path, raster, model)
+  for raster in rasters: raster2pgsql(now, nc_input_path, raster, model, reload_existing_data)
   print('\nNetCDF data loaded successfully!!', str(datetime.now() - now))
 
   """
   Coordinates are stored in the DB as EPSG:4326. Each model is done
   on a fixed XY grid - so the coordinates don't change.
   """
-  print('\n-> Calculating coordinates', str(datetime.now() - now))
+  print('\n-> Calculating and loading coordinates', str(datetime.now() - now))
   index_coordinates(model)
 
   # If the models view doesn't already exist create it
-  print('\n-> Calculating temperature contours', str(datetime.now() - now))
-  index_temperatures(model, run_date)
+  print('\n-> Calculating and loading data values', str(datetime.now() - now))
+  index_values(model, run_date)
 

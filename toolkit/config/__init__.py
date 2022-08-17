@@ -19,4 +19,4 @@ COPERNICUS_USERNAME = env.str('COPERNICUS_USERNAME','default username')
 COPERNICUS_PASSWORD = env.str('COPERNICUS_PASSWORD','default password')
 DOWNLOADS_DIRECTORY = env.str('DOWNLOADS_DIRECTORY', path.join(getcwd(), '.downloads'))
 
-RELOAD_EXISTING_DATA = env.bool('RELOAD_EXISTING_DATA', True)
+reload_existing_data = env.bool('RELOAD_EXISTING_DATA', True)

@@ -58,7 +58,13 @@ create table if not exists public.coordinates (
   constraint unique_coordinates unique (modelid, pixel)
 );
 
-create or replace view raster_grid as
+
+/**
+ * VIEWS
+ */
+drop view if exists raster_grid;
+
+create view raster_grid as
 with polys as (
   select
     modelid,
@@ -82,6 +88,7 @@ where
   and st_geometrytype (grid_convex_hull) = 'ST_Polygon';
 
 drop view if exists public.metadata;
+
 create view public.metadata as
 select
   modelid id,
@@ -107,4 +114,41 @@ from (
   group by
     modelid,
     name) t;
+
+
+/**
+ * FUNCTIONS
+ */
+drop function if exists public.get_values;
+
+create function public.get_values (modelid int, depth_level int, time_step int, variable text)
+  returns table (
+    pixel geometry,
+    value float
+  )
+  as $$
+declare
+  band_no int;
+  declare m int;
+begin
+  band_no := ((time_step - 1) * 20) + depth_level;
+  m := modelid;
+  return query
+  select
+    t.geom pixel,
+    t.val value
+  from (
+    select
+      r.rid,
+      rxm.modelid,
+      (ST_PixelAsCentroids (r.rast, band_no)).*
+    from
+      rasters r
+      join raster_xref_model rxm on rxm.rasterid = r.rid
+    where
+      filename like ('%:' || variable)
+      and rxm.modelid = m) t;
+end;
+$$
+language 'plpgsql';
 
