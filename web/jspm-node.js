@@ -22,7 +22,7 @@ const generator = new Generator({
   ],
 })
 
-await Promise.all(DEPS.split(':').map(dep => generator.traceInstall('./' + dep)))
+await Promise.all(DEPS.split(':').map(dep => generator.pin('./' + dep)))
 
 mkdirp.sync(dirname(TARGET))
 await writeFile(TARGET, JSON.stringify(generator.getMap(), null, 2))
