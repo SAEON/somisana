@@ -83,3 +83,4 @@ time as (select 1 time_step)
 select
 *
 from values
+limit 1
