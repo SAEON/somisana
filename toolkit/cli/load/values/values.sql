@@ -1,5 +1,5 @@
-
-;with 
+create materialized view if not exists values as
+with 
 
 model as (select 1 modelid),
 depth as (select 1 depth_level),
@@ -13,7 +13,7 @@ time as (select 1 time_step)
     pixel,
     value
   from
-    public.get_values (modelid => 1, depth_level => 1, time_step => 1, variable => 'm_rho')
+    public.get_values (modelid => (select * from model), depth_level => (select * from depth), time_step => (select * from time), variable => 'm_rho')
 )
 
 
@@ -25,7 +25,7 @@ time as (select 1 time_step)
     pixel,
     value
   from
-    public.get_values (modelid => 1, depth_level => 1, time_step => 1, variable => 'temperature')
+    public.get_values (modelid => (select * from model), depth_level => (select * from depth), time_step => (select * from time), variable => 'temperature')
 )
 
 ,salinity as (
@@ -36,7 +36,7 @@ time as (select 1 time_step)
     pixel,
     value
   from
-    public.get_values (modelid => 1, depth_level => 1, time_step => 1, variable => 'salt')
+    public.get_values (modelid => (select * from model), depth_level => (select * from depth), time_step => (select * from time), variable => 'salt')
 )
 
 ,u as (
@@ -47,7 +47,7 @@ time as (select 1 time_step)
     pixel,
     value
   from
-    public.get_values (modelid => 1, depth_level => 1, time_step => 1, variable => 'u')
+    public.get_values (modelid => (select * from model), depth_level => (select * from depth), time_step => (select * from time), variable => 'u')
 )
 
 ,v as (
@@ -58,7 +58,7 @@ time as (select 1 time_step)
     pixel,
     value
   from
-    public.get_values (modelid => 1, depth_level => 1, time_step => 1, variable => 'v')
+    public.get_values (modelid => (select * from model), depth_level => (select * from depth), time_step => (select * from time), variable => 'v')
 )
 
 ,values as (
@@ -66,12 +66,13 @@ time as (select 1 time_step)
 	d.modelid,
 	d.depth_level,
 	c.id coordinateid,
-	st_makepoint(c.longitude,c.latitude,d.value) xyz,
+	st_makepoint(c.longitude,c.latitude,d.value)::geometry(PointZ, 4326) xyz,
 	d.value depth,
 	t.value temperature,
 	s.value salinity,
 	u.value u,
-	v.value v
+	v.value v,
+	sqrt( power(u.value, 2) + power(v.value, 2)) current_speed
 	from depths d
 	join temperatures t on t.pixel = d.pixel
 	join salinity s on s.pixel = d.pixel
@@ -83,4 +84,3 @@ time as (select 1 time_step)
 select
 *
 from values
-limit 1

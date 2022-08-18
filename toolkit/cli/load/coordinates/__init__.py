@@ -7,7 +7,7 @@ once a model is run once, the grid is fixed
 in terms of XY and doesn't need further
 updates
 """
-def merge(model):    
+def upsert(model):    
     with open('cli/load/coordinates/coordinates.sql', 'r') as file:
       sql = file.read()
       cursor = connect().cursor()
