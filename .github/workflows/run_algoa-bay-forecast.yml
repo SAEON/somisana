@@ -202,9 +202,9 @@ jobs:
               -v $WORKDIR/:/tmp/somisana/current \
               -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-              -e DOWNLOADS_DIRECTORY=/tmp/somisana/current \
               ${{ needs.python.outputs.image }} \
-                -d
+                -d \
+                -o /tmp/somisana/current
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/

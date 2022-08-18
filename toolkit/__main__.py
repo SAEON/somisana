@@ -12,12 +12,15 @@ parser = OptionParser(description="ETL tools supporting the SOMISANA initiative"
 downloadCLI = OptionGroup(parser, '--download (-d)')
 parser.add_option_group(downloadCLI)
 parser.add_option('--download', '-d', action="store_true", default = False, help="Download forcing data")
+downloadCLI.add_option('--output-path', '-o', default="./.downloads/", help="Directory output of forcing files")
+# TODO run_date
+# TODO domain
 
 transformCLI = OptionGroup(parser, '--transform (-t)')
 parser.add_option_group(transformCLI)
 parser.add_option('--transform', '-t', action="store_true", default = False, help="Normalize model output grids)")
 transformCLI.add_option('--nc-input-path', '-i', default="./input.nc", help="Path of NetCDF input file")
-transformCLI.add_option('--nc-output-path', '-o', default="./", help="Path of NetCDF output path")
+transformCLI.add_option('--output-path', '-o', default="./", help="Path of NetCDF output path")
 transformCLI.add_option('--grid-input-path', '-g', default="../../lib/grd.nc", help="Path of NetCDF grid input path")
 
 loadLCI = OptionGroup(parser, '--load (-l)')

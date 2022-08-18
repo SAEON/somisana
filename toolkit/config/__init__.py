@@ -17,6 +17,3 @@ MONGO_PASSWORD = env.str('MONGO_PASSWORD', 'password')
 
 COPERNICUS_USERNAME = env.str('COPERNICUS_USERNAME','default username')
 COPERNICUS_PASSWORD = env.str('COPERNICUS_PASSWORD','default password')
-DOWNLOADS_DIRECTORY = env.str('DOWNLOADS_DIRECTORY', path.join(getcwd(), '.downloads'))
-
-reload_existing_data = env.bool('RELOAD_EXISTING_DATA', True)
