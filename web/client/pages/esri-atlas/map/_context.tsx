@@ -5,16 +5,45 @@ import esriConfig from '@arcgis/core/config'
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer'
 import { ctx as configContext } from '../../../modules/config'
 import useTheme from '@mui/material/styles/useTheme'
+import VectorTileLayer from '@arcgis/core/layers/VectorTileLayer'
 import Div from '../../../components/div'
 import ExaggeratedElevationLayer from '../../../modules/arcgis/exaggerated-elevation-layer'
 
 export const ctx = createContext(null)
 
 export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
-  const { ESRI_API_KEY, ESRI_BASEMAP } = useContext(configContext)
+  const { ESRI_API_KEY, ESRI_BASEMAP, TILESERV_BASE_URL } = useContext(configContext)
   const theme = useTheme()
   const ref = useRef(null)
   esriConfig.apiKey = ESRI_API_KEY
+
+  const metadata = new VectorTileLayer({
+    style: {
+      id: 'metadata',
+      version: 8,
+      sources: {
+        models: {
+          type: 'vector',
+          tiles: [`${TILESERV_BASE_URL}/public.values/{z}/{x}/{y}.pbf`],
+        },
+      },
+      layers: [
+        {
+          id: 'model-metadata',
+          type: 'circle',
+          source: 'models',
+          minzoom: 0,
+          maxzoom: 24,
+          'source-layer': 'public.values',
+          paint: {
+            'circle-radius': 2,
+            'circle-opacity': 0.6,
+            'circle-color': theme.palette.common.black,
+          },
+        },
+      ],
+    },
+  })
 
   const gridOptions = useMemo(
     () => ({
@@ -63,6 +92,7 @@ export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
             url: `https://services.arcgis.com/nGt4QxSblgDfeJn9/ArcGIS/rest/services/Graticule/FeatureServer/10`,
             ...gridOptions,
           }),
+          metadata,
         ],
       }),
     [gridOptions]
