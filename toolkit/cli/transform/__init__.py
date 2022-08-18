@@ -38,12 +38,12 @@ def transform(options, arguments):
     #Setting the paths using the bash input 
     grid_input_path = options.grid_input_path
     nc_input_path = options.nc_input_path # Model output
-    nc_output_path = options.nc_output_path
+    output_path = options.output_path
 
     print('\n== Running Algoa Bay Forecast post-processing ==')
-    print('nc-input-path', options.nc_input_path)
-    print('grid-input-path', options.grid_input_path)
-    print('nc-output-path', options.nc_output_path)
+    print('nc-input-path', nc_input_path)
+    print('grid-input-path', grid_input_path)
+    print('output-path', output_path)
 
     data = xr.open_dataset(nc_input_path)
     data_grid = xr.open_dataset(grid_input_path)
@@ -129,7 +129,7 @@ def transform(options, arguments):
     print('-> Generated NetCDF dataset', str(datetime.now() - now))
 
     # Print output 
-    data_out.to_netcdf(nc_output_path, encoding = {
+    data_out.to_netcdf(output_path, encoding = {
         'temperature': { },
         'salt': { },
         'u': { },
