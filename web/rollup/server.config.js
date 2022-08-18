@@ -10,7 +10,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 rimraf.sync(join(__dirname, '../.ssr/index.js'))
 
 export default {
-  input: [join(__dirname, '../ssr/index.jsx')],
+  input: [join(__dirname, '../ssr/index.tsx')],
   output: [
     {
       exports: 'auto',
