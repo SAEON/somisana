@@ -80,7 +80,7 @@ services:
     environment:
       DATABASE_URL: $PG_DATABASE_URL
     ports:
-      - 7010:9000
+      - 7011:9000
     networks:
       - somisana_stable
 
