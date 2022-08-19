@@ -1,3 +1,4 @@
+drop materialized view if exists values cascade;
 create materialized view if not exists values as
 with 
 
