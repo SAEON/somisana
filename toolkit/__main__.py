@@ -12,7 +12,8 @@ parser = OptionParser(description="ETL tools supporting the SOMISANA initiative"
 downloadCLI = OptionGroup(parser, '--download (-d)')
 parser.add_option_group(downloadCLI)
 parser.add_option('--download', '-d', action="store_true", default = False, help="Download forcing data")
-downloadCLI.add_option('--output-path', '-o', default="./.downloads/", help="Directory output of forcing files")
+downloadCLI.add_option('--output-path', '-o', default="./.downloads/forcings-input", help="Directory output of forcing files")
+downloadCLI.add_option('--matlab-env-path', '-e', default="./.downloads/.env", help="Path to MatLab configuration file")
 # TODO run_date
 # TODO domain
 

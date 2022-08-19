@@ -9,7 +9,7 @@ def download(options, arguments):
   print('Downloading forecast model boundary data...')
 
   download_directory = options.output_path
-  MATLAB_ENV_PATH = os.path.join(download_directory, '.env')
+  matlab_env_path = options.matlab_env_path
   
   hdays = 5 
   fdays = 5
@@ -49,12 +49,12 @@ def download(options, arguments):
 
   # MatLab is configured via a .env file
   print('Configuring MatLab...')
-  with open(MATLAB_ENV_PATH, 'w+') as env:
+  with open(matlab_env_path, 'w+') as env:
     env.writelines([
       'RUN_DATE=' + str(date.today()) + '\n',
       'DELTA_DAYS_GFS=' + str(delta_days_gfs) + '\n'
     ])
-  os.chmod(MATLAB_ENV_PATH, 0o777)
+  os.chmod(matlab_env_path, 0o777)
 
   # Script complete
   print('Complete!')
