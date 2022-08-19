@@ -18,7 +18,7 @@ const generator = new Generator({
     'apollo-server-koa',
     'koa-bodyparser',
     'http-errors',
-    'pg'
+    'pg',
   ],
 })
 
