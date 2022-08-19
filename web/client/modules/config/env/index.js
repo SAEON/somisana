@@ -1,6 +1,7 @@
 export const NODE_ENV = process.env.NODE_ENV
 export const API = process.env.API
 export const TILESERV_BASE_URL = process.env.TILESERV_BASE_URL
+export const FEATURESERV_BASE_URL = process.env.FEATURESERV_BASE_URL
 export const ESRI_API_KEY = process.env.ESRI_API_KEY
 export const ORIGIN = API
 export const ESRI_BASEMAP = 'arcgis-oceans'

@@ -17,6 +17,7 @@ const PACKAGE_JSON = readFileSync(normalize(join(__dirname, '../package.json')))
 const NODE_ENV = process.env.NODE_ENV || 'development'
 const API = process.env.API || 'http://localhost:3000'
 const TILESERV_BASE_URL = process.env.TILESERV_BASE_URL || 'http://localhost:7800'
+const FEATURESERV_BASE_URL = process.env.FEATURESERV_BASE_URL || 'http://localhost:9000'
 const ESRI_API_KEY = process.env.ESRI_API_KEY || 'missing'
 const TECHNICAL_CONTACT =
   process.env.TECHNICAL_CONTACT || 'Missing configuration (TECHNICAL_CONTACT)'
@@ -61,6 +62,7 @@ export default {
       'process.env.API': JSON.stringify(API),
       'process.env.TECHNICAL_CONTACT': JSON.stringify(TECHNICAL_CONTACT),
       'process.env.TILESERV_BASE_URL': JSON.stringify(TILESERV_BASE_URL),
+      'process.env.FEATURESERV_BASE_URL': JSON.stringify(FEATURESERV_BASE_URL),
       'process.env.ESRI_API_KEY': JSON.stringify(ESRI_API_KEY),
       'process.env.PACKAGE_JSON': JSON.stringify(PACKAGE_JSON),
     }),

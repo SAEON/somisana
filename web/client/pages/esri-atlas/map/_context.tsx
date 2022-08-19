@@ -13,7 +13,7 @@ import ExaggeratedElevationLayer from '../../../modules/arcgis/exaggerated-eleva
 export const ctx = createContext(null)
 
 export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
-  const { ESRI_API_KEY, ESRI_BASEMAP, TILESERV_BASE_URL } = useContext(configContext)
+  const { ESRI_API_KEY, ESRI_BASEMAP, TILESERV_BASE_URL, FEATURESERV_BASE_URL } = useContext(configContext)
   const theme = useTheme()
   const ref = useRef(null)
   esriConfig.apiKey = ESRI_API_KEY
@@ -79,7 +79,7 @@ export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
 
   const xyzPoints = new OGCFeatureLayer({
     id: 'test',
-    url: 'http://localhost:9000/',
+    url: FEATURESERV_BASE_URL,
     collectionId: 'public.values',
     objectIdField: 'id',
     // maxScale: 1,
