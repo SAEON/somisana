@@ -3,7 +3,7 @@ create materialized view if not exists values as
 with 
 
 model as (select 1 modelid),
-depth as (select 1 depth_level),
+depth as (select 10 depth_level),
 time as (select 1 time_step)
 
 ,depths as (

@@ -120,6 +120,19 @@ from (
 /**
  * FUNCTIONS
  */
+
+-- drop function if exists public.join_values;
+
+-- create function public.join_values ()
+--   returns table (
+
+--   )
+
+-- as $$
+-- declare
+--   modelid int;
+
+
 drop function if exists public.get_values;
 
 create function public.get_values (modelid int, depth_level int, time_step int, variable text)
@@ -128,8 +141,7 @@ create function public.get_values (modelid int, depth_level int, time_step int, 
     value float
   )
   as $$
-declare
-  band_no int;
+declare band_no int;
   declare m int;
 begin
   band_no := ((time_step - 1) * 20) + depth_level;

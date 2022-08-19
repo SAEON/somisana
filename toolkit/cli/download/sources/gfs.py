@@ -37,7 +37,7 @@ def gfs(date_now, hdays, fdays, domain, dirout):
                            date_now.day, 18, 0, 0)
     gfs_exists = False
     iters = 0
-    while not(gfs_exists):
+    while not (gfs_exists):
         url_check = 'https://nomads.ncep.noaa.gov/dods/gfs_0p25_1hr/gfs'+date_latest.strftime(
             "%Y")+date_latest.strftime("%m")+date_latest.strftime("%d")+'/gfs_0p25_1hr_'+date_latest.strftime("%H")+'z'
         try:
@@ -66,7 +66,7 @@ def gfs(date_now, hdays, fdays, domain, dirout):
             fname = date_hist.strftime("%Y")+date_hist.strftime("%m")+date_hist.strftime(
                 "%d")+date_hist.strftime("%H")+'_f'+str(frcst).zfill(3)+'.grb'
             fileout = os.path.join(dirout, fname)
-            if not(os.path.isfile(fileout)):  # only download if the file doesn't already exist
+            if not (os.path.isfile(fileout)):  # only download if the file doesn't already exist
                 url = url1 + \
                     date_hist.strftime("%H")+'z.pgrb2.0p25.f' + \
                     str(frcst).zfill(3)+url2+url3
@@ -75,12 +75,14 @@ def gfs(date_now, hdays, fdays, domain, dirout):
 
                 # If the cURL command fails, then throw an error
                 if os.system(cmd) != 0:
-                    raise Exception('GFS download failed (via cURL). ' + fname + ' could not be downloaded. ' + cmd)
+                    raise Exception('GFS download failed (via cURL). ' +
+                                    fname + ' could not be downloaded. ' + cmd)
 
                 # Small files indicate that the download succeeded, but that the requested resource doesn't exist
                 # The model should still run in in these cases
                 if Path(fileout).stat().st_size < 1000:  # using 1kB as the check
-                    print('WARNING: '+ fname + ' could not be downloaded', open(fileout, 'r').read())
+                    print('WARNING: ' + fname + ' could not be downloaded',
+                          open(fileout, 'r').read())
                     os.remove(fileout)
 
         date_hist = date_hist + timedelta(hours=6)
@@ -96,21 +98,23 @@ def gfs(date_now, hdays, fdays, domain, dirout):
         fileout = os.path.join(dirout, fname)
 
         # only download if the file doesn't already exist
-        if not(os.path.isfile(fileout)):
+        if not (os.path.isfile(fileout)):
             url = url1 + \
                 date_latest.strftime("%H")+'z.pgrb2.0p25.f' + \
                 str(frcst).zfill(3)+url2+url3
             cmd = 'curl --silent \'' + url + '\'' + ' -o ' + fileout
             print('download = ', fileout)
-            
+
             # If the cURL command fails, then throw an error
             if os.system(cmd) != 0:
-                raise Exception('GFS download failed (via cURL). ' + fname + ' could not be downloaded. ' + cmd)
-            
+                raise Exception('GFS download failed (via cURL). ' +
+                                fname + ' could not be downloaded. ' + cmd)
+
             # Small files indicate that the download succeeded, but that the requested resource doesn't exist
             # The model should still run in in these cases
             if Path(fileout).stat().st_size < 1000:  # using 1kB as the check
-                print('WARNING: '+fname+' could not be downloaded', open(fileout, 'r').read())
+                print('WARNING: '+fname+' could not be downloaded',
+                      open(fileout, 'r').read())
                 os.remove(fileout)
 
     print('GFS download completed (in '+str(datetime.now() - startTime)+' h:m:s)')

@@ -11,7 +11,7 @@ Adapted script from Mostafa Bakhoday-Paskyabi <Mostafa.Bakhoday@nersc.no>
 """
 
 
-def mercator(usrname, passwd, domain, date_now, hdays, fdays, varList, depths, outdir):
+def mercator(usrname, passwd, domain, date_now, hdays, fdays, varList, depths, dirout):
     # extent hdays and fdays by 1 day to make sure our download completely covers the simulation period
     hdays = hdays+1
     fdays = fdays+1
@@ -38,9 +38,9 @@ def mercator(usrname, passwd, domain, date_now, hdays, fdays, varList, depths, o
         ' --date-min "'+str(startDate.strftime('%Y-%m-%d'))+'" --date-max "'+str(endDate.strftime('%Y-%m-%d'))+'"' + \
         ' --depth-min '+str(depths[0])+' --depth-max '+str(depths[1]) + \
         var_str + \
-        ' --out-dir '+ os.path.join(outdir, '/') + ' --out-name '+fname
+        ' --out-dir ' + os.path.normpath(dirout) + ' --out-name ' + fname
 
-    if os.path.exists(os.path.join(outdir, fname)) == False:
+    if os.path.exists(os.path.normpath(os.path.join(dirout, fname))) == False:
         # run the runcommand, i.e. download the data specified above
         print('downloading latest mercator ocean forecast from CMEMS...')
         startTime = datetime.now()
@@ -55,4 +55,5 @@ def mercator(usrname, passwd, domain, date_now, hdays, fdays, varList, depths, o
             # then in run_frcst.py we could use that flag to either make a new croco file from the downloaded mercator file
             # or if the file wasn't downloaded then we could use yesterday's croco file and just repeat the last available time-step to make a new one
     else:
-        print(os.path.join(outdir, fname) + ' already exists - not downloading mercator data')
+        print(os.path.normpath(os.path.join(dirout, fname)) +
+              ' already exists - not downloading mercator data')

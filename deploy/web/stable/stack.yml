@@ -59,3 +59,28 @@ services:
       - 7009:7800
     networks:
       - somisana_stable
+
+  pg_featureserv:
+    image: pramsey/pg_featureserv:20220708
+    deploy:
+      replicas: 1
+      rollback_config:
+        parallelism: 0
+      update_config:
+        parallelism: 0
+        order: start-first
+        failure_action: rollback
+      restart_policy:
+        condition: any
+        delay: 30s
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+    environment:
+      DATABASE_URL: $PG_DATABASE_URL
+    ports:
+      - 7010:9000
+    networks:
+      - somisana_stable
+

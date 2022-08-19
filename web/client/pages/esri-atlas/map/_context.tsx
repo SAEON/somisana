@@ -119,7 +119,7 @@ export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
       new SceneView({
         map,
         qualityProfile: 'high',
-        viewingMode: 'local',
+        viewingMode: 'global',
         camera: {
           position: { x: 30, y: -45, z: 1400000 },
           heading: -20,
