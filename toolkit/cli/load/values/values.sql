@@ -66,7 +66,7 @@ time as (select 1 time_step)
 	d.modelid,
 	d.depth_level,
 	c.id coordinateid,
-	st_makepoint(c.longitude,c.latitude,d.value)::geometry(PointZ, 4326) xyz,
+	st_makepoint(c.longitude,c.latitude,d.value * 35)::geometry(PointZ, 4326) xyz,
 	d.value depth,
 	t.value temperature,
 	s.value salinity,
@@ -82,5 +82,7 @@ time as (select 1 time_step)
 )
 
 select
+row_number() over() id,
 *
 from values
+order by depth asc

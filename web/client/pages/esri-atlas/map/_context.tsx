@@ -77,41 +77,17 @@ export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
     []
   )
 
-  const colors = [
-    'rgba(115, 0, 115, 0)',
-    '#820082',
-    '#910091',
-    '#a000a0',
-    '#af00af',
-    '#c300c3',
-    '#d700d7',
-    '#eb00eb',
-    '#ff00ff',
-    '#ff58a0',
-    '#ff896b',
-    '#ffb935',
-    '#ffea00',
-  ]
-
   const xyzPoints = new OGCFeatureLayer({
     id: 'test',
     url: 'http://localhost:9000/',
     collectionId: 'public.values',
     objectIdField: 'id',
-    customParameters: {
-      limit: 15000,
-    },
-    displayField: 'temperature',
     // maxScale: 1,
     // minScale: 22,
     screenSizePerspectiveEnabled: true,
     elevationInfo: {
       mode: 'absolute-height',
       unit: 'meters',
-    },
-    featureReduction: {
-      type: 'cluster',
-      clusterRadius: 100,
     },
   })
 

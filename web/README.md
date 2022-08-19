@@ -67,6 +67,8 @@ docker run \
   -p 9000:9000 \
   --net postgis \
   -e DATABASE_URL=postgres://admin:password@postgis:5432/somisana_local \
+  -e PGFS_PAGING_LIMITDEFAULT=50000 \
+  -e PGFS_PAGING_LIMITMAX=50000 \
   pramsey/pg_featureserv:latest
 ```
 
