@@ -3,18 +3,48 @@ import SceneView from '@arcgis/core/views/SceneView'
 import Map from '@arcgis/core/Map'
 import esriConfig from '@arcgis/core/config'
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer'
+import OGCFeatureLayer from '@arcgis/core/layers/OGCFeatureLayer'
 import { ctx as configContext } from '../../../modules/config'
 import useTheme from '@mui/material/styles/useTheme'
+import VectorTileLayer from '@arcgis/core/layers/VectorTileLayer'
 import Div from '../../../components/div'
 import ExaggeratedElevationLayer from '../../../modules/arcgis/exaggerated-elevation-layer'
 
 export const ctx = createContext(null)
 
 export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
-  const { ESRI_API_KEY, ESRI_BASEMAP } = useContext(configContext)
+  const { ESRI_API_KEY, ESRI_BASEMAP, TILESERV_BASE_URL } = useContext(configContext)
   const theme = useTheme()
   const ref = useRef(null)
   esriConfig.apiKey = ESRI_API_KEY
+
+  const curvilinearGrid = new VectorTileLayer({
+    style: {
+      id: 'curvilinear-grid',
+      version: 8,
+      sources: {
+        models: {
+          type: 'vector',
+          tiles: [`${TILESERV_BASE_URL}/public.values/{z}/{x}/{y}.pbf`],
+        },
+      },
+      layers: [
+        {
+          id: 'model-metadata',
+          type: 'circle',
+          source: 'models',
+          minzoom: 0,
+          maxzoom: 24,
+          'source-layer': 'public.values',
+          paint: {
+            'circle-radius': 2,
+            'circle-opacity': 0.6,
+            'circle-color': theme.palette.common.black,
+          },
+        },
+      ],
+    },
+  })
 
   const gridOptions = useMemo(
     () => ({
@@ -47,6 +77,44 @@ export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
     []
   )
 
+  const colors = [
+    'rgba(115, 0, 115, 0)',
+    '#820082',
+    '#910091',
+    '#a000a0',
+    '#af00af',
+    '#c300c3',
+    '#d700d7',
+    '#eb00eb',
+    '#ff00ff',
+    '#ff58a0',
+    '#ff896b',
+    '#ffb935',
+    '#ffea00',
+  ]
+
+  const xyzPoints = new OGCFeatureLayer({
+    id: 'test',
+    url: 'http://localhost:9000/',
+    collectionId: 'public.values',
+    objectIdField: 'id',
+    customParameters: {
+      limit: 15000,
+    },
+    displayField: 'temperature',
+    // maxScale: 1,
+    // minScale: 22,
+    screenSizePerspectiveEnabled: true,
+    elevationInfo: {
+      mode: 'absolute-height',
+      unit: 'meters',
+    },
+    featureReduction: {
+      type: 'cluster',
+      clusterRadius: 100,
+    },
+  })
+
   const map = useMemo(
     () =>
       new Map({
@@ -63,6 +131,8 @@ export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
             url: `https://services.arcgis.com/nGt4QxSblgDfeJn9/ArcGIS/rest/services/Graticule/FeatureServer/10`,
             ...gridOptions,
           }),
+          // curvilinearGrid,
+          xyzPoints,
         ],
       }),
     [gridOptions]

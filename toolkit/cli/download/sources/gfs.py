@@ -65,7 +65,7 @@ def gfs(date_now, hdays, fdays, domain, dirout):
         for frcst in range(1, 7):  # forecast hours 1 to 6
             fname = date_hist.strftime("%Y")+date_hist.strftime("%m")+date_hist.strftime(
                 "%d")+date_hist.strftime("%H")+'_f'+str(frcst).zfill(3)+'.grb'
-            fileout = dirout+fname
+            fileout = os.path.join(dirout, fname)
             if not(os.path.isfile(fileout)):  # only download if the file doesn't already exist
                 url = url1 + \
                     date_hist.strftime("%H")+'z.pgrb2.0p25.f' + \
@@ -93,7 +93,7 @@ def gfs(date_now, hdays, fdays, domain, dirout):
     for frcst in range(1, fhours+1):
         fname = date_latest.strftime("%Y")+date_latest.strftime("%m")+date_latest.strftime(
             "%d")+date_latest.strftime("%H")+'_f'+str(frcst).zfill(3)+'.grb'
-        fileout = dirout+fname
+        fileout = os.path.join(dirout, fname)
 
         # only download if the file doesn't already exist
         if not(os.path.isfile(fileout)):

@@ -1,16 +1,16 @@
 import os
 from datetime import timedelta, date
 from pathlib import Path
-from config import COPERNICUS_PASSWORD, COPERNICUS_USERNAME, DOWNLOADS_DIRECTORY
+from config import COPERNICUS_PASSWORD, COPERNICUS_USERNAME
 from cli.download.sources.gfs import gfs
 from cli.download.sources.mercator import mercator
-
-DOWNLOADS_PATH = os.path.join(DOWNLOADS_DIRECTORY, 'forcing-inputs/')
-MATLAB_ENV_PATH = os.path.join(DOWNLOADS_DIRECTORY, '.env')
 
 def download(options, arguments):
   print('Downloading forecast model boundary data...')
 
+  download_directory = options.output_path
+  MATLAB_ENV_PATH = os.path.join(download_directory, '.env')
+  
   hdays = 5 
   fdays = 5
   date_now = date.today() # use datetime() as we use 00:00:00 as the reference time
@@ -26,12 +26,12 @@ def download(options, arguments):
   print('simulation temporal coverage', str(date_start), '-', str(date_end))
   print('spatial extent for download of global forcing data (west, east, south, north)', str(domain))
 
-  print('Downloads path (creating if it doesn\'t exist', DOWNLOADS_PATH)
-  Path(DOWNLOADS_PATH).mkdir(parents=True, exist_ok=True)
+  print('Downloads path (creating if it doesn\'t exist', download_directory)
+  Path(download_directory).mkdir(parents=True, exist_ok=True)
 
   # Download GFS data (ocean surface weather data)
   print('Downloading GFS data...')
-  delta_days_gfs = gfs(date_now, hdays, fdays, domain, DOWNLOADS_PATH)
+  delta_days_gfs = gfs(date_now, hdays, fdays, domain, download_directory)
 
     # Download Mercator data (ocean boundary data)
   print('Downloading Mercator data...')
@@ -44,7 +44,7 @@ def download(options, arguments):
       fdays,
       varsOfInterest,
       depths,
-      DOWNLOADS_PATH
+      download_directory
   )
 
   # MatLab is configured via a .env file

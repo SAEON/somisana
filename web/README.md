@@ -56,6 +56,20 @@ docker run \
   pramsey/pg_tileserv:latest
 ```
 
+## Start a local `pg_featureserv` server
+Assuming you have a PostGIS server running as a docker container with the name `postgis` on a network called `postgis`:
+
+```sh
+docker run \
+  -dt \
+  --restart always \
+  --name pg_featureserv \
+  -p 9000:9000 \
+  --net postgis \
+  -e DATABASE_URL=postgres://admin:password@postgis:5432/somisana_local \
+  pramsey/pg_featureserv:latest
+```
+
 ## Add an HTML page to the app
 
 The build process will automatically configure routes from specific files in the `client/` directory. To add a new HTML route:

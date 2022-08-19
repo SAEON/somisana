@@ -1,11 +1,10 @@
 import { join, normalize } from 'path'
 import fs from 'fs/promises'
-import dirname from '../server/lib/dirname.js'
-import { createReadStream } from 'fs'
+import dirname from '../server/lib/dirname'
 import { createEmotionCache } from '../common/app'
 import createEmotionServer from '@emotion/server/create-instance'
-import Layout from './_layout.jsx'
-import serve from './_serve.js.js'
+import Layout from './_layout'
+import serve from './_serve'
 
 /**
  * Emotion doesn't support stream-rendering yet

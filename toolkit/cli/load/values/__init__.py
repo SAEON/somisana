@@ -1,6 +1,6 @@
 from postgis import connect
 
-def merge(model, run_date):
+def upsert(model, run_date):
   with open('cli/load/values/values.sql', 'r') as file:
     sql = file.read()
     cursor = connect().cursor()

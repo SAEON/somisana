@@ -3,8 +3,8 @@ from datetime import datetime
 from postgis import setup as installDb, drop as dropSchema, connect
 from config import PY_ENV
 from cli.load.raster2pgsql import register as raster2pgsql
-from cli.load.coordinates import merge as index_coordinates
-from cli.load.values import merge as index_values
+from cli.load.coordinates import upsert as upsert_coordinates
+from cli.load.values import upsert as upsert_values
 
 
 def load(options, arguments):
@@ -85,9 +85,9 @@ def load(options, arguments):
   on a fixed XY grid - so the coordinates don't change.
   """
   print('\n-> Calculating and loading coordinates', str(datetime.now() - now))
-  index_coordinates(model)
+  upsert_coordinates(model)
 
   # If the models view doesn't already exist create it
   print('\n-> Calculating and loading data values', str(datetime.now() - now))
-  index_values(model, run_date)
+  upsert_values(model, run_date)
 
