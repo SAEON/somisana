@@ -204,8 +204,8 @@ jobs:
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
               ${{ needs.python.outputs.image }} \
                 -d \
-                -o /tmp/somisana/current/forcing-inputs \
-                -e /tmp/somisana/current/.env
+                --workdir /tmp/somisana/current/forcing-inputs \
+                --matlab-env /tmp/somisana/current/.env
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
@@ -324,9 +324,9 @@ jobs:
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/tmp/somisana/current/croco/forcing/grd.nc \
             ${{ needs.python.outputs.image }} \
               -t \
-              -g /tmp/somisana/current/croco/forcing/grd.nc \
-              -i /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
-              -o /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc
+              --grid-input-path /tmp/somisana/current/croco/forcing/grd.nc \
+              --nc-input-path /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
+              --nc-output-path /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc
       - name: Load normalized NetCDF output to PostGIS
         env:
           PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
@@ -345,7 +345,7 @@ jobs:
             -e PG_DB=$PG_DB \
             ${{ needs.python.outputs.image }} \
               -l \
-              -i /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-              -m algoa-bay-forecast \
-              -R \
-              -r ${{ env.RUN_DATE }}
+              --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+              --model-name algoa-bay-forecast \
+              --reload-data \
+              --run-date ${{ env.RUN_DATE }}

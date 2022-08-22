@@ -9,18 +9,18 @@ from cli.load.values import upsert as upsert_values
 
 def load(options, arguments):
   now = datetime.now()
-  model = options.model
-  nc_input_path = options.nc_input_path
+  model_name = options.model_name
+  model_data = options.model_data
   run_date = options.run_date
   drop_db = options.drop_db
-  reload_existing_data = options.reload_existing_data
+  reload_data = options.reload_data
   run_date = options.run_date
   
   """
   Check CLI options are specified correctly
   """
-  if not model: raise Exception('Please specify the model name (-m)')
-  if not nc_input_path: raise Exception('Please specify the file input name (-i)')
+  if not model_name: raise Exception('Please specify the model name (-m)')
+  if not model_data: raise Exception('Please specify the file input name (-i)')
 
   """
   Check that the correct run_date is specified
@@ -56,12 +56,12 @@ def load(options, arguments):
   idea
   """
   cursor = connect().cursor()
-  cursor.execute("""select 1 where exists (select * from models where "name" = %s)""", (model, ))
+  cursor.execute("""select 1 where exists (select * from models where "name" = %s)""", (model_name, ))
   model_exists = len(cursor.fetchall())
   if not model_exists:
-    raise Exception('Specified model does not exist exist - ' + model)
+    raise Exception('Specified model does not exist exist - ' + model_name)
   else:
-    print("""\n== Loading PostGIS data ({0} model) ==""".format(model))
+    print("""\n== Loading PostGIS data ({0} model) ==""".format(model_name))
     print('\n-> Installing PostGIS schema', str(datetime.now() - now))
 
   """
@@ -71,13 +71,13 @@ def load(options, arguments):
   Each subdataset is a raster. Unlike gdalinfo, Xarray splits subdatasets
   into keys (variables) and coords (also variables in this context) 
   """
-  netcdf = xr.open_dataset(nc_input_path)
+  netcdf = xr.open_dataset(model_data)
   variables = list(netcdf.keys())
   coords = list(netcdf.coords)
   rasters = list(set(variables + coords))
   rasters.sort()
   print('\n-> Loading variables', rasters, str(datetime.now() - now))
-  for raster in rasters: raster2pgsql(now, nc_input_path, raster, model, reload_existing_data, run_date)
+  for raster in rasters: raster2pgsql(now, model_data, raster, model_name, reload_data, run_date)
   print('\nNetCDF data loaded successfully!!', str(datetime.now() - now))
 
   """
@@ -85,9 +85,9 @@ def load(options, arguments):
   on a fixed XY grid - so the coordinates don't change.
   """
   print('\n-> Calculating and loading coordinates', str(datetime.now() - now))
-  upsert_coordinates(model)
+  upsert_coordinates(model_name)
 
   # If the models view doesn't already exist create it
   print('\n-> Calculating and loading data values', str(datetime.now() - now))
-  upsert_values(model, run_date)
+  upsert_values(model_name, run_date, now)
 

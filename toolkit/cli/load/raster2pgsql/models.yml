@@ -33,6 +33,9 @@ models:
     depth:
       xy: NUL
       tile_size: 20x1
+    h:
+      xy: 152x106
+      tile_size: 8x53
 
   false-bay-forecast:
     description: >-
@@ -68,3 +71,6 @@ models:
     depth:
       xy: NUL
       tile_size: 40x1
+    h:
+      xy: 152x106
+      tile_size: 8x53

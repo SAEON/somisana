@@ -8,8 +8,8 @@ from cli.download.sources.mercator import mercator
 def download(options, arguments):
   print('Downloading forecast model boundary data...')
 
-  download_directory = options.output_path
-  matlab_env_path = options.matlab_env_path
+  workdir = options.workdir
+  matlab_env = options.matlab_env
   
   hdays = 5 
   fdays = 5
@@ -26,12 +26,12 @@ def download(options, arguments):
   print('simulation temporal coverage', str(date_start), '-', str(date_end))
   print('spatial extent for download of global forcing data (west, east, south, north)', str(domain))
 
-  print('Downloads path (creating if it doesn\'t exist', download_directory)
-  Path(download_directory).mkdir(parents=True, exist_ok=True)
+  print('Downloads path (creating if it doesn\'t exist', workdir)
+  Path(workdir).mkdir(parents=True, exist_ok=True)
 
   # Download GFS data (ocean surface weather data)
   print('Downloading GFS data...')
-  delta_days_gfs = gfs(date_now, hdays, fdays, domain, download_directory)
+  delta_days_gfs = gfs(date_now, hdays, fdays, domain, workdir)
 
     # Download Mercator data (ocean boundary data)
   print('Downloading Mercator data...')
@@ -44,17 +44,17 @@ def download(options, arguments):
       fdays,
       varsOfInterest,
       depths,
-      download_directory
+      workdir
   )
 
   # MatLab is configured via a .env file
   print('Configuring MatLab...')
-  with open(matlab_env_path, 'w+') as env:
+  with open(matlab_env, 'w+') as env:
     env.writelines([
       'RUN_DATE=' + str(date.today()) + '\n',
       'DELTA_DAYS_GFS=' + str(delta_days_gfs) + '\n'
     ])
-  os.chmod(matlab_env_path, 0o777)
+  os.chmod(matlab_env, 0o777)
 
   # Script complete
   print('Complete!')

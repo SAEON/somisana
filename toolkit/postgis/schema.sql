@@ -56,6 +56,7 @@ create table if not exists public.coordinates (
   coord geometry(point, 4326) not null,
   longitude float not null,
   latitude float not null,
+  bathymetry float not null,
   constraint unique_coordinates unique (modelid, pixel)
 );
 
@@ -116,36 +117,41 @@ from (
     modelid,
     name) t;
 
+create table if not exists public.values (
+  id serial primary key,
+  modelid int not null references public.models (id),
+  depth_level int not null,
+  time_step int not null,
+  run_date date,
+  coordinateid int not null references coordinates (id),
+  xyz geometry(PointZ, 4326) not null,
+  depth float,
+  temperature float,
+  salinity float,
+  u float,
+  v float
+);
+
 
 /**
  * FUNCTIONS
  */
-
--- drop function if exists public.join_values;
-
--- create function public.join_values ()
---   returns table (
-
---   )
-
--- as $$
--- declare
---   modelid int;
-
-
 drop function if exists public.get_values;
 
-create function public.get_values (modelid int, depth_level int, time_step int, variable text)
+create function public.get_values (modelid int, rundate date, depth_level int, time_step int, variable text)
   returns table (
     pixel geometry,
     value float
   )
   as $$
-declare band_no int;
-  declare m int;
+declare
+  band_no int;
+  m int;
+  rd date;
 begin
   band_no := ((time_step - 1) * 20) + depth_level;
   m := modelid;
+  rd := rundate;
   return query
   select
     t.geom pixel,
@@ -160,7 +166,114 @@ begin
       join raster_xref_model rxm on rxm.rasterid = r.rid
     where
       filename like ('%:' || variable)
-      and rxm.modelid = m) t;
+      and rxm.modelid = m
+      and rxm.run_date = rd) t;
+end;
+$$
+language 'plpgsql';
+
+drop function if exists public.join_values;
+
+create function public.join_values (modelid int, rundate date, depth_level int, time_step int)
+  returns table (
+    coordinateid int,
+    xyz geometry(point, 4326),
+    depth float,
+    temperature float,
+    salinity float,
+    u float,
+    v float
+  )
+  as $$
+begin
+  return query with depths as (
+    select
+      modelid,
+      depth_level,
+      time_step,
+      pixel,
+      value
+    from
+      public.get_values (modelid, rundate, depth_level, time_step, variable => 'm_rho')
+),
+temperatures as (
+  select
+    modelid,
+    depth_level,
+    time_step,
+    pixel,
+    value
+  from
+    public.get_values (modelid, rundate, depth_level, time_step, variable => 'temperature')
+),
+salinity as (
+  select
+    modelid,
+    depth_level,
+    time_step,
+    pixel,
+    value
+  from
+    public.get_values (modelid, rundate, depth_level, time_step, variable => 'salt')
+),
+u as (
+  select
+    modelid,
+    depth_level,
+    time_step,
+    pixel,
+    value
+  from
+    public.get_values (modelid, rundate, depth_level, time_step, variable => 'u')
+),
+v as (
+  select
+    modelid,
+    depth_level,
+    time_step,
+    pixel,
+    value
+  from
+    public.get_values (modelid, rundate, depth_level, time_step, variable => 'v'))
+select
+  c.id coordinateid,
+  st_makepoint (c.longitude, c.latitude, d.value * 35)::geometry(PointZ, 4326) xyz,
+  d.value depth,
+  t.value temperature,
+  s.value salinity,
+  u.value u,
+  v.value v
+from
+  depths d
+  join temperatures t on t.pixel = d.pixel
+  join salinity s on s.pixel = d.pixel
+  join u on u.pixel = d.pixel
+  join v on v.pixel = d.pixel
+  join coordinates c on c.modelid = d.modelid
+    and c.pixel = d.pixel;
+end;
+$$
+language 'plpgsql';
+
+drop function if exists public.upsert_values;
+
+create function public.upsert_values (modelid int, rundate date, depth_level int, time_step int)
+  returns void
+  as $$
+begin
+  merge into public.values t
+  using (
+    select
+      modelid, depth_level, time_step, rundate run_date, coordinateid, xyz, depth, temperature, salinity, u, v
+    from
+      join_values (modelid, rundate, depth_level, time_step)) s on s.modelid = t.modelid
+    and s.depth_level = t.depth_level
+    and s.time_step = t.time_step
+    and s.run_date = t.run_date
+    and s.coordinateid = t.coordinateid
+  when not matched then
+    insert (modelid, depth_level, time_step, run_date, coordinateid, xyz, depth, temperature, salinity, u, v)
+      values (s.modelid, s.depth_level, s.time_step, s.run_date, s.coordinateid, s.xyz, s.depth, s.temperature, s.salinity, s.u, s.v);
 end;
 $$
 language 'plpgsql';
