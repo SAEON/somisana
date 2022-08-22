@@ -136,7 +136,7 @@ create table if not exists public.values (
 /**
  * FUNCTIONS
  */
-drop function if exists public.get_values;
+drop function if exists public.get_values cascade;
 
 create function public.get_values (modelid int, rundate date, depth_level int, time_step int, variable text)
   returns table (
@@ -172,7 +172,7 @@ end;
 $$
 language 'plpgsql';
 
-drop function if exists public.join_values;
+drop function if exists public.join_values cascade;
 
 create function public.join_values (modelid int, rundate date, depth_level int, time_step int)
   returns table (
@@ -255,7 +255,7 @@ end;
 $$
 language 'plpgsql';
 
-drop function if exists public.upsert_values;
+drop function if exists public.upsert_values cascade;
 
 create function public.upsert_values (modelid int, rundate date, depth_level int, time_step int)
   returns void
