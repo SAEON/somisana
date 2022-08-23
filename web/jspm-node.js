@@ -19,6 +19,7 @@ const generator = new Generator({
     'koa-bodyparser',
     'http-errors',
     'pg',
+    'mime'
   ],
 })
 

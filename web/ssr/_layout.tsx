@@ -25,7 +25,9 @@ export default ({ children, ctx, emotionCache }) => {
       cookie={cookie}
       acceptLanguage={language}
       emotionCache={emotionCache}
-      Router={props => <StaticRouter location={ctx.request.url} context={{}} {...props} />}
+      Router={(props: React.FC) => (
+        <StaticRouter location={ctx.request.url} context={{}} {...props} />
+      )}
       apolloClient={apolloClient}
     >
       {children}
