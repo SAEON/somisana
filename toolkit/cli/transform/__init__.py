@@ -1,4 +1,3 @@
-from pydoc import describe
 import xarray as xr
 import numpy as np
 from datetime import timedelta, datetime
