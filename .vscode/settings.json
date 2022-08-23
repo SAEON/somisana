@@ -79,6 +79,7 @@
     "vtransform",
     "WORKDIR",
     "xarray",
-    "xzvf"
+    "xzvf",
+    "Zarr"
   ]
 }

@@ -16,6 +16,7 @@ pathlib = "*"
 motuclient = "*"
 pydap = "*"
 pyyaml = "*"
+zarr = "*"
 
 [dev-packages]
 

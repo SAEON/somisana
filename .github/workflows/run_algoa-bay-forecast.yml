@@ -326,7 +326,8 @@ jobs:
               -t \
               --grid-input-path /tmp/somisana/current/croco/forcing/grd.nc \
               --nc-input-path /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
-              --nc-output-path /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc
+              --nc-output-path /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+              --zarr-output-path /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.zarr
       - name: Load normalized NetCDF output to PostGIS
         env:
           PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}

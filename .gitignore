@@ -8,6 +8,7 @@ external-projects/croco_tools/*
 
 # NetCDF binary files
 *.nc
+*.zarr
 
 ##### Python
 # Byte-compiled / optimized / DLL files

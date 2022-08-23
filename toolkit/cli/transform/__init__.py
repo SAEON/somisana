@@ -49,11 +49,13 @@ def transform(options, arguments):
     grid_input_path = options.grid_input_path
     nc_input_path = options.nc_input_path
     nc_output_path = options.nc_output_path
+    zarr_output_path = options.zarr_output_path
 
     print('\n== Running Algoa Bay Forecast post-processing ==')
     print('nc-input-path', nc_input_path)
     print('grid-input-path', grid_input_path)
-    print('output-path', nc_output_path)
+    print('nc-output-path', nc_output_path)
+    print('zarr-output-path', zarr_output_path)
 
     data = xr.open_dataset(nc_input_path)
     data_grid = xr.open_dataset(grid_input_path)
@@ -90,18 +92,16 @@ def transform(options, arguments):
 
     # Convert u and v current components to the rho grid (otherwise these values are on cell edges and not the center of the cells)
     # use the function u2rho_4d and v2rho_4d
+    print('-> Normalizing u/v model output variables', str(datetime.now() - now))
     u_rho = u2rho_4d(u)
     v_rho = v2rho_4d(v)
-    print('-> Normalized u/v model output variables', str(datetime.now() - now))
 
-    # Replace value = 0 celsius with nan
-    # In this dataset a value of 0 is representative
-    # of a grid location that is not water (over land)
+    print('-> Masking 0 values (land) from variables', str(datetime.now() - now))
     temperature[np.where(temperature == 0)] = np.nan
     salt[np.where(salt == 0)] = np.nan
     u[np.where(u == 0)] = np.nan
     v[np.where(v == 0)] = np.nan
-    print('-> Removed 0 values (land) from variables', str(datetime.now() - now))
+    
 
     # Variables hard coded set during model configuration
     # Relative to each model
@@ -115,15 +115,15 @@ def transform(options, arguments):
         raise Exception('Unexpected value for vtransform (' + vtransform + ')')
 
     # m_rho refers to the depth level in meters
+    print('-> Converting depth levels to depth in meters', str(datetime.now() - now))
     m_rho = np.zeros(np.shape(temperature))
     for x in np.arange(np.size(temperature, 0)):
         depth_temp = z_levels(
             h, ssh[x, :, :], theta_s, theta_b, hc, N, type_coordinate, vtransform)
         m_rho[x, ::] = depth_temp
-    print('-> Converted depth levels to depth in meters',
-          str(datetime.now() - now))
 
     # Create new xarray dataset with selected variables
+    print('-> Generating dataset', str(datetime.now() - now))
     data_out = xr.Dataset(
         attrs=dict(
             description="CROCO output from algoa Bay model transformed lon/lat/depth/time"),
@@ -150,9 +150,8 @@ def transform(options, arguments):
             time=xr.Variable(['time'], time_steps, dict(description="Time steps in hours - TODO improve this description")),
         ),
     )
-    print('-> Generated NetCDF dataset', str(datetime.now() - now))
 
-    # Print output
+    print('-> outputting NetCDF', str(datetime.now() - now))
     data_out.to_netcdf(nc_output_path, encoding={
         'temperature': {},
         'salt': {},
@@ -165,5 +164,7 @@ def transform(options, arguments):
         'time': {'dtype': 'i4'}
     })
 
-    print('-> Output NetCDF data to disk', str(datetime.now() - now))
+    print('-> outputting Zarr', str(datetime.now() - now))
+    data_out.to_zarr(zarr_output_path, mode='w')
+
     print('\nComplete! If you don\'t see this message there was a problem')
