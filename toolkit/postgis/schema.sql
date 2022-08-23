@@ -119,11 +119,11 @@ from (
 
 create table if not exists public.values (
   id serial primary key,
-  modelid int not null references public.models (id),
+  modelid int not null references public.models (id) on delete cascade,
   depth_level int not null,
   time_step int not null,
   run_date date,
-  coordinateid int not null references coordinates (id),
+  coordinateid int not null references coordinates (id) on delete cascade,
   xyz geometry(PointZ, 4326) not null,
   depth float,
   temperature float,

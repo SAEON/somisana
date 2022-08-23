@@ -12,3 +12,5 @@ drop table if exists public.models cascade;
 
 drop table if exists public.rasters cascade;
 
+drop table if exists public.values cascade;
+
