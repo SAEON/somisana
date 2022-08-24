@@ -66,9 +66,7 @@ def gfs(date_now, hdays, fdays, domain, dirout):
     print("GFS download started...")
     delta_days = (date_latest-date_now).total_seconds() / 86400
     date_hist = date_now + timedelta(days =- hdays)
-    
 
-    
     while date_hist < date_latest:
 
         # forecast hours 1 to 6
@@ -112,7 +110,7 @@ def gfs(date_now, hdays, fdays, domain, dirout):
 
     # now download the forecast from date_latest, already identified as the latest initialisation of gfs
 
-    fhours = int((fdays-delta_days)*24)
+    fhours = int( (fdays-delta_days) * 24 )
 
     for frcst in range(1, fhours+1):
         fname = yyyymmdd(date_latest) \
