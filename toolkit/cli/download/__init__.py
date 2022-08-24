@@ -26,7 +26,7 @@ def download(options, arguments):
   print('simulation temporal coverage', str(date_start), '-', str(date_end))
   print('spatial extent for download of global forcing data (west, east, south, north)', str(domain))
 
-  print('Downloads path (creating if it doesn\'t exist', workdir)
+  print('Downloads path', workdir)
   Path(workdir).mkdir(parents=True, exist_ok=True)
 
   # Download GFS data (ocean surface weather data)

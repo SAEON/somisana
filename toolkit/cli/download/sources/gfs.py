@@ -32,26 +32,35 @@ def gfs(date_now, hdays, fdays, domain, dirout):
     print('checking for latest GFS initialisation...')
     # just converting date_now from a date to a datetime- needed for comparing to other datetimes
     date_now = datetime.combine(date_now, time())
+
     # start with the last possible one for today
     date_latest = datetime(date_now.year, date_now.month,
                            date_now.day, 18, 0, 0)
+                           
     gfs_exists = False
     iters = 0
     while not (gfs_exists):
-        url_check = 'https://nomads.ncep.noaa.gov/dods/gfs_0p25_1hr/gfs'+date_latest.strftime(
-            "%Y")+date_latest.strftime("%m")+date_latest.strftime("%d")+'/gfs_0p25_1hr_'+date_latest.strftime("%H")+'z'
+        if iters > 4:
+            print("GFS data is not presently available")
+            sys.exit('')
+        
+        url_check = \
+            'https://nomads.ncep.noaa.gov/dods/gfs_0p25_1hr/gfs' \
+                + date_latest.strftime("%Y") \
+                + date_latest.strftime("%m") \
+                + date_latest.strftime("%d") \
+                + '/gfs_0p25_1hr_' \
+                + date_latest.strftime("%H") \
+                + 'z'
         try:
-            check_gfs = open_url(url_check)
+            print('Checking GFS availability', url_check)
+            open_url(url_check)
             gfs_exists = True
         except:
-            # work backwards in 6 hour timesteps
-            date_latest = date_latest+timedelta(hours=-6)
-            iters = iters+1
-            if iters > 4:
-                print("GFS data is not presently available")
-                sys.exit('')
+            date_latest = date_latest + timedelta(hours =- 6)
+            iters += 1
 
-    print("Latest available GFS initialisation found:", date_latest)
+    print("Latest available GFS initialisation found:", date_latest, url_check)
     print("GFS download started...")
     startTime = datetime.now()  # for timing purposes
 
