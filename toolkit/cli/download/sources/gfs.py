@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, time
 import sys
 import os
 from pathlib import Path
-from cli.download.sources._functions import yyyymmdd
+from cli.download.sources._functions import yyyymmdd, time_param
 
 """
 Download GFS forecast data for running a croco model
@@ -34,7 +34,7 @@ def gfs(date_now, hdays, fdays, domain, dirout):
         + str(domain[3]) \
         + '&bottomlat=' \
         + str(domain[2]) \
-        + '&dir=%2Fgfs.'
+        + '&dir=/gfs.'
 
     date_now = datetime.combine(date_now, time())
     date_latest = datetime(date_now.year, date_now.month, date_now.day, 18, 0, 0)
@@ -73,10 +73,6 @@ def gfs(date_now, hdays, fdays, domain, dirout):
     # go back in time to cover the full duration of the croco simulation
     date_hist = date_now + timedelta(days=-hdays)
     while date_hist < date_latest:
-        url3 = yyyymmdd(date_hist) \
-            + '%2F' \
-            + date_hist.strftime("%H") \
-            + '%2Fatmos'
 
         # forecast hours 1 to 6
         for frcst in range(1, 7):
@@ -95,7 +91,7 @@ def gfs(date_now, hdays, fdays, domain, dirout):
                     + 'z.pgrb2.0p25.f' \
                     + str(frcst).zfill(3) \
                     + URL_PARAMS \
-                    + url3
+                    + time_param(date_hist)
 
                 cmd = 'curl -silent \'' \
                     + url \
@@ -118,10 +114,6 @@ def gfs(date_now, hdays, fdays, domain, dirout):
         date_hist = date_hist + timedelta(hours=6)
 
     # now download the forecast from date_latest, already identified as the latest initialisation of gfs
-    url3 = yyyymmdd(date_latest) \
-        + '%2F' \
-        + date_latest.strftime("%H") \
-        + '%2Fatmos'
 
     fhours = int((fdays-delta_days)*24)
 
@@ -140,7 +132,7 @@ def gfs(date_now, hdays, fdays, domain, dirout):
                 + 'z.pgrb2.0p25.f' \
                 + str(frcst).zfill(3) \
                 + URL_PARAMS \
-                + url3
+                + time_param(date_latest)
 
             cmd = 'curl --silent \'' \
                 + url \
