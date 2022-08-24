@@ -24,7 +24,7 @@ parser.add_option('--transform', '-t', action="store_true", default = False, hel
 transformCLI.add_option('--nc-input-path', default="./input.nc", help="Path of NetCDF input file")
 transformCLI.add_option('--nc-output-path', default=".output.nc", help="Path of NetCDF output path")
 transformCLI.add_option('--zarr-output-path', default=".output.zarr", help="Path of Zarr output path")
-transformCLI.add_option('--grid-input-path', default="../../lib/grd.nc", help="Path of NetCDF grid input path")
+transformCLI.add_option('--grid-input-path', default="./grd.nc", help="Path of NetCDF grid input path")
 
 loadLCI = OptionGroup(parser, '-l, --load')
 parser.add_option_group(loadLCI)
