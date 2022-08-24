@@ -17,15 +17,14 @@ The latest initialisation is used at the time this is run, so that if there is a
 side then a slightly older initialization will be found
 """
 
+BASE_URL = 'https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25_1hr.pl?file=gfs.t'
 
 def gfs(date_now, hdays, fdays, domain, dirout):
     # extent hdays and fdays by 6 hours to make sure our download completely covers the simulation period
     hdays = hdays + 0.25
     fdays = fdays + 0.25
 
-    url1 = 'https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25_1hr.pl?file=gfs.t'
-
-    url2 = '&lev_10_m_above_ground=on&lev_2_m_above_ground=on&lev_surface=on&var_DLWRF=on&var_DSWRF=on&var_LAND' \
+    URL_PARAMS = '&lev_10_m_above_ground=on&lev_2_m_above_ground=on&lev_surface=on&var_DLWRF=on&var_DSWRF=on&var_LAND' \
         + '=on&var_PRATE=on&var_RH=on&var_TMP=on&var_UFLX=on&var_UGRD=on&var_ULWRF=on&var_USWRF=on&var_VFLX=on&var_VGRD=on&' \
         + 'subregion=&leftlon=' \
         + str(domain[0]) \
@@ -91,11 +90,11 @@ def gfs(date_now, hdays, fdays, domain, dirout):
 
             # only download if the file doesn't already exist
             if not (os.path.isfile(fileout)):
-                url = url1 \
+                url = BASE_URL \
                     + date_hist.strftime("%H") \
                     + 'z.pgrb2.0p25.f' \
                     + str(frcst).zfill(3) \
-                    + url2 \
+                    + URL_PARAMS \
                     + url3
 
                 cmd = 'curl -silent \'' \
@@ -136,11 +135,11 @@ def gfs(date_now, hdays, fdays, domain, dirout):
 
         # only download if the file doesn't already exist
         if not (os.path.isfile(fileout)):
-            url = url1 + \
+            url = BASE_URL + \
                 date_latest.strftime("%H") \
                 + 'z.pgrb2.0p25.f' \
                 + str(frcst).zfill(3) \
-                + url2 \
+                + URL_PARAMS \
                 + url3
 
             cmd = 'curl --silent \'' \
