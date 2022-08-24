@@ -2,8 +2,7 @@ import requests as r
 from datetime import datetime, timedelta, time
 import sys
 import os
-from pathlib import Path
-from cli.download.sources._functions import yyyymmdd, time_param
+from cli.download.sources._functions import yyyymmdd, time_param, create_fname, validate_download_or_remove, make_cURL
 
 """
 Download GFS forecast data for running a croco model
@@ -35,7 +34,6 @@ def gfs(date_now, hdays, fdays, domain, dirout):
         + '&bottomlat=' \
         + str(domain[2]) \
         + '&dir=/gfs.'
-
     
     date_latest = datetime(date_now.year, date_now.month, date_now.day, 18, 0, 0)
     gfs_exists = False
@@ -70,13 +68,8 @@ def gfs(date_now, hdays, fdays, domain, dirout):
     while date_hist < date_latest:
 
         # forecast hours 1 to 6
-        for frcst in range(1, 7):
-            fname = yyyymmdd(date_hist) \
-                + date_hist.strftime("%H") \
-                + '_f' \
-                + str(frcst).zfill(3) \
-                + '.grb'
-
+        for i in range(1, 7):
+            fname = create_fname(date_hist, i)
             fileout = os.path.join(dirout, fname)
 
             # only download if the file doesn't already exist
@@ -84,40 +77,25 @@ def gfs(date_now, hdays, fdays, domain, dirout):
                 url = BASE_URL \
                     + date_hist.strftime("%H") \
                     + 'z.pgrb2.0p25.f' \
-                    + str(frcst).zfill(3) \
+                    + str(i).zfill(3) \
                     + URL_PARAMS \
                     + time_param(date_hist)
 
-                cmd = 'curl -silent \'' \
-                    + url \
-                    + '\'' \
-                    + ' -o ' \
-                    + fileout
-
+                cmd = make_cURL(url, fileout)
                 print(cmd)
 
-                # If the cURL command fails, then throw an error
                 if os.system(cmd) != 0:
                     raise Exception('GFS download failed (via cURL). ' + fname + ' could not be downloaded. ' + cmd)
-
-                # Small files indicate that the download succeeded, but that the requested resource doesn't exist
-                # The model should still run in in these cases
-                if Path(fileout).stat().st_size < 1000:  # using 1kB as the check
-                    print('WARNING:', fname, 'could not be downloaded', open(fileout, 'r').read())
-                    os.remove(fileout)
+                else:
+                    validate_download_or_remove(fileout)
 
         date_hist = date_hist + timedelta(hours=6)
 
     # now download the forecast from date_latest, already identified as the latest initialisation of gfs
-
     fhours = int( (fdays-delta_days) * 24 )
 
-    for frcst in range(1, fhours+1):
-        fname = yyyymmdd(date_latest) \
-            + date_latest.strftime("%H") \
-            + '_f' \
-            + str(frcst).zfill(3) \
-            + '.grb'
+    for i in range(1, fhours + 1):
+        fname = create_fname(date_latest, i)
         fileout = os.path.join(dirout, fname)
 
         # only download if the file doesn't already exist
@@ -125,26 +103,17 @@ def gfs(date_now, hdays, fdays, domain, dirout):
             url = BASE_URL + \
                 date_latest.strftime("%H") \
                 + 'z.pgrb2.0p25.f' \
-                + str(frcst).zfill(3) \
+                + str(i).zfill(3) \
                 + URL_PARAMS \
                 + time_param(date_latest)
 
-            cmd = 'curl --silent \'' \
-                + url \
-                + '\'' \
-                + ' -o ' \
-                + fileout
-
+            cmd = make_cURL(url, fileout)
             print(cmd)
 
             if os.system(cmd) != 0:
                 raise Exception('GFS download failed (via cURL). ' + fname + ' could not be downloaded. ' + cmd)
-
-            # Small files indicate that the download succeeded, but that the requested resource doesn't exist
-            # The model should still run in in these cases
-            if Path(fileout).stat().st_size < 1000:  # using 1kB as the check
-                print('WARNING:', fname, 'could not be downloaded', open(fileout, 'r').read())
-                os.remove(fileout)
+            else:
+                validate_download_or_remove(fileout)
 
     print('GFS download completed (in '+str(datetime.now() - start_time)+' h:m:s)')
     return delta_days 
