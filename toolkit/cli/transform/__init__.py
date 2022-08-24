@@ -2,40 +2,12 @@ import xarray as xr
 import numpy as np
 from datetime import timedelta, datetime
 from cli.transform.depth_functions import z_levels
+from cli.transform.functions import hour_rounder, u2rho_4d, v2rho_4d
 
 # All dates in the CROCO output are represented
 # in seconds from 1 Jan 2000 (i.e. the reference date)
 REFERENCE_DATE = datetime(2000, 1, 1, 0, 0, 0)
 
-# Rounds to nearest hour by adding a timedelta hour if minute >= 30
-
-
-def hour_rounder(t):
-    return (t.replace(second=0, microsecond=0, minute=0, hour=t.hour) + timedelta(hours=t.minute//30))
-
-# Converts the v current component to the correct (rho) grid
-
-
-def v2rho_4d(var_v):
-    [T, D, M, Lp] = var_v.shape
-    var_rho = np.zeros((T, D, M+1, Lp))
-    var_rho[:, :, 1:M-1, :] = 0.5 * \
-        np.squeeze([var_v[:, :, 0:M-2, :]+var_v[:, :, 1:M-1, :]])
-    var_rho[:, :, 0, :] = var_rho[:, :, 1, :]
-    var_rho[:, :, M, :] = var_rho[:, :, M-1, :]
-    return var_rho
-
-# Converts the u current component to the correct (rho) grid
-
-
-def u2rho_4d(var_u):
-    [T, D, Mp, L] = var_u.shape
-    var_rho = np.zeros((T, D, Mp, L+1))
-    var_rho[:, :, :, 1:L-1] = 0.5 * \
-        np.squeeze([var_u[:, :, :, 0:L-2]+var_u[:, :, :, 1:L-1]])
-    var_rho[:, :, :, 0] = var_rho[:, :, :, 1]
-    var_rho[:, :, :, L] = var_rho[:, :, :, L-1]
-    return var_rho
 
 # Model variables use the dimensions time (time from reference date),
 # eta_rho (lat) and xi_rho (lon). We are changing eta_rho and xi_rho
@@ -100,7 +72,6 @@ def transform(options, arguments):
     salt[np.where(salt == 0)] = np.nan
     u[np.where(u == 0)] = np.nan
     v[np.where(v == 0)] = np.nan
-    
 
     # Variables hard coded set during model configuration
     # Relative to each model
@@ -114,7 +85,8 @@ def transform(options, arguments):
         raise Exception('Unexpected value for vtransform (' + vtransform + ')')
 
     # m_rho refers to the depth level in meters
-    print('-> Converting depth levels to depth in meters', str(datetime.now() - now))
+    print('-> Converting depth levels to depth in meters',
+          str(datetime.now() - now))
     m_rho = np.zeros(np.shape(temperature))
     for x in np.arange(np.size(temperature, 0)):
         depth_temp = z_levels(
@@ -145,13 +117,14 @@ def transform(options, arguments):
                                 units=data.lon_rho.units, description="Longitude coordinate values of curvilinear grid cells")),
             lat_rho=xr.Variable(["lat", "lon"], lat_rho, dict(long_name=data.lat_rho.long_name,
                                 units=data.lat_rho.units, description="Latitude coordinate values of curvilinear grid cells")),
-            depth=xr.Variable(['depth'], s_rho, dict(description="Depth levels (grid levels)")),
-            time=xr.Variable(['time'], time_steps, dict(description="Time steps in hours - TODO improve this description")),
+            depth=xr.Variable(['depth'], s_rho, dict(
+                description="Depth levels (grid levels)")),
+            time=xr.Variable(['time'], time_steps, dict(
+                description="Time steps in hours - TODO improve this description")),
         ),
     )
 
-    print('-> outputting NetCDF', str(datetime.now() - now))
-    data_out.to_netcdf(nc_output_path, encoding={
+    encoding = {
         'temperature': {},
         'salt': {},
         'u': {},
@@ -160,10 +133,14 @@ def transform(options, arguments):
         'lon_rho': {},
         'lat_rho': {},
         'depth': {},
-        'time': {'dtype': 'i4'}
-    })
+        'time': {'dtype': 'i4'},
+        'h': {}
+    }
+
+    print('-> outputting NetCDF', str(datetime.now() - now))
+    data_out.to_netcdf(nc_output_path, encoding=encoding)
 
     print('-> outputting Zarr', str(datetime.now() - now))
-    data_out.to_zarr(zarr_output_path, mode='w')
+    data_out.to_zarr(zarr_output_path, mode='w', encoding=encoding)
 
     print('\nComplete! If you don\'t see this message there was a problem')
