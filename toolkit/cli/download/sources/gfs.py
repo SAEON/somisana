@@ -36,28 +36,31 @@ def gfs(date_now, hdays, fdays, domain, dirout):
     # start with the last possible one for today
     date_latest = datetime(date_now.year, date_now.month,
                            date_now.day, 18, 0, 0)
-                           
+
     gfs_exists = False
     iters = 0
     while not (gfs_exists):
         if iters > 4:
             print("GFS data is not presently available")
             sys.exit('')
-        
+
         url_check = \
             'https://nomads.ncep.noaa.gov/dods/gfs_0p25_1hr/gfs' \
-                + date_latest.strftime("%Y") \
-                + date_latest.strftime("%m") \
-                + date_latest.strftime("%d") \
-                + '/gfs_0p25_1hr_' \
-                + date_latest.strftime("%H") \
-                + 'z'
+            + date_latest.strftime("%Y") \
+            + date_latest.strftime("%m") \
+            + date_latest.strftime("%d") \
+            + '/gfs_0p25_1hr_' \
+            + date_latest.strftime("%H") \
+            + 'z'
+
         try:
-            print('Checking GFS availability', url_check)
-            open_url(url_check)
+            print('Testing GFS availability', url_check)
+            available_data = open_url(url_check)
+            print(available_data)
             gfs_exists = True
-        except:
-            date_latest = date_latest + timedelta(hours =- 6)
+        except Exception as error:
+            print(error)
+            date_latest = date_latest + timedelta(hours=- 6)
             iters += 1
 
     print("Latest available GFS initialisation found:", date_latest, url_check)
@@ -69,18 +72,41 @@ def gfs(date_now, hdays, fdays, domain, dirout):
     # go back in time to cover the full duration of the croco simulation
     date_hist = date_now + timedelta(days=-hdays)
     while date_hist < date_latest:
-        url3 = date_hist.strftime("%Y")+date_hist.strftime("%m") + \
-            date_hist.strftime("%d")+'%2F'+date_hist.strftime("%H")+'%2Fatmos'
-        for frcst in range(1, 7):  # forecast hours 1 to 6
-            fname = date_hist.strftime("%Y")+date_hist.strftime("%m")+date_hist.strftime(
-                "%d")+date_hist.strftime("%H")+'_f'+str(frcst).zfill(3)+'.grb'
+        url3 = date_hist.strftime("%Y") \
+            + date_hist.strftime("%m") \
+            + date_hist.strftime("%d") \
+            + '%2F' \
+            + date_hist.strftime("%H") \
+            + '%2Fatmos'
+
+        # forecast hours 1 to 6
+        for frcst in range(1, 7):
+            fname = date_hist.strftime("%Y") \
+                + date_hist.strftime("%m") \
+                + date_hist.strftime("%d") \
+                + date_hist.strftime("%H") \
+                + '_f' \
+                + str(frcst).zfill(3) \
+                + '.grb'
+
             fileout = os.path.join(dirout, fname)
-            if not (os.path.isfile(fileout)):  # only download if the file doesn't already exist
-                url = url1 + \
-                    date_hist.strftime("%H")+'z.pgrb2.0p25.f' + \
-                    str(frcst).zfill(3)+url2+url3
-                cmd = 'curl -silent \'' + url + '\'' + ' -o ' + fileout
-                print('download = ', fileout)
+
+            # only download if the file doesn't already exist
+            if not (os.path.isfile(fileout)):
+                url = url1 \
+                    + date_hist.strftime("%H") \
+                    + 'z.pgrb2.0p25.f' \
+                    + str(frcst).zfill(3) \
+                    + url2 \
+                    + url3
+
+                cmd = 'curl -silent \'' \
+                    + url \
+                    + '\'' \
+                    + ' -o ' \
+                    + fileout
+
+                print(cmd)
 
                 # If the cURL command fails, then throw an error
                 if os.system(cmd) != 0:
@@ -90,20 +116,30 @@ def gfs(date_now, hdays, fdays, domain, dirout):
                 # Small files indicate that the download succeeded, but that the requested resource doesn't exist
                 # The model should still run in in these cases
                 if Path(fileout).stat().st_size < 1000:  # using 1kB as the check
-                    print('WARNING: ' + fname + ' could not be downloaded',
+                    print('WARNING:', fname, 'could not be downloaded',
                           open(fileout, 'r').read())
                     os.remove(fileout)
 
         date_hist = date_hist + timedelta(hours=6)
 
     # now download the forecast from date_latest, already identified as the latest initialisation of gfs
-    url3 = date_latest.strftime("%Y")+date_latest.strftime(
-        "%m")+date_latest.strftime("%d")+'%2F'+date_latest.strftime("%H")+'%2Fatmos'
+    url3 = date_latest.strftime("%Y") \
+        + date_latest.strftime("%m") \
+        + date_latest.strftime("%d") \
+        + '%2F' \
+        + date_latest.strftime("%H") \
+        + '%2Fatmos'
+
     fhours = int((fdays-delta_days)*24)
 
     for frcst in range(1, fhours+1):
-        fname = date_latest.strftime("%Y")+date_latest.strftime("%m")+date_latest.strftime(
-            "%d")+date_latest.strftime("%H")+'_f'+str(frcst).zfill(3)+'.grb'
+        fname = date_latest.strftime("%Y") \
+            + date_latest.strftime("%m") \
+            + date_latest.strftime("%d") \
+            + date_latest.strftime("%H") \
+            + '_f' \
+            + str(frcst).zfill(3) \
+            + '.grb'
         fileout = os.path.join(dirout, fname)
 
         # only download if the file doesn't already exist
