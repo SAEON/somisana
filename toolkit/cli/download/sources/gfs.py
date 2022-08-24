@@ -2,7 +2,7 @@ import requests as r
 from datetime import datetime, timedelta, time
 import sys
 import os
-from cli.download.sources._functions import yyyymmdd, time_param, create_fname, validate_download_or_remove, make_cURL
+from cli.download.sources.gfs_functions import yyyymmdd, time_param, create_fname, validate_download_or_remove, make_cURL
 
 """
 Download GFS forecast data for running a croco model
