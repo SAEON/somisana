@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from pydap.client import open_url
+import requests as r
 from datetime import datetime, timedelta, time
 import sys
 import os
@@ -20,7 +19,8 @@ side then a slightly older initialization will be found
 BASE_URL = 'https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25_1hr.pl?file=gfs.t'
 
 def gfs(date_now, hdays, fdays, domain, dirout):
-    # extent hdays and fdays by 6 hours to make sure our download completely covers the simulation period
+    start_time = datetime.now()
+    date_now = datetime.combine(date_now, time())
     hdays = hdays + 0.25
     fdays = fdays + 0.25
 
@@ -36,16 +36,15 @@ def gfs(date_now, hdays, fdays, domain, dirout):
         + str(domain[2]) \
         + '&dir=/gfs.'
 
-    date_now = datetime.combine(date_now, time())
+    
     date_latest = datetime(date_now.year, date_now.month, date_now.day, 18, 0, 0)
-
     gfs_exists = False
     iters = 0
 
     while not (gfs_exists):
         if iters > 4:
             print("GFS data is not presently available")
-            sys.exit('')
+            sys.exit(1)
 
         url_check = \
             'https://nomads.ncep.noaa.gov/dods/gfs_0p25_1hr/gfs' \
@@ -54,24 +53,22 @@ def gfs(date_now, hdays, fdays, domain, dirout):
             + date_latest.strftime("%H") \
             + 'z'
 
-        try:
-            print('Testing GFS availability', url_check)
-            available_data = open_url(url_check)
-            print(available_data)
+        print('Testing GFS availability', url_check)
+        result = r.head(url_check)
+        xdap = result.headers.get('XDAP')
+        if xdap:
+            print("Latest available GFS initialisation found at",url_check, '\n', 'X-DAP HTTP Header', xdap, '\n', '\n')
             gfs_exists = True
-        except Exception as e:
-            print("Error {0}".format(str(e.args[0])).encode("utf-8"))
+        else:
             date_latest = date_latest + timedelta(hours=- 6)
             iters += 1
 
-    print("Latest available GFS initialisation found:", date_latest, url_check)
     print("GFS download started...")
-    startTime = datetime.now()  # for timing purposes
+    delta_days = (date_latest-date_now).total_seconds() / 86400
+    date_hist = date_now + timedelta(days =- hdays)
+    
 
-    delta_days = (date_latest-date_now).total_seconds()/86400
-
-    # go back in time to cover the full duration of the croco simulation
-    date_hist = date_now + timedelta(days=-hdays)
+    
     while date_hist < date_latest:
 
         # forecast hours 1 to 6
@@ -151,5 +148,5 @@ def gfs(date_now, hdays, fdays, domain, dirout):
                 print('WARNING:', fname, 'could not be downloaded', open(fileout, 'r').read())
                 os.remove(fileout)
 
-    print('GFS download completed (in '+str(datetime.now() - startTime)+' h:m:s)')
+    print('GFS download completed (in '+str(datetime.now() - start_time)+' h:m:s)')
     return delta_days 
