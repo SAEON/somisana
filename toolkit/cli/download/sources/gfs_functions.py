@@ -70,6 +70,7 @@ def download_file(dt, i, dirout, PARAMS):
     else:
         print('File already exists', fileout)
 
+
 def get_latest_available_dt(dt):
     latest_available_date = datetime(dt.year, dt.month, dt.day, 18, 0, 0)
     gfs_exists = False
@@ -92,10 +93,12 @@ def get_latest_available_dt(dt):
         xdap = result.headers.get('XDAP')
 
         if xdap:
-            print("Latest available GFS initialisation found at",dataset_url, '\n', 'X-DAP HTTP Header', xdap, '\n', '\n')
+            print("Latest available GFS initialisation found at",
+                  dataset_url, '\n', 'X-DAP HTTP Header', xdap, '\n', '\n')
             gfs_exists = True
         else:
-            latest_available_date = latest_available_date + timedelta(hours=- 6)
+            latest_available_date = latest_available_date + \
+                timedelta(hours=- 6)
             iters += 1
-    
+
     return latest_available_date
