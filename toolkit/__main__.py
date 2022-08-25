@@ -10,7 +10,7 @@ TODAY = date.today()
 
 parser = OptionParser(description="ETL tools supporting the SOMISANA initiative", version=VERSION, epilog="\n\n", prog="cli")
 
-downloadCLI = OptionGroup(parser, '-f, --download')
+downloadCLI = OptionGroup(parser, '-d, --download')
 parser.add_option_group(downloadCLI)
 parser.add_option('--download', '-d', action="store_true", default = False, help="Download forcing data")
 downloadCLI.add_option('--workdir', default=".output", help="Directory output of forcing files")

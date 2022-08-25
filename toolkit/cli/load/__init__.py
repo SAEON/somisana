@@ -1,4 +1,5 @@
 import xarray as xr
+import yaml
 from datetime import datetime
 from postgis import setup as installDb, drop as dropSchema, connect
 from config import PY_ENV
@@ -64,6 +65,11 @@ def load(options, arguments):
     print("""\n== Loading PostGIS data ({0} model) ==""".format(model_name))
     print('\n-> Installing PostGIS schema', str(datetime.now() - now))
 
+
+  config = None
+  with open('cli/load/models.yml') as file:
+    config = yaml.load(file, yaml.Loader)['models']
+
   """
   The NetCDF file has many rasters - each variable/coordinate
   is a raster. Each raster has to be loaded into the DB individually.
@@ -77,7 +83,7 @@ def load(options, arguments):
   rasters = list(set(variables + coords))
   rasters.sort()
   print('\n-> Loading variables', rasters, str(datetime.now() - now))
-  for raster in rasters: raster2pgsql(now, model_data, raster, model_name, reload_data, run_date)
+  for raster in rasters: raster2pgsql(config, now, model_data, raster, model_name, reload_data, run_date)
   print('\nNetCDF data loaded successfully!!', str(datetime.now() - now))
 
   """
@@ -89,5 +95,5 @@ def load(options, arguments):
 
   # If the models view doesn't already exist create it
   print('\n-> Calculating and loading data values', str(datetime.now() - now))
-  upsert_values(model_name, run_date, now)
+  upsert_values(model_name, run_date, now, config)
 

@@ -33,6 +33,7 @@ models:
     depth:
       xy: NUL
       tile_size: 20x1
+      levels: 20
     h:
       xy: 152x106
       tile_size: 8x53
@@ -71,6 +72,7 @@ models:
     depth:
       xy: NUL
       tile_size: 40x1
+      levels: 40
     h:
       xy: 152x106
       tile_size: 8x53

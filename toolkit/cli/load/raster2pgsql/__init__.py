@@ -1,24 +1,15 @@
-from curses.ascii import NUL
 import os
 from re import sub
 from postgis import connect as connectPg
-from yaml import Loader, load
 from datetime import datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME, PY_ENV
 
-def register(now, nc_input_path, raster, model, reload_existing_data, run_date):
+def register(config, now, nc_input_path, raster, model, reload_existing_data, run_date):
   print('\n->', raster, str(datetime.now() - now))
   p, filename =  os.path.split("""{0}:{1}""".format(str(nc_input_path), str(raster)))
 
-  """
-  Config is to define how to split raster bands into smaller tiles
-  when inserting into PostGIS
-  """
-  config = NUL
-  with open('cli/load/raster2pgsql/models.yml') as file:
-    config = load(file, Loader)['models']
-    if not config[model]: raise Exception('No raster2pgsql configuration for model', model)
-    if not config[model][raster]: raise Exception('No raster2pgsql configuration for model', model, 'variable', raster)
+  if not config[model]: raise Exception('No configuration for model', model)
+  if not config[model][raster]: raise Exception('No configuration for model', model, 'variable', raster)
 
   """
   raster2pgsql -t auto value defaults to the grid size (156x106) which

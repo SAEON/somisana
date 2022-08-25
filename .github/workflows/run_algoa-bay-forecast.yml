@@ -351,5 +351,4 @@ jobs:
               -l \
                 --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                 --model-name algoa-bay-forecast \
-                --reload-data \
                 --run-date ${{ env.RUN_DATE }}
