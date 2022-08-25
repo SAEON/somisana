@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta, date
+from datetime import datetime, timedelta, date
 from pathlib import Path
 from config import COPERNICUS_PASSWORD, COPERNICUS_USERNAME
 from cli.download.sources.gfs import gfs
@@ -10,17 +10,17 @@ def download(options, arguments):
 
   workdir = options.workdir
   matlab_env = options.matlab_env
+  run_date = datetime.strptime(options.download_date, '%Y%m%d')
+  domain = list(map(lambda i: float(i), options.domain.split(',')))
   
   hdays = 5 
   fdays = 5
-  date_now = date.today() # use datetime() as we use 00:00:00 as the reference time
-  date_start = date_now + timedelta(days=-hdays)
-  date_end = date_now + timedelta(days=fdays)
-  domain = [22, 31, -37, -31] # Extent (4326)
+  date_start = run_date + timedelta(days=-hdays)
+  date_end = run_date + timedelta(days=fdays)
   varsOfInterest = ['so', 'thetao', 'zos', 'uo', 'vo'] # Mercator
   depths = [0.493, 5727.918] # Mercator [min, max]
 
-  print('date', str(date_now))
+  print('date', str(run_date))
   print('hindcast days', str(hdays))
   print('forecast days', str(fdays))
   print('simulation temporal coverage', str(date_start), '-', str(date_end))
@@ -31,7 +31,7 @@ def download(options, arguments):
 
   # Download GFS data (ocean surface weather data)
   print('Downloading GFS data...')
-  delta_days_gfs = gfs(date_now, hdays, fdays, domain, workdir)
+  delta_days_gfs = gfs(run_date, hdays, fdays, domain, workdir)
 
     # Download Mercator data (ocean boundary data)
   print('Downloading Mercator data...')
@@ -39,7 +39,7 @@ def download(options, arguments):
       COPERNICUS_USERNAME,
       COPERNICUS_PASSWORD,
       domain,
-      date_now,
+      run_date,
       hdays,
       fdays,
       varsOfInterest,

@@ -13,15 +13,15 @@ The latest initialisation is used at the time this is run, so that if there is a
 side then a slightly older initialization will be found
 """
 
-def gfs(date_now, hdays, fdays, domain, dirout):
+def gfs(run_date, hdays, fdays, domain, dirout):
     now = datetime.now()
     hdays = hdays + 0.25
     fdays = fdays + 0.25
-    date_now = datetime.combine(date_now, time())
-    start_date = date_now + timedelta(days =- hdays)
+    run_date = datetime.combine(run_date, time())
+    start_date = run_date + timedelta(days =- hdays)
 
-    latest_available_date = get_latest_available_dt(date_now)
-    delta_days = (latest_available_date - date_now).total_seconds() / 86400  
+    latest_available_date = get_latest_available_dt(run_date)
+    delta_days = (latest_available_date - run_date).total_seconds() / 86400  
     
     params = '&lev_10_m_above_ground=on&lev_2_m_above_ground=on&lev_surface=on&var_DLWRF=on&var_DSWRF=on&var_LAND' \
         + '=on&var_PRATE=on&var_RH=on&var_TMP=on&var_UFLX=on&var_UGRD=on&var_ULWRF=on&var_USWRF=on&var_VFLX=on&var_VGRD=on&' \

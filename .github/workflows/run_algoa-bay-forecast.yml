@@ -176,10 +176,11 @@ jobs:
   # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
   # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
   boundary-data:
-    needs: [python, workdir]
+    needs: [python, workdir, envs]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
       - name: Source ~/.bashrc (for NVM - required for non-interactive shells). This is required for the retry
         run: |
@@ -205,7 +206,9 @@ jobs:
               ${{ needs.python.outputs.image }} \
                 -d \
                   --workdir /tmp/somisana/current/forcing-inputs \
-                  --matlab-env /tmp/somisana/current/.env
+                  --matlab-env /tmp/somisana/current/.env \
+                  --download-date ${{ env.MODEL_RUN_DATE }} \
+                  --domain 22,31,-37,-31
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/

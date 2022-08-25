@@ -1,12 +1,12 @@
-from email.policy import default
 from cli.transform import transform as transformModelOutput
 from cli.load import load as loadRaster
 from cli.download import download as downloadBoundaryData
 from optparse import OptionGroup, OptionParser
-from datetime import datetime
+from datetime import datetime, date
 
 VERSION = '0.0.1'
 NOW = datetime.now().strftime('%Y%m%d')
+TODAY = date.today()
 
 parser = OptionParser(description="ETL tools supporting the SOMISANA initiative", version=VERSION, epilog="\n\n", prog="cli")
 
@@ -15,8 +15,8 @@ parser.add_option_group(downloadCLI)
 parser.add_option('--download', '-d', action="store_true", default = False, help="Download forcing data")
 downloadCLI.add_option('--workdir', default=".output", help="Directory output of forcing files")
 downloadCLI.add_option('--matlab-env', default=".output/.env", help="Path to MatLab configuration file")
-# TODO run_date
-# TODO domain
+downloadCLI.add_option('--download-date', default = NOW, help="Download date (yyyymmdd)")
+downloadCLI.add_option('--domain', help="Bounding box in 4326 projection (i.e. min_long,max_long,min_lat,max_lat)")
 
 transformCLI = OptionGroup(parser, '-t, --transform')
 parser.add_option_group(transformCLI)
