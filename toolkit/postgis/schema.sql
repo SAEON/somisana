@@ -132,6 +132,11 @@ create table if not exists public.values (
   v float
 );
 
+create index if not exists values_index_modelid on public.values using btree (modelid);
+create index if not exists values_index_depth_level on public.values using btree (depth_level);
+create index if not exists values_index_time_step on public.values using btree (time_step);
+create index if not exists values_index_run_date on public.values using btree (run_date);
+create index if not exists values_index_coordinateid on public.values using btree (coordinateid);
 
 /**
  * FUNCTIONS
