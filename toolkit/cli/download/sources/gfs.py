@@ -42,8 +42,8 @@ def gfs(date_now, hdays, fdays, domain, dirout):
         start_date = start_date + timedelta(hours=6)
 
     # Download forecast forcing files
-    fhours = int( (fdays - delta_days) * 24 )
-    for i in range(1, fhours + 1):
+    total_forecast_hours = int( (fdays - delta_days) * 24 )
+    for i in range(1, total_forecast_hours + 1):
         download_file(latest_available_date, i, dirout, params)
 
     print('GFS download completed (in ' + str(datetime.now() - now) + ' h:m:s)')
