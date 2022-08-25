@@ -46,5 +46,5 @@ def gfs(date_now, hdays, fdays, domain, dirout):
     for i in range(1, fhours + 1):
         download_file(latest_available_date, i, dirout, params)
 
-    print('GFS download completed (in '+str(datetime.now() - now)+' h:m:s)')
+    print('GFS download completed (in ' + str(datetime.now() - now) + ' h:m:s)')
     return delta_days 
