@@ -1,6 +1,6 @@
 import os
 from re import sub
-from postgis import connect, release
+from postgis import pool
 from datetime import datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME, PY_ENV
 
@@ -15,12 +15,12 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
         raise Exception("No configuration for model", model, "variable", raster)
 
     """
-  raster2pgsql -t auto value defaults to the grid size (156x106) which
-  is too large for in-db rasters. This seems to work with out-db rasters,
-  but regardless it's probably more performant to work with smaller tile
-  sizes. However, the tile sizes then need to be set explicitly for each
-  variable
-  """
+    raster2pgsql -t auto value defaults to the grid size (156x106) which
+    is too large for in-db rasters. This seems to work with out-db rasters,
+    but regardless it's probably more performant to work with smaller tile
+    sizes. However, the tile sizes then need to be set explicitly for each
+    variable
+    """
     tileDimensions = config[model][raster]["tile_size"]
     if not tileDimensions:
         raise Exception(
@@ -30,57 +30,56 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
         )
 
     """
-  There are good reasons to reload from a file input, for example if the
-  file was recreated by rerunning the model. However in development this
-  is very slow (unless an out-db raster solution is used in the future).
-  This is only for development
-  """
+    There are good reasons to reload from a file input, for example if the
+    file was recreated by rerunning the model. However in development this
+    is very slow (unless an out-db raster solution is used in the future).
+    This is only for development
+    """
     if not reload_data:
         if not PY_ENV == "development":
             raise Exception(
                 "In production mode, raster data should ALWAYS re-inserted to the DB since the GFC initialization data is likely to be different for re-runs"
             )
         else:
-            client = connect()
-            cursor = client.cursor()
-            cursor.execute(
-                """select 1 where exists ( select * from public.rasters where filename = %s )""",
-                (filename,),
-            )
-            exists = not len(cursor.fetchall()) == 0
-            release(client)
+            with pool.connection() as client:
+                cursor = client.cursor()
+                cursor.execute(
+                    """select 1 where exists ( select * from public.rasters where filename = %s )""",
+                    (filename,),
+                )
+                exists = not len(cursor.fetchall()) == 0
 
-            if exists:
-                print("skipping (raster already exists in DB)")
-                return
-
-    """
-  In case this function is re-run from the same input file, first delete
-  previous input from that file (otherwise there will be duplicate raster).
-  So far as I'm aware there is no way to check uniqueness of rasters loaded
-  via raster2pgsql. This query should never fail as the table should be created
-  as part of the DDL specification (schema.sql)
-  """
-    client = connect()
-    client.cursor().execute(
-        """delete from public.rasters where filename = %s""",
-        (filename,),
-    )
-    release(client)
+                if exists:
+                    print("skipping (raster already exists in DB)")
+                    return
 
     """
-  Load rasters into the DB. In the future it may be useful to have
-  out-db rasters, so the flag is left here as a stub. Note that the
-  srid is set to 0 (-s 0) as the grid is not geobound, but instead
-  integer based.
-  """
+    In case this function is re-run from the same input file, first delete
+    previous input from that file (otherwise there will be duplicate raster).
+    So far as I'm aware there is no way to check uniqueness of rasters loaded
+    via raster2pgsql. This query should never fail as the table should be created
+    as part of the DDL specification (schema.sql)
+    """
+    with pool.connection() as client:
+        client.cursor().execute(
+            """delete from public.rasters where filename = %s""",
+            (filename,),
+        )
+
+    """
+    Load rasters into the DB. In the future it may be useful to have
+    out-db rasters, so the flag is left here as a stub. Note that the
+    srid is set to 0 (-s 0) as the grid is not geobound, but instead
+    integer based.
+    """
     out_db_flag = ""
     cmd = """
-    raster2pgsql \
+    PGCONNECT_TIMEOUT=3600 raster2pgsql \
       -a \
       -q \
       -t {0} \
       -F \
+      -e \
       -s 0 \
       {1} \
       NETCDF:"{2}":{3} \
@@ -105,15 +104,13 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
     # Explicitly associate individual rasters with a model
     with open("cli/load/raster2pgsql/update-raster_xref_model.sql") as file:
         sql = file.read()
-        client = connect()
-        cursor = client.cursor()
-        cursor.execute(
-            sql,
-            (
-                filename,
-                model,
-                run_date,
-            ),
-        )
-        print(cursor.statusmessage)
-        release(client)
+        with pool.connection(timeout=3600) as client:
+            cursor = client.cursor()
+            cursor.execute(
+                sql,
+                (
+                    filename,
+                    model,
+                    run_date,
+                ),
+            )

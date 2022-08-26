@@ -10,12 +10,13 @@ cython = "*"
 netcdf4 = "*"
 pymongo = "*"
 environs= "*"
-psycopg2-binary = "*"
 requests = "*"
 pathlib = "*"
 motuclient = "*"
 pyyaml = "*"
 zarr = "*"
+psycopg-pool = "*"
+psycopg = "*"
 
 [dev-packages]
 

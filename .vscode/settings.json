@@ -51,6 +51,7 @@
     "NOPASSWD",
     "numpy",
     "Parens",
+    "PGCONNECT",
     "pgdata",
     "pgsql",
     "Pipeable",

@@ -47,6 +47,9 @@ create table if not exists public.raster_xref_model (
   run_date date not null
 );
 
+create index if not exists raster_xref_model_index_modelid on public.raster_xref_model using btree (modelid);
+create index if not exists raster_xref_model_index_rasterid on public.raster_xref_model using btree (rasterid);
+
 create table if not exists public.coordinates (
   id serial not null primary key,
   modelid int not null references models (id) on delete cascade,
