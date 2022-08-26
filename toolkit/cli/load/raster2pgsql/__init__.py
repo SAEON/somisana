@@ -74,12 +74,11 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
     """
     out_db_flag = ""
     cmd = """
-    PGCONNECT_TIMEOUT=3600 raster2pgsql \
+    raster2pgsql \
       -a \
       -q \
       -t {0} \
       -F \
-      -e \
       -s 0 \
       {1} \
       NETCDF:"{2}":{3} \

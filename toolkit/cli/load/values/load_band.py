@@ -26,7 +26,9 @@ def load(depth_level, run_date, start_time, modelid):
                         (modelid, run_date, depth_level, t),
                     )
                     successful = True
+                    if attempt > 1:
+                        print('--> Succeeded on attempt', attempt, 'depth level', depth_level, 'time step', time_step)
             except Exception as e:
-                print("--> ERROR on attempt", attempt, "of", MAX_RETRIES, e)
+                print("--> ERROR on attempt", attempt, "of", MAX_RETRIES, e, 'depth level', depth_level, 'time step', time_step)
                 attempt += 1
                 sleep(10)

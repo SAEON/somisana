@@ -182,7 +182,7 @@ jobs:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
-      - name: Source ~/.bashrc (for NVM - required for non-interactive shells). This is required for the retry
+      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
         run: |
           source ~/.bashrc
           nvm use 16.14.2

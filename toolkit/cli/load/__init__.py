@@ -6,8 +6,6 @@ from config import PY_ENV
 from cli.load.raster2pgsql import register as raster2pgsql
 from cli.load.coordinates import upsert as upsert_coordinates
 from cli.load.values import upsert as upsert_values
-from multiprocessing import Pool, cpu_count
-
 
 def load(options, arguments):
     now = datetime.now()
@@ -92,12 +90,8 @@ def load(options, arguments):
     rasters = list(set(variables + coords))
     rasters.sort()
     
-    cores = cpu_count()
-    print('Running on multiple cores:', cores)
-    
     print("\n-> Loading variables", rasters, str(datetime.now() - now))
-    with Pool(processes=cores) as cpuPool:
-        cpuPool.starmap(raster2pgsql, list(map(lambda raster: [config, now, model_data, raster, model_name, reload_data, run_date], rasters)))
+    # for raster in rasters: raster2pgsql(config, now, model_data, raster, model_name, reload_data, run_date)
     print("\nNetCDF data loaded successfully!!", str(datetime.now() - now))
 
     """
