@@ -2,7 +2,7 @@ from postgis import pool
 from datetime import datetime
 from time import sleep
 
-MAX_RETRIES = 5
+MAX_RETRIES = 10
 
 
 def load(depth_level, run_date, start_time, modelid):
@@ -20,15 +20,35 @@ def load(depth_level, run_date, start_time, modelid):
                     str(datetime.now() - start_time),
                 )
                 with pool.connection() as client:
-                    cursor = client.cursor()
-                    cursor.execute(
-                        """select upsert_values (modelid => %s, rundate => %s,  depth_level => %s, time_step => %s)""",
-                        (modelid, run_date, depth_level, t),
+                    client.execute(
+                        query="""select upsert_values (modelid => %s, rundate => %s,  depth_level => %s, time_step => %s)""",
+                        params=(modelid, run_date, depth_level, t),
+                        prepare=False,
                     )
                     successful = True
                     if attempt > 1:
-                        print('--> Succeeded on attempt', attempt, 'depth level', depth_level, 'time step', time_step)
+                        print(
+                            "--> Succeeded on attempt",
+                            attempt,
+                            "depth level",
+                            depth_level,
+                            "time step",
+                            time_step,
+                        )
             except Exception as e:
-                print("--> ERROR on attempt", attempt, "of", MAX_RETRIES, e, 'depth level', depth_level, 'time step', time_step)
+                print(
+                    "--> ERROR on attempt",
+                    attempt,
+                    "of",
+                    MAX_RETRIES,
+                    e,
+                    "depth level",
+                    depth_level,
+                    "time step",
+                    time_step,
+                )
                 attempt += 1
                 sleep(10)
+
+        if attempt > MAX_RETRIES:
+            raise Exception("upsert_values function failed to many times")

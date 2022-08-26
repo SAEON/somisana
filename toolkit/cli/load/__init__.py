@@ -60,8 +60,7 @@ def load(options, arguments):
     idea
     """
     with pool.connection() as client:
-        cursor = client.cursor()
-        cursor.execute(
+        cursor = client.execute(
             """select 1 where exists (select * from models where "name" = %s)""",
             (model_name,),
         )

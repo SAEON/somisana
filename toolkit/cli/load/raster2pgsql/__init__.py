@@ -42,8 +42,7 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
             )
         else:
             with pool.connection() as client:
-                cursor = client.cursor()
-                cursor.execute(
+                cursor = client.execute(
                     """select 1 where exists ( select * from public.rasters where filename = %s )""",
                     (filename,),
                 )
@@ -104,8 +103,7 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
     with open("cli/load/raster2pgsql/update-raster_xref_model.sql") as file:
         sql = file.read()
         with pool.connection(timeout=3600) as client:
-            cursor = client.cursor()
-            cursor.execute(
+            cursor = client.execute(
                 sql,
                 (
                     filename,

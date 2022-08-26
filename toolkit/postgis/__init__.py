@@ -1,5 +1,6 @@
 from psycopg_pool.pool import ConnectionPool
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME
+from multiprocessing import cpu_count
 
 pool = ConnectionPool(
     conninfo="""
@@ -11,17 +12,23 @@ pool = ConnectionPool(
         str(PG_DB), str(PG_USERNAME), str(PG_PORT), str(PG_HOST), str(PG_PASSWORD)
     ),
     open=True,
+    timeout=600,
+    num_workers=cpu_count(),
+    min_size=4,
+    max_size=20,
 )
 
 
 CREATE_SQL_PATH = "postgis/schema.sql"
 DROP_SQL_PATH = "postgis/drop-schema.sql"
 
+
 def exe_file(path):
     with open(path, "r") as file:
         sql = file.read()
-        with pool.connection(timeout = 60) as client:
+        with pool.connection(timeout=60) as client:
             client.execute(sql)
+
 
 def setup():
     print(
