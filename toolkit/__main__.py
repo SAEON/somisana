@@ -3,6 +3,7 @@ from cli.load import load as loadRaster
 from cli.download import download as downloadBoundaryData
 from optparse import OptionGroup, OptionParser
 from datetime import datetime, date
+from args.validate import ensure_valid_group
 
 VERSION = '0.0.1'
 NOW = datetime.now().strftime('%Y%m%d')
@@ -21,45 +22,22 @@ downloadCLI.add_option('--domain', help="Bounding box in 4326 projection (i.e. m
 transformCLI = OptionGroup(parser, '-t, --transform')
 parser.add_option_group(transformCLI)
 parser.add_option('--transform', '-t', action="store_true", default = False, help="Normalize model output grids)")
-transformCLI.add_option('--nc-input-path', default="./input.nc", help="Path of NetCDF input file")
+transformCLI.add_option('--nc-input-path', help="Path of NetCDF input file")
 transformCLI.add_option('--nc-output-path', default=".output.nc", help="Path of NetCDF output path")
 transformCLI.add_option('--zarr-output-path', default=".output.zarr", help="Path of Zarr output path")
-transformCLI.add_option('--grid-input-path', default="./grd.nc", help="Path of NetCDF grid input path")
+transformCLI.add_option('--grid-input-path', help="Path of NetCDF grid input path")
 
 loadLCI = OptionGroup(parser, '-l, --load')
 parser.add_option_group(loadLCI)
 parser.add_option('--load', '-l', action="store_true", default = False, help="Load NetCDF data into PostGIS")
-loadLCI.add_option('--model-name', default='', help="The name of the model data is being loaded for")
+loadLCI.add_option('--model-name', help="The name of the model data is being loaded for")
 loadLCI.add_option('--drop-db', action="store_true", default = False, help="Drop and recreate the DB. (PY_ENV == development only)")
 loadLCI.add_option('--run-date', default = NOW, help="Run date (yyyymmdd)")
-loadLCI.add_option('--model-data', default="./input.nc", help="Path of NetCDF input file")
+loadLCI.add_option('--model-data', help="Path of NetCDF input file")
 loadLCI.add_option('--reload-data', action="store_true", default = False, help="Path of NetCDF input file")
 
 options, arguments = parser.parse_args()
-
-# Ensure only one option is passed to the CLI
-seen = False
-valid = False
-
-if (options.download):
-  valid = True
-  seen = True
-
-if (options.transform):
-  if seen: valid = False
-  else:
-    valid = True
-    seen = True
-
-if (options.load):
-  if seen: valid = False
-  else:
-    valid = True
-    seen = True
-
-if not valid:
-  OptionParser.print_help(parser)
-  exit(0)
+ensure_valid_group(options, parser)
 
 if (options.download):
   downloadBoundaryData(options, arguments)

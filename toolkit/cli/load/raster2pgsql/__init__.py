@@ -4,7 +4,7 @@ from postgis import connect as connectPg
 from datetime import datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME, PY_ENV
 
-def register(config, now, nc_input_path, raster, model, reload_existing_data, run_date):
+def register(config, now, nc_input_path, raster, model, reload_data, run_date):
   print('\n->', raster, str(datetime.now() - now))
   p, filename =  os.path.split("""{0}:{1}""".format(str(nc_input_path), str(raster)))
 
@@ -28,9 +28,9 @@ def register(config, now, nc_input_path, raster, model, reload_existing_data, ru
   is very slow (unless an out-db raster solution is used in the future).
   This is only for development
   """
-  if not reload_existing_data:
+  if not reload_data:
     if not PY_ENV == 'development':
-      raise Exception('In production mode, raster data is ALWAYS re-inserted to the DB')
+      raise Exception('In production mode, raster data should ALWAYS re-inserted to the DB since the GFC initialization data is likely to be different for re-runs')
     else:
       cursor = connectPg().cursor()
       cursor.execute("""select 1 where exists ( select * from public.rasters where filename = %s )""", (filename, ))
