@@ -90,7 +90,7 @@ def load(options, arguments):
     rasters.sort()
     
     print("\n-> Loading variables", rasters, str(datetime.now() - now))
-    # for raster in rasters: raster2pgsql(config, now, model_data, raster, model_name, reload_data, run_date)
+    for raster in rasters: raster2pgsql(config, now, model_data, raster, model_name, reload_data, run_date)
     print("\nNetCDF data loaded successfully!!", str(datetime.now() - now))
 
     """
