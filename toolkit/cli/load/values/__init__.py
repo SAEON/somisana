@@ -13,7 +13,6 @@ def upsert(model, run_date, start_time, config):
         modelid = cursor.fetchall()[0][0]
 
     depth_levels = [*range(1, total_depth_levels + 1, 1)]
-    print(depth_levels)
 
     cores = cpu_count()
     print("Running on multiple cores:", cores)

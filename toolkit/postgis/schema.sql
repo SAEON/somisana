@@ -48,6 +48,7 @@ create table if not exists public.raster_xref_model (
 );
 
 create index if not exists raster_xref_model_index_modelid on public.raster_xref_model using btree (modelid);
+
 create index if not exists raster_xref_model_index_rasterid on public.raster_xref_model using btree (rasterid);
 
 create table if not exists public.coordinates (
@@ -62,6 +63,10 @@ create table if not exists public.coordinates (
   bathymetry float not null,
   constraint unique_coordinates unique (modelid, pixel)
 );
+
+create index if not exists coordinates_modelid on public.coordinates using btree (modelid);
+
+create index if not exists coordinates_pixel on public.coordinates using btree (pixel asc);
 
 
 /**
@@ -136,10 +141,15 @@ create table if not exists public.values (
 );
 
 create index if not exists values_index_modelid on public.values using btree (modelid);
+
 create index if not exists values_index_depth_level on public.values using btree (depth_level);
+
 create index if not exists values_index_time_step on public.values using btree (time_step);
+
 create index if not exists values_index_run_date on public.values using btree (run_date);
+
 create index if not exists values_index_coordinateid on public.values using btree (coordinateid);
+
 
 /**
  * FUNCTIONS
@@ -175,7 +185,9 @@ begin
     where
       filename like ('%:' || variable)
       and rxm.modelid = m
-      and rxm.run_date = rd) t;
+      and rxm.run_date = rd) t
+order by
+  t.geom asc;
 end;
 $$
 language 'plpgsql';
@@ -193,12 +205,12 @@ create function public.join_values (modelid int, rundate date, depth_level int, 
     v float
   )
   as $$
+declare
+  m int;
 begin
+  m := modelid;
   return query with depths as (
     select
-      modelid,
-      depth_level,
-      time_step,
       pixel,
       value
     from
@@ -206,9 +218,6 @@ begin
 ),
 temperatures as (
   select
-    modelid,
-    depth_level,
-    time_step,
     pixel,
     value
   from
@@ -216,9 +225,6 @@ temperatures as (
 ),
 salinity as (
   select
-    modelid,
-    depth_level,
-    time_step,
     pixel,
     value
   from
@@ -226,9 +232,6 @@ salinity as (
 ),
 u as (
   select
-    modelid,
-    depth_level,
-    time_step,
     pixel,
     value
   from
@@ -236,9 +239,6 @@ u as (
 ),
 v as (
   select
-    modelid,
-    depth_level,
-    time_step,
     pixel,
     value
   from
@@ -257,7 +257,7 @@ from
   join salinity s on s.pixel = d.pixel
   join u on u.pixel = d.pixel
   join v on v.pixel = d.pixel
-  join coordinates c on c.modelid = d.modelid
+  join coordinates c on c.modelid = m
     and c.pixel = d.pixel;
 end;
 $$
