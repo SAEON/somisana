@@ -1,7 +1,5 @@
-import requests as r
 from datetime import datetime, timedelta, time
-from cli.download.sources.gfs_functions import (
-    yyyymmdd,
+from cli.download.gfs.functions import (
     download_file,
     get_latest_available_dt,
 )
@@ -18,7 +16,7 @@ side then a slightly older initialization will be found
 """
 
 
-def gfs(run_date, hdays, fdays, domain, dirout):
+def download(run_date, hdays, fdays, domain, workdir):
     now = datetime.now()
     hdays = hdays + 0.25
     fdays = fdays + 0.25
@@ -45,13 +43,13 @@ def gfs(run_date, hdays, fdays, domain, dirout):
     # Download forcing files up to latest available date
     while start_date < latest_available_date:
         for i in range(1, 7):  # hours 1 to 6
-            download_file(start_date, i, dirout, params)
+            download_file(start_date, i, workdir, params)
         start_date = start_date + timedelta(hours=6)
 
     # Download forecast forcing files
     total_forecast_hours = int((fdays - delta_days) * 24)
     for i in range(1, total_forecast_hours + 1):
-        download_file(latest_available_date, i, dirout, params)
+        download_file(latest_available_date, i, workdir, params)
 
     print("GFS download completed (in " + str(datetime.now() - now) + " h:m:s)")
     return delta_days

@@ -1,10 +1,5 @@
-##### Matlab
-gfs/
-mercator/
-
 external-projects/croco_tools/*
-
-.output
+**/.output/
 
 # NetCDF binary files
 *.nc

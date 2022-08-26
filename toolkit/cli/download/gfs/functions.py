@@ -48,9 +48,9 @@ def exec_cmd(cmd, fileout):
         validate_download_or_remove(fileout)
 
 
-def download_file(dt, i, dirout, PARAMS):
+def download_file(dt, i, workdir, PARAMS):
     fname = create_fname(dt, i)
-    fileout = os.path.join(dirout, fname)
+    fileout = os.path.join(workdir, fname)
 
     if not (os.path.isfile(fileout)):
         url = make_url(dt, i, PARAMS)
