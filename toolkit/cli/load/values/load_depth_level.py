@@ -1,4 +1,4 @@
-from postgis import connect
+from postgis import connect, release
 from datetime import datetime
 from time import sleep
 
@@ -12,8 +12,10 @@ def load(depth_level, run_date, start_time, modelid):
       while not successful and attempt <= MAX_RETRIES:
           try:
               print('--> Refreshing values at depth level', f'{depth_level:02}', 'timestep', f'{t:03}', str(datetime.now() - start_time))
-              cursor = connect().cursor()
+              client = cursor()
+              cursor = client.cursor()
               cursor.execute("""select upsert_values (modelid => %s, rundate => %s,  depth_level => %s, time_step => %s)""", (modelid, run_date, depth_level, t))
+              release(client)
               successful = True
           except:
               print('--> ERROR on attempt', attempt, 'of', MAX_RETRIES)

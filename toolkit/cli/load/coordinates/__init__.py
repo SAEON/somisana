@@ -1,4 +1,4 @@
-from postgis import connect
+from postgis import connect, release
 
 """
 Update the coordinates table whenever a
@@ -10,5 +10,7 @@ updates
 def upsert(model):    
     with open('cli/load/coordinates/coordinates.sql', 'r') as file:
       sql = file.read()
-      cursor = connect().cursor()
+      client = connect()
+      cursor = client.cursor()
       cursor.execute(sql, (model, ))
+      release(client)

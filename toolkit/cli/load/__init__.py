@@ -1,11 +1,12 @@
 import xarray as xr
 import yaml
 from datetime import datetime
-from postgis import setup as installDb, drop as dropSchema, connect
+from postgis import release, setup as installDb, drop as dropSchema, connect
 from config import PY_ENV
 from cli.load.raster2pgsql import register as raster2pgsql
 from cli.load.coordinates import upsert as upsert_coordinates
 from cli.load.values import upsert as upsert_values
+from multiprocessing import Pool, cpu_count
 
 
 def load(options, arguments):
@@ -60,12 +61,15 @@ def load(options, arguments):
     which model the data is for - relying on file name format is not a good
     idea
     """
-    cursor = connect().cursor()
+    client = connect()
+    cursor = client.cursor()
     cursor.execute(
         """select 1 where exists (select * from models where "name" = %s)""",
         (model_name,),
     )
     model_exists = len(cursor.fetchall())
+    release(client)
+
     if not model_exists:
         raise Exception("Specified model does not exist exist - " + model_name)
     else:
@@ -88,9 +92,13 @@ def load(options, arguments):
     coords = list(netcdf.coords)
     rasters = list(set(variables + coords))
     rasters.sort()
+    
+    cores = cpu_count()
+    print('Running on multiple cores:', cores)
+    
     print("\n-> Loading variables", rasters, str(datetime.now() - now))
-    for raster in rasters:
-        raster2pgsql(config, now, model_data, raster, model_name, reload_data, run_date)
+    with Pool(processes=cores) as pool:
+        pool.starmap(raster2pgsql, list(map(lambda raster: [config, now, model_data, raster, model_name, reload_data, run_date], rasters)))
     print("\nNetCDF data loaded successfully!!", str(datetime.now() - now))
 
     """
