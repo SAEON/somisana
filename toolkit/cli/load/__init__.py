@@ -59,7 +59,7 @@ def load(options, arguments):
     which model the data is for - relying on file name format is not a good
     idea
     """
-    with pool.connection() as client:
+    with pool().connection() as client:
         cursor = client.execute(
             """select 1 where exists (select * from models where "name" = %s)""",
             (model_name,),

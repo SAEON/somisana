@@ -41,7 +41,7 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
                 "In production mode, raster data should ALWAYS re-inserted to the DB since the GFC initialization data is likely to be different for re-runs"
             )
         else:
-            with pool.connection() as client:
+            with pool().connection() as client:
                 cursor = client.execute(
                     """select 1 where exists ( select * from public.rasters where filename = %s )""",
                     (filename,),
@@ -59,7 +59,7 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
     via raster2pgsql. This query should never fail as the table should be created
     as part of the DDL specification (schema.sql)
     """
-    with pool.connection() as client:
+    with pool().connection() as client:
         client.cursor().execute(
             """delete from public.rasters where filename = %s""",
             (filename,),
@@ -102,7 +102,7 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
     # Explicitly associate individual rasters with a model
     with open("cli/load/raster2pgsql/update-raster_xref_model.sql") as file:
         sql = file.read()
-        with pool.connection(timeout=3600) as client:
+        with pool().connection(timeout=3600) as client:
             cursor = client.execute(
                 sql,
                 (

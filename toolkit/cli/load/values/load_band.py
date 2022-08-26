@@ -19,7 +19,7 @@ def load(depth_level, run_date, start_time, modelid):
                     f"{t:03}",
                     str(datetime.now() - start_time),
                 )
-                with pool.connection() as client:
+                with pool().connection() as client:
                     client.execute(
                         query="""select upsert_values (modelid => %s, rundate => %s,  depth_level => %s, time_step => %s)""",
                         params=(modelid, run_date, depth_level, t),

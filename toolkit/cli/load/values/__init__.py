@@ -8,7 +8,7 @@ def upsert(model, run_date, start_time, config):
 
     # Resolve the modelid from the name
     modelid = None
-    with pool.connection() as client:
+    with pool().connection() as client:
         cursor = client.execute("""select id from models where name = %s""", (model,))
         modelid = cursor.fetchall()[0][0]
 

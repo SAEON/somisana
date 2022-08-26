@@ -10,5 +10,5 @@ updates
 def upsert(model):    
     with open('cli/load/coordinates/coordinates.sql', 'r') as file:
       sql = file.read()
-      with pool.connection() as client:
+      with pool().connection() as client:
         client.execute(sql, (model, ))
