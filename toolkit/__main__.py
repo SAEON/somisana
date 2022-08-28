@@ -1,3 +1,4 @@
+from email.policy import default
 from cli.transform import transform as transformModelOutput
 from cli.load import load as loadRaster
 from cli.download import download as downloadBoundaryData
@@ -30,8 +31,13 @@ transformCLI.add_option('--grid-input-path', help="Path of NetCDF grid input pat
 loadLCI = OptionGroup(parser, '-l, --load')
 parser.add_option_group(loadLCI)
 parser.add_option('--load', '-l', action="store_true", default = False, help="Load NetCDF data into PostGIS")
-loadLCI.add_option('--model-name', help="The name of the model data is being loaded for")
+loadLCI.add_option('--upsert-rasters', action="store_true", default = False, help="Run the raster2pgsql script")
+loadLCI.add_option('--upsert-coordinates', action="store_true", default = False, help="Refresh the coordinates of the grid")
+loadLCI.add_option('--upsert-values', action="store_true", default = False, help="Refresh the coordinates of the grid")
+loadLCI.add_option('--depths', help="Depth level range to refresh (i.e. '1,5')")
+loadLCI.add_option('--model', help="The name of the model data is being loaded for")
 loadLCI.add_option('--drop-db', action="store_true", default = False, help="Drop and recreate the DB. (PY_ENV == development only)")
+loadLCI.add_option('--install-db', action="store_true", default = False, help="Run the idempotent schema install script")
 loadLCI.add_option('--run-date', default = NOW, help="Run date (yyyymmdd)")
 loadLCI.add_option('--model-data', help="Path of NetCDF input file")
 loadLCI.add_option('--reload-data', action="store_true", default = False, help="Path of NetCDF input file")

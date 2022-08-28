@@ -19,8 +19,8 @@ def pool():
             open=True,
             timeout=600,
             num_workers=cpu_count(),
-            min_size=4,
-            max_size=20,
+            min_size=1,
+            max_size=8,
         )
     return _pool_
 
