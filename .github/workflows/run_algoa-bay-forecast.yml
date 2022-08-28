@@ -302,16 +302,12 @@ jobs:
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:
-    needs: [normalize-output, branch-ref, croco, python, envs, workdir]
+    needs: [normalize-output, branch-ref, python, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
-      - name: Check out source code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_REF }}
       - name: Get PG_HOST secret name
         id: _PG_HOST_
         uses: ASzc/change-string-case-action@v2
@@ -365,16 +361,12 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 1 - 3
   refresh-values-depths_1_3:
-    needs: [load-postgis, branch-ref, croco, python, envs, workdir]
+    needs: [load-postgis, branch-ref, python, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
-      - name: Check out source code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_REF }}
       - name: Get PG_HOST secret name
         id: _PG_HOST_
         uses: ASzc/change-string-case-action@v2
@@ -426,16 +418,12 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 4 - 6
   refresh-values-depths_4_6:
-    needs: [load-postgis, branch-ref, croco, python, envs, workdir]
+    needs: [load-postgis, branch-ref, python, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
-      - name: Check out source code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_REF }}
       - name: Get PG_HOST secret name
         id: _PG_HOST_
         uses: ASzc/change-string-case-action@v2
@@ -487,16 +475,12 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 7 - 9
   refresh-values-depths_7_9:
-    needs: [load-postgis, branch-ref, croco, python, envs, workdir]
+    needs: [load-postgis, branch-ref, python, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
-      - name: Check out source code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_REF }}
       - name: Get PG_HOST secret name
         id: _PG_HOST_
         uses: ASzc/change-string-case-action@v2
@@ -548,16 +532,12 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 10 - 12
   refresh-values-depths_10_12:
-    needs: [load-postgis, branch-ref, croco, python, envs, workdir]
+    needs: [load-postgis, branch-ref, python, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
-      - name: Check out source code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_REF }}
       - name: Get PG_HOST secret name
         id: _PG_HOST_
         uses: ASzc/change-string-case-action@v2
@@ -609,16 +589,12 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 13 - 15
   refresh-values-depths_13_15:
-    needs: [load-postgis, branch-ref, croco, python, envs, workdir]
+    needs: [load-postgis, branch-ref, python, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
-      - name: Check out source code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_REF }}
       - name: Get PG_HOST secret name
         id: _PG_HOST_
         uses: ASzc/change-string-case-action@v2
@@ -670,16 +646,12 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 16 - 18
   refresh-values-depths_16_18:
-    needs: [load-postgis, branch-ref, croco, python, envs, workdir]
+    needs: [load-postgis, branch-ref, python, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
-      - name: Check out source code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_REF }}
       - name: Get PG_HOST secret name
         id: _PG_HOST_
         uses: ASzc/change-string-case-action@v2
@@ -731,16 +703,12 @@ jobs:
 # Refresh the values table with new data
   # Depth levels 19 - 20
   refresh-values-depths_19_20:
-    needs: [load-postgis, branch-ref, croco, python, envs, workdir]
+    needs: [load-postgis, branch-ref, python, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
-      - name: Check out source code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_REF }}
       - name: Get PG_HOST secret name
         id: _PG_HOST_
         uses: ASzc/change-string-case-action@v2
