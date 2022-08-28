@@ -1,5 +1,5 @@
 from postgis import pool
-import datetime
+from datetime import datetime
 
 """
 Update the coordinates table whenever a
