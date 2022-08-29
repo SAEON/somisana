@@ -14,13 +14,11 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
     if not config[model][raster]:
         raise Exception("No configuration for model", model, "variable", raster)
 
-    """
-    raster2pgsql -t auto value defaults to the grid size (156x106) which
-    is too large for in-db rasters. This seems to work with out-db rasters,
-    but regardless it's probably more performant to work with smaller tile
-    sizes. However, the tile sizes then need to be set explicitly for each
-    variable
-    """
+    # raster2pgsql -t auto value defaults to the grid size (156x106) which
+    # is too large for in-db rasters. This seems to work with out-db rasters,
+    # but regardless it's probably more performant to work with smaller tile
+    # sizes. However, the tile sizes then need to be set explicitly for each
+    # variable
     tileDimensions = config[model][raster]["tile_size"]
     if not tileDimensions:
         raise Exception(
@@ -29,12 +27,10 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
             "Please update this in the source code manually above",
         )
 
-    """
-    There are good reasons to reload from a file input, for example if the
-    file was recreated by rerunning the model. However in development this
-    is very slow (unless an out-db raster solution is used in the future).
-    This is only for development
-    """
+    # In development it's nice to skip this
+    # but in production, if boundary data
+    # changes then the the output would change
+    # so rasters should be reloaded
     if not reload_data:
         if not PY_ENV == "development":
             raise Exception(
@@ -52,25 +48,21 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
                     print("skipping (raster already exists in DB)")
                     return
 
-    """
-    In case this function is re-run from the same input file, first delete
-    previous input from that file (otherwise there will be duplicate raster).
-    So far as I'm aware there is no way to check uniqueness of rasters loaded
-    via raster2pgsql. This query should never fail as the table should be created
-    as part of the DDL specification (schema.sql)
-    """
+    # In case this function is re-run from the same input file, first delete
+    # previous input from that file (otherwise there will be duplicate raster).
+    # So far as I'm aware there is no way to check uniqueness of rasters loaded
+    # via raster2pgsql. This query should never fail as the table should be created
+    # as part of the DDL specification (schema.sql)
     with pool().connection() as client:
         client.cursor().execute(
             """delete from public.rasters where filename = %s""",
             (filename,),
         )
 
-    """
-    Load rasters into the DB. In the future it may be useful to have
-    out-db rasters, so the flag is left here as a stub. Note that the
-    srid is set to 0 (-s 0) as the grid is not geobound, but instead
-    integer based.
-    """
+    # Load rasters into the DB. In the future it may be useful to have
+    # out-db rasters, so the flag is left here as a stub. Note that the
+    # srid is set to 0 (-s 0) as the grid is not geobound, but instead
+    # integer based.
     out_db_flag = ""
     cmd = """
     raster2pgsql \

@@ -164,7 +164,7 @@ create function public.get_values (modelid smallint, rundate date, depth_level s
   as $$
 declare
   band_no int;
-  m int;
+  m smallint;
   rd date;
 begin
   band_no := ((time_step - 1) * 20) + depth_level;
@@ -173,7 +173,7 @@ begin
   return query
   select
     t.geom pixel,
-    t.val value
+    t.val::float4 value
   from (
     select
       r.rid,
@@ -206,7 +206,7 @@ create function public.join_values (modelid smallint, rundate date, depth_level 
   )
   as $$
 declare
-  m int;
+  m smallint;
 begin
   m := modelid;
   return query with depths as (

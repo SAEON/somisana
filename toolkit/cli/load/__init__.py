@@ -47,6 +47,10 @@ def load(options, arguments):
         if not model_data:
             raise Exception("Please specify the file input name")
 
+    if upsert_values:
+        if not depths:
+            raise Exception('Please specify depth range for this script')
+
     try:
         datetime.strptime(run_date, "%Y%m%d")
     except:
@@ -68,18 +72,21 @@ def load(options, arguments):
         model_config = yaml.load(file, yaml.Loader)["models"]
 
     if upsert_rasters:
-        netcdf = xr.open_dataset(model_data)
-        variables = list(netcdf.keys())
-        coords = list(netcdf.coords)
-        rasters = list(set(variables + coords))
-        rasters.sort()
-        for raster in rasters:
-            refresh_rasters(
-                model_config, start_time, model_data, raster, model, reload_data, run_date
-            )
+        with xr.open_dataset(model_data) as netcdf:
+            variables = list(netcdf.keys())
+            coords = list(netcdf.coords)
+            rasters = list(set(variables + coords))
+            rasters.sort()
+            for raster in rasters:
+                refresh_rasters(
+                    model_config, start_time, model_data, raster, model, reload_data, run_date
+                )
 
     if upsert_coordinates:
         refresh_coordinates(model, start_time)
 
     if upsert_values:
-        refresh_values(model, run_date, start_time, depths)
+        t_0 = None
+        with xr.open_dataset(model_data) as netcdf:
+            t_0 = netcdf.time.values[0]
+        refresh_values(model, run_date, start_time, depths, t_0)

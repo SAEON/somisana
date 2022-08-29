@@ -196,7 +196,7 @@ def transform(options, arguments):
         "lon_rho": {"dtype": "float32"},
         "lat_rho": {"dtype": "float32"},
         "depth": {"dtype": "u2", "_FillValue": 65535},
-        "time": {"dtype": "u4"},
+        "time": {"dtype": "i4"},
         "h": {"dtype": "float32"},
     }
 
