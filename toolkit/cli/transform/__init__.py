@@ -100,104 +100,104 @@ def transform(options, arguments):
     # Create new xarray dataset with selected variables
     print("-> Generating dataset", str(datetime.now() - now))
     data_out = xr.Dataset(
-        attrs=dict(
-            description="CROCO output from algoa Bay model transformed lon/lat/depth/time"
-        ),
-        data_vars=dict(
-            temperature=xr.Variable(
+        attrs={
+            "description": "CROCO output from algoa Bay model transformed lon/lat/depth/time"
+        },
+        data_vars={
+            "temperature": xr.Variable(
                 ["time", "depth", "lat", "lon"],
                 temperature,
-                dict(
-                    long_name=data.temp.long_name,
-                    units=data.temp.units,
-                    description="Temperature at grid points",
-                ),
+                {
+                    "long_name": data.temp.long_name,
+                    "units": data.temp.units,
+                    "description": "Temperature at grid points",
+                },
             ),
-            salt=xr.Variable(
+            "salt": xr.Variable(
                 ["time", "depth", "lat", "lon"],
                 salt,
-                dict(
-                    long_name=data.salt.long_name,
-                    units=data.salt.units,
-                    description="Salinity at grid points",
-                ),
+                {
+                    "long_name": data.salt.long_name,
+                    "units": data.salt.units,
+                    "description": "Salinity at grid points",
+                },
             ),
-            u=xr.Variable(
+            "u": xr.Variable(
                 ["time", "depth", "lat", "lon"],
                 u_rho,
-                dict(
-                    long_name=data.u.long_name,
-                    units=data.u.units,
-                    description="@MATT TODO at grid points",
-                ),
+                {
+                    "long_name": data.u.long_name,
+                    "units": data.u.units,
+                    "description": "@MATT TODO at grid points",
+                },
             ),
-            v=xr.Variable(
+            "v": xr.Variable(
                 ["time", "depth", "lat", "lon"],
                 v_rho,
-                dict(
-                    long_name=data.v.long_name,
-                    units=data.v.units,
-                    description="@MATT TODO at grid points",
-                ),
+                {
+                    "long_name": data.v.long_name,
+                    "units": data.v.units,
+                    "description": "@MATT TODO at grid points",
+                },
             ),
-            m_rho=xr.Variable(
+            "m_rho": xr.Variable(
                 ["time", "depth", "lat", "lon"],
                 m_rho,
-                dict(
-                    description="Depth level of grid points in meters, centred in grid cells"
-                ),
+                {
+                    "description": "Depth level of grid points in meters, centred in grid cells"
+                },
             ),
-            h=xr.Variable(
+            "h": xr.Variable(
                 ["lat", "lon"],
                 h,
-                dict(
-                    long_name=data.h.long_name,
-                    units=data.h.units,
-                    description="Bathymetry elevation at grid XY points",
-                ),
+                {
+                    "long_name": data.h.long_name,
+                    "units": data.h.units,
+                    "description": "Bathymetry elevation at grid XY points",
+                },
             ),
-        ),
-        coords=dict(
-            lon_rho=xr.Variable(
+        },
+        coords={
+            "lon_rho": xr.Variable(
                 ["lat", "lon"],
                 lon_rho,
-                dict(
-                    long_name=data.lon_rho.long_name,
-                    units=data.lon_rho.units,
-                    description="Longitude coordinate values of curvilinear grid cells",
-                ),
+                {
+                    "long_name": data.lon_rho.long_name,
+                    "units": data.lon_rho.units,
+                    "description": "Longitude coordinate values of curvilinear grid cells",
+                },
             ),
-            lat_rho=xr.Variable(
+            "lat_rho": xr.Variable(
                 ["lat", "lon"],
                 lat_rho,
-                dict(
-                    long_name=data.lat_rho.long_name,
-                    units=data.lat_rho.units,
-                    description="Latitude coordinate values of curvilinear grid cells",
-                ),
+                {
+                    "long_name": data.lat_rho.long_name,
+                    "units": data.lat_rho.units,
+                    "description": "Latitude coordinate values of curvilinear grid cells",
+                },
             ),
-            depth=xr.Variable(
-                ["depth"], s_rho, dict(description="Depth levels (grid levels)")
+            "depth": xr.Variable(
+                ["depth"], s_rho, {"description": "Depth levels (grid levels)"}
             ),
-            time=xr.Variable(
+            "time": xr.Variable(
                 ["time"],
                 time_steps,
-                dict(description="Time steps in hours - TODO improve this description"),
+                {"description": "Time steps in hours - TODO improve this description"},
             ),
-        ),
+        },
     )
 
     encoding = {
-        "temperature": {},
-        "salt": {},
-        "u": {},
-        "v": {},
-        "m_rho": {},
-        "lon_rho": {},
-        "lat_rho": {},
-        "depth": {},
-        "time": {"dtype": "i4"},
-        "h": {},
+        "temperature": {"dtype": "float32"},
+        "salt": {"dtype": "float32"},
+        "u": {"dtype": "float32"},
+        "v": {"dtype": "float32"},
+        "m_rho": {"dtype": "float32"},
+        "lon_rho": {"dtype": "float32"},
+        "lat_rho": {"dtype": "float32"},
+        "depth": {"dtype": "u2", "_FillValue": 65535},
+        "time": {"dtype": "u4"},
+        "h": {"dtype": "float32"},
     }
 
     print("-> Writing NetCDF file", str(datetime.now() - now))
@@ -212,6 +212,6 @@ def transform(options, arguments):
         encoding=encoding,
     )
 
-    subprocess.call(["chmod", "-R", "777", zarr_output_path])
+    subprocess.call(["chmod", "-R", "775", zarr_output_path])
 
     print("\nComplete! If you don't see this message there was a problem")
