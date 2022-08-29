@@ -203,7 +203,7 @@ def transform(options, arguments):
     print("-> Writing NetCDF file", str(datetime.now() - now))
     data_out.to_netcdf(nc_output_path, encoding=encoding, mode="w")
 
-    subprocess.call(["chmod", "-R", "777", nc_output_path])
+    subprocess.call(["chmod", "-R", "775", nc_output_path])
 
     print("-> Writing Zarr directory", str(datetime.now() - now))
     data_out.to_zarr(
