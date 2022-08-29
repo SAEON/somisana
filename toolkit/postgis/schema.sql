@@ -17,7 +17,7 @@ create extension if not exists address_standardizer_data_us;
 create extension if not exists postgis_tiger_geocoder;
 
 create table if not exists public.rasters (
-  rid serial not null primary key,
+  rid int primary key generated always as identity,
   rast public.raster null,
   filename text null
 );
@@ -25,7 +25,7 @@ create table if not exists public.rasters (
 create index if not exists rasters_rast_st_convexhull_idx on public.rasters using gist (ST_ConvexHull (rast));
 
 create table if not exists public.models (
-  id serial not null primary key,
+  id smallint primary key generated always as identity,
   name varchar(255) not null unique
 );
 
@@ -41,9 +41,9 @@ when not matched then
     values (s.name);
 
 create table if not exists public.raster_xref_model (
-  id serial not null primary key,
+  id int primary key generated always as identity,
   rasterid int not null unique references rasters (rid) on delete cascade,
-  modelid int not null references models (id) on delete cascade,
+  modelid smallint not null references models (id) on delete cascade,
   run_date date not null
 );
 
@@ -52,15 +52,15 @@ create index if not exists raster_xref_model_index_modelid on public.raster_xref
 create index if not exists raster_xref_model_index_rasterid on public.raster_xref_model using btree (rasterid);
 
 create table if not exists public.coordinates (
-  id serial not null primary key,
-  modelid int not null references models (id) on delete cascade,
+  id int primary key generated always as identity,
+  modelid smallint not null references models (id) on delete cascade,
   lon_rasterid int not null references rasters (rid) on delete cascade,
   lat_rasterid int not null references rasters (rid) on delete cascade,
   pixel geometry(point, 0) not null,
   coord geometry(point, 4326) not null,
-  longitude float not null,
-  latitude float not null,
-  bathymetry float not null,
+  longitude float4 not null,
+  latitude float4 not null,
+  bathymetry float4 not null,
   constraint unique_coordinates unique (modelid, pixel)
 );
 
@@ -126,29 +126,29 @@ from (
     name) t;
 
 create table if not exists public.values (
-  id serial primary key,
-  modelid int not null references public.models (id) on delete cascade,
-  depth_level int not null,
-  time_step int not null,
+  id bigint primary key generated always as identity,
+  modelid smallint not null references public.models (id) on delete cascade,
+  depth_level smallint not null,
+  time_step smallint not null,
   run_date date,
   coordinateid int not null references coordinates (id) on delete cascade,
   xyz geometry(PointZ, 4326) not null,
-  depth float,
-  temperature float,
-  salinity float,
-  u float,
-  v float
+  depth float4,
+  temperature float4,
+  salinity float4,
+  u float4,
+  v float4
 );
 
-create index if not exists values_index_modelid on public.values using btree (modelid);
+create index if not exists values_index_modelid on public.values using btree (modelid asc);
 
-create index if not exists values_index_depth_level on public.values using btree (depth_level);
+create index if not exists values_index_depth_level on public.values using btree (depth_level asc);
 
-create index if not exists values_index_time_step on public.values using btree (time_step);
+create index if not exists values_index_time_step on public.values using btree (time_step asc);
 
-create index if not exists values_index_run_date on public.values using btree (run_date);
+create index if not exists values_index_run_date on public.values using btree (run_date asc);
 
-create index if not exists values_index_coordinateid on public.values using btree (coordinateid);
+create index if not exists values_index_coordinateid on public.values using btree (coordinateid asc);
 
 
 /**
@@ -156,10 +156,10 @@ create index if not exists values_index_coordinateid on public.values using btre
  */
 drop function if exists public.get_values cascade;
 
-create function public.get_values (modelid int, rundate date, depth_level int, time_step int, variable text)
+create function public.get_values (modelid smallint, rundate date, depth_level smallint, time_step smallint, variable text)
   returns table (
     pixel geometry,
-    value float
+    value float4
   )
   as $$
 declare
@@ -194,15 +194,15 @@ language 'plpgsql';
 
 drop function if exists public.join_values cascade;
 
-create function public.join_values (modelid int, rundate date, depth_level int, time_step int)
+create function public.join_values (modelid smallint, rundate date, depth_level smallint, time_step smallint)
   returns table (
     coordinateid int,
     xyz geometry(point, 4326),
-    depth float,
-    temperature float,
-    salinity float,
-    u float,
-    v float
+    depth float4,
+    temperature float4,
+    salinity float4,
+    u float4,
+    v float4
   )
   as $$
 declare
@@ -265,7 +265,7 @@ language 'plpgsql';
 
 drop function if exists public.upsert_values cascade;
 
-create function public.upsert_values (modelid int, rundate date, depth_level int, time_step int)
+create function public.upsert_values (modelid smallint, rundate date, depth_level smallint, time_step smallint)
   returns void
   as $$
 begin
