@@ -5,7 +5,8 @@ from time import sleep
 MAX_RETRIES = 10
 
 
-def load(modelid, depth_level, run_date, start_time):
+def load(modelid, depth_level, run_date, start_time, datetimes):
+    print("TODO - datetimes")
     for time_step in range(240):
         t = time_step + 1
         attempt = 1
@@ -13,14 +14,14 @@ def load(modelid, depth_level, run_date, start_time):
         while not successful and attempt <= MAX_RETRIES:
             try:
                 print(
-                    str(datetime.now() - start_time).split('.')[0],
+                    str(datetime.now() - start_time).split(".")[0],
                     "::",
                     "Refreshing values at depth level",
                     f"{depth_level:02}",
                     "timestep",
                     f"{t:03}",
-                    'run_date',
-                    run_date
+                    "run_date",
+                    run_date,
                 )
                 with pool().connection() as client:
                     client.execute(

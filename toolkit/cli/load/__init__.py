@@ -49,7 +49,9 @@ def load(options, arguments):
 
     if upsert_values:
         if not depths:
-            raise Exception('Please specify depth range for this script')
+            raise Exception("Please specify depth range for this script")
+        if not model_data:
+            raise Exception("Please specify the file input name")
 
     try:
         datetime.strptime(run_date, "%Y%m%d")
@@ -66,27 +68,38 @@ def load(options, arguments):
             raise Exception("Specified model does not exist exist - " + model)
         else:
             print("""\n== Loading PostGIS data ({0} model) ==""".format(model))
-            print(str(datetime.now() - start_time).split('.')[0], "::", "Installing PostGIS schema")
+            print(
+                str(datetime.now() - start_time).split(".")[0],
+                "::",
+                "Installing PostGIS schema",
+            )
 
     with open("cli/load/models.yml") as file:
         model_config = yaml.load(file, yaml.Loader)["models"]
 
     if upsert_rasters:
+        rasters = None
         with xr.open_dataset(model_data) as netcdf:
             variables = list(netcdf.keys())
             coords = list(netcdf.coords)
             rasters = list(set(variables + coords))
-            rasters.sort()
-            for raster in rasters:
-                refresh_rasters(
-                    model_config, start_time, model_data, raster, model, reload_data, run_date
-                )
+        rasters.sort()
+        for raster in rasters:
+            refresh_rasters(
+                model_config,
+                start_time,
+                model_data,
+                raster,
+                model,
+                reload_data,
+                run_date,
+            )
 
     if upsert_coordinates:
         refresh_coordinates(model, start_time)
 
     if upsert_values:
-        t_0 = None
+        datetimes = None
         with xr.open_dataset(model_data) as netcdf:
-            t_0 = netcdf.time.values[0]
-        refresh_values(model, run_date, start_time, depths, t_0)
+            datetimes = netcdf.time.values
+        refresh_values(model, run_date, start_time, depths, datetimes)
