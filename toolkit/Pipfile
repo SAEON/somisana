@@ -17,6 +17,7 @@ pyyaml = "*"
 zarr = "*"
 psycopg-pool = "*"
 psycopg = "*"
+pandas = "*"
 
 [dev-packages]
 

@@ -63,6 +63,7 @@
     "psycopg",
     "putconn",
     "pydap",
+    "pydatetime",
     "pyenv",
     "pypi",
     "pyplot",

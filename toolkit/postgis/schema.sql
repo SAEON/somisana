@@ -130,6 +130,7 @@ create table if not exists public.values (
   modelid smallint not null references public.models (id) on delete cascade,
   depth_level smallint not null,
   time_step smallint not null,
+  step_timestamp timestamp without time zone not null,
   run_date date,
   coordinateid int not null references coordinates (id) on delete cascade,
   xyz geometry(PointZ, 4326) not null,
@@ -265,14 +266,14 @@ language 'plpgsql';
 
 drop function if exists public.upsert_values cascade;
 
-create function public.upsert_values (modelid smallint, rundate date, depth_level smallint, time_step smallint)
+create function public.upsert_values (modelid smallint, rundate date, depth_level smallint, time_step smallint, actual_time timestamp)
   returns void
   as $$
 begin
   merge into public.values t
   using (
     select
-      modelid, depth_level, time_step, rundate run_date, coordinateid, xyz, depth, temperature, salinity, u, v
+      modelid, depth_level, time_step, actual_time step_timestamp, rundate run_date, coordinateid, xyz, depth, temperature, salinity, u, v
     from
       join_values (modelid, rundate, depth_level, time_step)) s on s.modelid = t.modelid
     and s.depth_level = t.depth_level
@@ -280,8 +281,8 @@ begin
     and s.run_date = t.run_date
     and s.coordinateid = t.coordinateid
   when not matched then
-    insert (modelid, depth_level, time_step, run_date, coordinateid, xyz, depth, temperature, salinity, u, v)
-      values (s.modelid, s.depth_level, s.time_step, s.run_date, s.coordinateid, s.xyz, s.depth, s.temperature, s.salinity, s.u, s.v);
+    insert (modelid, depth_level, time_step, step_timestamp, run_date, coordinateid, xyz, depth, temperature, salinity, u, v)
+      values (s.modelid, s.depth_level, s.time_step, s.step_timestamp, s.run_date, s.coordinateid, s.xyz, s.depth, s.temperature, s.salinity, s.u, s.v);
 end;
 $$
 language 'plpgsql';

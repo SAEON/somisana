@@ -1,14 +1,15 @@
 from postgis import pool
 from datetime import datetime
 from time import sleep
+from pandas import Timestamp
 
 MAX_RETRIES = 10
 
 
 def load(modelid, depth_level, run_date, start_time, datetimes):
-    print("TODO - datetimes")
-    for time_step in range(240):
-        t = time_step + 1
+    for i in range(240):
+        time_step = i + 1
+        timestamp = Timestamp(datetimes[i]).to_pydatetime()
         attempt = 1
         successful = False
         while not successful and attempt <= MAX_RETRIES:
@@ -19,14 +20,21 @@ def load(modelid, depth_level, run_date, start_time, datetimes):
                     "Refreshing values at depth level",
                     f"{depth_level:02}",
                     "timestep",
-                    f"{t:03}",
+                    f"{time_step:03}",
+                    "(" + str(timestamp) + ")",
                     "run_date",
                     run_date,
                 )
                 with pool().connection() as client:
                     client.execute(
-                        query="""select upsert_values (modelid => %s, rundate => %s,  depth_level => %s, time_step => %s)""",
-                        params=(modelid, run_date, depth_level, t),
+                        query="""select upsert_values (modelid => %s, rundate => %s,  depth_level => %s, time_step => %s, actual_time => %s)""",
+                        params=(
+                            modelid,
+                            run_date,
+                            depth_level,
+                            time_step,
+                            timestamp,
+                        ),
                         prepare=False,
                     )
                     successful = True
@@ -37,7 +45,7 @@ def load(modelid, depth_level, run_date, start_time, datetimes):
                             "depth level",
                             depth_level,
                             "time step",
-                            time_step,
+                            i,
                         )
             except Exception as e:
                 print(
@@ -49,7 +57,7 @@ def load(modelid, depth_level, run_date, start_time, datetimes):
                     "depth level",
                     depth_level,
                     "time step",
-                    t,
+                    time_step,
                 )
                 attempt += 1
                 sleep(10)
