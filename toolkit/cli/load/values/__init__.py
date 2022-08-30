@@ -11,6 +11,6 @@ def upsert(model, run_date, start_time, depths, datetimes):
         cursor = client.execute("""select id from models where name = %s""", (model,))
         modelid = cursor.fetchall()[0][0]
 
-    depth_levels = [*range(int(start_depth), int(end_depth), 1)]
+    depth_levels = [*range(int(start_depth), int(end_depth) + 1, 1)]
     for depth_level in depth_levels:
         load(modelid, depth_level, run_date, start_time, datetimes)
