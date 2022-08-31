@@ -17,14 +17,16 @@ export default async ctx => {
       const query = new QueryStream(
         `with band as (
           select
-            v.id,
+            v.id::int,
             v.step_timestamp,
             round(v.depth::numeric, 0)::int2 depth,
             v.temperature,
             v.salinity,
             v.u,
             v.v,
-            c.coord xy
+            st_asgeojson(c.coord) xy,
+            c.longitude,
+            c.latitude
           from values v
           join coordinates c on c.id = v.coordinateid  
         where

@@ -50,7 +50,7 @@ export default () => {
         </Icon>
 
         <Content>Matt TODO</Content>
-        <BoxButton sx={{ height: 100 }} to={'/explore/2'} title={'Go'} />
+        <BoxButton sx={{ height: 100 }} to={'/explore/1'} title={'Go'} />
       </GridItem>
 
       <GridItem>
@@ -71,7 +71,7 @@ export default () => {
         </Icon>
 
         <Content>Matt TODO</Content>
-        <BoxButton sx={{ height: 100 }} title={'Go'} to={'/explore/1'} />
+        <BoxButton sx={{ height: 100 }} title={'Go'} to={'/explore/2'} />
       </GridItem>
     </Grid>
   )
