@@ -13,6 +13,7 @@
     "cartopy",
     "ccrs",
     "chompfile",
+    "cleanup",
     "cmake",
     "conda",
     "convexhull",

@@ -828,5 +828,5 @@ jobs:
             -e PG_DB=$PG_DB \
             ${{ needs.python.outputs.image }} \
               -l \
-                --cleanup-rasters 
+                --cleanup-rasters \
                 --model algoa-bay-forecast
