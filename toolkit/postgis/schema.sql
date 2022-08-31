@@ -70,7 +70,6 @@ create index if not exists coordinates_pixel on public.coordinates using btree (
 /**
  * VIEWS
  */
-
 drop view if exists public.metadata;
 
 create view public.metadata as
