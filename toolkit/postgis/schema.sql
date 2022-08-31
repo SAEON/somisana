@@ -54,8 +54,6 @@ create index if not exists raster_xref_model_index_rasterid on public.raster_xre
 create table if not exists public.coordinates (
   id int primary key generated always as identity,
   modelid smallint not null references models (id) on delete cascade,
-  lon_rasterid int not null references rasters (rid) on delete cascade,
-  lat_rasterid int not null references rasters (rid) on delete cascade,
   pixel geometry(point, 0) not null,
   coord geometry(point, 4326) not null,
   longitude float4 not null,
@@ -72,30 +70,6 @@ create index if not exists coordinates_pixel on public.coordinates using btree (
 /**
  * VIEWS
  */
-drop view if exists raster_grid;
-
-create view raster_grid as
-with polys as (
-  select
-    modelid,
-    st_envelope (st_collect (coord)) grid_envelope,
-    st_convexhull (st_collect (coord)) grid_convex_hull
-  from
-    coordinates c
-  group by
-    modelid,
-    lon_rasterid,
-    lat_rasterid
-)
-select
-  modelid,
-  grid_envelope::geometry(Polygon, 4326),
-  grid_convex_hull::geometry(Polygon, 4326)
-from
-  polys
-where
-  st_geometrytype (grid_envelope) = 'ST_Polygon'
-  and st_geometrytype (grid_convex_hull) = 'ST_Polygon';
 
 drop view if exists public.metadata;
 

@@ -12,11 +12,9 @@ lon as (
   select
     modelid,
     geom pixel,
-    rasterid,
     val
   from ( select distinct
       m.id modelid,
-      r.rid rasterid,
       (ST_PixelAsCentroids (rast, 1)).*
     from
       rasters r
@@ -29,11 +27,9 @@ lat as (
   select
     modelid,
     geom pixel,
-    rasterid,
     val
   from ( select distinct
       m.id modelid,
-      r.rid rasterid,
       (ST_PixelAsCentroids (rast, 1)).*
     from
       rasters r
@@ -47,11 +43,9 @@ lat as (
   select
     modelid,
     geom pixel,
-    rasterid,
     (val * -1) val
   from ( select distinct
       m.id modelid,
-      r.rid rasterid,
       (ST_PixelAsCentroids (rast, 1)).*
     from
       rasters r
@@ -63,8 +57,6 @@ lat as (
 merge into public.coordinates t using (
   select
     lon.modelid,
-    lon.rasterid lon_rasterid,
-    lat.rasterid lat_rasterid,
     lon.pixel,
     st_point (lon.val, lat.val, 4326) coord,
     lon.val longitude,
@@ -77,6 +69,6 @@ merge into public.coordinates t using (
   s.modelid = t.modelid
   and s.pixel = t.pixel
   when not matched then
-    insert (modelid, lon_rasterid, lat_rasterid, pixel, coord, longitude, latitude, bathymetry)
-      values (s.modelid, s.lon_rasterid, s.lat_rasterid, s.pixel, s.coord, s.longitude, s.latitude, s.bathymetry);
+    insert (modelid, pixel, coord, longitude, latitude, bathymetry)
+      values (s.modelid, s.pixel, s.coord, s.longitude, s.latitude, s.bathymetry);
 

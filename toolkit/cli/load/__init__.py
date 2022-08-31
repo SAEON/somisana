@@ -6,6 +6,7 @@ from config import PY_ENV
 from cli.load.raster2pgsql import register as refresh_rasters
 from cli.load.coordinates import upsert as refresh_coordinates
 from cli.load.values import upsert as refresh_values
+from cli.load.cleanup import run as run_cleanup
 
 
 def load(options, arguments):
@@ -23,8 +24,14 @@ def load(options, arguments):
     upsert_values = options.upsert_values
     depths = options.depths
     install_db = options.install_db
+    cleanup_rasters = options.cleanup_rasters
 
-    if not upsert_rasters and not upsert_coordinates and not upsert_values:
+    if (
+        not upsert_rasters
+        and not upsert_coordinates
+        and not upsert_values
+        and not cleanup_rasters
+    ):
         print("No upsert options specified! Nothing to do (please read the help)")
         exit(0)
 
@@ -103,3 +110,6 @@ def load(options, arguments):
         with xr.open_dataset(model_data) as netcdf:
             datetimes = netcdf.time.values
         refresh_values(model, run_date, start_time, depths, datetimes)
+
+    if cleanup_rasters:
+        run_cleanup(start_time, model)

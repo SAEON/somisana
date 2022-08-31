@@ -706,7 +706,7 @@ jobs:
                 --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                 --run-date ${{ env.RUN_DATE }}
 
-# Refresh the values table with new data
+  # Refresh the values table with new data
   # Depth levels 19 - 20
   refresh-values-depths_19_20:
     needs: [load-postgis, branch-ref, python, envs, workdir]
@@ -763,3 +763,70 @@ jobs:
                 --model algoa-bay-forecast \
                 --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                 --run-date ${{ env.RUN_DATE }}
+
+
+  gather-jobs:
+    needs: [
+      refresh-values-depths_1_3,
+      refresh-values-depths_4_6,
+      refresh-values-depths_7_9,
+      refresh-values-depths_10_12,
+      refresh-values-depths_13_15,
+      refresh-values-depths_16_18,
+      refresh-values-depths_19_20
+    ]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: noop
+        run: echo done
+
+
+  # Cleanup rasters
+  cleanup-rasters:
+    needs: [branch-ref, python, gather-jobs]
+    runs-on: github-runner.saeon.int
+    steps:
+      - name: Get PG_HOST secret name
+        id: _PG_HOST_
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: PG_HOST_${{ needs.branch-ref.outputs.value }}
+      - name: Get PG_PORT secret name
+        id: _PG_PORT_
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: PG_PORT_${{ needs.branch-ref.outputs.value }}
+      - name: Get PG_DB secret name
+        id: _PG_DB_
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: PG_DB_${{ needs.branch-ref.outputs.value }}
+      - name: Get PG_USERNAME secret name
+        id: _PG_USERNAME_
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
+      - name: Get PG_PASSWORD secret name
+        id: _PG_PASSWORD_
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
+      - name: Load normalized NetCDF output to PostGIS
+        env:
+          PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
+          PG_PORT: ${{ secrets[steps._PG_PORT_.outputs.uppercase] }}
+          PG_DB: ${{ secrets[steps._PG_DB_.outputs.uppercase] }}
+          PG_USERNAME: ${{ secrets[steps._PG_USERNAME_.outputs.uppercase] }}
+          PG_PASSWORD: ${{ secrets[steps._PG_PASSWORD_.outputs.uppercase] }}
+        run: >-
+          docker run \
+            --rm \
+            -e PG_HOST=$PG_HOST \
+            -e PG_PORT=$PG_PORT \
+            -e PG_USERNAME=$PG_USERNAME \
+            -e PG_PASSWORD=$PG_PASSWORD \
+            -e PG_DB=$PG_DB \
+            ${{ needs.python.outputs.image }} \
+              -l \
+                --cleanup-rasters 
+                --model algoa-bay-forecast

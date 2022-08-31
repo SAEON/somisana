@@ -1,5 +1,4 @@
 -- VIEWS
-drop view if exists public.raster_grid cascade;
 
 drop view if exists public.metadata cascade;
 
