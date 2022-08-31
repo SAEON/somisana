@@ -10,11 +10,12 @@ import { KEY, PORT } from './config/index.js'
 import globalError from './middleware/error.js'
 import restrictCors from './middleware/restrict-cors.js'
 // import openCors from './middleware/open-cors.js'
-import blacklist from './middleware/blacklist.js'
-import whitelist from './middleware/whitelist.js'
+import include from './middleware/include.js'
+import exclude from './middleware/exclude.js'
 import ssr from '../.ssr/index.js'
 import graphql from './graphql/index.js'
 import createRequestCtx from './middleware/ctx.js'
+import httpDataRoute from './http/data/index.js'
 
 const __dirname = dirname(import.meta)
 
@@ -28,20 +29,30 @@ api
   .use(koaBody())
   .use(restrictCors)
   .use(
-    whitelist(
+    include(
       koaCompress({
-        threshold: 2048,
-        flush: zlib.constants.Z_SYNC_FLUSH,
+        filter: contentType => contentType.toLowerCase() === 'application/json',
+        threshold: 1024,
+        gzip: {
+          flush: zlib.constants.Z_SYNC_FLUSH,
+          level: 4,
+        },
+        deflate: {
+          flush: zlib.constants.Z_SYNC_FLUSH,
+          level: 4,
+        },
+        br: {},
       }),
       '/http',
       '/graphql'
     )
-  ) // Only compress the /http and /graphql route responses
+  )
   .use(createRequestCtx(api))
   .use(
-    blacklist(
+    exclude(
       new KoaRouter()
-        .get('/http', async ctx => (ctx.body = 'GET home route'))
+        .get('/http', async ctx => (ctx.body = 'Welcome to the SOMISANA HTTP API'))
+        .get('/http/data', httpDataRoute)
         .get(/^.*$/, ssr)
         .routes(),
       '/graphql'

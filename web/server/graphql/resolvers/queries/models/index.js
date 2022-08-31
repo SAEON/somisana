@@ -1,4 +1,4 @@
-import { simplePool as pool } from '../../../../postgres/index.js'
+import { pool } from '../../../../postgres/index.js'
 
 export default async (self, { id = undefined }, ctx) => {
   const client = await pool.connect()

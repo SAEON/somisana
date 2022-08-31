@@ -19,6 +19,8 @@ const generator = new Generator({
     'koa-bodyparser',
     'http-errors',
     'pg',
+    'pg-query-stream',
+    'JSONStream',
     'mime',
     'cacache'
   ],

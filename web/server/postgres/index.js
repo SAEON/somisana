@@ -7,7 +7,7 @@ import {
 } from '../config/index.js'
 import createPool from './_pool.js'
 
-export const simplePool = createPool({
+export const pool = createPool({
   host,
   user,
   database,

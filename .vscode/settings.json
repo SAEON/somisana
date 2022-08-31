@@ -17,6 +17,7 @@
     "cmake",
     "conda",
     "convexhull",
+    "coordinateid",
     "croco",
     "CROCOTOOLS",
     "dirout",
