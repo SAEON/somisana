@@ -259,7 +259,10 @@ begin
     and s.coordinateid = t.coordinateid
   when not matched then
     insert (modelid, depth_level, time_step, step_timestamp, run_date, coordinateid, xyz, depth, temperature, salinity, u, v)
-      values (s.modelid, s.depth_level, s.time_step, s.step_timestamp, s.run_date, s.coordinateid, s.xyz, s.depth, s.temperature, s.salinity, s.u, s.v);
+      values (s.modelid, s.depth_level, s.time_step, s.step_timestamp, s.run_date, s.coordinateid, s.xyz, s.depth, s.temperature, s.salinity, s.u, s.v)
+      when matched then
+        update set
+          step_timestamp = s.step_timestamp, run_date = s.run_date, coordinateid = s.coordinateid, xyz = s.xyz, depth = s.depth, temperature = s.temperature, salinity = s.salinity, u = s.u, v = s.v;
 end;
 $$
 language 'plpgsql';
