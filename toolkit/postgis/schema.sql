@@ -66,6 +66,8 @@ create index if not exists coordinates_modelid on public.coordinates using btree
 
 create index if not exists coordinates_pixel on public.coordinates using btree (pixel asc);
 
+create index if not exists coordinates_coord on public.coordinates using gist (coord);
+
 
 /**
  * VIEWS
@@ -123,6 +125,8 @@ create index if not exists values_index_time_step on public.values using btree (
 create index if not exists values_index_run_date on public.values using btree (run_date asc);
 
 create index if not exists values_index_coordinateid on public.values using btree (coordinateid asc);
+
+create index if not exists values_index_step_timestamp on public.values using brin (step_timestamp);
 
 
 /**
