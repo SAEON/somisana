@@ -53,8 +53,8 @@ jobs:
             DEPLOYMENT_ENV=development
             TZ=utc
             TECHNICAL_CONTACT=zd.smith@saeon.nrf.ac.za
-            TILESERV_BASE_URL=https://maps.somisana.dvn/tiles
-            FEATURESERV_BASE_URL=https://maps.somisana.dvn/features
+            TILESERV_BASE_URL=https://maps.somisana.dvn
+            FEATURESERV_BASE_URL=https://features.somisana.dvn
             ESRI_API_KEY=${{ env.ESRI_API_KEY }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
