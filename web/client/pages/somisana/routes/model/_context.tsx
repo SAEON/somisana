@@ -1,24 +1,47 @@
-import { createContext, useEffect } from 'react'
-import { contours } from 'd3-contour'
+import { createContext, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { gql, useQuery } from '@apollo/client'
+import { Linear as Loading } from '../../../../components/loading'
 
 export const context = createContext({})
 
 export default ({ children }) => {
-  useEffect(() => {
-    ;(async () => {
-      const url = new URL(`${window.location.protocol}//${window.location.host}/http/data`)
-      url.searchParams.append('model', 'algoa-bay-forecast')
-      url.searchParams.append('time_step', '1')
-      url.searchParams.append('depth', '1')
-      url.searchParams.append('run_date', '20220831')
-      const req = await fetch(url, {
-        method: 'GET',
-      })
-      const json = await req.json()
-      console.log(json)
+  const { id } = useParams()
+  const [time_step, setTime_step] = useState(1)
 
-      console.log(contours)
-    })()
-  }, [])
-  return <context.Provider value={{}}>{children}</context.Provider>
+  const { loading, error, data } = useQuery(
+    gql`
+      query models($id: ID) {
+        models(id: $id) {
+          id
+          ... on Model {
+            _id
+            max_x
+            max_y
+            min_x
+            min_y
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        id,
+      },
+    }
+  )
+
+  if (loading) {
+    return <Loading />
+  }
+
+  if (error) {
+    throw error
+  }
+
+  return (
+    <context.Provider value={{ time_step, setTime_step, model: { ...data.models[0] } }}>
+      {children}
+    </context.Provider>
+  )
 }
