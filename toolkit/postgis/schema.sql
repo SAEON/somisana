@@ -177,7 +177,7 @@ drop function if exists public.join_values cascade;
 create function public.join_values (modelid smallint, rundate date, depth_level smallint, time_step smallint)
   returns table (
     coordinateid int,
-    xy geometry(Point, 4326),
+    xy geometry(point, 4326),
     depth float4,
     temperature float4,
     salinity float4,
@@ -261,10 +261,10 @@ begin
     and s.coordinateid = t.coordinateid
   when not matched then
     insert (modelid, depth_level, time_step, step_timestamp, run_date, coordinateid, xy, depth, temperature, salinity, u, v)
-      values (s.modelid, s.depth_level, s.time_step, s.step_timestamp, s.run_date, s.coordinateid, st_transform (s.coord, 3857), s.depth, s.temperature, s.salinity, s.u, s.v)
+      values (s.modelid, s.depth_level, s.time_step, s.step_timestamp, s.run_date, s.coordinateid, st_transform (s.xy, 3857), s.depth, s.temperature, s.salinity, s.u, s.v)
       when matched then
         update set
-          step_timestamp = s.step_timestamp, run_date = s.run_date, coordinateid = s.coordinateid, xy = st_transform (s.coord, 3857), depth = s.depth, temperature = s.temperature, salinity = s.salinity, u = s.u, v = s.v;
+          step_timestamp = s.step_timestamp, run_date = s.run_date, coordinateid = s.coordinateid, xy = st_transform (s.xy, 3857), depth = s.depth, temperature = s.temperature, salinity = s.salinity, u = s.u, v = s.v;
 end;
 $$
 language 'plpgsql';
