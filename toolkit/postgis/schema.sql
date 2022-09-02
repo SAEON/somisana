@@ -108,7 +108,7 @@ create table if not exists public.values (
   step_timestamp timestamp without time zone not null,
   run_date date,
   coordinateid int not null references coordinates (id) on delete cascade,
-  xyz geometry(PointZ, 4326) not null,
+  xy geometry(point, 4326) not null,
   depth float4,
   temperature float4,
   salinity float4,
@@ -125,6 +125,8 @@ create index if not exists values_index_time_step on public.values using btree (
 create index if not exists values_index_run_date on public.values using btree (run_date asc);
 
 create index if not exists values_index_coordinateid on public.values using btree (coordinateid asc);
+
+create index if not exists values_index_xy on public.values using gist (xy);
 
 create index if not exists values_index_step_timestamp on public.values using brin (step_timestamp);
 
@@ -175,7 +177,7 @@ drop function if exists public.join_values cascade;
 create function public.join_values (modelid smallint, rundate date, depth_level smallint, time_step smallint)
   returns table (
     coordinateid int,
-    xyz geometry(point, 4326),
+    xy geometry(Point, 4326)
     depth float4,
     temperature float4,
     salinity float4,
@@ -223,7 +225,7 @@ v as (
     public.get_values (modelid, rundate, depth_level, time_step, variable => 'v'))
 select
   c.id coordinateid,
-  st_makepoint (c.longitude, c.latitude, d.value * 35)::geometry(PointZ, 4326) xyz,
+  c.coord xy,
   d.value depth,
   t.value temperature,
   s.value salinity,
@@ -250,7 +252,7 @@ begin
   merge into public.values t
   using (
     select
-      modelid, depth_level, time_step, actual_time step_timestamp, rundate run_date, coordinateid, xyz, depth, temperature, salinity, u, v
+      modelid, depth_level, time_step, actual_time step_timestamp, rundate run_date, coordinateid, xy, depth, temperature, salinity, u, v
     from
       join_values (modelid, rundate, depth_level, time_step)) s on s.modelid = t.modelid
     and s.depth_level = t.depth_level
@@ -258,11 +260,11 @@ begin
     and s.run_date = t.run_date
     and s.coordinateid = t.coordinateid
   when not matched then
-    insert (modelid, depth_level, time_step, step_timestamp, run_date, coordinateid, xyz, depth, temperature, salinity, u, v)
-      values (s.modelid, s.depth_level, s.time_step, s.step_timestamp, s.run_date, s.coordinateid, s.xyz, s.depth, s.temperature, s.salinity, s.u, s.v)
+    insert (modelid, depth_level, time_step, step_timestamp, run_date, coordinateid, xy, depth, temperature, salinity, u, v)
+      values (s.modelid, s.depth_level, s.time_step, s.step_timestamp, s.run_date, s.coordinateid, st_transform (s.coord, 3857), s.depth, s.temperature, s.salinity, s.u, s.v)
       when matched then
         update set
-          step_timestamp = s.step_timestamp, run_date = s.run_date, coordinateid = s.coordinateid, xyz = s.xyz, depth = s.depth, temperature = s.temperature, salinity = s.salinity, u = s.u, v = s.v;
+          step_timestamp = s.step_timestamp, run_date = s.run_date, coordinateid = s.coordinateid, xy = st_transform (s.coord, 3857), depth = s.depth, temperature = s.temperature, salinity = s.salinity, u = s.u, v = s.v;
 end;
 $$
 language 'plpgsql';

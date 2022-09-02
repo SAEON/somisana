@@ -66,11 +66,14 @@ export default () => {
   useEffect(() => {
     const run_date = '2022-09-01'
     const depth_level = 20
+    const id = `values_${time_step}`
+    const previousId = `values_${time_step - 1}`
+    const nextId = `values_${time_step + 1}`
 
-    if (map.getSource(`values_${time_step}`)) {
-      map.setLayoutProperty(`values_${time_step}`, 'visibility', 'visible')
+    if (map.getSource(id)) {
+      map.setLayoutProperty(id, 'visibility', 'visible')
     } else {
-      map.addSource(`values_${time_step}`, {
+      map.addSource(id, {
         type: 'vector',
         tiles: [
           `${TILESERV_BASE_URL}/public.values/{z}/{x}/{y}.pbf?filter=${encodeURIComponent(
@@ -82,44 +85,44 @@ export default () => {
       })
 
       map.addLayer({
-        id: `values_${time_step}`,
+        id: id,
         type: 'circle',
-        source: `values_${time_step}`,
+        source: id,
         'source-layer': 'public.values',
         paint,
       })
 
       let featureClickId = null
-      map.on('mouseenter', 'values', () => {
+      map.on('mouseenter', id, () => {
         map.getCanvas().style.cursor = 'pointer'
       })
 
-      map.on('mouseleave', 'values', () => {
+      map.on('mouseleave', id, () => {
         map.getCanvas().style.cursor = ''
       })
 
-      map.on('click', 'values', ({ features }) => {
+      map.on('click', id, ({ features }) => {
         let oldId = featureClickId
         featureClickId = features[0].id
         map.setFeatureState(
-          { source: 'values', id: featureClickId, sourceLayer: 'public.values' },
+          { source: id, id: featureClickId, sourceLayer: 'public.values' },
           { click: true }
         )
         if (oldId) {
           map.setFeatureState(
-            { source: 'values', id: oldId, sourceLayer: 'public.values' },
+            { source: id, id: oldId, sourceLayer: 'public.values' },
             { click: false }
           )
         }
       })
     }
 
-    if (map.getSource(`values_${time_step - 1}`)) {
-      map.setLayoutProperty(`values_${time_step - 1}`, 'visibility', 'none')
+    if (map.getSource(previousId)) {
+      map.setLayoutProperty(previousId, 'visibility', 'none')
     }
 
-    if (map.getSource(`values_${time_step + 1}`)) {
-      map.setLayoutProperty(`values_${time_step + 1}`, 'visibility', 'none')
+    if (map.getSource(nextId)) {
+      map.setLayoutProperty(nextId, 'visibility', 'none')
     }
   }, [time_step, map])
 }
