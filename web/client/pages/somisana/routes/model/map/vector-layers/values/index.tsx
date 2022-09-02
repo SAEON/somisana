@@ -77,10 +77,10 @@ export default () => {
         type: 'vector',
         tiles: [
           `${TILESERV_BASE_URL}/public.values/{z}/{x}/{y}.pbf?filter=${encodeURIComponent(`
-            depth_level=${depth_level}
-            and time_step=${time_step}
-            and modelid=${modelid}
-            and run_date=${run_date}`)}`,
+              depth_level=${depth_level}
+              and time_step=${time_step}
+              and modelid=${modelid}
+              and run_date=${run_date}`)}`,
         ],
         url: `${TILESERV_BASE_URL}/public.values.json`,
         promoteId: 'id',
