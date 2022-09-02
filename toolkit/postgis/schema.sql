@@ -108,7 +108,7 @@ create table if not exists public.values (
   step_timestamp timestamp without time zone not null,
   run_date date,
   coordinateid int not null references coordinates (id) on delete cascade,
-  xy geometry(point, 4326) not null,
+  xy geometry(point, 3857) not null,
   depth float4,
   temperature float4,
   salinity float4,
