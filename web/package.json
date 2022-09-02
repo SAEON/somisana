@@ -46,7 +46,7 @@
     "maplibre-gl": "2.4.0",
     "mime": "^3.0.0",
     "mkdirp": "^1.0.4",
-    "mongodb": "^4.9.0",
+    "mongodb": "^4.9.1",
     "pg": "^8.8.0",
     "pg-query-stream": "^4.2.4",
     "prettier": "^2.7.1",
