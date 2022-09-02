@@ -177,7 +177,7 @@ drop function if exists public.join_values cascade;
 create function public.join_values (modelid smallint, rundate date, depth_level smallint, time_step smallint)
   returns table (
     coordinateid int,
-    xy geometry(Point, 4326)
+    xy geometry(Point, 4326),
     depth float4,
     temperature float4,
     salinity float4,
