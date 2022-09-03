@@ -36,10 +36,9 @@ lat as (
     left join raster_xref_model rxm on rxm.rasterid = r.rid
     left join m on m.id = rxm.modelid
   where
-    filename like '%%:lat_rho') lat) 
-    
-    
-,h as (
+    filename like '%%:lat_rho') lat
+),
+h as (
   select
     modelid,
     geom pixel,
@@ -52,21 +51,13 @@ lat as (
     left join raster_xref_model rxm on rxm.rasterid = r.rid
     left join m on m.id = rxm.modelid
   where
-    filename like '%%:h') h)   
-    
-merge into public.coordinates t using (
+    filename like '%%:h') h) merge into public.coordinates t using (
   select
-    lon.modelid,
-    lon.pixel,
-    st_point (lon.val, lat.val, 4326) coord,
-    lon.val longitude,
-    lat.val latitude,
-    h.val bathymetry
-  from lon
-  join lat on lat.pixel = lon.pixel and lat.modelid = lon.modelid
-  join h on h.pixel = lon.pixel and h.modelid = lon.modelid
-) s on
-  s.modelid = t.modelid
+    lon.modelid, lon.pixel, st_transform (st_point (lon.val, lat.val, 4326), 3857) coord, lon.val longitude, lat.val latitude, h.val bathymetry from lon
+  join lat on lat.pixel = lon.pixel
+    and lat.modelid = lon.modelid
+  join h on h.pixel = lon.pixel
+    and h.modelid = lon.modelid) s on s.modelid = t.modelid
   and s.pixel = t.pixel
   when not matched then
     insert (modelid, pixel, coord, longitude, latitude, bathymetry)

@@ -351,7 +351,6 @@ jobs:
             -e PG_DB=$PG_DB \
             ${{ needs.python.outputs.image }} \
               -l \
-                --install-db \
                 --upsert-rasters \
                 --upsert-coordinates \
                 --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
