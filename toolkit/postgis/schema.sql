@@ -119,6 +119,8 @@ create index if not exists values_index_modelid on public.values using btree (mo
 
 create index if not exists values_index_depth_level on public.values using btree (depth_level asc);
 
+create index if not exists values_index_depth on public.values using btree (depth asc);
+
 create index if not exists values_index_time_step on public.values using btree (time_step asc);
 
 create index if not exists values_index_run_date on public.values using btree (run_date asc);
@@ -264,9 +266,9 @@ end;
 $$
 language 'plpgsql';
 
-drop function public.somisana_model_coordinates;
+drop function if exists public.somisana_model_coordinates;
 
-create or replace function public.somisana_model_coordinates (z integer, x integer, y integer, mid integer default 1)
+create function public.somisana_model_coordinates (z integer, x integer, y integer, mid integer default 1)
   returns bytea
   as $$
 declare
@@ -298,6 +300,7 @@ mvtgeom as (
   from
     points p,
     bounds
+    where ST_Intersects(p.xy, bounds.geom_clip)
   limit 50000
 )
 select
