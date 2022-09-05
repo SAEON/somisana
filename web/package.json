@@ -21,7 +21,7 @@
     "@node-loader/import-maps": "^1.1.0",
     "@rollup/plugin-replace": "^4.0.0",
     "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.245",
+    "@swc/core": "^1.2.247",
     "@types/react": "^18.0.18",
     "apollo-server-core": "^3.10.2",
     "apollo-server-koa": "^3.10.2",
