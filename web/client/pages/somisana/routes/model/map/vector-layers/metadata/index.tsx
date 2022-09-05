@@ -1,8 +1,10 @@
 import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_context'
 import { ctx as configContext } from '../../../../../../../modules/config'
+import useTheme from '@mui/material/styles/useTheme'
 
 export default () => {
+  const theme = useTheme()
   const { TILESERV_BASE_URL } = useContext(configContext)
   const {
     map,
@@ -28,7 +30,7 @@ export default () => {
       source: 'metadata',
       'source-layer': 'public.metadata',
       paint: {
-        'line-color': 'blue',
+        'line-color': theme.palette.grey[600],
       },
     })
   }, [map])

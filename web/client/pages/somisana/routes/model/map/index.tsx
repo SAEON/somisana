@@ -2,7 +2,7 @@ import MapProvider from './_context'
 import { useContext, useState } from 'react'
 import { context as modelContext } from '../_context'
 import Div from '../../../../../components/div'
-import ValuesLayer from './vector-layers/values'
+import CoordinatesLayer from './vector-layers/coordinates'
 import MetadataLayer from './vector-layers/metadata'
 import TimeControl from './controls/time'
 
@@ -15,7 +15,7 @@ export default props => {
       {ref && (
         <MapProvider container={ref} {...props} model={model}>
           <MetadataLayer />
-          <ValuesLayer />
+          <CoordinatesLayer />
           <TimeControl />
         </MapProvider>
       )}
