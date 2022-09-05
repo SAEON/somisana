@@ -83,7 +83,7 @@ select
   min_y,
   max_y,
   st_convexhull (coords)::geometry(Polygon, 3857) convexhull,
-  st_transform (st_makeenvelope (min_x, min_y, max_x, max_y, 4326), 3857)::geometry(Polygon, 3857) envelope
+  (st_makeenvelope (min_x, min_y, max_x, max_y, 4326))::geometry(Polygon, 4326) envelope
 from (
   select
     c.modelid,
@@ -266,7 +266,7 @@ end;
 $$
 language 'plpgsql';
 
-drop function if exists public.somisana_model_coordinates;
+drop function if exists public.somisana_model_coordinates cascade;
 
 create function public.somisana_model_coordinates (z integer, x integer, y integer, mid integer default 1)
   returns bytea
@@ -300,13 +300,14 @@ mvtgeom as (
   from
     points p,
     bounds
-    where ST_Intersects(p.xy, bounds.geom_clip)
+  where
+    ST_Intersects (p.xy, bounds.geom_clip)
   limit 50000
 )
 select
   ST_AsMVT (mvtgeom, 'default', 4096, 'xy', 'id') into result
-    from
-      mvtgeom;
+from
+  mvtgeom;
   return result;
 end;
 $$

@@ -37,6 +37,9 @@ export default ({ children }) => {
           heading: -20,
           tilt: 45,
         },
+        spatialReference: {
+          wkid: 3857,
+        },
       }),
     [map]
   )
