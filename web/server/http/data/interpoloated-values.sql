@@ -32,9 +32,9 @@ bounded_values as (
     v.depth_level,
     v.selected_depth,
     case when (coalesce(v_upper.depth, 0) - v.depth) - (coalesce(v.depth, 0) - v_lower.depth) < 1 then
-      'UP'
-    else
       'DOWN'
+    else
+      'UP'
     end interp_direction,
     case when (coalesce(v_upper.depth, 0) - v.depth) - (coalesce(v.depth, 0) - v_lower.depth) < 1 then
       coalesce(v_upper.depth, 0) - v.depth
@@ -75,47 +75,28 @@ interpolated_values as (
   select
     bv.coordinateid,
     bv.depth_level,
-    bv.selected_depth depth,
+    bv.interp_direction,
+    bv.temp_upper,
+    bv.temp,
+    bv.temp_lower,
+    bv.depth_upper,
+    bv.depth,
+    bv.depth_lower,
+    bv.selected_depth interp_depth,
     bv.temp + case bv.interp_direction
     when 'UP' then
-      (coalesce(bv.temp_upper, bv.temp) - bv.temp) / abs(bv. "Δ depth")
+      case when bv. "Δ depth" = 0 then
+        0
+      else
+        (coalesce(bv.temp_upper, bv.temp) - bv.temp) / abs(bv. "Δ depth")
+      end
     when 'DOWN' then
       case when bv. "Δ depth" = 0 then
         0
       else
         (bv.temp_lower - bv.temp) / abs(bv. "Δ depth")
       end
-    end interpolated_temperature,
-    bv.salt + case bv.interp_direction
-    when 'UP' then
-      (coalesce(bv.salt_upper, bv.salt) - bv.salt) / abs(bv. "Δ depth")
-    when 'DOWN' then
-      case when bv. "Δ depth" = 0 then
-        0
-      else
-        (bv.salt_lower - bv.salt) / abs(bv. "Δ depth")
-      end
-    end interpolated_salinity,
-    bv.u + case bv.interp_direction
-    when 'UP' then
-      (coalesce(bv.u_upper, bv.u) - bv.u) / abs(bv. "Δ depth")
-    when 'DOWN' then
-      case when bv. "Δ depth" = 0 then
-        0
-      else
-        (bv.u_lower - bv.u) / abs(bv. "Δ depth")
-      end
-    end interpolated_u,
-    bv.v + case bv.interp_direction
-    when 'UP' then
-      (coalesce(bv.v_upper, bv.v) - bv.v) / abs(bv. "Δ depth")
-    when 'DOWN' then
-      case when bv. "Δ depth" = 0 then
-        0
-      else
-        (bv.v_lower - bv.v) / abs(bv. "Δ depth")
-      end
-    end interpolated_v
+    end interp_temp
   from
     bounded_values bv
   where
