@@ -26,7 +26,7 @@ jobs:
         with:
           cores: 8
           cmds: |
-            - echo \
+            - echo
                 ${{ secrets.PG_PORT_STABLE }}
-            - echo \
+            - echo
                 hi2
