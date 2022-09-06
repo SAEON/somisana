@@ -6,8 +6,11 @@ import { spawn } from 'child_process'
 try {
   let usedCores = 0
   const cores = core.getInput('cores') || cpus().length
-  const commands = core.getInput('cmds')
-  console.log( commands.split('-'))
+  
+  let commands = core.getInput('cmds').split('-').map(s => s.trim().split(/\s+/).map(s => s.trim()).flat().filter(_ => _)).filter(_ => _.length)
+
+  console.log(commands)
+  
 
   // let commands = core
   //   .getInput('cmds')
