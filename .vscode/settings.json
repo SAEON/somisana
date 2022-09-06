@@ -15,6 +15,7 @@
     "chompfile",
     "cleanup",
     "cmake",
+    "cmds",
     "conda",
     "convexhull",
     "coordinateid",
