@@ -1,6 +1,10 @@
 name: 'Run parallel commands'
 description: 'Greet someone and record the time'
 inputs:
+  cores:
+    description: Number of available cores to use
+    required: false
+    default: ''
   cmds:  # id of input
     description: 'List of commands to execute'
     required: true
