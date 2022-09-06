@@ -9,7 +9,7 @@ try {
 
   let commands = core
     .getInput('cmds')
-    .split('-')
+    .split('~')
     .map(s =>
       s
         .trim()
