@@ -24,7 +24,7 @@ jobs:
         id: parallel-cmds
         uses: ./.github/actions/parallel-cmds
         with:
-          cmds: 
-            - echo hi1
-            - echo hi2
-            - echo hi3
+          cmds: |
+            echo hi1
+            echo hi2
+            echo hi3

@@ -4,8 +4,8 @@ inputs:
   cmds:  # id of input
     description: 'List of commands to execute'
     required: true
-    default: 
-      - 'echo "No commands specified"'
+    default: |
+      'echo "No commands specified"'
 outputs:
   time: # id of output
     description: 'Time of completion'
