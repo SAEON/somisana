@@ -4,7 +4,7 @@ import github from '@actions/github'
 
 try {
   const commands = core.getInput('cmds')
-  console.log(commands)
+  console.log(typeof commands, commands)
 
   const time = new Date().toTimeString()
   core.setOutput('time', time)
