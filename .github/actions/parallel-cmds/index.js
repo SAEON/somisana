@@ -30,7 +30,7 @@ try {
         p.on('exit', c => {
           if (c === 0) {
             usedCores--
-            resolve()
+            resolve('complete')
           } else {
             reject()
           }
