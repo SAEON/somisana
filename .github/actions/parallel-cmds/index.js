@@ -1,6 +1,5 @@
 // https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action
 import core from '@actions/core'
-import github from '@actions/github'
 import { cpus } from 'os'
 import { spawn } from 'child_process'
 
@@ -43,7 +42,6 @@ try {
     }
   }
 
-  console.log(executingCommands)
   await Promise.all(executingCommands)
 
   console.log('All done!')
