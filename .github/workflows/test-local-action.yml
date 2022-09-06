@@ -26,6 +26,4 @@ jobs:
         with:
           cores: 8
           cmds: |
-            echo "${{ secrets.PG_PORT_STABLE }} >> /tmp/somisana/algoa-bay-forecast/stable/test.txt"
-            echo "${{ secrets.PG_PORT_STABLE }} >> /tmp/somisana/algoa-bay-forecast/stable/test.txt"
-            echo "${{ secrets.PG_PORT_STABLE }} >> /tmp/somisana/algoa-bay-forecast/stable/test.txt"
+            echo ${{ secrets.PG_PORT_STABLE }}
