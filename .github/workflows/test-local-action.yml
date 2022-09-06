@@ -15,11 +15,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ env.BRANCH_REF }}
-      # - name: Install node_modules for action
-      #   run: |
-      #     source ~/.bashrc
-      #     nvm use 16.14.2
-      #     npm ci --only production --prefix .github/actions/parallel-cmds/
+      - name: Install node_modules for action
+        run: |
+          source ~/.bashrc
+          nvm use 16.14.2
+          npm ci --only production --prefix .github/actions/parallel-cmds/
       - name: Hello world action step
         id: parallel-cmds
         uses: ./.github/actions/parallel-cmds
