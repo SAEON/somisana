@@ -29,4 +29,7 @@ jobs:
             ~ echo
                 ${{ secrets.PG_PORT_STABLE }}
             ~ echo
-                hi2
+                hi
+            ~ docker run
+                --rm
+                hello-world
