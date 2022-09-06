@@ -8,7 +8,7 @@ env:
 
 jobs:
   hello_world_job:
-    runs-on: runner1
+    runs-on: github-runner.saeon.int
     name: Run parallel cmds
     steps:
       - name: Checkout source code
@@ -21,20 +21,10 @@ jobs:
           nvm use 16.14.2
           npm ci --only production --prefix .github/actions/parallel-cmds/
       - name: Hello world action step
-        id: hello
+        id: parallel-cmds
         uses: ./.github/actions/parallel-cmds
         with:
-          who-to-greet: 'SOMISANA locally defined action'
-      - name: Get the output time
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 1
-          retry_wait_seconds: 1 # Wait 10 minutes and try again
-          max_attempts: 3
-          retry_on: any
-          warning_on_retry: true
-          shell: bash
-          continue_on_error: false
-          command: >- 
-            echo "The time was ${{ steps.hello.outputs.time }}" \
-              && docker --version
+          cmds: 
+            - echo hi1
+            - echo hi2
+            - echo hi3
