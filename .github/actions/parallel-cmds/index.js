@@ -38,7 +38,7 @@ try {
       executingCommands.push(promise)
       usedCores++
     } else {
-      await new Promise(res => setTimeout(res, 10000))
+      await new Promise(res => setTimeout(res, 1000))
     }
   }
 
