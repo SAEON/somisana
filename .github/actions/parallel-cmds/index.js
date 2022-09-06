@@ -6,9 +6,19 @@ import { spawn } from 'child_process'
 try {
   let usedCores = 0
   const cores = core.getInput('cores') || cpus().length
-  
-  let commands = core.getInput('cmds').split('-').map(s => s.trim().split(/\s+/).map(s => s.trim()).flat().filter(_ => _)).filter(_ => _.length)
 
+  let commands = core
+    .getInput('cmds')
+    .split('-')
+    .map(s =>
+      s
+        .trim()
+        .split(/\s+/)
+        .map(s => s.trim())
+        .flat()
+        .filter(_ => _)
+    )
+    .filter(_ => _.length)
 
   const executingCommands = []
 
