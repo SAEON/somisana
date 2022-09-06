@@ -12,7 +12,7 @@ values
       v.u,
       v.v,
       v.depth,
-      -100 selected_depth
+      -300 selected_depth
     from
     values
       v
@@ -24,27 +24,32 @@ values
 bounded_values as (
   select
     b.*,
-    row_number() over (partition by b.coordinateid order by abs("Δ depth") asc) "r#"
+    row_number() over (partition by b.coordinateid order by interpolation_distance asc) "r#"
   from (
   select
     v.id,
     v.coordinateid,
     v.depth_level,
     v.selected_depth,
-    case when (coalesce(v_upper.depth, 0) - v.depth) - (coalesce(v.depth, 0) - v_lower.depth) < 1 then
+    abs(v.depth - v.selected_depth) interpolation_distance,
+    case when v.selected_depth between v.depth and coalesce(v_upper.depth, 0) then
+      'UP'
+    when v.selected_depth between v_lower.depth and v.depth then
       'DOWN'
     else
-      'UP'
+      'UP' -- I think this will work
     end interp_direction,
-    case when (coalesce(v_upper.depth, 0) - v.depth) - (coalesce(v.depth, 0) - v_lower.depth) < 1 then
+    case when v.selected_depth between v.depth and coalesce(v_upper.depth, 0) then
       coalesce(v_upper.depth, 0) - v.depth
+    when v.selected_depth between v_lower.depth and v.depth then
+      v.depth - v_lower.depth
     else
-      v_lower.depth - v.depth
+      0
     end "Δ depth",
     coalesce(v_upper.depth, 0) depth_upper,
-    v.depth,
-    v_lower.depth depth_lower,
-    coalesce(v_upper.temp, v.temp) temp_upper,
+  v.depth,
+  v_lower.depth depth_lower,
+  coalesce(v_upper.temp, v.temp) temp_upper,
   v.temp,
   v_lower.temp temp_lower,
   coalesce(v_upper.salt, v.salt) salt_upper,
@@ -79,6 +84,7 @@ interpolated_values as (
     bv.temp_upper,
     bv.temp,
     bv.temp_lower,
+    bv. "Δ depth",
     bv.depth_upper,
     bv.depth,
     bv.depth_lower,
