@@ -9,7 +9,7 @@ env:
 jobs:
   hello_world_job:
     runs-on: runner1
-    name: A job to say hello
+    name: Run parallel cmds
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -19,10 +19,10 @@ jobs:
         run: |
           source ~/.bashrc
           nvm use 16.14.2
-          npm ci --only production --prefix .github/actions/hello-world/
+          npm ci --only production --prefix .github/actions/parallel-cmds/
       - name: Hello world action step
         id: hello
-        uses: ./.github/actions/hello-world
+        uses: ./.github/actions/parallel-cmds
         with:
           who-to-greet: 'SOMISANA locally defined action'
       - name: Get the output time
