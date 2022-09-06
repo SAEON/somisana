@@ -11,32 +11,24 @@ try {
   
   let commands = core.getInput('cmds').split('\n').map(s => s.split(' ').map(s => s.trim()).flat())
 
-  await new Promise((resolve, reject) => {
-    while (usedCores < cores && commands.length) {
-      const cmd = commands.shift()
-      console.log(cmd)
-      usedCores ++
+
+    while (commands.length > 0) {
+      if (usedCores < cores) {
+        const [cmd, ...args] = commands.shift()
+        console.info('Executing cmd', cmd, args)
+        const p = spawn(cmd, args)
+        p.on('message', msg => console.info(msg.toString()))
+        p.on('exit', c => {
+          if (c === 0) {
+            usedCores --
+          }
+        })
+        usedCores ++
+      } else {
+        await new Promise(res => setTimeout(res, 1000))
+      }
+      
     }
-
-    resolve()
-  })
-
-
-
-  // const results = await Promise.all(commands.split('\n').map(s =>  new Promise((resolve, reject) => {
-  //     const [cmd, ...args] = s.trim().split(' ').map(c => c.trim())
-  //     console.info('Executing cmd', cmd, args)
-  //     const p = spawn(cmd, args)
-  //     p.on('message', msg => console.info(msg.toString()))
-  //     p.on('exit', code => {
-  //       if (code === 0) {
-  //         resolve()
-  //       } else {
-  //         reject()
-  //       }
-  //     })
-  //   })
-  // ))
 
   console.log('All done!')
 
