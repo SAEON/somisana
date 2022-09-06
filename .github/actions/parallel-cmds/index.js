@@ -11,9 +11,9 @@ try {
   console.log('cores', cores)
 
   const results = await Promise.all(commands.split('\n').map(s =>  new Promise((resolve, reject) => {
-      const cmd = s.trim()
+      const [cmd, ...args] = s.trim().split(' ').map(c => c.trim())
       console.info('Executing cmd', cmd)
-      const p = spawn(cmd)
+      const p = spawn(cmd, args)
       p.on('message', msg => console.info(msg.toString()))
       p.on('exit', code => {
         if (code === 0) {
