@@ -26,6 +26,6 @@ jobs:
         with:
           cores: 2
           cmds: |
-            echo hi1
+            echo ${{ secrets.PG_PORT }}
             echo hi2
             echo hi3

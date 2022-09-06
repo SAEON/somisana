@@ -44,10 +44,9 @@ try {
 
   await Promise.all(executingCommands)
 
-  console.log('All done!')
-
   const time = new Date().toTimeString()
   core.setOutput('time', time)
+  console.info('All done!', time)
 } catch (error) {
   console.error(error.message)
   core.setFailed(error.message)
