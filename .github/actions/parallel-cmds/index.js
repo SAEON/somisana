@@ -11,11 +11,17 @@ try {
   
   let commands = core.getInput('cmds').split('\n').map(s => s.split(' ').map(s => s.trim()).flat())
 
-  while (usedCores < cores && commands.length) {
-    const cmd = commands.shift()
-    console.log(cmd)
-    usedCores ++
-  }
+  await new Promise((resolve, reject) => {
+    while (usedCores < cores && commands.length) {
+      const cmd = commands.shift()
+      console.log(cmd)
+      usedCores ++
+    }
+
+    resolve()
+  })
+
+
 
   // const results = await Promise.all(commands.split('\n').map(s =>  new Promise((resolve, reject) => {
   //     const [cmd, ...args] = s.trim().split(' ').map(c => c.trim())
