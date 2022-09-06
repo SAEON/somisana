@@ -6,11 +6,13 @@ import {spawn } from 'child_process'
 
 try {
   
-  const cores = core.getInput('cores') || cpus().length
-  let commands = core.getInput('cmds').split('\n').map(s => s.split(' ').map(s => s.trim()).flat())
   let usedCores = 0
+  const cores = core.getInput('cores') || cpus().length
+  
+  let commands = core.getInput('cmds').split('\n').map(s => s.split(' ').map(s => s.trim()).flat())
+
   while (usedCores < cores && commands.length) {
-    cmd = commands.shift()
+    const cmd = commands.shift()
     console.log(cmd)
     usedCores ++
   }
