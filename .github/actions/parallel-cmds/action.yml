@@ -1,5 +1,5 @@
-name: 'Run parallel commands'
-description: 'Greet someone and record the time'
+name: '@saeon/parallel-cmds'
+description: 'Run cmds in parallel'
 inputs:
   cores:
     description: Number of available cores to use

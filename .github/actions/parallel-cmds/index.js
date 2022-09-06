@@ -7,7 +7,7 @@ try {
   let usedCores = 0
   const cores = core.getInput('cores') || cpus().length
   const commands = core.getInput('cmds')
-  console.log(commands, commands.split('-'))
+  console.log( commands.split('-'))
 
   // let commands = core
   //   .getInput('cmds')
