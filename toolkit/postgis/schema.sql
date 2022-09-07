@@ -245,12 +245,11 @@ begin
     select
       modelid, depth_level, time_step, run_id runid, coordinateid, depth, temperature, salinity, u, v
     from
-      somisana_join_values (modelid, run_id, depth_level, time_step)) s on
-        s.modelid = t.modelid
-        and s.runid = t.runid
-        and s.depth_level = t.depth_level
-        and s.time_step = t.time_step
-        and s.coordinateid = t.coordinateid
+      somisana_join_values (modelid, run_id, depth_level, time_step)) s on s.modelid = t.modelid
+    and s.runid = t.runid
+    and s.depth_level = t.depth_level
+    and s.time_step = t.time_step
+    and s.coordinateid = t.coordinateid
   when not matched then
     insert (modelid, depth_level, time_step, runid, coordinateid, depth, temperature, salinity, u, v)
       values (s.modelid, s.depth_level, s.time_step, s.runid, s.coordinateid, s.depth, s.temperature, s.salinity, s.u, s.v)
@@ -276,27 +275,27 @@ begin
 points as (
   select distinct
     c.id,
-    coord xy
+    coord xy,
+    ( select geom_clip from bounds ) geom_clip
   from
     coordinates c
     join
   values
     v on v.coordinateid = c.id
       and v.modelid = mid
-      and v.depth_level = 20
-      and v.time_step = 1
   where
     c.modelid = mid
+    and v.depth_level = 20
+    and v.time_step = 1
 ),
 mvtgeom as (
   select
     id,
-    ST_AsMVTGeom (p.xy, bounds.geom_clip, 4096, 256, true) as xy
+    ST_AsMVTGeom (p.xy, geom_clip, 4096, 256, true) as xy
   from
-    points p,
-    bounds
+    points p
   where
-    ST_Intersects (p.xy, bounds.geom_clip)
+    ST_Intersects (p.xy, geom_clip)
   limit 50000
 )
 select
