@@ -98,7 +98,7 @@ jobs:
   # In the context of a testing environment, where updates to these
   # scripts is part of the development workflow, the toolkit needs
   # to be compiled on every run
-  python:
+  toolkit:
     needs: [envs]
     runs-on: ubuntu-latest
     outputs:
@@ -176,7 +176,7 @@ jobs:
   # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
   # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
   boundary-data:
-    needs: [python, workdir, envs]
+    needs: [toolkit, workdir, envs]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
@@ -203,7 +203,7 @@ jobs:
               -v $WORKDIR/:/tmp/somisana/current \
               -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-              ${{ needs.python.outputs.image }} \
+              ${{ needs.toolkit.outputs.image }} \
                 -d \
                   --workdir /tmp/somisana/current/forcing-inputs \
                   --matlab-env /tmp/somisana/current/.env \
@@ -277,7 +277,7 @@ jobs:
   # Updates CROCO output vars to be centred
   # and work out depth levels in meters
   normalize-output:
-    needs: [branch-ref, croco, python, envs, workdir]
+    needs: [branch-ref, croco, toolkit, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
@@ -293,7 +293,7 @@ jobs:
             --rm \
             -v $WORKDIR:/tmp/somisana/current \
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/tmp/somisana/current/croco/forcing/grd.nc \
-            ${{ needs.python.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }} \
               -t \
                 --grid-input-path /tmp/somisana/current/croco/forcing/grd.nc \
                 --nc-input-path /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
@@ -302,7 +302,7 @@ jobs:
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:
-    needs: [normalize-output, branch-ref, python, envs, workdir]
+    needs: [normalize-output, branch-ref, toolkit, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
@@ -349,7 +349,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.python.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }} \
               -l \
                 --upsert-rasters \
                 --upsert-coordinates \
@@ -361,7 +361,7 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 1 - 3
   refresh-values-depths_1_3:
-    needs: [load-postgis, branch-ref, python, envs, workdir]
+    needs: [load-postgis, branch-ref, toolkit, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
@@ -408,7 +408,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.python.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }} \
               -l \
                 --upsert-values \
                 --depths 1,3 \
@@ -419,7 +419,7 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 4 - 6
   refresh-values-depths_4_6:
-    needs: [load-postgis, branch-ref, python, envs, workdir]
+    needs: [load-postgis, branch-ref, toolkit, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
@@ -466,7 +466,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.python.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }} \
               -l \
                 --upsert-values \
                 --depths 4,6 \
@@ -477,7 +477,7 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 7 - 9
   refresh-values-depths_7_9:
-    needs: [load-postgis, branch-ref, python, envs, workdir]
+    needs: [load-postgis, branch-ref, toolkit, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
@@ -524,7 +524,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.python.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }} \
               -l \
                 --upsert-values \
                 --depths 7,9 \
@@ -535,7 +535,7 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 10 - 12
   refresh-values-depths_10_12:
-    needs: [load-postgis, branch-ref, python, envs, workdir]
+    needs: [load-postgis, branch-ref, toolkit, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
@@ -582,7 +582,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.python.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }} \
               -l \
                 --upsert-values \
                 --depths 10,12 \
@@ -593,7 +593,7 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 13 - 15
   refresh-values-depths_13_15:
-    needs: [load-postgis, branch-ref, python, envs, workdir]
+    needs: [load-postgis, branch-ref, toolkit, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
@@ -640,7 +640,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.python.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }} \
               -l \
                 --upsert-values \
                 --depths 13,15 \
@@ -651,7 +651,7 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 16 - 18
   refresh-values-depths_16_18:
-    needs: [load-postgis, branch-ref, python, envs, workdir]
+    needs: [load-postgis, branch-ref, toolkit, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
@@ -698,7 +698,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.python.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }} \
               -l \
                 --upsert-values \
                 --depths 16,18 \
@@ -709,7 +709,7 @@ jobs:
   # Refresh the values table with new data
   # Depth levels 19 - 20
   refresh-values-depths_19_20:
-    needs: [load-postgis, branch-ref, python, envs, workdir]
+    needs: [load-postgis, branch-ref, toolkit, envs, workdir]
     runs-on: github-runner.saeon.int
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
@@ -756,7 +756,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.python.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }} \
               -l \
                 --upsert-values \
                 --depths 19,20 \
@@ -783,7 +783,7 @@ jobs:
 
   # Cleanup rasters
   cleanup-rasters:
-    needs: [branch-ref, python, gather-jobs]
+    needs: [branch-ref, toolkit, gather-jobs]
     runs-on: github-runner.saeon.int
     steps:
       - name: Get PG_HOST secret name
@@ -826,7 +826,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.python.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }} \
               -l \
                 --cleanup-rasters \
                 --model algoa-bay-forecast
