@@ -20,7 +20,6 @@ values
       runid = 1
       and time_step = 1
       and modelid = 1
-      
 ),
 bounded_values as (
   select
@@ -80,7 +79,6 @@ and selected_depth between b.depth_lower and b.depth_upper
 interpolated_values as (
   select
     bv.coordinateid,
-    bv.selected_depth,
     -- temperature
     bv.temp + case bv. "Δ depth"
     when 0 then
@@ -135,6 +133,11 @@ interpolated_values as (
     "r#" = 1
 )
 select
-  *
+  c.coord xy,
+  v.temperature,
+  v.salinity,
+  v.u,
+  v.v
 from
-  interpolated_values
+  interpolated_values v
+  join coordinates c on c.id = v.coordinateid
