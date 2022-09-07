@@ -17,9 +17,10 @@ values
     values
       v
     where
-      run_date = '20220903'
-      and modelid = 1
+      runid = 1
       and time_step = 1
+      and modelid = 1
+      
 ),
 bounded_values as (
   select
@@ -79,30 +80,55 @@ and selected_depth between b.depth_lower and b.depth_upper
 interpolated_values as (
   select
     bv.coordinateid,
-    bv.depth_level,
-    bv.interp_direction,
-    bv.temp_upper,
-    bv.temp,
-    bv.temp_lower,
-    bv. "Δ depth",
-    bv.depth_upper,
-    bv.depth,
-    bv.depth_lower,
-    bv.selected_depth interp_depth,
-    bv.temp + case bv.interp_direction
-    when 'UP' then
-      case when bv. "Δ depth" = 0 then
-        0
-      else
+    bv.selected_depth,
+    -- temperature
+    bv.temp + case bv. "Δ depth"
+    when 0 then
+      0
+    else
+      case bv.interp_direction
+      when 'UP' then
         (coalesce(bv.temp_upper, bv.temp) - bv.temp) / abs(bv. "Δ depth")
-      end
-    when 'DOWN' then
-      case when bv. "Δ depth" = 0 then
-        0
-      else
+      when 'DOWN' then
         (bv.temp_lower - bv.temp) / abs(bv. "Δ depth")
       end
-    end interp_temp
+    end temperature,
+    -- salinity
+    bv.salt + case bv. "Δ depth"
+    when 0 then
+      0
+    else
+      case bv.interp_direction
+      when 'UP' then
+        (coalesce(bv.salt_upper, bv.salt) - bv.salt) / abs(bv. "Δ depth")
+      when 'DOWN' then
+        (bv.salt_lower - bv.salt) / abs(bv. "Δ depth")
+      end
+    end salinity,
+    -- u
+    bv.u + case bv. "Δ depth"
+    when 0 then
+      0
+    else
+      case bv.interp_direction
+      when 'UP' then
+        (coalesce(bv.u_upper, bv.u) - bv.u) / abs(bv. "Δ depth")
+      when 'DOWN' then
+        (bv.u_lower - bv.u) / abs(bv. "Δ depth")
+      end
+    end u,
+    -- v
+    bv.v + case bv. "Δ depth"
+    when 0 then
+      0
+    else
+      case bv.interp_direction
+      when 'UP' then
+        (coalesce(bv.v_upper, bv.v) - bv.v) / abs(bv. "Δ depth")
+      when 'DOWN' then
+        (bv.v_lower - bv.v) / abs(bv. "Δ depth")
+      end
+    end v
   from
     bounded_values bv
   where

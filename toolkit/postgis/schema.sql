@@ -1,5 +1,6 @@
 ;
 
+--create extension if not exists pg_trgm;
 create extension if not exists postgis;
 
 create extension if not exists postgis_raster;
@@ -54,7 +55,7 @@ create table if not exists public.raster_xref_model (
   runid smallint not null references model_runs (id) on delete cascade
 );
 
-create index if not exists raster_xref_model_index_modelid on public.raster_xref_model using btree (modelid);
+create index if not exists raster_xref_model_index on public.raster_xref_model using btree (rasterid, modelid, runid);
 
 create index if not exists raster_xref_model_index_rasterid on public.raster_xref_model using btree (rasterid);
 
@@ -71,9 +72,9 @@ create table if not exists public.coordinates (
 
 create index if not exists coordinates_modelid on public.coordinates using btree (modelid);
 
-create index if not exists coordinates_pixel on public.coordinates using gist (pixel);
-
 create index if not exists coordinates_coord on public.coordinates using gist (coord);
+
+create index if not exists coordinates_pixel on public.coordinates using gist (pixel);
 
 create table if not exists public.values (
   id bigint primary key generated always as identity,
@@ -89,7 +90,7 @@ create table if not exists public.values (
   v decimal(5, 4)
 );
 
-create index if not exists values_composite_key on public.values using brin (modelid, runid, depth_level, time_step, coordinateid, depth);
+create index if not exists values_merge_columns on public.values using btree (runid asc, time_step asc, depth_level, coordinateid asc, modelid asc);
 
 
 /**
@@ -127,9 +128,9 @@ from (
 /**
  * FUNCTIONS
  */
-drop function if exists public.somisana_get_values cascade;
+drop function if exists public.somisana_get_pixel_values cascade;
 
-create function public.somisana_get_values (modelid smallint, runid smallint, depth_level smallint, time_step smallint, variable text)
+create function public.somisana_get_pixel_values (modelid smallint, runid smallint, depth_level smallint, time_step smallint, variable text)
   returns table (
     pixel geometry,
     value numeric
@@ -155,12 +156,10 @@ begin
     from
       rasters r
       join raster_xref_model rxm on rxm.rasterid = r.rid
+        and rxm.modelid = m
+        and rxm.runid = rd
     where
-      filename like ('%:' || variable)
-      and rxm.modelid = m
-      and rxm.runid = rd) t
-order by
-  t.geom asc;
+      filename like ('%:' || variable)) t;
 end;
 $$
 language 'plpgsql';
@@ -186,35 +185,35 @@ begin
       pixel,
       value
     from
-      public.somisana_get_values (modelid, runid, depth_level, time_step, variable => 'm_rho')
+      public.somisana_get_pixel_values (modelid, runid, depth_level, time_step, variable => 'm_rho')
 ),
 temperatures as (
   select
     pixel,
     value
   from
-    public.somisana_get_values (modelid, runid, depth_level, time_step, variable => 'temperature')
+    public.somisana_get_pixel_values (modelid, runid, depth_level, time_step, variable => 'temperature')
 ),
 salinity as (
   select
     pixel,
     value
   from
-    public.somisana_get_values (modelid, runid, depth_level, time_step, variable => 'salt')
+    public.somisana_get_pixel_values (modelid, runid, depth_level, time_step, variable => 'salt')
 ),
 u as (
   select
     pixel,
     value
   from
-    public.somisana_get_values (modelid, runid, depth_level, time_step, variable => 'u')
+    public.somisana_get_pixel_values (modelid, runid, depth_level, time_step, variable => 'u')
 ),
 v as (
   select
     pixel,
     value
   from
-    public.somisana_get_values (modelid, runid, depth_level, time_step, variable => 'v'))
+    public.somisana_get_pixel_values (modelid, runid, depth_level, time_step, variable => 'v'))
 select
   c.id coordinateid,
   d.value depth,
@@ -245,11 +244,11 @@ begin
     select
       modelid, depth_level, time_step, run_id runid, coordinateid, depth, temperature, salinity, u, v
     from
-      somisana_join_values (modelid, run_id, depth_level, time_step)) s on s.modelid = t.modelid
-    and s.runid = t.runid
-    and s.depth_level = t.depth_level
+      somisana_join_values (modelid, run_id, depth_level, time_step)) s on s.runid = t.runid
     and s.time_step = t.time_step
+    and s.depth_level = t.depth_level
     and s.coordinateid = t.coordinateid
+    and s.modelid = t.modelid
   when not matched then
     insert (modelid, depth_level, time_step, runid, coordinateid, depth, temperature, salinity, u, v)
       values (s.modelid, s.depth_level, s.time_step, s.runid, s.coordinateid, s.depth, s.temperature, s.salinity, s.u, s.v)
@@ -276,24 +275,28 @@ points as (
   select distinct
     c.id,
     coord xy,
-    ( select geom_clip from bounds ) geom_clip
-  from
-    coordinates c
-    join
-  values
-    v on v.coordinateid = c.id
-      and v.modelid = mid
-  where
-    c.modelid = mid
-    and v.depth_level = 20
-    and v.time_step = 1
+    (
+      select
+        geom_clip
+      from
+        bounds) geom_clip
+    from
+      coordinates c
+      join
+    values
+      v on v.coordinateid = c.id
+        and v.modelid = mid
+    where
+      c.modelid = mid
+      and v.depth_level = 20
+      and v.time_step = 1
 ),
 mvtgeom as (
   select
     id,
     ST_AsMVTGeom (p.xy, geom_clip, 4096, 256, true) as xy
-  from
-    points p
+from
+  points p
   where
     ST_Intersects (p.xy, geom_clip)
   limit 50000
