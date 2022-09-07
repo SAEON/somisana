@@ -32,7 +32,7 @@ create table if not exists public.models (
 
 create table if not exists public.model_runs (
   id smallint primary key generated always as identity,
-  run_date date unique not null
+  run_date date not null unique
 );
 
 merge into public.models t
@@ -50,12 +50,9 @@ create table if not exists public.raster_xref_model (
   id int primary key generated always as identity,
   rasterid int not null unique references rasters (rid) on delete cascade,
   modelid smallint not null references models (id) on delete cascade,
-  runid smallint not null references model_runs (id) on delete cascade
+  runid smallint not null references model_runs (id) on delete cascade,
+  constraint unique_rasters_per_model unique (rasterid, modelid, runid)
 );
-
-create index if not exists raster_xref_model_index on public.raster_xref_model using btree (rasterid, modelid, runid);
-
-create index if not exists raster_xref_model_index_rasterid on public.raster_xref_model using btree (rasterid);
 
 create table if not exists public.coordinates (
   id int primary key generated always as identity,
