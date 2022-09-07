@@ -35,8 +35,6 @@ create table if not exists public.model_runs (
   run_date date unique not null
 );
 
-create index if not exists model_runs_date on public.model_runs using btree (run_date asc);
-
 merge into public.models t
 using (
   select
@@ -87,10 +85,9 @@ create table if not exists public.values (
   temperature decimal(4, 2),
   salinity decimal(6, 4),
   u decimal(5, 4),
-  v decimal(5, 4)
+  v decimal(5, 4),
+  constraint values_unique_cols unique (runid, time_step, depth_level, coordinateid, modelid)
 );
-
-create index if not exists values_merge_columns on public.values using btree (runid asc, time_step asc, depth_level, coordinateid asc, modelid asc);
 
 
 /**
