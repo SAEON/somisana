@@ -16,6 +16,5 @@ run = '''
   doctoc web/*.md
   doctoc models/**/*.md
   doctoc models/**/**/*.md
-  doctoc models/**/**/**/*.md
   doctoc docker/**/*.md
 '''
