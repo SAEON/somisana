@@ -29,6 +29,13 @@ create table if not exists public.models (
   name varchar(255) not null unique
 );
 
+create table if not exists public.model_runs (
+  id smallint primary key generated always as identity,
+  run_date date unique not null
+);
+
+create index if not exists model_runs_date on public.model_runs using btree (run_date asc);
+
 merge into public.models t
 using (
   select
@@ -44,7 +51,7 @@ create table if not exists public.raster_xref_model (
   id int primary key generated always as identity,
   rasterid int not null unique references rasters (rid) on delete cascade,
   modelid smallint not null references models (id) on delete cascade,
-  run_date date not null
+  runid smallint not null references model_runs (id) on delete cascade
 );
 
 create index if not exists raster_xref_model_index_modelid on public.raster_xref_model using btree (modelid);
@@ -56,9 +63,9 @@ create table if not exists public.coordinates (
   modelid smallint not null references models (id) on delete cascade,
   pixel geometry(point, 0) not null,
   coord geometry(point, 3857) not null,
-  longitude float4 not null,
-  latitude float4 not null,
-  bathymetry float4 not null,
+  longitude float not null,
+  latitude float not null,
+  bathymetry decimal(7, 2) not null,
   constraint unique_coordinates unique (modelid, pixel)
 );
 
@@ -67,6 +74,22 @@ create index if not exists coordinates_modelid on public.coordinates using btree
 create index if not exists coordinates_pixel on public.coordinates using gist (pixel);
 
 create index if not exists coordinates_coord on public.coordinates using gist (coord);
+
+create table if not exists public.values (
+  id bigint primary key generated always as identity,
+  modelid smallint not null references public.models (id) on delete cascade,
+  runid smallint not null references public.model_runs (id) on delete cascade,
+  depth_level smallint not null,
+  time_step smallint not null,
+  coordinateid int not null references public.coordinates (id) on delete cascade,
+  depth decimal(7, 2),
+  temperature decimal(4, 2),
+  salinity decimal(6, 4),
+  u decimal(5, 4),
+  v decimal(5, 4)
+);
+
+create index if not exists values_composite_key on public.values using brin (modelid, runid, depth_level, time_step, coordinateid, depth);
 
 
 /**
@@ -100,59 +123,30 @@ from (
     modelid,
     name) t;
 
-create table if not exists public.values (
-  id bigint primary key generated always as identity,
-  modelid smallint not null references public.models (id) on delete cascade,
-  depth_level smallint not null,
-  time_step smallint not null,
-  step_timestamp timestamp without time zone not null,
-  run_date date,
-  coordinateid int not null references coordinates (id) on delete cascade,
-  depth float4,
-  temperature float4,
-  salinity float4,
-  u float4,
-  v float4
-);
-
-create index if not exists values_index_modelid on public.values using btree (modelid asc);
-
-create index if not exists values_index_depth_level on public.values using btree (depth_level asc);
-
-create index if not exists values_index_depth on public.values using btree (depth asc);
-
-create index if not exists values_index_time_step on public.values using btree (time_step asc);
-
-create index if not exists values_index_run_date on public.values using btree (run_date asc);
-
-create index if not exists values_index_coordinateid on public.values using btree (coordinateid asc);
-
-create index if not exists values_index_step_timestamp on public.values using brin (step_timestamp);
-
 
 /**
  * FUNCTIONS
  */
-drop function if exists public.get_values cascade;
+drop function if exists public.somisana_get_values cascade;
 
-create function public.get_values (modelid smallint, rundate date, depth_level smallint, time_step smallint, variable text)
+create function public.somisana_get_values (modelid smallint, runid smallint, depth_level smallint, time_step smallint, variable text)
   returns table (
     pixel geometry,
-    value float4
+    value numeric
   )
   as $$
 declare
   band_no int;
   m smallint;
-  rd date;
+  rd smallint;
 begin
   band_no := ((time_step - 1) * 20) + depth_level;
   m := modelid;
-  rd := rundate;
+  rd := runid;
   return query
   select
     t.geom pixel,
-    t.val::float4 value
+    t.val::numeric value
   from (
     select
       r.rid,
@@ -164,23 +158,23 @@ begin
     where
       filename like ('%:' || variable)
       and rxm.modelid = m
-      and rxm.run_date = rd) t
+      and rxm.runid = rd) t
 order by
   t.geom asc;
 end;
 $$
 language 'plpgsql';
 
-drop function if exists public.join_values cascade;
+drop function if exists public.somisana_join_values cascade;
 
-create function public.join_values (modelid smallint, rundate date, depth_level smallint, time_step smallint)
+create function public.somisana_join_values (modelid smallint, runid smallint, depth_level smallint, time_step smallint)
   returns table (
     coordinateid int,
-    depth float4,
-    temperature float4,
-    salinity float4,
-    u float4,
-    v float4
+    depth decimal(7, 2),
+    temperature decimal(4, 2),
+    salinity decimal(6, 4),
+    u decimal(5, 4),
+    v decimal(5, 4)
   )
   as $$
 declare
@@ -192,35 +186,35 @@ begin
       pixel,
       value
     from
-      public.get_values (modelid, rundate, depth_level, time_step, variable => 'm_rho')
+      public.somisana_get_values (modelid, runid, depth_level, time_step, variable => 'm_rho')
 ),
 temperatures as (
   select
     pixel,
     value
   from
-    public.get_values (modelid, rundate, depth_level, time_step, variable => 'temperature')
+    public.somisana_get_values (modelid, runid, depth_level, time_step, variable => 'temperature')
 ),
 salinity as (
   select
     pixel,
     value
   from
-    public.get_values (modelid, rundate, depth_level, time_step, variable => 'salt')
+    public.somisana_get_values (modelid, runid, depth_level, time_step, variable => 'salt')
 ),
 u as (
   select
     pixel,
     value
   from
-    public.get_values (modelid, rundate, depth_level, time_step, variable => 'u')
+    public.somisana_get_values (modelid, runid, depth_level, time_step, variable => 'u')
 ),
 v as (
   select
     pixel,
     value
   from
-    public.get_values (modelid, rundate, depth_level, time_step, variable => 'v'))
+    public.somisana_get_values (modelid, runid, depth_level, time_step, variable => 'v'))
 select
   c.id coordinateid,
   d.value depth,
@@ -240,28 +234,29 @@ end;
 $$
 language 'plpgsql';
 
-drop function if exists public.upsert_values cascade;
+drop function if exists public.somisana_upsert_values cascade;
 
-create function public.upsert_values (modelid smallint, rundate date, depth_level smallint, time_step smallint, actual_time timestamp)
+create function public.somisana_upsert_values (modelid smallint, run_id smallint, depth_level smallint, time_step smallint)
   returns void
   as $$
 begin
   merge into public.values t
   using (
     select
-      modelid, depth_level, time_step, actual_time step_timestamp, rundate run_date, coordinateid, depth, temperature, salinity, u, v
+      modelid, depth_level, time_step, run_id runid, coordinateid, depth, temperature, salinity, u, v
     from
-      join_values (modelid, rundate, depth_level, time_step)) s on s.modelid = t.modelid
-    and s.depth_level = t.depth_level
-    and s.time_step = t.time_step
-    and s.run_date = t.run_date
-    and s.coordinateid = t.coordinateid
+      somisana_join_values (modelid, run_id, depth_level, time_step)) s on
+        s.modelid = t.modelid
+        and s.runid = t.runid
+        and s.depth_level = t.depth_level
+        and s.time_step = t.time_step
+        and s.coordinateid = t.coordinateid
   when not matched then
-    insert (modelid, depth_level, time_step, step_timestamp, run_date, coordinateid, depth, temperature, salinity, u, v)
-      values (s.modelid, s.depth_level, s.time_step, s.step_timestamp, s.run_date, s.coordinateid, s.depth, s.temperature, s.salinity, s.u, s.v)
+    insert (modelid, depth_level, time_step, runid, coordinateid, depth, temperature, salinity, u, v)
+      values (s.modelid, s.depth_level, s.time_step, s.runid, s.coordinateid, s.depth, s.temperature, s.salinity, s.u, s.v)
       when matched then
         update set
-          step_timestamp = s.step_timestamp, run_date = s.run_date, coordinateid = s.coordinateid, depth = s.depth, temperature = s.temperature, salinity = s.salinity, u = s.u, v = s.v;
+          runid = s.runid, coordinateid = s.coordinateid, depth = s.depth, temperature = s.temperature, salinity = s.salinity, u = s.u, v = s.v;
 end;
 $$
 language 'plpgsql';

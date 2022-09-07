@@ -1,12 +1,13 @@
 from postgis import pool
 from datetime import datetime
 from time import sleep
+from config import PY_ENV
 from pandas import Timestamp
 
-MAX_RETRIES = 10
+MAX_RETRIES = 1 if PY_ENV == 'development' else 5
 
 
-def load(modelid, depth_level, run_date, start_time, datetimes):
+def load(modelid, depth_level, runid, start_time, datetimes):
     for i in range(240):
         time_step = i + 1
         timestamp = Timestamp(datetimes[i]).to_pydatetime()
@@ -22,18 +23,17 @@ def load(modelid, depth_level, run_date, start_time, datetimes):
                     "timestep",
                     f"{time_step:03}",
                     "(" + str(timestamp) + ")",
-                    "run_date",
-                    run_date,
+                    "runid",
+                    runid,
                 )
                 with pool().connection() as client:
                     client.execute(
-                        query="""select upsert_values (modelid => %s, rundate => %s,  depth_level => %s, time_step => %s, actual_time => %s)""",
+                        query="""select somisana_upsert_values (modelid => %s, run_id => %s,  depth_level => %s, time_step => %s)""",
                         params=(
                             modelid,
-                            run_date,
+                            runid,
                             depth_level,
                             time_step,
-                            timestamp,
                         ),
                         prepare=False,
                     )
@@ -60,7 +60,7 @@ def load(modelid, depth_level, run_date, start_time, datetimes):
                     time_step,
                 )
                 attempt += 1
-                sleep(10)
+                sleep(1)
 
         if attempt > MAX_RETRIES:
             raise Exception("upsert_values function failed to many times")

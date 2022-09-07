@@ -2,7 +2,7 @@ from postgis import pool
 from cli.load.values.load_band import load
 
 
-def upsert(model, run_date, start_time, depths, datetimes):
+def upsert(model, runid, start_time, depths, datetimes):
     start_depth, end_depth = depths.split(",")
 
     # Resolve the modelid from the name
@@ -13,4 +13,4 @@ def upsert(model, run_date, start_time, depths, datetimes):
 
     depth_levels = [*range(int(start_depth), int(end_depth) + 1, 1)]
     for depth_level in depth_levels:
-        load(modelid, depth_level, run_date, start_time, datetimes)
+        load(modelid, depth_level, runid, start_time, datetimes)

@@ -18,7 +18,6 @@ def load(options, arguments):
     run_date = options.run_date
     drop_db = options.drop_db
     reload_data = options.reload_data
-    run_date = options.run_date
     upsert_rasters = options.upsert_rasters
     upsert_coordinates = options.upsert_coordinates
     upsert_values = options.upsert_values
@@ -65,6 +64,24 @@ def load(options, arguments):
     except:
         raise Exception("Expected date format for --run-date is %Y%m%d")
 
+    # Register this run_date
+    runid = None
+    with pool().connection() as client:
+        client.execute(
+            """
+            merge into public.model_runs t
+            using (
+                    select %s::date run_date
+                ) s on s.run_date = t.run_date
+            when not matched then insert (run_date)
+                values (s.run_date)""",
+            (run_date,),
+        )
+        runid = client.execute(
+            """select id from model_runs where run_date = %s""", (run_date,)
+        ).fetchall()[0][0]
+    
+
     # Check the specified model exists
     with pool().connection() as client:
         cursor = client.execute(
@@ -99,7 +116,7 @@ def load(options, arguments):
                 raster,
                 model,
                 reload_data,
-                run_date,
+                runid,
             )
 
     if upsert_coordinates:
@@ -108,8 +125,10 @@ def load(options, arguments):
     if upsert_values:
         datetimes = None
         with xr.open_dataset(model_data) as netcdf:
+            # TODO The metadata contains the datetime step information
+            # This should be in the model table, and datetimes worked out from there
             datetimes = netcdf.time.values
-        refresh_values(model, run_date, start_time, depths, datetimes)
+        refresh_values(model, runid, start_time, depths, datetimes)
 
     if cleanup_rasters:
         run_cleanup(start_time, model)

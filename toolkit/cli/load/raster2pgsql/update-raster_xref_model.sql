@@ -6,11 +6,11 @@ with ref as (
     %s model
 )
 
-insert into raster_xref_model (rasterid, modelid, run_date)
+insert into raster_xref_model (rasterid, modelid, runid)
 select
   r.rid rasterid,
   m.id modelid,
-  %s run_date
+  %s runid
 from
   ref
   left join rasters r on r.filename = ref.filename

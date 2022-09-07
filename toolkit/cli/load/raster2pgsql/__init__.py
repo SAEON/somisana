@@ -5,7 +5,7 @@ from datetime import datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME, PY_ENV
 
 
-def register(config, now, nc_input_path, raster, model, reload_data, run_date):
+def register(config, now, nc_input_path, raster, model, reload_data, runid):
     print("\n->", raster, str(datetime.now() - now))
     p, filename = os.path.split("""{0}:{1}""".format(str(nc_input_path), str(raster)))
 
@@ -100,6 +100,6 @@ def register(config, now, nc_input_path, raster, model, reload_data, run_date):
                 (
                     filename,
                     model,
-                    run_date,
+                    runid,
                 ),
             )

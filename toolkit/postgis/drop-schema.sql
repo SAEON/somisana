@@ -1,3 +1,12 @@
+-- FUNCTIONS
+drop function if exists public.somisana_get_values cascade;
+
+drop function if exists public.somisana_join_values cascade;
+
+drop function if exists public.somisana_upsert_values cascade;
+
+drop function if exists public.somisana_model_coordinates cascade;
+
 -- VIEWS
 
 drop view if exists public.metadata cascade;
@@ -5,6 +14,8 @@ drop view if exists public.metadata cascade;
 -- TABLES
 
 drop table if exists public.values cascade;
+
+drop table if exists public.model_runs cascade;
 
 drop table if exists public.coordinates cascade;
 
