@@ -298,7 +298,32 @@ jobs:
                 --grid-input-path /tmp/somisana/current/croco/forcing/grd.nc \
                 --nc-input-path /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
                 --nc-output-path /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --zarr-output-path /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.zarr
+                --zarr-output-path /tmp/somisana/current/croco/forecast/${{ env.RUN_DATE }}.zarr
+
+  # Archive croco output and load zarr to HTTP-range server
+  archive-data:
+    needs: [normalize-output, workdir, envs]
+    runs-on: github-runner.saeon.int
+    env:
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+      RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+    steps:
+      - name: Load Zarr to mnemosyne HTTP-range server
+        continue-on-error: true
+        run: >-
+          cd $WORKDIR/croco/forecast && \
+          find \
+            ${{ env.RUN_DATE }}.zarr \
+            -type f \
+            -exec \
+              curl \
+              --silent \
+              --keepalive-time 1200 \
+              -X PUT \
+              -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+              --create-dirs \
+              -T {} \
+              https://mnemosyne.somisana.ac.za/egagasini/somisana/algoa-bay-forecast/{} \;
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:
