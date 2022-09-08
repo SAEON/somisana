@@ -17,16 +17,19 @@ export default () => {
     map.addSource(sourceId, {
       type: 'vector',
       tiles: [
-        `${TILESERV_BASE_URL}/public.somisana_model_coordinates/{z}/{x}/{y}.pbf?mid=${modelid}`,
+        `${TILESERV_BASE_URL}/public.coordinates/{z}/{x}/{y}.pbf?filter=${encodeURIComponent(
+          `modelid=${modelid}
+          and has_value=true`
+        )}`,
       ],
-      url: `${TILESERV_BASE_URL}/public.somisana_model_coordinates.json`,
+      url: `${TILESERV_BASE_URL}/public.coordinates.json`,
     })
 
     map.addLayer({
       id: sourceId,
       type: 'circle',
       source: sourceId,
-      'source-layer': 'default',
+      'source-layer': 'public.coordinates',
       paint: {
         'circle-radius': ['case', ['boolean', ['feature-state', 'click'], false], 8, 2],
         'circle-stroke-width': 4,
@@ -37,7 +40,7 @@ export default () => {
           theme.palette.grey[900],
           theme.palette.grey[600],
         ],
-        'circle-opacity': ['case', ['boolean', ['feature-state', 'click'], false], 1, 0.3],
+        'circle-opacity': ['case', ['boolean', ['feature-state', 'click'], false], 0.8, 0.4],
       },
     })
 
@@ -54,12 +57,12 @@ export default () => {
       let oldId = featureClickId
       featureClickId = features[0].id
       map.setFeatureState(
-        { source: sourceId, id: featureClickId, sourceLayer: 'default' },
+        { source: sourceId, id: featureClickId, sourceLayer: 'public.coordinates' },
         { click: true }
       )
       if (oldId) {
         map.setFeatureState(
-          { source: sourceId, id: oldId, sourceLayer: 'default' },
+          { source: sourceId, id: oldId, sourceLayer: 'public.coordinates' },
           { click: false }
         )
       }
