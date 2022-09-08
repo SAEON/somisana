@@ -14,3 +14,21 @@ export const pool = createPool({
   password,
   port,
 })
+
+export const updateCoordinatesMask = async () => {
+  const client = await pool.connect()
+  client.query(`
+    update
+      public.coordinates c
+    set
+      has_value = true
+    where
+      has_value = false
+      and exists (
+        select
+          1
+        from
+          values
+        where
+          coordinateid = c.id);`)
+}

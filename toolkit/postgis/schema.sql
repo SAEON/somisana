@@ -66,6 +66,8 @@ create table if not exists public.coordinates (
   constraint unique_coordinates unique (modelid, pixel)
 );
 
+create index if not exists coordinates_has_value on public.coordinates using btree (has_value);
+
 create index if not exists coordinates_modelid on public.coordinates using btree (modelid);
 
 create index if not exists coordinates_coord on public.coordinates using gist (coord);
@@ -86,6 +88,9 @@ create table if not exists public.values (
   v decimal(5, 4),
   constraint values_unique_cols unique (runid, time_step, depth_level, coordinateid, modelid)
 );
+
+
+create index if not exists values_coordinateid on public.values using btree (coordinateid asc);
 
 
 /**
