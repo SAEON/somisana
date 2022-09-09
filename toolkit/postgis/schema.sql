@@ -262,9 +262,9 @@ $$
 language 'plpgsql'
 parallel safe;
 
-drop function if exists public.somisana_interpolated_values cascade;
+drop function if exists public.somisana_interpolate_values cascade;
 
-create function public.somisana_interpolated_values (target_depth integer default -0, runid integer default 1, time_step integer default 1, modelid integer default 1)
+create function public.somisana_interpolate_values (target_depth integer default 0, runid integer default 1, time_step integer default 1, modelid integer default 1)
   returns table (
     coordinateid int,
     interpolated_temperature decimal(4, 2),

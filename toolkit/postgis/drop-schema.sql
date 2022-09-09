@@ -5,7 +5,7 @@ drop function if exists public.somisana_join_values cascade;
 
 drop function if exists public.somisana_upsert_values cascade;
 
-drop function if exists public.somisana_interpolated_values cascade;
+drop function if exists public.somisana_interpolate_values cascade;
 
 -- VIEWS
 

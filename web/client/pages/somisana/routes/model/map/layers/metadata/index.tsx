@@ -12,7 +12,6 @@ export default () => {
   } = useContext(mapContext)
 
   useEffect(() => {
-    window.map = map
     map.addSource('metadata', {
       type: 'vector',
       tiles: [

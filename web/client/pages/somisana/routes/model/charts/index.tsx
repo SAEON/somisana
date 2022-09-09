@@ -3,5 +3,5 @@ import { context as modelContext } from '../_context'
 
 export default () => {
   const ctx = useContext(modelContext)
-  return JSON.stringify(ctx)
+  return <pre>{JSON.stringify(ctx, null, 2)}</pre>
 }

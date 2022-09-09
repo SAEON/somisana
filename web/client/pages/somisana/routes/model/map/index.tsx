@@ -2,10 +2,11 @@ import MapProvider from './_context'
 import { useContext, useState } from 'react'
 import { context as modelContext } from '../_context'
 import Div from '../../../../../components/div'
-import CoordinatesLayer from './vector-layers/coordinates'
-import MetadataLayer from './vector-layers/metadata'
+import CoordinatesLayer from './layers/coordinates'
+import MetadataLayer from './layers/metadata'
 import DepthControl from './controls/depth'
 import TimeControl from './controls/time'
+import Contours from './layers/contours'
 
 export default props => {
   const [ref, setRef] = useState(null)
@@ -17,6 +18,7 @@ export default props => {
         <MapProvider container={ref} {...props} model={model}>
           <MetadataLayer />
           <CoordinatesLayer />
+          <Contours />
         </MapProvider>
       )}
 
