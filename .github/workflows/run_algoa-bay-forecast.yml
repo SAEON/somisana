@@ -308,11 +308,14 @@ jobs:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
-      - name: Load Zarr to mnemosyne HTTP-range server
+      - name: Load $PATH
+        run: |
+          source ~/.bashrc
+      - name: Upload Zarr to mnemosyne HTTP-range server
         continue-on-error: true
         run: >-
-          cd $WORKDIR/croco/forecast && \
-          /usr/bin/find \
+          cd $WORKDIR/croco/forecast \
+          && find \
             ${{ env.RUN_DATE }}.zarr \
             -type f \
             -exec \
