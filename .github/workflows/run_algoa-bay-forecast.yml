@@ -312,7 +312,7 @@ jobs:
         continue-on-error: true
         run: >-
           cd $WORKDIR/croco/forecast && \
-          find \
+          /usr/bin/find \
             ${{ env.RUN_DATE }}.zarr \
             -type f \
             -exec \
