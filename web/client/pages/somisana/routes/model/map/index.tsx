@@ -4,6 +4,7 @@ import { context as modelContext } from '../_context'
 import Div from '../../../../../components/div'
 import CoordinatesLayer from './vector-layers/coordinates'
 import MetadataLayer from './vector-layers/metadata'
+import DepthControl from './controls/depth'
 import TimeControl from './controls/time'
 
 export default props => {
@@ -16,19 +17,27 @@ export default props => {
         <MapProvider container={ref} {...props} model={model}>
           <MetadataLayer />
           <CoordinatesLayer />
-          <TimeControl />
         </MapProvider>
       )}
+
       <Div
+        id="a"
         sx={{
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
+          display: 'flex',
+          flex: 1,
         }}
-        ref={el => setRef(el)}
-      />
+      >
+        <Div sx={{ display: 'flex', flex: 1, flexDirection: 'column', minHeight: 500 }}>
+          <Div
+            sx={{
+              minHeight: 500,
+            }}
+            ref={el => setRef(el)}
+          />
+          <TimeControl />
+        </Div>
+        <DepthControl />
+      </Div>
     </>
   )
 }

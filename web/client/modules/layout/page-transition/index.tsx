@@ -7,7 +7,17 @@ export default ({ children, tKey }) => {
 
   return (
     <Fade key={tKey} in={true}>
-      <Div sx={{ display: 'flex', flexGrow: 1, position: 'relative' }}>{children}</Div>
+      <Div
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          flexGrow: 1,
+          position: 'relative',
+        }}
+      >
+        {children}
+      </Div>
     </Fade>
   )
 }

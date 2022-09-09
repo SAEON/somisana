@@ -1,6 +1,7 @@
 import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_context'
 import { ctx as configContext } from '../../../../../../../modules/config'
+import { context as modelContext } from '../../../_context'
 import useTheme from '@mui/material/styles/useTheme'
 
 export default () => {
@@ -10,6 +11,7 @@ export default () => {
     map,
     model: { _id: modelid },
   } = useContext(mapContext)
+  const { setSelectedCoordinate } = useContext(modelContext)
 
   const sourceId = 'coordinates'
 
@@ -66,6 +68,7 @@ export default () => {
           { click: false }
         )
       }
+      setSelectedCoordinate(featureClickId)
     })
   }, [map])
 }

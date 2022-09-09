@@ -7,7 +7,9 @@ export const context = createContext({})
 
 export default ({ children }) => {
   const { id } = useParams()
-  const [time_step, setTime_step] = useState(1)
+  const [timeStep, setTimeStep] = useState(1)
+  const [depth, setDepth] = useState(0)
+  const [selectedCoordinate, setSelectedCoordinate] = useState(null)
 
   const { loading, error, data } = useQuery(
     gql`
@@ -40,7 +42,17 @@ export default ({ children }) => {
   }
 
   return (
-    <context.Provider value={{ time_step, setTime_step, model: { ...data.models[0] } }}>
+    <context.Provider
+      value={{
+        selectedCoordinate,
+        setSelectedCoordinate,
+        depth,
+        setDepth,
+        timeStep,
+        setTimeStep,
+        model: { ...data.models[0] },
+      }}
+    >
       {children}
     </context.Provider>
   )
