@@ -16,8 +16,8 @@ export default async ctx => {
     try {
       const query = new QueryStream(
         `select
-          c.longitude x,
-          c.latitude y,
+          st_x(c.coord) x,
+          st_y(c.coord) y,
           v.interpolated_temperature::float
           from somisana_interpolate_values(
             target_depth => 0,

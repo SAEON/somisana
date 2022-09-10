@@ -68,7 +68,11 @@ export default () => {
           { click: false }
         )
       }
-      setSelectedCoordinate(featureClickId)
+      if (oldId === featureClickId) {
+        setSelectedCoordinate(null)
+      } else {
+        setSelectedCoordinate(featureClickId)
+      }
     })
   }, [map])
 }

@@ -17,6 +17,7 @@ export default () => {
       </Typography>
       <Slider
         sx={{
+          zIndex: 20,
           '& .MuiSlider-mark': {
             height: '12px',
             width: '1px',
