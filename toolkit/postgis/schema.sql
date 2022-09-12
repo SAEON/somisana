@@ -49,8 +49,8 @@ when not matched then
 
 create table if not exists public.raster_xref_run (
   id int primary key generated always as identity,
-  rasterid int not null unique references rasters (rid) on delete cascade,
-  runid smallint not null references runs (id) on delete cascade,
+  rasterid int not null unique references public.rasters (rid) on delete cascade,
+  runid smallint not null references public.runs (id) on delete cascade,
   constraint unique_rasters_per_model unique (rasterid, runid)
 );
 
@@ -76,7 +76,6 @@ create index if not exists coordinates_pixel on public.coordinates using gist (p
 
 create table if not exists public.values (
   id bigint primary key generated always as identity,
-  modelid smallint not null references public.models (id) on delete cascade,
   runid smallint not null references public.runs (id) on delete cascade,
   depth_level smallint not null,
   time_step smallint not null,
@@ -86,7 +85,7 @@ create table if not exists public.values (
   salinity decimal(6, 4),
   u decimal(5, 4),
   v decimal(5, 4),
-  constraint values_unique_cols unique (runid, time_step, depth_level, coordinateid, modelid)
+  constraint values_unique_cols unique (runid, time_step, depth_level, coordinateid)
 );
 
 create index if not exists values_coordinateid on public.values using btree (coordinateid asc);
@@ -236,26 +235,25 @@ stable parallel safe;
 
 drop function if exists public.somisana_upsert_values cascade;
 
-create function public.somisana_upsert_values (modelid smallint, run_id smallint, depth_level smallint, time_step smallint)
+create function public.somisana_upsert_values (run_id smallint, depth_level smallint, time_step smallint)
   returns void
   as $$
 begin
   merge into public.values t
   using (
     select
-      modelid, depth_level, time_step, run_id runid, coordinateid, depth, temperature, salinity, u, v
+      depth_level, time_step, run_id runid, coordinateid, depth, temperature, salinity, u, v
     from
-      somisana_join_values (modelid, run_id, depth_level, time_step)) s on s.runid = t.runid
+      somisana_join_values (run_id, depth_level, time_step)) s on s.runid = t.runid
     and s.time_step = t.time_step
     and s.depth_level = t.depth_level
     and s.coordinateid = t.coordinateid
-    and s.modelid = t.modelid
   when not matched then
-    insert (modelid, depth_level, time_step, runid, coordinateid, depth, temperature, salinity, u, v)
-      values (s.modelid, s.depth_level, s.time_step, s.runid, s.coordinateid, s.depth, s.temperature, s.salinity, s.u, s.v)
+    insert (depth_level, time_step, runid, coordinateid, depth, temperature, salinity, u, v)
+      values (s.depth_level, s.time_step, s.runid, s.coordinateid, s.depth, s.temperature, s.salinity, s.u, s.v)
       when matched then
         update set
-          runid = s.runid, coordinateid = s.coordinateid, depth = s.depth, temperature = s.temperature, salinity = s.salinity, u = s.u, v = s.v;
+          depth = s.depth, temperature = s.temperature, salinity = s.salinity, u = s.u, v = s.v;
 end;
 $$
 language 'plpgsql'
@@ -263,7 +261,7 @@ parallel safe;
 
 drop function if exists public.somisana_interpolate_values cascade;
 
-create function public.somisana_interpolate_values (target_depth integer default 0, runid integer default 1, time_step integer default 1, modelid integer default 1)
+create function public.somisana_interpolate_values (target_depth integer default 0, runid integer default 1, time_step integer default 1)
   returns table (
     coordinateid int,
     interpolated_temperature decimal(4, 2),
@@ -281,7 +279,6 @@ begin
   t := target_depth;
   r := runid;
   ts := time_step;
-  m := modelid;
   return query with
 values
   as (
@@ -301,7 +298,6 @@ values
     where
       v.runid = r
       and v.time_step = ts
-      and v.modelid = m
 ),
 bounded_values as (
   select
