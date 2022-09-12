@@ -3,23 +3,22 @@
 with ref as (
   select
     %s filename,
-    %s model
-)
-
-insert into raster_xref_run (rasterid, modelid, runid)
+    %s runid)
+    
+insert into raster_xref_run (rasterid, runid)
 select
   r.rid rasterid,
-  m.id modelid,
-  %s runid
+  ref.runid
 from
   ref
-  left join rasters r on r.filename = ref.filename
-  left join models m on m.name = ref.model
-
-where not exists (
-  select 1
-  from raster_xref_run x
-  where x.rasterid = r.rid and x.modelid = m.id
-);
-
+  join rasters r on r.filename = ref.filename
+where
+  not exists (
+    select
+      1
+    from
+      raster_xref_run x
+    where
+      x.rasterid = r.rid
+      and x.runid = ref.runid);
 

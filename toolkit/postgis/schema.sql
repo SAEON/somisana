@@ -128,7 +128,7 @@ from (
  */
 drop function if exists public.somisana_get_pixel_values cascade;
 
-create function public.somisana_get_pixel_values (modelid smallint, runid smallint, depth_level smallint, time_step smallint, variable text)
+create function public.somisana_get_pixel_values (runid int, depth_level int, time_step int, variable text)
   returns table (
     pixel geometry,
     value numeric
@@ -136,28 +136,24 @@ create function public.somisana_get_pixel_values (modelid smallint, runid smalli
   as $$
 declare
   band_no int;
-  m smallint;
-  rd smallint;
+  rd int;
 begin
   band_no := ((time_step - 1) * 20) + depth_level;
-  m := modelid;
   rd := runid;
-  return query
-  select
-    t.geom pixel,
-    t.val::numeric value
-  from (
+  return query with centroids as (
     select
-      r.rid,
-      x.modelid,
       (ST_PixelAsCentroids (r.rast, band_no)).*
     from
       rasters r
       join raster_xref_run x on x.rasterid = r.rid
-        and x.modelid = m
-        and x.runid = rd
     where
-      filename like ('%:' || variable)) t;
+      x.runid = rd
+      and filename like ('%:' || variable))
+  select
+    geom pixel,
+    val::numeric value
+  from
+    centroids;
 end;
 $$
 language 'plpgsql'
@@ -165,7 +161,7 @@ stable parallel safe;
 
 drop function if exists public.somisana_join_values cascade;
 
-create function public.somisana_join_values (modelid smallint, runid smallint, depth_level smallint, time_step smallint)
+create function public.somisana_join_values (runid smallint, depth_level smallint, time_step smallint)
   returns table (
     coordinateid int,
     depth decimal(7, 2),
@@ -175,44 +171,41 @@ create function public.somisana_join_values (modelid smallint, runid smallint, d
     v decimal(5, 4)
   )
   as $$
-declare
-  m smallint;
 begin
-  m := modelid;
   return query with depths as (
     select
       pixel,
       value
     from
-      public.somisana_get_pixel_values (modelid, runid, depth_level, time_step, variable => 'm_rho')
+      public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'm_rho')
 ),
 temperatures as (
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (modelid, runid, depth_level, time_step, variable => 'temperature')
+    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'temperature')
 ),
 salinity as (
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (modelid, runid, depth_level, time_step, variable => 'salt')
+    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'salt')
 ),
 u as (
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (modelid, runid, depth_level, time_step, variable => 'u')
+    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'u')
 ),
 v as (
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (modelid, runid, depth_level, time_step, variable => 'v'))
+    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'v'))
 select
   c.id coordinateid,
   d.value depth,
@@ -226,8 +219,7 @@ from
   join salinity s on s.pixel = d.pixel
   join u on u.pixel = d.pixel
   join v on v.pixel = d.pixel
-  join coordinates c on c.modelid = m
-    and c.pixel = d.pixel;
+  join coordinates c on c.pixel = d.pixel;
 end;
 $$
 language 'plpgsql'

@@ -87,12 +87,21 @@ def load(options, arguments):
             """
             merge into public.runs t
             using (
-                    select
-                        %s::date run_date,
-                        ( select id from models where name = %s ) modelid
-                ) s on s.run_date = t.run_date
-            when not matched then insert (run_date, modelid)
-                values (s.run_date, s.modelid)""",
+                select
+                    %s::date run_date, 
+                    (select
+                      id
+                     from
+                      models
+                     where
+                      name = %s) modelid
+                ) s on 
+                   s.run_date = t.run_date
+                   and s.modelid = t.modelid
+            when not matched then
+                insert (run_date, modelid)
+                values (s.run_date, s.modelid)
+            """,
             (
                 run_date,
                 model,
@@ -132,7 +141,7 @@ def load(options, arguments):
             # TODO The metadata contains the datetime step information
             # This should be in the model table, and datetimes worked out from there
             datetimes = netcdf.time.values
-        refresh_values(model, runid, start_time, depths, datetimes)
+        refresh_values(runid, start_time, depths, datetimes)
 
     if cleanup_rasters:
         run_cleanup(start_time, model)
