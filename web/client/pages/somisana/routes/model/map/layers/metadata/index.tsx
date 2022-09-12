@@ -30,6 +30,8 @@ export default () => {
       'source-layer': 'public.metadata',
       paint: {
         'line-color': theme.palette.grey[900],
+        'line-width': 1,
+        'line-dasharray': [1, 1],
       },
     })
   }, [map])

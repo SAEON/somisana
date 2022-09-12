@@ -21,7 +21,35 @@ import {
   mdiDatabase,
   mdiEarth,
   mdiDataMatrix,
+  mdiPlay,
+  mdiSkipNext,
+  mdiSkipPrevious,
+  mdiPause,
 } from '@mdi/js'
+
+export const Play = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiPlay} />
+  </SvgIcon>
+))({})
+
+export const SkipNext = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiSkipNext} />
+  </SvgIcon>
+))({})
+
+export const SkipBack = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiSkipPrevious} />
+  </SvgIcon>
+))({})
+
+export const Pause = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiPause} />
+  </SvgIcon>
+))({})
 
 export const Api = styled((props: any) => (
   <SvgIcon {...props}>

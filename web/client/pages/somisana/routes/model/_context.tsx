@@ -10,6 +10,7 @@ export default ({ children }) => {
   const [timeStep, setTimeStep] = useState(1)
   const [depth, setDepth] = useState(0)
   const [selectedCoordinate, setSelectedCoordinate] = useState(null)
+  const [animateTimeStep, setAnimateTimeStep] = useState(false)
 
   const { loading, error, data } = useQuery(
     gql`
@@ -50,6 +51,8 @@ export default ({ children }) => {
         setDepth,
         timeStep,
         setTimeStep,
+        animateTimeStep,
+        setAnimateTimeStep,
         model: { ...data.models[0] },
       }}
     >

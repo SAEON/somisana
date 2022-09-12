@@ -3,11 +3,11 @@ import QueryStream from 'pg-query-stream'
 import { stringify } from 'JSONStream'
 
 export default async ctx => {
-  const { model = 1, time_step = 120, runid = 1, depth = 0 } = ctx.query
+  const { time_step = 120, runid = 1, depth = 0 } = ctx.query
 
-  // if (!model || !time_step || !run_date || !depth) {
-  //   throw new Error(`Missing query params. Please specify model, time_step, run_date, depth values`)
-  // }
+  if (!time_step || !runid || !depth) {
+    throw new Error(`Missing query params. Please specify model, time_step, run_date, depth values`)
+  }
 
   ctx.compress = false
   const client = await pool.connect()
@@ -16,17 +16,16 @@ export default async ctx => {
     try {
       const query = new QueryStream(
         `select
-          st_x(c.coord) x,
-          st_y(c.coord) y,
-          v.interpolated_temperature::float
-          from somisana_interpolate_values(
-            target_depth => 0,
-            runid => 1,
-            time_step => 120,
-            modelid => 1
-          ) v
-          join coordinates c on c.id = v.coordinateid;`,
-        [],
+        st_x(st_transform( c.coord, 4326)) x,
+        st_y(st_transform( c.coord, 4326)) y,
+        v.interpolated_temperature::float
+        from somisana_interpolate_values(
+          target_depth => $1,
+          runid => $2,
+          time_step => $3
+        ) v
+        join coordinates c on c.id = v.coordinateid;`,
+        [depth, runid, time_step],
         {
           batchSize: 100,
           rowMode: 'array',

@@ -13,10 +13,8 @@ export default () => {
   } = useContext(mapContext)
   const { setSelectedCoordinate } = useContext(modelContext)
 
-  const sourceId = 'coordinates'
-
   useEffect(() => {
-    map.addSource(sourceId, {
+    map.addSource('coordinates', {
       type: 'vector',
       tiles: [
         `${TILESERV_BASE_URL}/public.coordinates/{z}/{x}/{y}.pbf?filter=${encodeURIComponent(
@@ -28,43 +26,43 @@ export default () => {
     })
 
     map.addLayer({
-      id: sourceId,
+      id: 'coordinates',
       type: 'circle',
-      source: sourceId,
+      source: 'coordinates',
       'source-layer': 'public.coordinates',
       paint: {
-        'circle-radius': ['case', ['boolean', ['feature-state', 'click'], false], 8, 2],
+        'circle-radius': ['case', ['boolean', ['feature-state', 'click'], false], 8, 1],
         'circle-stroke-width': 4,
         'circle-stroke-opacity': 0,
         'circle-color': [
           'case',
           ['boolean', ['feature-state', 'click'], false],
-          theme.palette.grey[900],
-          theme.palette.grey[600],
+          theme.palette.common.white,
+          theme.palette.common.white,
         ],
-        'circle-opacity': ['case', ['boolean', ['feature-state', 'click'], false], 0.8, 0.4],
+        'circle-opacity': ['case', ['boolean', ['feature-state', 'click'], false], 0.5, 0],
       },
     })
 
     let featureClickId = null
-    map.on('mouseenter', sourceId, () => {
+    map.on('mouseenter', 'coordinates', () => {
       map.getCanvas().style.cursor = 'pointer'
     })
 
-    map.on('mouseleave', sourceId, () => {
+    map.on('mouseleave', 'coordinates', () => {
       map.getCanvas().style.cursor = ''
     })
 
-    map.on('click', sourceId, ({ features }) => {
+    map.on('click', 'coordinates', ({ features }) => {
       let oldId = featureClickId
       featureClickId = features[0].id
       map.setFeatureState(
-        { source: sourceId, id: featureClickId, sourceLayer: 'public.coordinates' },
+        { source: 'coordinates', id: featureClickId, sourceLayer: 'public.coordinates' },
         { click: true }
       )
       if (oldId) {
         map.setFeatureState(
-          { source: sourceId, id: oldId, sourceLayer: 'public.coordinates' },
+          { source: 'coordinates', id: oldId, sourceLayer: 'public.coordinates' },
           { click: false }
         )
       }
