@@ -6,7 +6,7 @@ with ref as (
     %s model
 )
 
-insert into raster_xref_model (rasterid, modelid, runid)
+insert into raster_xref_run (rasterid, modelid, runid)
 select
   r.rid rasterid,
   m.id modelid,
@@ -18,7 +18,7 @@ from
 
 where not exists (
   select 1
-  from raster_xref_model x
+  from raster_xref_run x
   where x.rasterid = r.rid and x.modelid = m.id
 );
 

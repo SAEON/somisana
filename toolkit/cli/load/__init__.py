@@ -64,24 +64,6 @@ def load(options, arguments):
     except:
         raise Exception("Expected date format for --run-date is %Y%m%d")
 
-    # Register this run_date
-    runid = None
-    with pool().connection() as client:
-        client.execute(
-            """
-            merge into public.model_runs t
-            using (
-                    select %s::date run_date
-                ) s on s.run_date = t.run_date
-            when not matched then insert (run_date)
-                values (s.run_date)""",
-            (run_date,),
-        )
-        runid = client.execute(
-            """select id from model_runs where run_date = %s""", (run_date,)
-        ).fetchall()[0][0]
-    
-
     # Check the specified model exists
     with pool().connection() as client:
         cursor = client.execute(
@@ -97,6 +79,28 @@ def load(options, arguments):
                 "::",
                 "Installing PostGIS schema",
             )
+
+    # Register this run_date
+    runid = None
+    with pool().connection() as client:
+        client.execute(
+            """
+            merge into public.runs t
+            using (
+                    select
+                        %s::date run_date,
+                        ( select id from models where name = %s ) modelid
+                ) s on s.run_date = t.run_date
+            when not matched then insert (run_date, modelid)
+                values (s.run_date, s.modelid)""",
+            (
+                run_date,
+                model,
+            ),
+        )
+        runid = client.execute(
+            """select id from runs where run_date = %s""", (run_date,)
+        ).fetchall()[0][0]
 
     with open("cli/load/models.yml") as file:
         model_config = yaml.load(file, yaml.Loader)["models"]

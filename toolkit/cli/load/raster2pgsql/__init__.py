@@ -92,7 +92,7 @@ def register(config, now, nc_input_path, raster, model, reload_data, runid):
         raise Exception("raster2pgsql cmd failed: " + sub(" +", " ", cmd))
 
     # Explicitly associate individual rasters with a model
-    with open("cli/load/raster2pgsql/update-raster_xref_model.sql") as file:
+    with open("cli/load/raster2pgsql/update-raster_xref_run.sql") as file:
         sql = file.read()
         with pool().connection(timeout=3600) as client:
             cursor = client.execute(

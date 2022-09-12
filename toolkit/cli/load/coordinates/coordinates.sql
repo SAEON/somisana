@@ -18,8 +18,8 @@ lon as (
       (ST_PixelAsCentroids (rast, 1)).*
     from
       rasters r
-      join raster_xref_model rxm on rxm.rasterid = r.rid
-      join m on m.id = rxm.modelid
+      join raster_xref_run x on x.rasterid = r.rid
+      join m on m.id = x.modelid
     where
       filename like '%%:lon_rho') lon
 ),
@@ -33,8 +33,8 @@ lat as (
       (ST_PixelAsCentroids (rast, 1)).*
     from
       rasters r
-    left join raster_xref_model rxm on rxm.rasterid = r.rid
-    left join m on m.id = rxm.modelid
+    left join raster_xref_run x on x.rasterid = r.rid
+    left join m on m.id = x.modelid
   where
     filename like '%%:lat_rho') lat
 ),
@@ -48,8 +48,8 @@ h as (
       (ST_PixelAsCentroids (rast, 1)).*
     from
       rasters r
-    left join raster_xref_model rxm on rxm.rasterid = r.rid
-    left join m on m.id = rxm.modelid
+    left join raster_xref_run x on x.rasterid = r.rid
+    left join m on m.id = x.modelid
   where
     filename like '%%:h') h) merge into public.coordinates t using (
   select

@@ -15,11 +15,11 @@ drop view if exists public.metadata cascade;
 
 drop table if exists public.values cascade;
 
-drop table if exists public.model_runs cascade;
+drop table if exists public.runs cascade;
 
 drop table if exists public.coordinates cascade;
 
-drop table if exists public.raster_xref_model cascade;
+drop table if exists public.raster_xref_run cascade;
 
 drop table if exists public.models cascade;
 

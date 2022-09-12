@@ -30,9 +30,10 @@ create table if not exists public.models (
   name varchar(255) not null unique
 );
 
-create table if not exists public.model_runs (
+create table if not exists public.runs (
   id smallint primary key generated always as identity,
-  run_date date not null unique
+  run_date date not null unique,
+  modelid smallint not null references public.models (id)
 );
 
 merge into public.models t
@@ -46,12 +47,11 @@ when not matched then
   insert (name)
     values (s.name);
 
-create table if not exists public.raster_xref_model (
+create table if not exists public.raster_xref_run (
   id int primary key generated always as identity,
   rasterid int not null unique references rasters (rid) on delete cascade,
-  modelid smallint not null references models (id) on delete cascade,
-  runid smallint not null references model_runs (id) on delete cascade,
-  constraint unique_rasters_per_model unique (rasterid, modelid, runid)
+  runid smallint not null references runs (id) on delete cascade,
+  constraint unique_rasters_per_model unique (rasterid, runid)
 );
 
 create table if not exists public.coordinates (
@@ -77,7 +77,7 @@ create index if not exists coordinates_pixel on public.coordinates using gist (p
 create table if not exists public.values (
   id bigint primary key generated always as identity,
   modelid smallint not null references public.models (id) on delete cascade,
-  runid smallint not null references public.model_runs (id) on delete cascade,
+  runid smallint not null references public.runs (id) on delete cascade,
   depth_level smallint not null,
   time_step smallint not null,
   coordinateid int not null references public.coordinates (id) on delete cascade,
@@ -88,7 +88,6 @@ create table if not exists public.values (
   v decimal(5, 4),
   constraint values_unique_cols unique (runid, time_step, depth_level, coordinateid, modelid)
 );
-
 
 create index if not exists values_coordinateid on public.values using btree (coordinateid asc);
 
@@ -151,13 +150,13 @@ begin
   from (
     select
       r.rid,
-      rxm.modelid,
+      x.modelid,
       (ST_PixelAsCentroids (r.rast, band_no)).*
     from
       rasters r
-      join raster_xref_model rxm on rxm.rasterid = r.rid
-        and rxm.modelid = m
-        and rxm.runid = rd
+      join raster_xref_run x on x.rasterid = r.rid
+        and x.modelid = m
+        and x.runid = rd
     where
       filename like ('%:' || variable)) t;
 end;

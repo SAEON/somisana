@@ -14,7 +14,7 @@ def run(start_time, model):
             """
             delete from public.rasters r
             where rid in (
-              select rid from raster_xref_model x
+              select rid from raster_xref_run x
               join models m on m.id = x.modelid 
               where m.name = %s 
             )""",

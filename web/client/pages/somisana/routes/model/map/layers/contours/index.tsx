@@ -7,7 +7,7 @@ import { tricontour } from 'd3-tricontour'
 
 export default () => {
   const theme = useTheme()
-  const { TILESERV_BASE_URL } = useContext(configContext)
+  const { API_HTTP } = useContext(configContext)
   const {
     map,
     model: { _id: modelid },
@@ -16,7 +16,7 @@ export default () => {
 
   useEffect(() => {
     const _fetch = async () => {
-      const response = await fetch('http://localhost:3000/http/data')
+      const response = await fetch(`${API_HTTP}/data`)
       const data = await response.json()
       const contours = tricontour()(data)
       console.log(contours)
