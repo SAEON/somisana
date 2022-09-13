@@ -36,7 +36,7 @@ export default () => {
         'circle-stroke-width': ['interpolate', ['exponential', 1], ['zoom'], 7, 2, 18, 16],
         'circle-stroke-color': theme.palette.common.white,
         'circle-stroke-opacity': ['case', ['boolean', ['feature-state', 'click'], false], 0.8, 0],
-        'circle-color': theme.palette.common.white,
+        'circle-color': theme.palette.common.black,
         'circle-opacity': ['interpolate', ['exponential', 1], ['zoom'], 8, 0, 16, 1],
       },
     })

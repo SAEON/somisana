@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { context as modelContext } from '../../_context'
 import Div from '../../../../../../components/div'
-import Slider from '@mui/material/Slider'
+import Slider from './_slider'
 import styled from '@mui/material/styles/styled'
 import IconButton_ from '@mui/material/IconButton'
 import { Play, SkipNext, SkipBack, Pause } from '../../../../../../components/icons'
@@ -41,28 +41,7 @@ export default () => {
           </IconButton>
         </span>
       </Tooltip>
-      <Slider
-        sx={{
-          zIndex: 20,
-          '& .MuiSlider-mark': {
-            height: '12px',
-            width: '1px',
-          },
-        }}
-        aria-label="Depth level"
-        defaultValue={1}
-        size="small"
-        scale={x => x}
-        min={1}
-        value={timeStep}
-        max={240}
-        orientation="horizontal"
-        step={1}
-        valueLabelDisplay="auto"
-        track={false}
-        onChangeCommitted={(_, val) => setTimeStep(val)}
-        valueLabelFormat={val => `TIMESTAMP ${val}`}
-      />
+      <Slider timeStep={timeStep} setTimeStep={setTimeStep} />
     </Div>
   )
 }

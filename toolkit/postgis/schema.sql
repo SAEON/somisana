@@ -27,7 +27,9 @@ create index if not exists rasters_rast_st_convexhull_idx on public.rasters usin
 
 create table if not exists public.models (
   id smallint primary key generated always as identity,
-  name varchar(255) not null unique
+  name varchar(255) not null unique,
+  title varchar(255),
+  description text
 );
 
 create table if not exists public.runs (
@@ -39,13 +41,16 @@ create table if not exists public.runs (
 merge into public.models t
 using (
   select
-    'algoa-bay-forecast' name
+    'algoa-bay-forecast' name, 'Algoa Bay Forecast' title, '' description
   union
     select
-      'false-bay-forecast' name) s on s.name = t.name
+      'false-bay-forecast' name, 'False Bay Forecast' title, '' description) s on s.name = t.name
 when not matched then
-  insert (name)
-    values (s.name);
+  insert (name, title, description)
+    values (s.name, s.title, description)
+    when matched then
+      update set
+        title = s.title, description = s.description;
 
 create table if not exists public.raster_xref_run (
   id int primary key generated always as identity,
@@ -100,6 +105,8 @@ create view public.metadata as
 select
   modelid id,
   name,
+  title,
+  description,
   min_x,
   max_x,
   min_y,
@@ -116,7 +123,9 @@ select
 from (
   select
     c.modelid,
-    m."name",
+    m.name,
+    m.title,
+    m.description,
     min(c.longitude) min_x,
     max(c.longitude) max_x,
     max(c.latitude) max_y,
@@ -127,7 +136,9 @@ from (
     join models m on m.id = c.modelid
   group by
     modelid,
-    name) t;
+    name,
+    title,
+    description) t;
 
 
 /**
@@ -403,11 +414,31 @@ interpolated_values as (
     (("Δy_v" / "Δx") * x) + c_u interpolated_v
   from
     equation_vals e
+),
+grid as (
+  select
+    st_x (c.pixel) x,
+    st_y (c.pixel) y,
+    c.id coordinateid,
+    v.interpolated_temperature,
+    v.interpolated_salinity,
+    v.interpolated_u,
+    v.interpolated_v
+from
+  interpolated_values v
+  right join coordinates c on c.id = v.coordinateid
 )
 select
-  *
+  g.coordinateid,
+  g.interpolated_temperature,
+  g.interpolated_salinity,
+  g.interpolated_u,
+  g.interpolated_v
 from
-  interpolated_values;
+  grid g
+order by
+  y desc,
+  x asc;
 end;
 $$
 language 'plpgsql'

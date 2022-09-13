@@ -1,12 +1,12 @@
 import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_context'
-import { context as dataContext } from '../../../data/_context'
+import { context as bandDataContext } from '../../../band-data/_context'
 import { tricontour } from 'd3-tricontour'
 import { Linear as Loading } from '../../../../../../../components/loading'
 
 export default () => {
   const { map } = useContext(mapContext)
-  const gql = useContext(dataContext)
+  const gql = useContext(bandDataContext)
 
   if (gql.error) {
     throw gql.error

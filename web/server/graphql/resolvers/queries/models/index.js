@@ -9,12 +9,15 @@ export default async (self, { id = undefined }, ctx) => {
         select
           id,
           name,
+          title,
+          description,
           min_x,
           min_y,
           max_x,
           max_y,
           st_asgeojson(convexhull) convexhull,
           st_asgeojson(envelope) envelope,
+          runs,
           'Model' "_gqlType"
         from metadata;`)
     ).rows

@@ -2,7 +2,8 @@ import { lazy, Suspense, useState, useEffect } from 'react'
 import Div from '../../../../components/div'
 import { Linear as Loading } from '../../../../components/loading'
 import ModelProvider from './_context'
-import DataProvider from './data'
+import BandDataProvider from './band-data'
+import PointDataProvider from './point-data'
 import Container from '@mui/material/Container'
 import Title from './title'
 import Charts from './charts'
@@ -24,7 +25,7 @@ export default props => {
 
   return (
     <ModelProvider>
-      <DataProvider>
+      <BandDataProvider>
         {/* MAP OBJECT */}
         <Suspense fallback={<Loading />}>
           <Map divRef={divRef} {...props} />
@@ -37,28 +38,24 @@ export default props => {
           {/* TITLE */}
           <Title />
 
-          <Grid container spacing={4}>
-            <Grid item xs={12} sx={{ display: 'flex' }}>
-              <Div sx={{ display: 'flex', flex: 1, flexDirection: 'column', minHeight: 500 }}>
-                <Div sx={{ minHeight: 500 }} ref={el => setRef(el)} />
+          {/* MAP */}
+          <Div sx={{ display: 'flex', flex: 1 }}>
+            <Div sx={{ display: 'flex', flex: 1, flexDirection: 'column', minHeight: 500 }}>
+              <Div sx={{ minHeight: 500 }} ref={el => setRef(el)} />
+              <TimeControl />
+            </Div>
+            <DepthControl />
+          </Div>
 
-                {/* TIME */}
-                <TimeControl />
-              </Div>
-
-              {/* DEPTH */}
-              <DepthControl />
-            </Grid>
-
-            {/* CHARTS */}
-            <Grid item xs={12}>
-              <Charts />
-            </Grid>
-          </Grid>
+          {/* CHARTS */}
+          <Div sx={{ my: theme => theme.spacing(4) }} />
+          <PointDataProvider>
+            <Charts />
+          </PointDataProvider>
         </Container>
 
         <Div sx={{ my: theme => theme.spacing(2) }} />
-      </DataProvider>
+      </BandDataProvider>
     </ModelProvider>
   )
 }

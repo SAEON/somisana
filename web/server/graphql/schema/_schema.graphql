@@ -24,12 +24,15 @@ type Model implements Node {
   """
   _id: Int!
   name: String!
+  title: String!
+  description: String
   min_x: Float!
   max_x: Float!
   min_y: Float!
   max_y: Float!
   convexhull: JSON!
   envelope: JSON!
+  runs: JSON
 }
 
 type PageInfo {

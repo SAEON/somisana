@@ -5,7 +5,11 @@ import { gql, useQuery } from '@apollo/client'
 export const context = createContext({})
 
 export default ({ children }) => {
-  const { depth, timeStep } = useContext(modelContext)
+  const {
+    depth,
+    timeStep,
+    run: { id: runId },
+  } = useContext(modelContext)
 
   const graphqlRequest = useQuery(
     gql`
@@ -18,7 +22,7 @@ export default ({ children }) => {
     `,
     {
       variables: {
-        runId: 1,
+        runId,
         depth,
         timeStep,
       },

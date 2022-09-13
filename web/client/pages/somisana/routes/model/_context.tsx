@@ -7,7 +7,7 @@ export const context = createContext({})
 
 export default ({ children }) => {
   const { id } = useParams()
-  const [timeStep, setTimeStep] = useState(1)
+  const [timeStep, setTimeStep] = useState(120)
   const [depth, setDepth] = useState(0)
   const [selectedCoordinate, setSelectedCoordinate] = useState(null)
   const [animateTimeStep, setAnimateTimeStep] = useState(false)
@@ -19,10 +19,13 @@ export default ({ children }) => {
           id
           ... on Model {
             _id
+            title
+            description
             max_x
             max_y
             min_x
             min_y
+            runs
           }
         }
       }
@@ -42,6 +45,9 @@ export default ({ children }) => {
     throw error
   }
 
+  const model = data.models.find(({ _id }) => _id == id)
+  const run = model.runs[model.runs.length - 1]
+
   return (
     <context.Provider
       value={{
@@ -53,7 +59,8 @@ export default ({ children }) => {
         setTimeStep,
         animateTimeStep,
         setAnimateTimeStep,
-        model: { ...data.models[0] },
+        run,
+        model,
       }}
     >
       {children}
