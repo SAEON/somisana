@@ -1,6 +1,6 @@
 import { useContext } from 'react'
-import { context as modelContext } from '../../../_context'
-import Div from '../../../../../../../components/div'
+import { context as modelContext } from '../../_context'
+import Div from '../../../../../../components/div'
 import Slider from '@mui/material/Slider'
 import Typography from '@mui/material/Typography'
 

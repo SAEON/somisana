@@ -1,14 +1,19 @@
 import { lazy, Suspense, useState, useEffect } from 'react'
 import Div from '../../../../components/div'
 import { Linear as Loading } from '../../../../components/loading'
-import Provider from './_context'
+import ModelProvider from './_context'
+import DataProvider from './data'
 import Container from '@mui/material/Container'
 import Title from './title'
 import Charts from './charts'
+import DepthControl from './controls/depth'
+import TimeControl from './controls/time'
+import Grid from '@mui/material/Grid'
 
 const Map = lazy(() => import('./map'))
 
 export default props => {
+  const [divRef, setRef] = useState(null)
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => setIsClient(true), [])
@@ -18,24 +23,42 @@ export default props => {
   }
 
   return (
-    <Provider>
-      <Div sx={{ my: theme => theme.spacing(2) }} />
-      <Container>
-        {/* TITLE */}
-        <Title />
-
-        {/* MAP */}
+    <ModelProvider>
+      <DataProvider>
+        {/* MAP OBJECT */}
         <Suspense fallback={<Loading />}>
-          <Div sx={{ display: 'flex', flex: 1 }}>
-            <Map {...props} />
-          </Div>
+          <Map divRef={divRef} {...props} />
         </Suspense>
 
-        {/* CHARTS */}
-        <Charts />
-      </Container>
+        <Div sx={{ my: theme => theme.spacing(2) }} />
 
-      <Div sx={{ my: theme => theme.spacing(2) }} />
-    </Provider>
+        {/* LAYOUT */}
+        <Container>
+          {/* TITLE */}
+          <Title />
+
+          <Grid container spacing={4}>
+            <Grid item xs={12} sx={{ display: 'flex' }}>
+              <Div sx={{ display: 'flex', flex: 1, flexDirection: 'column', minHeight: 500 }}>
+                <Div sx={{ minHeight: 500 }} ref={el => setRef(el)} />
+
+                {/* TIME */}
+                <TimeControl />
+              </Div>
+
+              {/* DEPTH */}
+              <DepthControl />
+            </Grid>
+
+            {/* CHARTS */}
+            <Grid item xs={12}>
+              <Charts />
+            </Grid>
+          </Grid>
+        </Container>
+
+        <Div sx={{ my: theme => theme.spacing(2) }} />
+      </DataProvider>
+    </ModelProvider>
   )
 }

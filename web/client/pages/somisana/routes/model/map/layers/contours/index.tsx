@@ -1,76 +1,81 @@
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_context'
-import { context as modelContext } from '../../../_context'
-import { ctx as configContext } from '../../../../../../../modules/config'
+import { context as dataContext } from '../../../data/_context'
 import { tricontour } from 'd3-tricontour'
+import { Linear as Loading } from '../../../../../../../components/loading'
 
 export default () => {
-  const { API_HTTP } = useContext(configContext)
   const { map } = useContext(mapContext)
-  const { depth, timeStep } = useContext(modelContext)
+  const gql = useContext(dataContext)
 
-  const id = useMemo(() => `contours${depth}${timeStep}`, [depth, timeStep])
+  if (gql.error) {
+    throw gql.error
+  }
 
   useEffect(() => {
-    window.map = map
-    const controller = new AbortController()
-    const _fetch = async () => {
-      const response = await fetch(
-        `${API_HTTP}/data?time_step=${timeStep}&runid=1&depth=${depth}`,
-        { signal: controller.signal }
-      )
-      const data = await response.json()
-      const contours = tricontour()(data)
+    const { data } = gql
 
-      const geojson = {
-        type: 'FeatureCollection',
-        features: contours.map(({ type, coordinates, value }) => ({
-          type: 'Feature',
-          properties: { value },
-          geometry: {
-            type,
-            coordinates,
+    if (data) {
+      const { id, json } = data.data
+
+      if (map.getLayer(id)) {
+        map.setLayoutProperty(id, 'visibility', 'visible')
+      } else {
+        const c = tricontour()
+        c.thresholds(100)
+        const contours = c(json)
+
+        const geojson = {
+          type: 'FeatureCollection',
+          features: contours.map(({ type, coordinates, value }) => ({
+            type: 'Feature',
+            properties: { value },
+            geometry: {
+              type,
+              coordinates,
+            },
+          })),
+        }
+
+        const min = geojson.features[0].properties.value
+        const max = geojson.features[geojson.features.length - 1].properties.value
+        const range = max - min
+
+        map.addSource(id, {
+          type: 'geojson',
+          data: geojson,
+        })
+
+        const exp = ['*', 255, ['/', ['-', ['get', 'value'], min], range]]
+
+        map.addLayer(
+          {
+            id,
+            type: 'fill',
+            source: id,
+            layout: {},
+            paint: {
+              'fill-color': ['rgba', ['+', 0, exp], 0, ['-', 255, exp], 1],
+            },
           },
-        })),
+          'coordinates'
+        )
       }
-
-      const min = geojson.features[0].properties.value
-      const max = geojson.features[geojson.features.length - 1].properties.value
-      const range = max - min
-
-      map.addSource(id, {
-        type: 'geojson',
-        data: geojson,
-      })
-
-      const exp = ['*', 255, ['/', ['-', ['get', 'value'], min], range]]
-
-      map.addLayer(
-        {
-          id,
-          type: 'fill',
-          source: id,
-          layout: {},
-          paint: {
-            'fill-color': ['rgba', ['+', 0, exp], 0, ['-', 255, exp], 1],
-          },
-        },
-        'coordinates'
-      )
-    }
-
-    if (map.getLayer(id)) {
-      map.setLayoutProperty(id, 'visibility', 'visible')
-    } else {
-      _fetch()
     }
 
     return () => {
-      if (map.getLayer(id)) {
-        map.setLayoutProperty(id, 'visibility', 'none')
-      } else {
-        controller.abort()
+      if (data) {
+        const { id } = data.data
+        if (map.getLayer(id)) {
+          map.setLayoutProperty(id, 'visibility', 'none')
+        }
       }
     }
-  }, [map, depth, timeStep])
+  }, [gql])
+
+  if (gql.loading) {
+    return <Loading />
+  } else {
+    return null
+  }
 }

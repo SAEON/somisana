@@ -43,10 +43,17 @@ enum Language {
   en
 }
 
+type ModelData {
+  id: ID!
+  json: JSON!
+}
+
 type Query {
   node(id: ID!): Node
   locales(id: ID, languages: [Language!]): [Node]!
   models(id: ID): [Node]!
+
+  data(timeStep: Int!, runId: Int!, depth: Int!): ModelData!
 }
 
 type Mutation {

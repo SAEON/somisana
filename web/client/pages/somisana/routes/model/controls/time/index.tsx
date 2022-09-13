@@ -1,10 +1,10 @@
 import { useContext } from 'react'
-import { context as modelContext } from '../../../_context'
-import Div from '../../../../../../../components/div'
+import { context as modelContext } from '../../_context'
+import Div from '../../../../../../components/div'
 import Slider from '@mui/material/Slider'
 import styled from '@mui/material/styles/styled'
 import IconButton_ from '@mui/material/IconButton'
-import { Play, SkipNext, SkipBack, Pause } from '../../../../../../../components/icons'
+import { Play, SkipNext, SkipBack, Pause } from '../../../../../../components/icons'
 import Tooltip from '@mui/material/Tooltip'
 
 const IconButton = styled(IconButton_)({ padding: '2px' })

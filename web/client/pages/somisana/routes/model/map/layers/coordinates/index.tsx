@@ -30,17 +30,14 @@ export default () => {
       type: 'circle',
       source: 'coordinates',
       'source-layer': 'public.coordinates',
+
       paint: {
-        'circle-radius': ['case', ['boolean', ['feature-state', 'click'], false], 8, 1],
-        'circle-stroke-width': 4,
-        'circle-stroke-opacity': 0,
-        'circle-color': [
-          'case',
-          ['boolean', ['feature-state', 'click'], false],
-          theme.palette.common.white,
-          theme.palette.common.white,
-        ],
-        'circle-opacity': ['case', ['boolean', ['feature-state', 'click'], false], 0.5, 0],
+        'circle-radius': ['case', ['boolean', ['feature-state', 'click'], false], 7, 2],
+        'circle-stroke-width': ['interpolate', ['exponential', 1], ['zoom'], 7, 2, 18, 16],
+        'circle-stroke-color': theme.palette.common.white,
+        'circle-stroke-opacity': ['case', ['boolean', ['feature-state', 'click'], false], 0.8, 0],
+        'circle-color': theme.palette.common.white,
+        'circle-opacity': ['interpolate', ['exponential', 1], ['zoom'], 8, 0, 16, 1],
       },
     })
 
@@ -68,6 +65,7 @@ export default () => {
       }
       if (oldId === featureClickId) {
         setSelectedCoordinate(null)
+        featureClickId = null
       } else {
         setSelectedCoordinate(featureClickId)
       }

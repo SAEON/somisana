@@ -6,7 +6,7 @@ export default async ctx => {
   const { time_step = 120, runid = 1, depth = 0 } = ctx.query
 
   if (!time_step || !runid || !depth) {
-    throw new Error(`Missing query params. Please specify model, time_step, run_date, depth values`)
+    throw new Error(`Missing query params. Please specify time_step, runid, depth values`)
   }
 
   ctx.compress = false
