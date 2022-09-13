@@ -105,7 +105,14 @@ select
   min_y,
   max_y,
   st_convexhull (coords)::geometry(Polygon, 3857) convexhull,
-  (st_makeenvelope (min_x, min_y, max_x, max_y, 4326))::geometry(Polygon, 4326) envelope
+  (st_makeenvelope (min_x, min_y, max_x, max_y, 4326))::geometry(Polygon, 4326) envelope,
+  (
+    select
+      json_agg(runs)
+    from
+      runs
+    where
+      modelid = modelid) runs
 from (
   select
     c.modelid,
