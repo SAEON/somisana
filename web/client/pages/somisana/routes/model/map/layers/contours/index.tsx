@@ -3,8 +3,10 @@ import { context as mapContext } from '../../_context'
 import { context as bandDataContext } from '../../../band-data/_context'
 import { tricontour } from 'd3-tricontour'
 import { Linear as Loading } from '../../../../../../../components/loading'
+import useTheme from '@mui/material/styles/useTheme'
 
 export default () => {
+  const theme = useTheme()
   const { map } = useContext(mapContext)
   const gql = useContext(bandDataContext)
 
@@ -22,7 +24,7 @@ export default () => {
         map.setLayoutProperty(id, 'visibility', 'visible')
       } else {
         const c = tricontour()
-        c.thresholds(250)
+        c.thresholds(100)
         const triContours = c(json)
 
         const minUsefulThreshold =
@@ -68,6 +70,7 @@ export default () => {
             layout: {},
             paint: {
               'fill-color': ['rgba', ['+', 0, exp], 0, ['-', 255, exp], 1],
+              'fill-outline-color': theme.palette.common.white,
             },
           },
           'coordinates'
