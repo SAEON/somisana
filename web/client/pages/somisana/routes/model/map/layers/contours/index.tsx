@@ -2,6 +2,7 @@ import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_context'
 import { context as bandDataContext } from '../../../band-data/_context'
 import { tricontour } from 'd3-tricontour'
+import { contours } from 'd3-contour'
 import { Linear as Loading } from '../../../../../../../components/loading'
 
 export default () => {
@@ -23,11 +24,17 @@ export default () => {
       } else {
         const c = tricontour()
         c.thresholds(100)
-        const contours = c(json)
+        const triContours = c(json)
+
+        const c2 = contours()
+        c2.size([152, 106])
+        const v = json.map(([, , v]) => v)
+        const v2 = c2(v)
+        console.log(v2)
 
         const geojson = {
           type: 'FeatureCollection',
-          features: contours.map(({ type, coordinates, value }) => ({
+          features: triContours.map(({ type, coordinates, value }) => ({
             type: 'Feature',
             properties: { value },
             geometry: {
