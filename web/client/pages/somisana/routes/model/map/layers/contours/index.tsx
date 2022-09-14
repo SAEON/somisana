@@ -1,14 +1,20 @@
 import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_context'
+import { createPortal } from 'react-dom'
 import { context as bandDataContext } from '../../../band-data/_context'
 import { tricontour } from 'd3-tricontour'
 import { Linear as Loading } from '../../../../../../../components/loading'
 import useTheme from '@mui/material/styles/useTheme'
+import Div from '../../../../../../../components/div'
 
 export default () => {
   const theme = useTheme()
   const { map } = useContext(mapContext)
   const gql = useContext(bandDataContext)
+
+  console.log(createPortal)
+
+  window.map = map
 
   if (gql.error) {
     throw gql.error
@@ -91,6 +97,6 @@ export default () => {
   if (gql.loading) {
     return <Loading />
   } else {
-    return null
+    return createPortal(<Div />, map.getContainer())
   }
 }
