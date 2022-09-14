@@ -6,36 +6,27 @@ import Typography from '@mui/material/Typography'
 
 const marks = [
   {
-    value: -120,
-    label: '120 M',
+    value: -500,
+    label: '500 M',
+  },
+  {
+    value: -200,
+    label: '200 M',
   },
 
   {
-    value: -80,
-    label: '80 M',
+    value: -100,
+    label: '100 M',
   },
 
   {
-    value: -40,
-    label: '40 M',
+    value: -50,
+    label: '50 M',
   },
 
   {
-    value: -20,
-    label: '20 M',
-  },
-
-  {
-    value: -15,
-    label: '15 M',
-  },
-  {
-    value: -10,
-    label: '10 M',
-  },
-  {
-    value: -5,
-    label: '05 M',
+    value: -25,
+    label: '25 M',
   },
 
   {
