@@ -18,9 +18,7 @@ export default () => {
     <Box
       sx={{
         height: theme => `calc(100vh - ${theme.spacing(6)})`,
-        display: 'flex',
         position: 'relative',
-        flex: 1,
       }}
     >
       {isClient && (
