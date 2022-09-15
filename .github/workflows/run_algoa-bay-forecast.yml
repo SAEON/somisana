@@ -808,7 +808,6 @@ jobs:
       - name: noop
         run: echo done
 
-
   # Cleanup rasters
   cleanup-rasters:
     needs: [branch-ref, toolkit, gather-jobs]
