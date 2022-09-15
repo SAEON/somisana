@@ -299,7 +299,7 @@ jobs:
             ${{ needs.toolkit.outputs.image }} \
               -t \
                 --grid-input-path /tmp/somisana/current/croco/forcing/grd.nc \
-                --nc-input-path /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
+                --nc-input-path /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1 \
                 --nc-output-path /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
                 --zarr-output-path /tmp/somisana/current/croco/forecast/${{ env.RUN_DATE }}.zarr
 
