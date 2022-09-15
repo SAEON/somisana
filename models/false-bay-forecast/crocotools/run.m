@@ -16,7 +16,7 @@ cd croco/forcing/
 start;
 
 % Load the daily parameters of the model date/hdays/fdays etc
-config
+config;
 
 % delta_days_gfs needs to be double not string from .env
 delta_days_gfs=double(delta_days_gfs);
@@ -41,7 +41,7 @@ make_GFS_ocims(date_now_year,date_now_month,date_now_day,delta_days_gfs,hdays,fd
 
 % Run function to create atomspereic forcing (GFS) for a nested domain 
 % (false bay uses two domains, it is nested)
-make_GFS_ocims_nest(date_now_year,date_now_month,date_now_day)
+make_GFS_ocims_nest(date_now_year,date_now_month,date_now_day);
 
 % Run function to create ocean forcing (mercator)
 make_OGCM_ocims(date_now_year,date_now_month,date_now_day,hdays,makeini);

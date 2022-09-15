@@ -16,7 +16,7 @@ cd croco/forcing/
 start;
 
 % Load the daily parameters of the model date/hdays/fdays etc
-config
+config;
 
 % delta_days_gfs needs to be double not string from .env
 delta_days_gfs=double(delta_days_gfs);
