@@ -214,18 +214,24 @@ jobs:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
       RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
-      RESTART_FILE_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
+      RESTART_FILE_1_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
+      RESTART_FILE_2_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc.1
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Check out source code
         uses: actions/checkout@v2
         with:
           ref: ${{ env.BRANCH_REF }}
-      - name: Copy yesterday's restart file (if it exists)
-        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc
-        continue-on-error: true # Allow for the case where the restart file doesn't exist
+      - name: Copy yesterday's parent restart file (if it exists)
+        run: cp ${{ env.RESTART_FILE_1_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc
+        continue-on-error: true # Restart file doesn't have to exist
+      - name: Copy yesterday's child restart file (if it exists)
+        run: cp ${{ env.RESTART_FILE_2_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc.1
+        continue-on-error: true # Restart file doesn't have to exist
       - name: Configure MatLab env restart file path
-        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
+        run: |
+          echo "RESTART_FILE_1_PATH=/tmp/somisana/current/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
+          echo "RESTART_FILE_2_PATH=/tmp/somisana/current/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc.1" >> ${{ env.WORKDIR }}/.env
       - name: Make forcing files
         run: >-
           docker run \
