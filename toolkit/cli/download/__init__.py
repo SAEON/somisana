@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta, date
 from pathlib import Path
+from time import strftime
 from cli.download.mercator import download as mercator_download
 from cli.download.gfs import download as gfs_download
 
@@ -38,7 +39,7 @@ def download(options, arguments):
     with open(matlab_env, "w+") as env:
         env.writelines(
             [
-                "RUN_DATE=" + str(date.today()) + "\n",
+                "RUN_DATE=" + str(datetime.strftime(run_date, '%Y-%m-%d')) + "\n",
                 "DELTA_DAYS_GFS=" + str(delta_days_gfs) + "\n",
             ]
         )

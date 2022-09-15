@@ -17,7 +17,7 @@ side then a slightly older initialization will be found
 
 
 def download(run_date, hdays, fdays, domain, workdir):
-    now = datetime.now()
+    _now = datetime.now()
     hdays = hdays + 0.25
     fdays = fdays + 0.25
     run_date = datetime.combine(run_date, time())
@@ -41,15 +41,17 @@ def download(run_date, hdays, fdays, domain, workdir):
     )
 
     # Download forcing files up to latest available date
+    print('\nDOWNLOADING HINDCAST files')
     while start_date < latest_available_date:
         for i in range(1, 7):  # hours 1 to 6
             download_file(start_date, i, workdir, params)
         start_date = start_date + timedelta(hours=6)
 
     # Download forecast forcing files
+    print('\nDOWNLOADING FORECAST files')
     total_forecast_hours = int((fdays - delta_days) * 24)
     for i in range(1, total_forecast_hours + 1):
         download_file(latest_available_date, i, workdir, params)
 
-    print("GFS download completed (in " + str(datetime.now() - now) + " h:m:s)")
+    print("GFS download completed (in " + str(datetime.now() - _now) + " h:m:s)")
     return delta_days

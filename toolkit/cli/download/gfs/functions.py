@@ -55,7 +55,7 @@ def download_file(dt, i, workdir, PARAMS):
     if not (os.path.isfile(fileout)):
         url = make_url(dt, i, PARAMS)
         cmd = make_cURL(url, fileout)
-        print(cmd)
+        print('', cmd)
         exec_cmd(cmd, fileout)
     else:
         print("File already exists", fileout)
