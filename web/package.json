@@ -27,6 +27,7 @@
     "apollo-server-koa": "^3.10.2",
     "browserslist": "^4.21.4",
     "cookie": "^0.5.0",
+    "d3": "^7.6.1",
     "d3-contour": "^4.0.0",
     "d3-tricontour": "^1.0.2",
     "dataloader": "^2.1.0",

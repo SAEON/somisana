@@ -60,7 +60,7 @@ export default ({ children }) => {
         animateTimeStep,
         setAnimateTimeStep,
         run,
-        model,
+        model: { ...model, gridWidth: 152, gridHeight: 106 },
       }}
     >
       {children}
