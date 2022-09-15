@@ -1,6 +1,6 @@
 d = dotenv('/tmp/somisana/current/.env');
 
-RESTART_FILE_PATH = d.env.RESTART_FILE_PATH
+RESTART_FILE_1_PATH = d.env.RESTART_FILE_1_PATH
 
 RUN_DATE = datetime(d.env.RUN_DATE, 'InputFormat','yyyy-MM-dd');
 date_now_year=year(RUN_DATE);
