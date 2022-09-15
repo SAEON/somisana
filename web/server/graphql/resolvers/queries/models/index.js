@@ -15,6 +15,8 @@ export default async (self, { id = undefined }, ctx) => {
           min_y,
           max_x,
           max_y,
+          grid_width,
+          grid_height,
           st_asgeojson(convexhull) convexhull,
           st_asgeojson(envelope) envelope,
           runs,

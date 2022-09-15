@@ -30,6 +30,8 @@ type Model implements Node {
   max_x: Float!
   min_y: Float!
   max_y: Float!
+  gridWidth: Int!
+  gridHeight: Int!
   convexhull: JSON!
   envelope: JSON!
   runs: JSON

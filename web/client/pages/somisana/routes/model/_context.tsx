@@ -25,6 +25,8 @@ export default ({ children }) => {
             max_y
             min_x
             min_y
+            gridWidth
+            gridHeight
             runs
           }
         }
@@ -60,7 +62,7 @@ export default ({ children }) => {
         animateTimeStep,
         setAnimateTimeStep,
         run,
-        model: { ...model, gridWidth: 152, gridHeight: 106 },
+        model,
       }}
     >
       {children}

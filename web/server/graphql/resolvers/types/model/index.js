@@ -3,4 +3,6 @@ export default {
   _id: async ({ id }) => id,
   envelope: async ({ envelope }) => JSON.parse(envelope),
   convexhull: async ({ convexhull }) => JSON.parse(convexhull),
+  gridWidth: async ({ grid_width: gridWidth }) => gridWidth,
+  gridHeight: async ({ grid_height: gridHeight }) => gridHeight,
 }

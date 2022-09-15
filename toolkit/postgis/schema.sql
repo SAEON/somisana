@@ -29,7 +29,9 @@ create table if not exists public.models (
   id smallint primary key generated always as identity,
   name varchar(255) not null unique,
   title varchar(255),
-  description text
+  description text,
+  grid_width int not null,
+  grid_height int not null
 );
 
 create table if not exists public.runs (
@@ -41,16 +43,16 @@ create table if not exists public.runs (
 merge into public.models t
 using (
   select
-    'algoa-bay-forecast' name, 'Algoa Bay Forecast' title, '' description
+    'algoa-bay-forecast' name, 'Algoa Bay Forecast' title, '' description, 152 grid_width, 106 grid_height
   union
     select
-      'false-bay-forecast' name, 'False Bay Forecast' title, '' description) s on s.name = t.name
+      'false-bay-forecast' name, 'False Bay Forecast' title, '' description, 77 grid_width, 89 grid_height) s on s.name = t.name
 when not matched then
-  insert (name, title, description)
-    values (s.name, s.title, description)
+  insert (name, title, description, grid_width, grid_height)
+    values (s.name, s.title, s.description, s.grid_width, s.grid_height)
     when matched then
       update set
-        title = s.title, description = s.description;
+        title = s.title, description = s.description, grid_width = s.grid_width, grid_height = s.grid_height;
 
 create table if not exists public.raster_xref_run (
   id int primary key generated always as identity,
@@ -111,6 +113,8 @@ select
   max_x,
   min_y,
   max_y,
+  grid_width,
+  grid_height,
   st_convexhull (coords)::geometry(Polygon, 3857) convexhull,
   (st_makeenvelope (min_x, min_y, max_x, max_y, 4326))::geometry(Polygon, 4326) envelope,
   (
@@ -126,6 +130,8 @@ from (
     m.name,
     m.title,
     m.description,
+    grid_width,
+    grid_height,
     min(c.longitude) min_x,
     max(c.longitude) max_x,
     max(c.latitude) max_y,
@@ -138,6 +144,8 @@ from (
     modelid,
     name,
     title,
+    grid_width,
+    grid_height,
     description) t;
 
 
@@ -419,11 +427,11 @@ grid as (
   select
     st_x (c.pixel) x,
     st_y (c.pixel) y,
-    c.id coordinateid,
-    v.interpolated_temperature,
-    v.interpolated_salinity,
-    v.interpolated_u,
-    v.interpolated_v
+  c.id coordinateid,
+  v.interpolated_temperature,
+  v.interpolated_salinity,
+  v.interpolated_u,
+  v.interpolated_v
 from
   interpolated_values v
   right join coordinates c on c.id = v.coordinateid
