@@ -21,7 +21,7 @@ def run(start_time, model):
                   join runs r on r.id = x.runid
                   join models m on m.id = r.modelid
                 where
-                  m.name = %s)
+                  m.name = %s);
             """,
             (model,),
         )

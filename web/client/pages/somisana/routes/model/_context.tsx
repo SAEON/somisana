@@ -48,7 +48,7 @@ export default ({ children }) => {
   }
 
   const model = data.models.find(({ _id }) => _id == id)
-  const run = model.runs[model.runs.length - 1]
+  const run = model.runs[0]
 
   return (
     <context.Provider

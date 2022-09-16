@@ -30,29 +30,35 @@ create table if not exists public.models (
   name varchar(255) not null unique,
   title varchar(255),
   description text,
-  grid_width int not null,
-  grid_height int not null
+  grid_width int,
+  grid_height int,
+  min_x float,
+  max_x float,
+  min_y float,
+  max_y float
 );
 
 create table if not exists public.runs (
   id smallint primary key generated always as identity,
-  run_date date not null unique,
-  modelid smallint not null references public.models (id)
+  run_date date not null,
+  modelid smallint not null references public.models (id) on delete cascade,
+  successful boolean default null,
+  constraint unique_runs_per_model unique (run_date, modelid)
 );
 
 merge into public.models t
 using (
   select
-    'algoa-bay-forecast' name, 'Algoa Bay Forecast' title, '' description, 152 grid_width, 106 grid_height
+    'algoa-bay-forecast' name, 'Algoa Bay Forecast' title, '' description, 152 grid_width, 106 grid_height, 24.820085525512695 min_x, 27.76671028137207 max_x, -34.85134506225586 min_y, -33.07335662841797 max_y
   union
     select
-      'false-bay-forecast' name, 'False Bay Forecast' title, '' description, 77 grid_width, 89 grid_height) s on s.name = t.name
+      'false-bay-forecast' name, 'False Bay Forecast' title, '' description, 77 grid_width, 89 grid_height, null min_x, null max_x, null min_y, null max_y) s on s.name = t.name
 when not matched then
-  insert (name, title, description, grid_width, grid_height)
-    values (s.name, s.title, s.description, s.grid_width, s.grid_height)
+  insert (name, title, description, grid_width, grid_height, min_x, max_x, min_y, max_y)
+    values (s.name, s.title, s.description, s.grid_width, s.grid_height, s.min_x, s.max_x, s.min_y, s.max_y)
     when matched then
       update set
-        title = s.title, description = s.description, grid_width = s.grid_width, grid_height = s.grid_height;
+        title = s.title, description = s.description, grid_width = s.grid_width, grid_height = s.grid_height, min_x = s.min_x, max_x = s.max_x, min_y = s.min_y, max_y = s.max_y;
 
 create table if not exists public.raster_xref_run (
   id int primary key generated always as identity,
@@ -119,23 +125,30 @@ select
   (st_makeenvelope (min_x, min_y, max_x, max_y, 4326))::geometry(Polygon, 4326) envelope,
   (
     select
-      json_agg(runs)
-    from
-      runs
-    where
-      modelid = modelid) runs
+      json_agg(t_runs)
+    from (
+      select
+        *
+      from
+        runs
+      where
+        runs.modelid = t.modelid
+        and runs.successful = true
+      order by
+        runs.run_date desc
+      limit 10) t_runs) runs
 from (
   select
     c.modelid,
     m.name,
     m.title,
     m.description,
-    grid_width,
-    grid_height,
-    min(c.longitude) min_x,
-    max(c.longitude) max_x,
-    max(c.latitude) max_y,
-    min(c.latitude) min_y,
+    m.grid_width,
+    m.grid_height,
+    m.min_x,
+    m.max_x,
+    m.max_y,
+    m.min_y,
     st_collect (coord) coords
   from
     coordinates c
@@ -146,7 +159,11 @@ from (
     title,
     grid_width,
     grid_height,
-    description) t;
+    description,
+    min_x,
+    max_x,
+    min_y,
+    max_y) t;
 
 
 /**

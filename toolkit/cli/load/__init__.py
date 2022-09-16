@@ -100,15 +100,24 @@ def load(options, arguments):
                    and s.modelid = t.modelid
             when not matched then
                 insert (run_date, modelid)
-                values (s.run_date, s.modelid)
-            """,
+                values (s.run_date, s.modelid);""",
             (
                 run_date,
                 model,
             ),
         )
         runid = client.execute(
-            """select id from runs where run_date = %s""", (run_date,)
+            """
+            select
+                r.id
+            from
+                runs r
+            join
+                models m on m.id = r.modelid 
+            where
+                r.run_date = %s
+                and m.name = %s""",
+            (run_date, model),
         ).fetchall()[0][0]
 
     with open("cli/load/models.yml") as file:
