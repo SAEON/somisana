@@ -204,7 +204,7 @@ stable parallel safe;
 
 drop function if exists public.somisana_join_values cascade;
 
-create function public.somisana_join_values (runid smallint, depth_level smallint, time_step smallint)
+create function public.somisana_join_values (runid int, depth_level int, time_step int)
   returns table (
     coordinateid int,
     depth decimal(7, 2),
@@ -215,12 +215,27 @@ create function public.somisana_join_values (runid smallint, depth_level smallin
   )
   as $$
 begin
-  return query with depths as (
+  return query with _coordinates as (
     select
-      pixel,
-      value
+      id,
+      pixel
     from
-      public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'm_rho')
+      public.coordinates c
+    where
+      c.modelid = (
+        select
+          modelid
+        from
+          runs
+        where
+          runs.id = runid)
+),
+depths as (
+  select
+    pixel,
+    value
+  from
+    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'm_rho')
 ),
 temperatures as (
   select
@@ -262,7 +277,7 @@ from
   join salinity s on s.pixel = d.pixel
   join u on u.pixel = d.pixel
   join v on v.pixel = d.pixel
-  join coordinates c on c.pixel = d.pixel;
+  join _coordinates c on c.pixel = d.pixel;
 end;
 $$
 language 'plpgsql'
@@ -270,7 +285,7 @@ stable parallel safe;
 
 drop function if exists public.somisana_upsert_values cascade;
 
-create function public.somisana_upsert_values (run_id smallint, depth_level smallint, time_step smallint)
+create function public.somisana_upsert_values (run_id int, depth_level int, time_step int)
   returns void
   as $$
 begin
