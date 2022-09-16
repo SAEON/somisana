@@ -52,7 +52,7 @@ using (
     'algoa-bay-forecast' name, 'Algoa Bay Forecast' title, '' description, 152 grid_width, 106 grid_height, 24.820085525512695 min_x, 27.76671028137207 max_x, -34.85134506225586 min_y, -33.07335662841797 max_y
   union
     select
-      'false-bay-forecast' name, 'False Bay Forecast' title, '' description, 77 grid_width, 89 grid_height, null min_x, null max_x, null min_y, null max_y) s on s.name = t.name
+      'false-bay-forecast' name, 'False Bay Forecast' title, '' description, 77 grid_width, 89 grid_height, 17.517778396606445 min_x, 19.962223052978516 max_x, -35.12773513793945 min_y, -33.38367462158203 max_y) s on s.name = t.name
 when not matched then
   insert (name, title, description, grid_width, grid_height, min_x, max_x, min_y, max_y)
     values (s.name, s.title, s.description, s.grid_width, s.grid_height, s.min_x, s.max_x, s.min_y, s.max_y)
@@ -314,9 +314,7 @@ begin
   t := target_depth;
   r := runid;
   ts := time_step;
-  return query with
-values
-  as (
+  return query with _values as (
     select
       v.id,
       v.coordinateid,
@@ -328,8 +326,7 @@ values
       v.depth,
       t target_depth
     from
-    values
-      v
+      public.values v
     where
       v.runid = r
       and v.time_step = ts
@@ -367,18 +364,15 @@ bounded_values as (
   coalesce(v_upper.v, v.v) v_upper,
   v.v,
   v_lower.v v_lower
-from
-values v
-  left join
-values v_upper on v_upper.coordinateid = v.coordinateid
-  and v_upper.depth_level = (v.depth_level + 1)
-  left join
-values v_lower on v_lower.coordinateid = v.coordinateid
-  and v_lower.depth_level = case when v.depth_level < 2 then
-    v.depth_level
-  else
-    (v.depth_level - 1)
-  end) b
+from _values v
+  left join _values v_upper on v_upper.coordinateid = v.coordinateid
+    and v_upper.depth_level = (v.depth_level + 1)
+  left join _values v_lower on v_lower.coordinateid = v.coordinateid
+    and v_lower.depth_level = case when v.depth_level < 2 then
+      v.depth_level
+    else
+      (v.depth_level - 1)
+    end) b
 where depth_lower is not null
 and b.target_depth between b.depth_lower and b.depth_upper
 ),
@@ -452,7 +446,14 @@ grid as (
 from
   interpolated_values v
   right join coordinates c on c.id = v.coordinateid
-)
+  where
+    c.modelid = (
+      select
+        modelid
+      from
+        runs
+      where
+        id = r))
 select
   g.coordinateid,
   g.interpolated_temperature,
