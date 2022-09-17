@@ -87,20 +87,23 @@ def load(options, arguments):
             """
             merge into public.runs t
             using (
+            select
+                %s::date run_date, (
                 select
-                    %s::date run_date, 
-                    (select
-                      id
-                     from
-                      models
-                     where
-                      name = %s) modelid
-                ) s on 
-                   s.run_date = t.run_date
-                   and s.modelid = t.modelid
+                    id
+                from
+                    models
+                where
+                    name = %s) modelid) s on s.run_date = t.run_date
+                and s.modelid = t.modelid
             when not matched then
-                insert (run_date, modelid)
-                values (s.run_date, s.modelid);""",
+                insert
+                (run_date, modelid)
+                values (s.run_date, s.modelid)
+                when matched then
+                    update set
+                    successful = null;
+            """,
             (
                 run_date,
                 model,
