@@ -81,6 +81,8 @@ def load(options, arguments):
             )
 
     # Register this run_date
+    # TODO the merge code is run on the load at the moment,
+    # which means runid.successful is getting toggled when it shouldn't be
     runid = None
     with pool().connection() as client:
         client.execute(
@@ -97,12 +99,8 @@ def load(options, arguments):
                     name = %s) modelid) s on s.run_date = t.run_date
                 and s.modelid = t.modelid
             when not matched then
-                insert
-                (run_date, modelid)
-                values (s.run_date, s.modelid)
-                when matched then
-                    update set
-                    successful = null;
+                insert (run_date, modelid)
+                values (s.run_date, s.modelid);
             """,
             (
                 run_date,
