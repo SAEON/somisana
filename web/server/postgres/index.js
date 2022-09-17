@@ -18,17 +18,28 @@ export const pool = createPool({
 export const updateCoordinatesMask = async () => {
   const client = await pool.connect()
   client.query(`
+    with _coordinates as (
+      select distinct
+        c.id
+      from
+        public.coordinates c
+      where
+        c.has_value = false
+        and exists (
+          select
+            1
+          from
+          values
+          where
+            coordinateid = c.id))
     update
       public.coordinates c
     set
       has_value = true
     where
-      has_value = false
-      and exists (
+      c.id in (
         select
-          1
+          id
         from
-          values
-        where
-          coordinateid = c.id);`)
+          _coordinates);`)
 }
