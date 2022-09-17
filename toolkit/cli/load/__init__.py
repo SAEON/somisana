@@ -149,11 +149,13 @@ def load(options, arguments):
 
     if upsert_values:
         datetimes = None
+        total_depth_levels = None
         with xr.open_dataset(model_data) as netcdf:
             # TODO The metadata contains the datetime step information
             # This should be in the model table, and datetimes worked out from there
             datetimes = netcdf.time.values
-        refresh_values(runid, start_time, depths, datetimes)
+            total_depth_levels = netcdf.sizes['depth']
+        refresh_values(runid, start_time, depths, datetimes, total_depth_levels)
 
     if cleanup_rasters:
         run_cleanup(start_time, model)

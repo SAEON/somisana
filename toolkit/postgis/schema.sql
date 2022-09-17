@@ -52,7 +52,7 @@ using (
     'algoa-bay-forecast' name, 'Algoa Bay Forecast' title, '' description, 152 grid_width, 106 grid_height, 24.820085525512695 min_x, 27.76671028137207 max_x, -34.85134506225586 min_y, -33.07335662841797 max_y
   union
     select
-      'false-bay-forecast' name, 'False Bay Forecast' title, '' description, 77 grid_width, 89 grid_height, 17.517778396606445 min_x, 19.962223052978516 max_x, -35.12773513793945 min_y, -33.38367462158203 max_y) s on s.name = t.name
+      'false-bay-forecast' name, 'False Bay Forecast' title, '' description, 89 grid_width, 77 grid_height, 17.517778396606445 min_x, 19.962223052978516 max_x, -35.12773513793945 min_y, -33.38367462158203 max_y) s on s.name = t.name
 when not matched then
   insert (name, title, description, grid_width, grid_height, min_x, max_x, min_y, max_y)
     values (s.name, s.title, s.description, s.grid_width, s.grid_height, s.min_x, s.max_x, s.min_y, s.max_y)
@@ -171,7 +171,7 @@ from (
  */
 drop function if exists public.somisana_get_pixel_values cascade;
 
-create function public.somisana_get_pixel_values (runid int, depth_level int, time_step int, variable text)
+create function public.somisana_get_pixel_values (runid int, depth_level int, time_step int, variable text, total_depth_levels int default 20)
   returns table (
     pixel geometry,
     value numeric
@@ -181,7 +181,7 @@ declare
   band_no int;
   rd int;
 begin
-  band_no := ((time_step - 1) * 20) + depth_level;
+  band_no := ((time_step - 1) * total_depth_levels) + depth_level;
   rd := runid;
   return query with centroids as (
     select
@@ -204,7 +204,7 @@ stable parallel safe;
 
 drop function if exists public.somisana_join_values cascade;
 
-create function public.somisana_join_values (runid int, depth_level int, time_step int)
+create function public.somisana_join_values (runid int, depth_level int, time_step int, total_depth_levels int default 20)
   returns table (
     coordinateid int,
     depth decimal(7, 2),
@@ -235,35 +235,35 @@ depths as (
     pixel,
     value
   from
-    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'm_rho')
+    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'm_rho', total_depth_levels => total_depth_levels)
 ),
 temperatures as (
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'temperature')
+    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'temperature', total_depth_levels => total_depth_levels)
 ),
 salinity as (
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'salt')
+    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'salt', total_depth_levels => total_depth_levels)
 ),
 u as (
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'u')
+    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'u', total_depth_levels => total_depth_levels)
 ),
 v as (
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'v'))
+    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'v', total_depth_levels => total_depth_levels))
 select
   c.id coordinateid,
   d.value depth,
@@ -285,7 +285,7 @@ stable parallel safe;
 
 drop function if exists public.somisana_upsert_values cascade;
 
-create function public.somisana_upsert_values (run_id int, depth_level int, time_step int)
+create function public.somisana_upsert_values (run_id int, depth_level int, time_step int, total_depth_levels int default 20)
   returns void
   as $$
 begin
@@ -294,7 +294,7 @@ begin
     select
       depth_level, time_step, run_id runid, coordinateid, depth, temperature, salinity, u, v
     from
-      somisana_join_values (run_id, depth_level, time_step)) s on s.runid = t.runid
+      somisana_join_values (run_id, depth_level, time_step, total_depth_levels)) s on s.runid = t.runid
     and s.time_step = t.time_step
     and s.depth_level = t.depth_level
     and s.coordinateid = t.coordinateid

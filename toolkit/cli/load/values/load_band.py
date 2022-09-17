@@ -7,7 +7,7 @@ from pandas import Timestamp
 MAX_RETRIES = 1 if PY_ENV == 'development' else 5
 
 
-def load(depth_level, runid, start_time, datetimes):
+def load(depth_level, runid, start_time, datetimes, total_depth_levels):
     for i in range(240):
         time_step = i + 1
         timestamp = Timestamp(datetimes[i]).to_pydatetime()
@@ -28,11 +28,12 @@ def load(depth_level, runid, start_time, datetimes):
                 )
                 with pool().connection() as client:
                     client.execute(
-                        query="""select somisana_upsert_values (run_id => %s,  depth_level => %s, time_step => %s)""",
+                        query="""select somisana_upsert_values (run_id => %s,  depth_level => %s, time_step => %s, total_depth_levels => %s)""",
                         params=(
                             runid,
                             depth_level,
                             time_step,
+                            total_depth_levels
                         ),
                         prepare=False,
                     )
