@@ -483,5 +483,5 @@ order by
 end;
 $$
 language 'plpgsql'
-stable parallel safe;
+immutable parallel safe;
 

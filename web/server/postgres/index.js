@@ -20,31 +20,31 @@ export const updateCoordinatesMask = async () => {
   const a = performance.now()
 
   try {
-    client.query(`
-    with _coordinates as (
-      select distinct
-        c.id
-      from
-        public.coordinates c
-      where
-        c.has_value = false
-        and exists (
-          select
-            1
-          from
-          values
-          where
-            coordinateid = c.id))
-    update
-      public.coordinates c
-    set
-      has_value = true
-    where
-      c.id in (
-        select
-          id
+    await client.query(`
+      with _coordinates as (
+        select distinct
+          c.id
         from
-          _coordinates);`)
+          public.coordinates c
+        where
+          c.has_value = false
+          and exists (
+            select
+              1
+            from
+            values
+            where
+              coordinateid = c.id))
+      update
+        public.coordinates c
+      set
+        has_value = true
+      where
+        c.id in (
+          select
+            id
+          from
+            _coordinates);`)
   } catch (error) {
     console.error('Error updating coordinate land masking', error)
     throw error
