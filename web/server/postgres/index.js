@@ -17,7 +17,10 @@ export const pool = createPool({
 
 export const updateCoordinatesMask = async () => {
   const client = await pool.connect()
-  client.query(`
+  const a = performance.now()
+
+  try {
+    client.query(`
     with _coordinates as (
       select distinct
         c.id
@@ -42,4 +45,12 @@ export const updateCoordinatesMask = async () => {
           id
         from
           _coordinates);`)
+  } catch (error) {
+    console.error('Error updating coordinate land masking', error)
+    throw error
+  } finally {
+    client.release()
+    const b = performance.now()
+    console.info('Refreshed coordinate land masking', ((b - a) / 1000).toFixed(2), 'seconds')
+  }
 }
