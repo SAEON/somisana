@@ -5,4 +5,6 @@ export default {
   convexhull: async ({ convexhull }) => JSON.parse(convexhull),
   gridWidth: async ({ grid_width: gridWidth }) => gridWidth,
   gridHeight: async ({ grid_height: gridHeight }) => gridHeight,
+  creatorContactEmail: async ({ creator_contact_email: creatorContactEmail }) =>
+    creatorContactEmail,
 }

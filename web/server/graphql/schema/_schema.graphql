@@ -26,6 +26,9 @@ type Model implements Node {
   name: String!
   title: String!
   description: String
+  creator: String
+  creatorContactEmail: String
+  type: String
   min_x: Float!
   max_x: Float!
   min_y: Float!

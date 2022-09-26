@@ -78,30 +78,36 @@ export default ({ contentBase = '/', routes }) => {
           )
         })}
 
-      {tree.slice(-1).map(({ label, breadcrumbsLabel, Icon, BreadcrumbsIcon, p } = {}) => {
-        Icon = BreadcrumbsIcon || Icon
-        label = breadcrumbsLabel
-          ? typeof breadcrumbsLabel === 'function'
-            ? breadcrumbsLabel(p)
-            : breadcrumbsLabel
-          : label
-        label = `${label || ''}`?.replace('Home', 'SOMISANA') || label
+      {tree
+        .slice(-1)
+        .map(({ label, breadcrumbsLabel, BreadcrumbsLabel, Icon, BreadcrumbsIcon, p } = {}) => {
+          Icon = BreadcrumbsIcon || Icon
+          label = breadcrumbsLabel
+            ? typeof breadcrumbsLabel === 'function'
+              ? breadcrumbsLabel(p)
+              : breadcrumbsLabel
+            : label
+          label = `${label || ''}`?.replace('Home', 'SOMISANA') || label
 
-        return (
-          <Typography
-            key={label}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            {Icon && (
-              <MuiIcon sx={{ mr: theme => theme.spacing(0.5), width: '0.8em' }} component={Icon} />
-            )}
-            {label}
-          </Typography>
-        )
-      })}
+          return (
+            <Typography
+              key={label}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              {Icon && (
+                <MuiIcon
+                  sx={{ mr: theme => theme.spacing(0.5), width: '0.8em' }}
+                  component={Icon}
+                />
+              )}
+              {BreadcrumbsLabel && <BreadcrumbsLabel pathname={p} />}
+              {!BreadcrumbsLabel && label}
+            </Typography>
+          )
+        })}
     </Breadcrumbs>
   )
 }

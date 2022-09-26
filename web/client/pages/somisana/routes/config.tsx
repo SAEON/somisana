@@ -1,15 +1,7 @@
 import { lazy, Suspense } from 'react'
-import { Linear as Loading } from '../../../components/loading'
-import {
-  Home,
-  Contract,
-  Map,
-  About,
-  Github,
-  License,
-  Link,
-  ChartTimelineVariantShimmer,
-} from '../../../components/icons'
+import { Linear as LinearLoading, Circular as CircularLoading } from '../../../components/loading'
+import { Home, Contract, Map, About, Github, License, Link } from '../../../components/icons'
+import { gql, useQuery } from '@apollo/client'
 import HomePage from './home'
 
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
@@ -17,7 +9,7 @@ const AboutPage = lazy(() => import('../../../modules/about'))
 const ExplorePage = lazy(() => import('./explore'))
 const ExploreModelPage = lazy(() => import('./model'))
 
-const L = () => <Loading sx={{ width: '100%' }} />
+const L = () => <LinearLoading sx={{ width: '100%' }} />
 
 export default [
   {
@@ -34,8 +26,36 @@ export default [
     to: '/explore/:id',
     path: '/explore/:id',
     label: 'Model',
-    Icon: ChartTimelineVariantShimmer,
-    breadcrumbsLabel: (pathname: any) => pathname.match(/\d+$/)?.[0] || '',
+    BreadcrumbsLabel: ({ pathname }) => {
+      const { error, loading, data } = useQuery(
+        gql`
+          query ($id: ID) {
+            models(id: $id) {
+              id
+              ... on Model {
+                _id
+                title
+              }
+            }
+          }
+        `,
+        {
+          variables: {
+            id: pathname.match(/\d+$/)?.[0],
+          },
+        }
+      )
+
+      if (loading) {
+        return <CircularLoading size={16} />
+      }
+
+      if (error) {
+        throw error
+      }
+
+      return data.models[0].title
+    },
     includeInNavMenu: false,
     includeInFooter: false,
     element: props => (
