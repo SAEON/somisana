@@ -30,6 +30,8 @@ create table if not exists public.models (
   name varchar(255) not null unique,
   title varchar(255),
   description text,
+  creator text,
+  creator_contact_email text,
   grid_width int,
   grid_height int,
   min_x float,
@@ -49,16 +51,16 @@ create table if not exists public.runs (
 merge into public.models t
 using (
   select
-    'algoa-bay-forecast' name, 'Algoa Bay Forecast' title, '' description, 152 grid_width, 106 grid_height, 24.820085525512695 min_x, 27.76671028137207 max_x, -34.85134506225586 min_y, -33.07335662841797 max_y
+    'algoa-bay-forecast' name, 'Algoa Bay Forecast' title, 'The Algoa Bay forecast provides the past, present and future state of the oceanographic environment from a Coastal and Regional Ocean COmmunity (CROCO) numerical model configuration. The model is initialised once a day, and produces output at an hourly temporal resolution for a period of 5 days into the future. The provided variables are temperature, sea surface height, salinity and surface currents. Boundary conditions for the model are obtained from the ~9km resolution Mercator global ocean analysis and forecast product, while surface forcing is obtained from the Global Forecast System (GFS) ~25km. Our configuration represents a ''downscaling'' of the Mercator global ocean product to high resolution, from ~3km at the edge of the domain ~500 m within the bay, allowing for the simulation of local bay-scale processes.' description, 'Giles Fearon' creator, 'gfearon11@gmail.com' creator_contact_email, 152 grid_width, 106 grid_height, 24.820085525512695 min_x, 27.76671028137207 max_x, -34.85134506225586 min_y, -33.07335662841797 max_y
   union
     select
-      'false-bay-forecast' name, 'False Bay Forecast' title, '' description, 89 grid_width, 77 grid_height, 17.517778396606445 min_x, 19.962223052978516 max_x, -35.12773513793945 min_y, -33.38367462158203 max_y) s on s.name = t.name
+      'false-bay-forecast' name, 'False Bay Forecast' title, 'The False Bay forecast provides a forecast of the ocean state for False Bay and the surrounding areas. The forecast is produced using the Coastal and Regional Ocean COmmunity (CROCO) numerical model. The configuration uses a 2 way nested approach, with a large parent domain ~9km resolution and a smaller child domain at ~3km region over False Bay and the surrounds. Only the output from the ~3km domain is displayed. The model is initialised once a day, and produces output at an hourly temporal resolution for a period of 5 days into the future. The provided variables are temperature, sea surface height, salinity and surface currents. Boundary conditions for the model are obtained from the ~9km resolution Mercator global ocean analysis and forecast product, while surface forcing is obtained from the Global Forecast System (GFS) ~25km.' description, 'Matthew Carr' creator, 'matthewcarr03@gmail.com' creator_contact_email, 89 grid_width, 77 grid_height, 17.517778396606445 min_x, 19.962223052978516 max_x, -35.12773513793945 min_y, -33.38367462158203 max_y) s on s.name = t.name
 when not matched then
-  insert (name, title, description, grid_width, grid_height, min_x, max_x, min_y, max_y)
-    values (s.name, s.title, s.description, s.grid_width, s.grid_height, s.min_x, s.max_x, s.min_y, s.max_y)
+  insert (name, title, description, creator, creator_contact_email, grid_width, grid_height, min_x, max_x, min_y, max_y)
+    values (s.name, s.title, s.description, s.creator, s.creator_contact_email, s.grid_width, s.grid_height, s.min_x, s.max_x, s.min_y, s.max_y)
     when matched then
       update set
-        title = s.title, description = s.description, grid_width = s.grid_width, grid_height = s.grid_height, min_x = s.min_x, max_x = s.max_x, min_y = s.min_y, max_y = s.max_y;
+        title = s.title, description = s.description, creator = s.creator, creator_contact_email = s.creator_contact_email, grid_width = s.grid_width, grid_height = s.grid_height, min_x = s.min_x, max_x = s.max_x, min_y = s.min_y, max_y = s.max_y;
 
 create table if not exists public.raster_xref_run (
   id int primary key generated always as identity,

@@ -1,5 +1,4 @@
 {
-  "minify": false,
   "jsc": {
     "target": "es2017",
     "parser": {
@@ -7,8 +6,8 @@
       "tsx": true
     },
     "minify": {
-      "compress": true,
-      "mangle": true
+      "compress": false,
+      "mangle": false
     },
     "transform": {
       "optimizer": {

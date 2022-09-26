@@ -1,4 +1,4 @@
-import styled from '@mui/material/styles/styled'
+import { styled } from '@mui/material/styles'
 import { alpha } from '@mui/system/colorManipulator'
 import ButtonBase from '@mui/material/ButtonBase'
 import Typography from '@mui/material/Typography'

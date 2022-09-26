@@ -1,6 +1,6 @@
 import { forwardRef } from 'react'
 import { keyframes } from '@mui/material/styles'
-import styled from '@mui/material/styles/styled'
+import { styled } from '@mui/material/styles'
 import { alpha } from '@mui/system/colorManipulator'
 import ButtonBase from '@mui/material/ButtonBase'
 

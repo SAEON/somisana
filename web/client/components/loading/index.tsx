@@ -1,6 +1,6 @@
 import LinearProgress from '@mui/material/LinearProgress'
 import CircularProgress from '@mui/material/CircularProgress'
-import styled from '@mui/material/styles/styled'
+import { styled } from '@mui/material/styles'
 
 const LoadingLinear = props => (
   <LinearProgress style={{ zIndex: 1099, position: 'absolute', width: '100%' }} {...props} />

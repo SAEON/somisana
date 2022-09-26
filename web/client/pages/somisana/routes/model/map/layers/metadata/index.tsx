@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_context'
 import { ctx as configContext } from '../../../../../../../modules/config'
-import useTheme from '@mui/material/styles/useTheme'
+import { useTheme } from '@mui/material/styles'
 
 export default () => {
   const theme = useTheme()

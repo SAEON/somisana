@@ -49,7 +49,7 @@ export default () => {
           <ChartTimelineVariantShimmer sx={{ width: '2em', height: '2em' }} />
         </Icon>
 
-        <Content>Matt TODO</Content>
+        <Content>pull from db</Content>
         <BoxButton sx={{ height: 100 }} to={'/explore/1'} title={'Go'} />
       </GridItem>
 
@@ -70,7 +70,7 @@ export default () => {
           <ChartTimelineVariantShimmer sx={{ width: '2em', height: '2em' }} />
         </Icon>
 
-        <Content>Matt TODO</Content>
+        <Content>pull from db</Content>
         <BoxButton sx={{ height: 100 }} title={'Go'} to={'/explore/2'} />
       </GridItem>
     </Grid>

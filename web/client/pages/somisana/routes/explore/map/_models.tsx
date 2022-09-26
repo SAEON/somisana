@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react'
 import { context as mapContext } from './_context'
 import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer'
-import useTheme from '@mui/material/styles/useTheme'
+import { useTheme } from '@mui/material/styles'
 import { useNavigate } from 'react-router-dom'
 
 export default ({ models }) => {

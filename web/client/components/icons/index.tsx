@@ -1,5 +1,5 @@
 import SvgIcon from '@mui/material/SvgIcon'
-import styled from '@mui/material/styles/styled'
+import { styled } from '@mui/material/styles'
 import {
   mdiCog,
   mdiClose,

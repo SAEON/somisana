@@ -2,7 +2,7 @@ import { forwardRef } from 'react'
 import FormControl from '@mui/material/FormControl'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Switch from '@mui/material/Switch'
-import styled from '@mui/material/styles/styled'
+import { styled } from '@mui/material/styles'
 
 const Toggle = forwardRef(({ labelProps, switchProps, ...props }, ref) => (
   <FormControl fullWidth margin="dense" ref={ref} {...props}>

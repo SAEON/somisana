@@ -1,7 +1,7 @@
 import { forwardRef } from 'react'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
-import styled from '@mui/material/styles/styled'
+import { styled } from '@mui/material/styles'
 
 const ComboBox = forwardRef((props, ref) => {
   const { label, options, ...otherProps } = props
