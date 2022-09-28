@@ -53,7 +53,7 @@ jobs:
         id: ENVS
         run: |
           echo "::set-output name=CROCO_IMAGE::${{ github.repository }}_false_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}"
-          echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_false-bay-forecast_toolkit_${{ needs.branch-ref.outputs.value }}"
+          echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}"
           echo "::set-output name=MODEL_RUN_DATE::${{ steps.run_date.outputs.value }}"
           echo "::set-output name=RESTART_FILE_DATE::${{ steps.restart_date.outputs.value }}"
 
@@ -100,7 +100,7 @@ jobs:
       image: ${{ steps.meta.outputs.tags }}
     env:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}_new
+      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
     steps:
       - name: Check out source code
         uses: actions/checkout@v2

@@ -18,9 +18,18 @@ export default ({ onClick, label, to, Icon, href }) => {
       to={to || ''}
       href={href}
     >
-      <ListItemIcon>{<Icon color={isActive ? 'primary' : 'inherit'} />}</ListItemIcon>
+      <ListItemIcon
+        sx={{
+          color: theme => (match ? theme.palette.primary.main : theme.palette.common.black),
+        }}
+      >
+        {<Icon />}
+      </ListItemIcon>
       <ListItemText
-        primary={<Typography color={isActive ? 'primary' : 'inherit'}>{label}</Typography>}
+        sx={{
+          color: theme => (match ? theme.palette.primary.main : theme.palette.common.black),
+        }}
+        primary={label}
       />
     </MenuItem>
   )

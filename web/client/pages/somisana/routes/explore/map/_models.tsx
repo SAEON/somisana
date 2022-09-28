@@ -5,7 +5,6 @@ import { useTheme } from '@mui/material/styles'
 import { useNavigate } from 'react-router-dom'
 
 export default ({ models }) => {
-  console.log(models)
   const { map, view } = useContext(mapContext)
   const navigate = useNavigate()
   const theme = useTheme()

@@ -9,7 +9,6 @@ import Title from './title'
 import Charts from './charts'
 import DepthControl from './controls/depth'
 import TimeControl from './controls/time'
-import Grid from '@mui/material/Grid'
 
 const Map = lazy(() => import('./map'))
 
