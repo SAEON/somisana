@@ -6,7 +6,7 @@ import Div from '../../components/div'
 export default () => {
   const ref = useRef(null)
 
-  const { ESRI_API_KEY } = useContext(configContext)
+  const { ESRI_API_KEY, API_HTTP } = useContext(configContext)
   const basemapEnum = 'ArcGIS:ChartedTerritory'
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default () => {
     map.on('load', () => {
       map.addSource('test', {
         type: 'vector',
-        tiles: [`http://localhost:3000/http/tiles/test/{z}/{x}/{y}.pbf`],
+        tiles: [`${API_HTTP}/tiles/test/{z}/{x}/{y}.pbf`],
       })
 
       map.addLayer({
