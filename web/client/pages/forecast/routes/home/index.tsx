@@ -16,7 +16,7 @@ export default () => {
 
   return (
     <Div sx={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0 }} ref={el => setRef(el)}>
-      <Div className="debug" sx={{ display: 'flex', height: '100%', width: '100%' }}>
+      <Div sx={{ display: 'flex', height: '100%', width: '100%' }}>
         {ref && (
           <Suspense fallback={<Loading />}>
             <Dashboard container={ref} />
