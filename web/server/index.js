@@ -15,7 +15,6 @@ import exclude from './middleware/exclude.js'
 import ssr from '../.ssr/index.js'
 import graphql from './graphql/index.js'
 import createRequestCtx from './middleware/ctx.js'
-import httpDataRoute from './http/data/index.js'
 import testVectorTileRoute from './http/vector-tiles/test/index.js'
 import { updateCoordinatesMask } from './postgres/index.js'
 
@@ -54,8 +53,7 @@ api
     exclude(
       new KoaRouter()
         .get('/http', async ctx => (ctx.body = 'Welcome to the SOMISANA HTTP API'))
-        .get('/http/data', httpDataRoute)
-        .get('/http/tiles/coordinates/:z/:x/:y', testVectorTileRoute)
+        .get('/http/tiles/test/:z/:x/:y', testVectorTileRoute)
         .get(/^.*$/, ssr)
         .routes(),
       '/graphql'

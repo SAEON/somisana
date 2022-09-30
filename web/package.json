@@ -34,6 +34,7 @@
     "dotenv": "^16.0.3",
     "echarts": "^5.4.0",
     "echarts-for-react": "^3.0.2",
+    "geojson-vt": "^3.2.1",
     "graphql": "16.6",
     "graphql-type-json": "^0.3.2",
     "install": "^0.13.0",

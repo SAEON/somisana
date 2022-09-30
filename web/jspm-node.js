@@ -23,6 +23,7 @@ const generator = new Generator({
     'JSONStream',
     'mime',
     'cacache',
+    'vt-pbf'
   ],
 })
 
