@@ -5,7 +5,7 @@
   "description": "SOMISANA web stack",
   "author": "zd.smith@saeon.nrf.ac.za",
   "dependencies": {
-    "@apollo/client": "3.6.9",
+    "@apollo/client": "3.6.10",
     "@arcgis/core": "^4.24.7",
     "@emotion/cache": "^11.10.3",
     "@emotion/react": "^11.10.4",
