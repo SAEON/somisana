@@ -9,7 +9,7 @@ const INDEX_NAME = 'somisana'
 
 export default async (ctx, htmlFiles, assetsPath) => {
   ctx.set('Content-type', 'text/html')
-  const entry = ctx.request.url.replace('.html', '').replace('/', '')
+  const entry = ctx.request.url.replace('.html', '').replace('/', '').replace(/\?.*$/, '')
   const page = entry ? (htmlFiles.includes(entry) ? entry : INDEX_NAME) : INDEX_NAME
 
   const htmlUtf8 = await fs.readFile(normalize(join(assetsPath, `${page}.html`)), {
