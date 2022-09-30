@@ -16,7 +16,7 @@ import ssr from '../.ssr/index.js'
 import graphql from './graphql/index.js'
 import createRequestCtx from './middleware/ctx.js'
 import httpDataRoute from './http/data/index.js'
-import coordinatesTilesRoute from './http/vector-tiles/coordinates/index.js'
+import testVectorTileRoute from './http/vector-tiles/test/index.js'
 import { updateCoordinatesMask } from './postgres/index.js'
 
 const __dirname = dirname(import.meta)
@@ -55,7 +55,7 @@ api
       new KoaRouter()
         .get('/http', async ctx => (ctx.body = 'Welcome to the SOMISANA HTTP API'))
         .get('/http/data', httpDataRoute)
-        .get('/http/tiles/coordinates/:z/:x/:y', coordinatesTilesRoute)
+        .get('/http/tiles/coordinates/:z/:x/:y', testVectorTileRoute)
         .get(/^.*$/, ssr)
         .routes(),
       '/graphql'
