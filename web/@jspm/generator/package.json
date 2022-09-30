@@ -1,0 +1,38 @@
+{
+  "name": "@jspm/generator",
+  "description": "Package Import Map Generation Tool",
+  "license": "MIT",
+  "version": "1.0.0-beta.37",
+  "types": "src/generator.ts",
+  "type": "module",
+  "scripts": {
+    "prepublishOnly": "chomp build"
+  },
+  "imports": {
+    "#fetch": {
+      "source": {
+        "vscode": "./lib/common/fetch-vscode.js",
+        "deno": "./lib/common/fetch-deno.js",
+        "node": "./lib/common/fetch-node.js",
+        "default": "./lib/common/fetch-native.js"
+      },
+      "default": {
+        "vscode": "./dist/fetch-vscode.js",
+        "deno": "./dist/fetch-deno.js",
+        "node": "./dist/fetch-node.js",
+        "default": "./dist/fetch-native.js"
+      }
+    },
+    "#test/*": {
+      "source": "./test/*.js"
+    }
+  },
+  "exports": {
+    "source": {
+      "deno": "./lib/generator-deno.js",
+      "default": "./lib/generator.js"
+    },
+    "deno": "./dist/generator-deno.js",
+    "default": "./dist/generator.js"
+  }
+}

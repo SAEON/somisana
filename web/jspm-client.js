@@ -1,4 +1,4 @@
-import { Generator } from '@jspm/generator'
+import { Generator } from './@jspm/generator/dist/generator.js'
 import { readFile, writeFile } from 'fs/promises'
 import { pathToFileURL } from 'url'
 import mkdirp from 'mkdirp'
@@ -12,6 +12,9 @@ const generator = new Generator({
   mapUrl: pathToFileURL(TARGET),
   env: ['browser', NODE_ENV, 'module'],
   defaultProvider: 'jspm',
+  ignore: [
+    
+  ]
 })
 
 const htmlSource = await readFile(DEP, 'utf-8')

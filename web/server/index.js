@@ -53,7 +53,7 @@ api
     exclude(
       new KoaRouter()
         .get('/http', async ctx => (ctx.body = 'Welcome to the SOMISANA HTTP API'))
-        .get('/http/tiles/test/:z/:x/:y', testVectorTileRoute)
+        .get('/http/tiles/test/:z/:x/:y.pbf', testVectorTileRoute)
         .get(/^.*$/, ssr)
         .routes(),
       '/graphql'

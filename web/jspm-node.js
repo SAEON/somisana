@@ -1,4 +1,4 @@
-import { Generator } from '@jspm/generator'
+import { Generator } from './@jspm/generator/dist/generator.js'
 import { writeFile } from 'fs/promises'
 import mkdirp from 'mkdirp'
 import { dirname } from 'path'
@@ -22,8 +22,7 @@ const generator = new Generator({
     'pg-query-stream',
     'JSONStream',
     'mime',
-    'cacache',
-    'vt-pbf'
+    'cacache'
   ],
 })
 
