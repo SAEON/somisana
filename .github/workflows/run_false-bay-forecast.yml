@@ -829,8 +829,8 @@ jobs:
               rm \
                 -rf {} \;
 
-  # Cleanup rasters
-  cleanup-rasters:
+  # Finalize run
+  finalize-run:
     needs: [branch-ref, toolkit, gather-jobs]
     runs-on: github-runner.saeon.int
     steps:
@@ -859,7 +859,7 @@ jobs:
         uses: ASzc/change-string-case-action@v2
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
-      - name: Delete raster files from PostGIS
+      - name: Delete raster files from PostGIS and mark run as complete
         env:
           PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
           PG_PORT: ${{ secrets[steps._PG_PORT_.outputs.uppercase] }}
@@ -876,5 +876,5 @@ jobs:
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
               -l \
-                --cleanup-rasters \
+                --finalize-run \
                 --model false-bay-forecast

@@ -826,8 +826,8 @@ jobs:
               rm \
                 -rf {} \;
 
-  # Cleanup rasters
-  cleanup-rasters:
+  # Cleanup rasters, and mark run as complete
+  Finalize run:
     needs: [branch-ref, toolkit, gather-jobs]
     runs-on: github-runner.saeon.int
     steps:
@@ -856,7 +856,7 @@ jobs:
         uses: ASzc/change-string-case-action@v2
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
-      - name: Cleanup rasters that have been loaded into values table
+      - name: Cleanup rasters that have been loaded into values table and mark run as complete
         env:
           PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
           PG_PORT: ${{ secrets[steps._PG_PORT_.outputs.uppercase] }}
@@ -873,5 +873,5 @@ jobs:
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
               -l \
-                --cleanup-rasters \
+                --finalize-run \
                 --model algoa-bay-forecast

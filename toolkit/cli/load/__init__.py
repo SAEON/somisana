@@ -6,7 +6,7 @@ from config import PY_ENV
 from cli.load.raster2pgsql import register as refresh_rasters
 from cli.load.coordinates import upsert as refresh_coordinates
 from cli.load.values import upsert as refresh_values
-from cli.load.cleanup import run as run_cleanup
+from cli.load.finalize import run as finalize_run
 
 
 def load(options, arguments):
@@ -23,13 +23,13 @@ def load(options, arguments):
     upsert_values = options.upsert_values
     depths = options.depths
     install_db = options.install_db
-    cleanup_rasters = options.cleanup_rasters
+    finalize_run = options.finalize_run
 
     if (
         not upsert_rasters
         and not upsert_coordinates
         and not upsert_values
-        and not cleanup_rasters
+        and not finalize_run
     ):
         print("No upsert options specified! Nothing to do (please read the help)")
         exit(0)
@@ -152,8 +152,8 @@ def load(options, arguments):
             # TODO The metadata contains the datetime step information
             # This should be in the model table, and datetimes worked out from there
             datetimes = netcdf.time.values
-            total_depth_levels = netcdf.sizes['depth']
+            total_depth_levels = netcdf.sizes["depth"]
         refresh_values(runid, start_time, depths, datetimes, total_depth_levels)
 
-    if cleanup_rasters:
-        run_cleanup(start_time, model)
+    if finalize_run:
+        finalize_run(start_time, model, runid)

@@ -6,6 +6,7 @@ import ModelProvider from './_context'
 import BandDataProvider from './band-data'
 import DepthControl from './controls/depth'
 import TimeControl from './controls/time'
+import InfoControl from './controls/info'
 import Map from './map'
 
 export default ({ modelid = undefined }) => {
@@ -29,6 +30,7 @@ export default ({ modelid = undefined }) => {
           <Div sx={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
             <Div sx={{ display: 'flex', flex: 1, flexDirection: 'row' }}>
               <Div sx={{ flex: 1 }} ref={el => setRef(el)} />
+              <InfoControl />
               <Paper
                 variant="outlined"
                 sx={{

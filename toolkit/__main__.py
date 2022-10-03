@@ -41,7 +41,7 @@ loadLCI.add_option('--install-db', action="store_true", default = False, help="R
 loadLCI.add_option('--run-date', default = NOW, help="Run date (yyyymmdd)")
 loadLCI.add_option('--model-data', help="Path of NetCDF input file")
 loadLCI.add_option('--reload-data', action="store_true", default = False, help="Path of NetCDF input file")
-loadLCI.add_option('--cleanup-rasters', action="store_true", default = False, help="Remove items from the rasters table after values table is populated")
+loadLCI.add_option('--finalize-run', action="store_true", default = False, help="Remove temp rasters, re-analyze tables, and mark run as finished")
 
 options, arguments = parser.parse_args()
 ensure_valid_group(options, parser)
