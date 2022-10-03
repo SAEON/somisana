@@ -811,6 +811,24 @@ jobs:
       - name: noop
         run: echo done
 
+  # Cleanup old runs temp files
+  cleanup-temp-files:
+    needs: [gather-jobs, branch-ref]
+    runs-on: github-runner.saeon.int
+    env:
+      BRANCH: ${{ needs.branch-ref.outputs.value }}
+    steps:
+      - name: Clean /tmp/somisana/false-bay-forecast/$BRANCH
+        run: >-
+          find \
+            /tmp/somisana/false-bay-forecast/$BRANCH/* \
+            -maxdepth 0 \
+            -type d \
+            -ctime +10 \
+            -exec \
+              rm \
+                -rf {} \;
+
   # Cleanup rasters
   cleanup-rasters:
     needs: [branch-ref, toolkit, gather-jobs]
@@ -841,7 +859,7 @@ jobs:
         uses: ASzc/change-string-case-action@v2
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
-      - name: Load normalized NetCDF output to PostGIS
+      - name: Delete raster files from PostGIS
         env:
           PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
           PG_PORT: ${{ secrets[steps._PG_PORT_.outputs.uppercase] }}
