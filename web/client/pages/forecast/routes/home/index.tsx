@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { Linear as Loading } from '../../../../components/loading'
 import Div from '../../../../components/div'
 import Paper from '@mui/material/Paper'
@@ -8,7 +8,7 @@ import DepthControl from './controls/depth'
 import TimeControl from './controls/time'
 import Map from './map'
 
-export default () => {
+export default ({ modelid = undefined }) => {
   const [ref, setRef] = useState(null)
   const [isClient, setIsClient] = useState(false)
 
@@ -20,7 +20,7 @@ export default () => {
 
   return (
     <Suspense fallback={<Loading />}>
-      <ModelProvider>
+      <ModelProvider modelid={modelid}>
         <BandDataProvider>
           {/* MAP OBJECT */}
           <Map container={ref} />

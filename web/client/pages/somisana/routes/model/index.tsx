@@ -1,60 +1,27 @@
-import { lazy, Suspense, useState, useEffect } from 'react'
-import Div from '../../../../components/div'
+import { lazy, Suspense } from 'react'
 import { Linear as Loading } from '../../../../components/loading'
-import ModelProvider from './_context'
-import BandDataProvider from './band-data'
-import PointDataProvider from './point-data'
-import Container from '@mui/material/Container'
-import Title from './title'
-import Charts from './charts'
-import DepthControl from './controls/depth'
-import TimeControl from './controls/time'
+import { useParams } from 'react-router-dom'
+import Div from '../../../../components/div'
 
-const Map = lazy(() => import('./map'))
+const Forecast = lazy(() => import('../../../forecast/routes/home'))
 
-export default props => {
-  const [divRef, setRef] = useState(null)
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => setIsClient(true), [])
-
-  if (!isClient) {
-    return null
-  }
-
+export default () => {
+  const { id } = useParams()
   return (
-    <ModelProvider>
-      <BandDataProvider>
-        {/* MAP OBJECT */}
-        <Suspense fallback={<Loading />}>
-          <Map divRef={divRef} {...props} />
-        </Suspense>
-
-        <Div sx={{ my: theme => theme.spacing(2) }} />
-
-        {/* LAYOUT */}
-        <Container>
-          {/* TITLE */}
-          <Title />
-
-          {/* MAP */}
-          <Div sx={{ display: 'flex', flex: 1 }}>
-            <Div sx={{ display: 'flex', flex: 1, flexDirection: 'column', minHeight: 500 }}>
-              <Div sx={{ minHeight: 500 }} ref={el => setRef(el)} />
-              <TimeControl />
-            </Div>
-            <DepthControl />
-          </Div>
-
-          {/* CHARTS */}
-          <Div sx={{ my: theme => theme.spacing(4) }} />
-          <PointDataProvider>
-            <Charts />
-          </PointDataProvider>
-        </Container>
-
-        <Div sx={{ my: theme => theme.spacing(2) }} />
-      </BandDataProvider>
-    </ModelProvider>
+    <Div
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        flexGrow: 1,
+        height: `calc(100vh - 48px)`,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <Suspense fallback={<Loading />}>
+        <Forecast modelid={id} />
+      </Suspense>
+    </Div>
   )
 }

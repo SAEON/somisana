@@ -4,8 +4,8 @@ import { Linear as Loading } from '../../../../components/loading'
 
 export const context = createContext({})
 
-export default ({ children }) => {
-  const id = new URL(window.location.href).searchParams.get('id')
+export default ({ modelid = undefined, children }) => {
+  const id = modelid || new URL(window.location.href).searchParams.get('id')
   const [timeStep, setTimeStep] = useState(120)
   const [depth, setDepth] = useState(0)
   const [selectedCoordinate, setSelectedCoordinate] = useState(null)
