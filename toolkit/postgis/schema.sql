@@ -499,4 +499,4 @@ order by
 end;
 $$
 language 'plpgsql'
-immutable parallel safe;
+stable parallel safe;

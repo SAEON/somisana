@@ -26,7 +26,7 @@ def z_levels(h, zeta, theta_s, theta_b, hc, N, type, vtransform):
     this provides a 3D grid of the depths of the sigma levels
     h = 2D bathymetry of your grid
     zeta = zeta at particular timestep that you are interested in
-    theta_s = surface stretching paramter
+    theta_s = surface stretching parameter
     theta_b = bottom stretching parameter
     hc = critical depth
     N = number of sigma levels
