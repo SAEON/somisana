@@ -18,7 +18,7 @@ export default ({ children, model, container }) => {
         style: `https://basemaps-api.arcgis.com/arcgis/rest/services/styles/${basemapEnum}?type=style&token=${ESRI_API_KEY}`,
         zoom: 5,
         center: [24, -33],
-        attributionControl: false,
+        attributionControl: true,
       }),
     []
   )

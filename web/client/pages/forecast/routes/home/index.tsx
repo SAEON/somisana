@@ -29,18 +29,31 @@ export default ({ modelid = undefined }) => {
           {/* MAP UI */}
           <Div sx={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
             <Div sx={{ display: 'flex', flex: 1, flexDirection: 'row' }}>
-              <Div sx={{ flex: 1 }} ref={el => setRef(el)} />
-              <InfoControl />
-              <Paper
-                variant="outlined"
-                sx={{
-                  borderRadius: 0,
-                  borderBottom: 'none',
-                  py: theme => theme.spacing(3),
-                }}
-              >
-                <DepthControl />
-              </Paper>
+              <Div sx={{ flex: 1 }} ref={el => setRef(el)}>
+                <Div
+                  sx={{
+                    position: 'absolute',
+                    right: 0,
+                    zIndex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <InfoControl />
+                </Div>
+              </Div>
+              <Div sx={{ display: 'flex' }}>
+                <Paper
+                  variant="outlined"
+                  sx={{
+                    borderRadius: 0,
+                    borderBottom: 'none',
+                    py: theme => theme.spacing(3),
+                  }}
+                >
+                  <DepthControl />
+                </Paper>
+              </Div>
             </Div>
 
             <Paper

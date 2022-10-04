@@ -20,10 +20,7 @@ export default () => {
         size="small"
         onClick={() => setOpen(!open)}
         sx={{
-          border: theme => `1px solid ${alpha(theme.palette.common.black, 0.54)}`,
-          ml: theme => theme.spacing(1),
-          mt: theme => theme.spacing(1),
-          position: 'absolute',
+          m: theme => theme.spacing(1),
         }}
       >
         <AboutIcon />
