@@ -29,6 +29,7 @@
     "@types/react": "^18.0.21",
     "apollo-server-core": "^3.10.2",
     "apollo-server-koa": "^3.10.2",
+    "apollo-server-plugin-response-cache": "^3.7.0",
     "browserslist": "^4.21.4",
     "cookie": "^0.5.0",
     "d3": "^7.6.1",

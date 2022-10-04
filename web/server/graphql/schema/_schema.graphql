@@ -51,6 +51,17 @@ enum Language {
   en
 }
 
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+  inheritMaxAge: Boolean
+) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+
 type ModelData {
   id: ID!
   json: JSON!
@@ -62,6 +73,7 @@ type Query {
   models(id: ID): [Node]!
 
   data(timeStep: Int!, runId: Int!, depth: Int!): ModelData!
+    @cacheControl(maxAge: 604800, scope: PUBLIC)
 }
 
 type Mutation {

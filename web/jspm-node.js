@@ -16,6 +16,7 @@ const generator = new Generator({
     'graphql',
     'apollo-server-core',
     'apollo-server-koa',
+    'apollo-server-plugin-response-cache',
     'koa-bodyparser',
     'http-errors',
     'pg',

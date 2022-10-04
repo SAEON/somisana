@@ -4,6 +4,8 @@ import {
   ApolloServerPluginLandingPageGraphQLPlayground,
 } from 'apollo-server-core'
 import _schema from './schema/index.js'
+import apolloCache from 'apollo-server-plugin-response-cache'
+const { default: responseCachePlugin } = apolloCache
 
 export const schema = _schema
 
@@ -24,6 +26,7 @@ export default async ({ httpServer, api }) => {
           'editor.theme': 'light',
         },
       }),
+      responseCachePlugin(),
     ],
     context: ({ ctx }) => {
       return ctx
