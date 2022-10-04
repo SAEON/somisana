@@ -24,6 +24,11 @@ const api = new Koa()
 api.keys = [KEY]
 api.proxy = true
 
+const compressionConfig = {
+  flush: zlib.constants.Z_SYNC_FLUSH,
+  level: 3,
+}
+
 // Configure middleware
 api
   .use(globalError)
@@ -33,16 +38,10 @@ api
     include(
       koaCompress({
         filter: contentType => contentType.toLowerCase() === 'application/json',
-        threshold: 1024,
-        gzip: {
-          flush: zlib.constants.Z_SYNC_FLUSH,
-          level: 4,
-        },
-        deflate: {
-          flush: zlib.constants.Z_SYNC_FLUSH,
-          level: 4,
-        },
-        br: {},
+        threshold: 2048,
+        gzip: compressionConfig,
+        deflate: compressionConfig,
+        br: false,
       }),
       '/http',
       '/graphql'

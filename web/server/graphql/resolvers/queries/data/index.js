@@ -3,7 +3,6 @@ import { pool } from '../../../../postgres/index.js'
 export default async (_, { timeStep, runId, depth }, ctx) => {
   const client = await pool.connect()
 
-  ctx.compress = true
   try {
     const res =
       depth === 0
