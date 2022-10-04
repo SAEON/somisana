@@ -827,7 +827,7 @@ jobs:
                 -rf {} \;
 
   # Cleanup rasters, and mark run as complete
-  Finalize run:
+  finalize-run:
     needs: [branch-ref, toolkit, gather-jobs]
     runs-on: github-runner.saeon.int
     steps:
