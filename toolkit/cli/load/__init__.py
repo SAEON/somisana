@@ -155,5 +155,5 @@ def load(options, arguments):
             total_depth_levels = netcdf.sizes["depth"]
         refresh_values(runid, start_time, depths, datetimes, total_depth_levels)
 
-    if finalize:
-        finalize_run(start_time, model, runid)
+    if finalize_run:
+        finalize(start_time, model, runid)
