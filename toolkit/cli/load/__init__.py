@@ -6,7 +6,7 @@ from config import PY_ENV
 from cli.load.raster2pgsql import register as refresh_rasters
 from cli.load.coordinates import upsert as refresh_coordinates
 from cli.load.values import upsert as refresh_values
-from cli.load.finalize import run as finalize_run
+from cli.load.finalize import run as finalize
 
 
 def load(options, arguments):
@@ -155,5 +155,5 @@ def load(options, arguments):
             total_depth_levels = netcdf.sizes["depth"]
         refresh_values(runid, start_time, depths, datetimes, total_depth_levels)
 
-    if finalize_run:
+    if finalize:
         finalize_run(start_time, model, runid)
