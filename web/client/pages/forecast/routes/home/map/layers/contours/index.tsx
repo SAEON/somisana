@@ -6,6 +6,7 @@ import { contours } from 'd3-contour'
 import { Linear as Loading } from '../../../../../../../components/loading'
 import { useTheme } from '@mui/material/styles'
 import Div from '../../../../../../../components/div'
+import Paper from '@mui/material/Paper'
 import project from './_project'
 import * as d3 from 'd3'
 
@@ -106,5 +107,29 @@ export default () => {
     }
   }, [gql])
 
-  return createPortal(gql.loading ? <Loading sx={{ top: 0 }} /> : <Div />, map.getContainer())
+  const container = map.getContainer()
+
+  return createPortal(
+    <>
+      {/* LOADING */}
+      {gql.loading && <Loading sx={{ top: 0 }} />}
+
+      {/* COLOR BAR */}
+      <Paper
+        sx={{
+          zIndex: 1,
+          display: 'inline-flex',
+          flexDirection: 'column',
+          position: 'relative',
+          mt: theme => theme.spacing(2),
+          mb: theme => theme.spacing(2),
+          mx: theme => theme.spacing(2),
+        }}
+      >
+        <Div>c1</Div>
+        <Div>c2</Div>
+      </Paper>
+    </>,
+    container
+  )
 }
