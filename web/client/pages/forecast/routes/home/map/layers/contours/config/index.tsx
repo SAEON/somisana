@@ -6,6 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import Typography from '@mui/material/Typography'
 import { Cog as CogIcon } from '../../../../../../../../components/icons'
+import Div from '../../../../../../../../components/div'
 import TextField from '@mui/material/TextField'
 
 export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax }) => {
@@ -27,36 +28,39 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax }) => {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle title={title}>{title}</DialogTitle>
         <DialogContent dividers>
-          <TextField
-            fullWidth
-            variant="standard"
-            label="Min"
-            type="number"
-            margin="normal"
-            size="small"
-            helperText="Minimum value to use for the color range"
-            step=".01"
-            value={scaleMin}
-            placeholder="Auto"
-            onChange={({ target: { value } }) => setScaleMin(value)}
-          />
-          <TextField
-            fullWidth
-            variant="standard"
-            label="Max"
-            type="number"
-            margin="normal"
-            size="small"
-            helperText="Max value to use for the color range"
-            step=".01"
-            value={scaleMax}
-            placeholder="Auto"
-            onChange={({ target: { value } }) => setScaleMax(value)}
-          />
+          <Typography variant="caption">Color range</Typography>
+          <Div sx={{ display: 'flex' }}>
+            <TextField
+              sx={{ flex: 2 }}
+              variant="outlined"
+              label="Min"
+              type="number"
+              margin="normal"
+              size="small"
+              value={scaleMin}
+              placeholder="Auto"
+              onChange={({ target: { value } }) => setScaleMin(value)}
+            />
+            <Div sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              -
+            </Div>
+            <TextField
+              sx={{ flex: 2 }}
+              variant="outlined"
+              label="Max"
+              type="number"
+              margin="normal"
+              size="small"
+              value={scaleMax}
+              placeholder="Auto"
+              onChange={({ target: { value } }) => setScaleMax(value)}
+            />
+          </Div>
+
           <Typography gutterBottom>
-            Not implemented yet. Should be possible to define constant or auto min/max values,
-            specify manual or auto intervals, save settings to browser storage so that settings are
-            persisted across page visits, change color scheme
+            Not implemented yet. Should be possible to specify manual or auto intervals, save
+            settings to browser storage so that settings are persisted across page visits, change
+            color scheme
           </Typography>
         </DialogContent>
       </Dialog>

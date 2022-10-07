@@ -17,8 +17,9 @@ import Config from './config'
 const cache = {}
 
 const ContourLayer = ({ map, gridWidth, gridHeight, data }) => {
-  const [scaleMin, setScaleMin] = useState(null)
-  const [scaleMax, setScaleMax] = useState(null)
+  const [scaleMin, setScaleMin] = useState(false)
+  console.log(scaleMin)
+  const [scaleMax, setScaleMax] = useState(false)
   const container = map.getContainer()
   const theme = useTheme()
   const { id, json: points } = data.data
@@ -40,7 +41,12 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data }) => {
         ),
       }))
 
-    const color = d3.scaleSequential(d3.interpolateMagma).domain(d3.extent(polygons, d => d.value))
+    const color = d3.scaleSequential(d3.interpolateMagma).domain(
+      d3.extent(
+        polygons.filter(({ value }) => value >= scaleMin || value),
+        d => d.value
+      )
+    )
 
     map.addSource(id, {
       type: 'geojson',
