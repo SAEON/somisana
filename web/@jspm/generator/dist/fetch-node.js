@@ -5,7 +5,7 @@ import rimraf from 'rimraf';
 import makeFetchHappen from 'make-fetch-happen';
 import { readFileSync } from 'fs';
 
-var version = "1.0.0-beta.37";
+var version = "1.0.0-beta.38";
 
 // @ts-ignore
 let cacheDir;
