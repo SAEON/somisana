@@ -39,7 +39,7 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax }) => {
               size="small"
               value={scaleMin}
               placeholder="Auto"
-              onChange={({ target: { value } }) => setScaleMin(value)}
+              onChange={({ target: { value } }) => setScaleMin(parseFloat(value))}
             />
             <Div sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               -
@@ -53,7 +53,7 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax }) => {
               size="small"
               value={scaleMax}
               placeholder="Auto"
-              onChange={({ target: { value } }) => setScaleMax(value)}
+              onChange={({ target: { value } }) => setScaleMax(parseFloat(value))}
             />
           </Div>
 

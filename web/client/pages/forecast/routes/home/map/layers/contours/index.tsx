@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo } from 'react'
 import { context as mapContext } from '../../_context'
 import { createPortal } from 'react-dom'
 import { context as bandDataContext } from '../../../band-data/_context'
@@ -14,94 +14,118 @@ import Typography from '@mui/material/Typography'
 import invertColor, { padZero } from './_invert-color'
 import Config from './config'
 
-const cache = {}
-
-const ContourLayer = ({ map, gridWidth, gridHeight, data }) => {
-  const [scaleMin, setScaleMin] = useState(false)
-  console.log(scaleMin)
-  const [scaleMax, setScaleMax] = useState(false)
+const ContourLayer = ({
+  map,
+  gridWidth,
+  gridHeight,
+  data,
+  scaleMin,
+  scaleMax,
+  setScaleMin,
+  setScaleMax,
+}) => {
   const container = map.getContainer()
   const theme = useTheme()
   const { id, json: points } = data.data
 
-  if (!map.getLayer(id)) {
-    const grid = {
-      lng: points.map(([lng]) => lng),
-      lat: points.map(([, lat]) => lat),
-      temperature: points.map(([, , temperature]) => temperature),
-    }
+  const grid = {
+    lng: points.map(([lng]) => lng),
+    lat: points.map(([, lat]) => lat),
+    temperature: points.map(([, , temperature]) => temperature),
+  }
 
-    const polygons = contours()
-      .thresholds(50)
-      .size([gridWidth, gridHeight])(grid.temperature)
-      .map(z => ({
-        ...z,
-        coordinates: z.coordinates.map(polygon =>
-          polygon.map(ring => ring.map(p => project(grid, gridHeight, gridWidth, p)).reverse())
-        ),
-      }))
+  const polygons = useMemo(
+    () =>
+      contours()
+        .thresholds(50)
+        .size([gridWidth, gridHeight])(grid.temperature)
+        .map(z => {
+          return {
+            ...z,
+            value:
+              scaleMin && z.value < scaleMin
+                ? scaleMin
+                : scaleMax && z.value > scaleMax
+                ? scaleMax
+                : z.value,
+            coordinates: z.coordinates.map(polygon => {
+              return polygon.map(ring =>
+                ring.map(p => project(grid, gridHeight, gridWidth, p)).reverse()
+              )
+            }),
+          }
+        }),
+    [scaleMin, scaleMax]
+  )
 
-    const color = d3.scaleSequential(d3.interpolateMagma).domain(
-      d3.extent(
-        polygons.filter(({ value }) => value >= scaleMin || value),
-        d => d.value
-      )
-    )
+  const color = useMemo(
+    () => d3.scaleSequential(d3.interpolateMagma).domain(d3.extent(polygons, d => d.value)),
+    [polygons]
+  )
 
+  const features = useMemo(
+    () =>
+      polygons.map(({ type, coordinates, value }) => {
+        return {
+          type: 'Feature',
+          properties: { value, color: color(value) },
+          geometry: {
+            type,
+            coordinates,
+          },
+        }
+      }),
+    [color, polygons]
+  )
+
+  if (map.getSource(id)) {
+    map.getSource(id).setData({
+      type: 'FeatureCollection',
+      features,
+    })
+  } else {
     map.addSource(id, {
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
-        features: polygons.map(({ type, coordinates, value }) => {
-          return {
-            type: 'Feature',
-            properties: { value, color: color(value) },
-            geometry: {
-              type,
-              coordinates,
-            },
-          }
-        }),
+        features,
       },
     })
-
-    map.addLayer(
-      {
-        id,
-        type: 'fill',
-        source: id,
-        layout: {},
-        paint: {
-          'fill-color': ['get', 'color'],
-          'fill-outline-color': [
-            'step',
-            ['zoom'],
-            ['rgba', 255, 255, 255, 0],
-            6,
-            ['rgba', 255, 255, 255, 0.1],
-            8,
-            ['rgba', 255, 255, 255, 0.2],
-            10,
-            ['rgba', 255, 255, 255, 0.3],
-            12,
-            ['rgba', 255, 255, 255, 0.5],
-            14,
-            ['rgba', 255, 255, 255, 0.75],
-            16,
-            theme.palette.common.white,
-          ],
-        },
-      },
-      map.getLayer('coordinates') ? 'coordinates' : undefined
-    )
-
-    cache[id] = {
-      polygons,
-      color,
-    }
   }
 
-  const { polygons, color } = cache[id]
+  if (map.getLayer(id)) {
+    map.moveLayer(id)
+  } else {
+    map.addLayer({
+      id,
+      type: 'fill',
+      source: id,
+      layout: {},
+      paint: {
+        'fill-color': ['get', 'color'],
+        'fill-outline-color': [
+          'step',
+          ['zoom'],
+          ['rgba', 255, 255, 255, 0],
+          6,
+          ['rgba', 255, 255, 255, 0.1],
+          8,
+          ['rgba', 255, 255, 255, 0.2],
+          10,
+          ['rgba', 255, 255, 255, 0.3],
+          12,
+          ['rgba', 255, 255, 255, 0.5],
+          14,
+          ['rgba', 255, 255, 255, 0.75],
+          16,
+          theme.palette.common.white,
+        ],
+      },
+    })
+    map.moveLayer(id)
+  }
+
+  if (map.getLayer('coordinates')) map.moveLayer('coordinates')
 
   return createPortal(
     <>
@@ -127,31 +151,33 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data }) => {
           setScaleMin={setScaleMin}
           setScaleMax={setScaleMax}
         />
-        {[...polygons].reverse().map(({ value }, i) => (
-          <Tooltip key={i} placement="right-start" title={`${value} °C`}>
-            <Div
-              sx={{
-                backgroundColor: color(value),
-                flex: 1,
-                display: 'flex',
-                px: theme => theme.spacing(1),
-              }}
-            >
-              {value.toFixed(0) == value && (
-                <Typography
-                  sx={{
-                    fontSize: '0.7rem',
-                    fontWeight: 'bold',
-                    color: invertColor(color(value), true),
-                  }}
-                  variant="overline"
-                >
-                  {padZero(value)} °C
-                </Typography>
-              )}
-            </Div>
-          </Tooltip>
-        ))}
+        {[...polygons].reverse().map(({ value }, i) => {
+          return (
+            <Tooltip key={i} placement="right-start" title={`${value} °C`}>
+              <Div
+                sx={{
+                  backgroundColor: color(value),
+                  flex: 1,
+                  display: 'flex',
+                  px: theme => theme.spacing(1),
+                }}
+              >
+                {value.toFixed(0) == value && (
+                  <Typography
+                    sx={{
+                      fontSize: '0.7rem',
+                      fontWeight: 'bold',
+                      color: invertColor(color(value), true),
+                    }}
+                    variant="overline"
+                  >
+                    {padZero(value)} °C
+                  </Typography>
+                )}
+              </Div>
+            </Tooltip>
+          )
+        })}
       </Paper>
     </>,
     container
@@ -160,22 +186,16 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data }) => {
 
 export default () => {
   const gql = useContext(bandDataContext)
-  const { map, model: { gridWidth = 0, gridHeight = 0 } = {} } = useContext(mapContext)
+  const {
+    map,
+    model: { gridWidth = 0, gridHeight = 0 } = {},
+    scaleMin,
+    scaleMax,
+    setScaleMin,
+    setScaleMax,
+  } = useContext(mapContext)
   const container = map.getContainer()
-
-  useEffect(() => {
-    const id = gql.data?.data.id
-
-    if (map.getLayer(id)) {
-      map.setLayoutProperty(id, 'visibility', 'visible')
-    }
-
-    return () => {
-      if (id && map.getLayer(id)) {
-        map.setLayoutProperty(id, 'visibility', 'none')
-      }
-    }
-  })
+  window.map = map
 
   if (gql.error) {
     throw gql.error
@@ -185,5 +205,16 @@ export default () => {
     return createPortal(<Loading sx={{ top: 0 }} />, container)
   }
 
-  return <ContourLayer map={map} gridWidth={gridWidth} gridHeight={gridHeight} data={gql.data} />
+  return (
+    <ContourLayer
+      map={map}
+      gridWidth={gridWidth}
+      gridHeight={gridHeight}
+      data={gql.data}
+      scaleMin={scaleMin}
+      scaleMax={scaleMax}
+      setScaleMin={setScaleMin}
+      setScaleMax={setScaleMax}
+    />
+  )
 }

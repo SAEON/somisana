@@ -10,6 +10,8 @@ export default ({ modelid = undefined, children }) => {
   const [depth, setDepth] = useState(0)
   const [selectedCoordinate, setSelectedCoordinate] = useState(null)
   const [animateTimeStep, setAnimateTimeStep] = useState(false)
+  const [scaleMin, setScaleMin] = useState(false)
+  const [scaleMax, setScaleMax] = useState(false)
 
   const { loading, error, data } = useQuery(
     gql`
@@ -62,6 +64,10 @@ export default ({ modelid = undefined, children }) => {
         setAnimateTimeStep,
         run,
         model,
+        scaleMin,
+        scaleMax,
+        setScaleMin,
+        setScaleMax,
       }}
     >
       {children}
