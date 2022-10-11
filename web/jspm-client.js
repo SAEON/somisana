@@ -1,4 +1,4 @@
-import { Generator } from './@jspm/generator/dist/generator.js'
+import { Generator } from '@jspm/generator'
 import { readFile, writeFile } from 'fs/promises'
 import { pathToFileURL } from 'url'
 import mkdirp from 'mkdirp'

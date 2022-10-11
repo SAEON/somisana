@@ -140,6 +140,6 @@ rimraf .ssr
 name = 'clear-jspm-cache'
 engine = 'node'
 run = """
-import { clearCache } from './@jspm/generator/dist/generator.js';
+import { clearCache } from '@jspm/generator';
 clearCache();
 """
