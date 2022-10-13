@@ -3,7 +3,7 @@ import { Linear as Loading } from '../../../../components/loading'
 import { useParams } from 'react-router-dom'
 import Div from '../../../../components/div'
 
-const Forecast = lazy(() => import('../../../forecast/routes/home'))
+const Forecast = lazy(() => import('../../../forecast/routes/index/index'))
 
 export default () => {
   const { id } = useParams()

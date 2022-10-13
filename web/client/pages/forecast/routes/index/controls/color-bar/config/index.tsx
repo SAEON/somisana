@@ -5,8 +5,8 @@ import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import Typography from '@mui/material/Typography'
-import { Cog as CogIcon } from '../../../../../../../../components/icons'
-import Div from '../../../../../../../../components/div'
+import { Cog as CogIcon } from '../../../../../../../components/icons'
+import Div from '../../../../../../../components/div'
 import TextField from '@mui/material/TextField'
 
 export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax }) => {

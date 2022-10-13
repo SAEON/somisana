@@ -1,6 +1,7 @@
-import { createContext, useState } from 'react'
+import { createContext, useState, useMemo } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Linear as Loading } from '../../../../components/loading'
+import * as d3 from 'd3'
 
 export const context = createContext({})
 
@@ -10,8 +11,16 @@ export default ({ modelid = undefined, children }) => {
   const [depth, setDepth] = useState(0)
   const [selectedCoordinate, setSelectedCoordinate] = useState(null)
   const [animateTimeStep, setAnimateTimeStep] = useState(false)
-  const [scaleMin, setScaleMin] = useState(false)
-  const [scaleMax, setScaleMax] = useState(false)
+  const [scaleMin, setScaleMin] = useState(10)
+  const [scaleMax, setScaleMax] = useState(25)
+
+  const color = useMemo(
+    () =>
+      d3
+        .scaleSequential(d3.interpolateMagma)
+        .domain(d3.extent([scaleMin || 10, scaleMax || 25], v => v)),
+    [scaleMin, scaleMax]
+  )
 
   const { loading, error, data } = useQuery(
     gql`
@@ -66,6 +75,7 @@ export default ({ modelid = undefined, children }) => {
         model,
         scaleMin,
         scaleMax,
+        color,
         setScaleMin,
         setScaleMax,
       }}

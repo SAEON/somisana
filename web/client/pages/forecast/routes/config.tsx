@@ -1,5 +1,5 @@
 import { Home } from '../../../components/icons'
-import HomePage from './home'
+import Page from './index'
 import Div from '../../../components/div'
 
 export default [
@@ -21,7 +21,7 @@ export default [
           overflow: 'hidden',
         }}
       >
-        <HomePage {...props} />
+        <Page {...props} />
       </Div>
     ),
   },

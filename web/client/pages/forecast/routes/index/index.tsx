@@ -7,6 +7,7 @@ import BandDataProvider from './band-data'
 import DepthControl from './controls/depth'
 import TimeControl from './controls/time'
 import InfoControl from './controls/info'
+import ColorBar from './controls/color-bar'
 import Map from './map'
 
 export default ({ modelid = undefined }) => {
@@ -30,6 +31,10 @@ export default ({ modelid = undefined }) => {
           <Div sx={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
             <Div sx={{ display: 'flex', flex: 1, flexDirection: 'row' }}>
               <Div sx={{ flex: 1 }} ref={el => setRef(el)}>
+                {/* COLOR BAR */}
+                <ColorBar />
+
+                {/* FLOATING MENU */}
                 <Div
                   sx={{
                     position: 'absolute',
@@ -42,6 +47,8 @@ export default ({ modelid = undefined }) => {
                   <InfoControl />
                 </Div>
               </Div>
+
+              {/* RIGHT MENU */}
               <Div sx={{ display: 'flex' }}>
                 <Paper
                   variant="outlined"
@@ -56,6 +63,7 @@ export default ({ modelid = undefined }) => {
               </Div>
             </Div>
 
+            {/* BOTTOM MENU */}
             <Paper
               sx={{
                 borderRadius: 0,
