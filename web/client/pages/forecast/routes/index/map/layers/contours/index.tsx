@@ -7,54 +7,43 @@ import { Linear as Loading } from '../../../../../../../components/loading'
 import { useTheme } from '@mui/material/styles'
 import project from './_project'
 
-const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, depth, color }) => {
+const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, color }) => {
   const theme = useTheme()
   const { id, json: points } = data.data
 
-  const grid = useMemo(
-    () => ({
-      lng: points.map(([lng]) => lng),
-      lat: points.map(([, lat]) => lat),
-      temperature: points.map(([, , temperature]) => temperature),
-    }),
-    [points]
-  )
+  const grid = {
+    lng: points.map(([lng]) => lng),
+    lat: points.map(([, lat]) => lat),
+    temperature: points.map(([, , temperature]) => temperature),
+  }
 
-  const polygons = useMemo(
-    () =>
-      contours()
-        .thresholds(50)
-        .size([gridWidth, gridHeight])(grid.temperature)
-        .map(z => {
-          return {
-            ...z,
-            value: z.value < scaleMin ? scaleMin : z.value > scaleMax ? scaleMax : z.value,
-            coordinates: z.coordinates.map(polygon => {
-              return polygon.map(ring =>
-                ring.map(p => project(grid, gridHeight, gridWidth, p)).reverse()
-              )
-            }),
-          }
+  const polygons = contours()
+    .thresholds(50)
+    .size([gridWidth, gridHeight])(grid.temperature)
+    .map(z => {
+      return {
+        ...z,
+        value: z.value < scaleMin ? scaleMin : z.value > scaleMax ? scaleMax : z.value,
+        coordinates: z.coordinates.map(polygon => {
+          return polygon.map(ring =>
+            ring.map(p => project(grid, gridHeight, gridWidth, p)).reverse()
+          )
         }),
-    [scaleMin, scaleMax]
-  )
+      }
+    })
 
-  const features = useMemo(
-    () =>
-      polygons.map(({ type, coordinates, value }) => {
-        return {
-          type: 'Feature',
-          properties: { value, color: color(value) },
-          geometry: {
-            type,
-            coordinates,
-          },
-        }
-      }),
-    [color, polygons]
-  )
+  const features = polygons.map(({ type, coordinates, value }) => {
+    return {
+      type: 'Feature',
+      properties: { value, color: color(value) },
+      geometry: {
+        type,
+        coordinates,
+      },
+    }
+  })
 
-  if (!map.getSource(id)) {
+  useEffect(() => {
     map.addSource(id, {
       type: 'geojson',
       data: {
@@ -62,9 +51,7 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, de
         features,
       },
     })
-  }
 
-  if (!map.getLayer(id)) {
     map.addLayer({
       id,
       type: 'fill',
@@ -91,28 +78,15 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, de
         ],
       },
     })
-  }
 
-  useEffect(() => {
-    if (map.getSource(id)) {
-      map.getSource(id).setData({
-        type: 'FeatureCollection',
-        features,
-      })
-    }
-  }, [scaleMin, scaleMax])
-
-  useEffect(() => {
     map.moveLayer(id)
     if (map.getLayer('coordinates')) map.moveLayer('coordinates')
-  })
 
-  useEffect(() => {
-    console.log('add', depth)
     return () => {
-      console.log('remove', depth)
+      map.removeLayer(id)
+      map.removeSource(id)
     }
-  }, [depth])
+  })
 }
 
 export default () => {
@@ -122,7 +96,6 @@ export default () => {
     model: { gridWidth = 0, gridHeight = 0 } = {},
     scaleMin,
     scaleMax,
-    depth,
     color,
   } = useContext(mapContext)
   const container = map.getContainer()
@@ -144,7 +117,6 @@ export default () => {
       scaleMin={scaleMin}
       scaleMax={scaleMax}
       color={color}
-      depth={depth}
     />
   )
 }

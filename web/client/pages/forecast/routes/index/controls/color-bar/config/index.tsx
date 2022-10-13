@@ -8,6 +8,17 @@ import Typography from '@mui/material/Typography'
 import { Cog as CogIcon } from '../../../../../../../components/icons'
 import Div from '../../../../../../../components/div'
 import TextField from '@mui/material/TextField'
+import Paper, { PaperProps } from '@mui/material/Paper'
+
+import Draggable from 'react-draggable'
+
+function PaperComponent(props: PaperProps) {
+  return (
+    <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
+      <Paper {...props} />
+    </Draggable>
+  )
+}
 
 export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax }) => {
   const [open, setOpen] = useState(false)
@@ -25,8 +36,15 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax }) => {
         </Button>
       </Tooltip>
 
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle title={title}>{title}</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        PaperComponent={PaperComponent}
+        aria-labelledby="draggable-dialog-title"
+      >
+        <DialogTitle id="draggable-dialog-title" sx={{ cursor: 'move' }} title={title}>
+          {title}
+        </DialogTitle>
         <DialogContent dividers>
           <Typography variant="caption">Color range</Typography>
           <Div sx={{ display: 'flex' }}>
