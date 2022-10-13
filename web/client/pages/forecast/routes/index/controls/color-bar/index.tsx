@@ -31,9 +31,9 @@ export default () => {
         setScaleMin={setScaleMin}
         setScaleMax={setScaleMax}
       />
-      {new Array((scaleMax - scaleMin) / 0.2)
+      {new Array((Math.ceil(scaleMax) - Math.floor(scaleMin)) / 0.2)
         .fill(null)
-        .map((_, i) => i / 5 + scaleMin)
+        .map((_, i) => parseFloat((i / 5 + scaleMin).toFixed(1)))
         .reverse()
         .map((value, i) => {
           return (

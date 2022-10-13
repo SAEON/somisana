@@ -4,26 +4,21 @@ import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
-import Typography from '@mui/material/Typography'
 import { Cog as CogIcon } from '../../../../../../../components/icons'
-import Div from '../../../../../../../components/div'
 import TextField from '@mui/material/TextField'
 import Paper, { PaperProps } from '@mui/material/Paper'
-
 import Draggable from 'react-draggable'
 
-function PaperComponent(props: PaperProps) {
-  return (
-    <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
-      <Paper {...props} />
-    </Draggable>
-  )
-}
+const PaperComponent = (props: PaperProps) => (
+  <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
+    <Paper {...props} />
+  </Draggable>
+)
 
 export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax }) => {
   const [open, setOpen] = useState(false)
 
-  const title = 'Configure scale bar'
+  const title = 'Colour scale'
 
   return (
     <>
@@ -37,49 +32,44 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax }) => {
       </Tooltip>
 
       <Dialog
+        maxWidth="xs"
         open={open}
         onClose={() => setOpen(false)}
         PaperComponent={PaperComponent}
         aria-labelledby="draggable-dialog-title"
       >
-        <DialogTitle id="draggable-dialog-title" sx={{ cursor: 'move' }} title={title}>
+        <DialogTitle
+          id="draggable-dialog-title"
+          sx={{ cursor: 'move', textAlign: 'center' }}
+          title={title}
+        >
           {title}
         </DialogTitle>
         <DialogContent dividers>
-          <Typography variant="caption">Color range</Typography>
-          <Div sx={{ display: 'flex' }}>
-            <TextField
-              sx={{ flex: 2 }}
-              variant="outlined"
-              label="Min"
-              type="number"
-              margin="normal"
-              size="small"
-              value={scaleMin}
-              placeholder="Auto"
-              onChange={({ target: { value } }) => setScaleMin(parseFloat(value))}
-            />
-            <Div sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              -
-            </Div>
-            <TextField
-              sx={{ flex: 2 }}
-              variant="outlined"
-              label="Max"
-              type="number"
-              margin="normal"
-              size="small"
-              value={scaleMax}
-              placeholder="Auto"
-              onChange={({ target: { value } }) => setScaleMax(parseFloat(value))}
-            />
-          </Div>
-
-          <Typography gutterBottom>
-            Not implemented yet. Should be possible to specify manual or auto intervals, save
-            settings to browser storage so that settings are persisted across page visits, change
-            color scheme
-          </Typography>
+          <TextField
+            sx={{ flex: 2 }}
+            fullWidth
+            variant="outlined"
+            label="Min"
+            type="number"
+            margin="normal"
+            size="small"
+            value={scaleMin}
+            placeholder="Auto"
+            onChange={({ target: { value } }) => setScaleMin(parseFloat(value))}
+          />
+          <TextField
+            sx={{ flex: 2 }}
+            fullWidth
+            variant="outlined"
+            label="Max"
+            type="number"
+            margin="normal"
+            size="small"
+            value={scaleMax}
+            placeholder="Auto"
+            onChange={({ target: { value } }) => setScaleMax(parseFloat(value))}
+          />
         </DialogContent>
       </Dialog>
     </>

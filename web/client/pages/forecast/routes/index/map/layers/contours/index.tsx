@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_context'
 import { createPortal } from 'react-dom'
 import { context as bandDataContext } from '../../../band-data/_context'
@@ -6,8 +6,21 @@ import { contours } from 'd3-contour'
 import { Linear as Loading } from '../../../../../../../components/loading'
 import { useTheme } from '@mui/material/styles'
 import project from './_project'
+import * as d3 from 'd3'
 
-const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, color }) => {
+const ContourLayer = ({
+  map,
+  gridWidth,
+  gridHeight,
+  data,
+  scaleMin,
+  setScaleMin,
+  scaleMax,
+  setScaleMax,
+  color,
+  setTimeStep,
+  animateTimeStep,
+}) => {
   const theme = useTheme()
   const { id, json: points } = data.data
 
@@ -40,6 +53,15 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, co
         type,
         coordinates,
       },
+    }
+  })
+
+  useEffect(() => {
+    if (!scaleMin || !scaleMax) {
+      const [min, max] = d3.extent(grid.temperature).map(v => parseFloat(v))
+      console.log(min, max)
+      setScaleMin(min)
+      setScaleMax(max)
     }
   })
 
@@ -87,6 +109,10 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, co
       map.removeSource(id)
     }
   })
+
+  if (animateTimeStep) {
+    setTimeout(() => setTimeStep(t => (t >= 240 ? 1 : t + 1)), 1000)
+  }
 }
 
 export default () => {
@@ -95,7 +121,11 @@ export default () => {
     map,
     model: { gridWidth = 0, gridHeight = 0 } = {},
     scaleMin,
+    setScaleMin,
     scaleMax,
+    setScaleMax,
+    setTimeStep,
+    animateTimeStep,
     color,
   } = useContext(mapContext)
   const container = map.getContainer()
@@ -115,8 +145,12 @@ export default () => {
       gridHeight={gridHeight}
       data={gql.data}
       scaleMin={scaleMin}
+      setScaleMin={setScaleMin}
+      setScaleMax={setScaleMax}
       scaleMax={scaleMax}
       color={color}
+      setTimeStep={setTimeStep}
+      animateTimeStep={animateTimeStep}
     />
   )
 }

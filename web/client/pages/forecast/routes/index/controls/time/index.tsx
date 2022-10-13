@@ -21,7 +21,7 @@ export default () => {
           </IconButton>
         </span>
       </Tooltip>
-      <Tooltip title="Not implemented yet" placement="top-start">
+      <Tooltip title="Auto-increment time frames" placement="top-start">
         <span>
           <IconButton onClick={() => setAnimateTimeStep(v => !v)} size="small">
             {animateTimeStep && <Pause />}
