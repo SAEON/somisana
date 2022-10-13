@@ -20,19 +20,35 @@ const ContourLayer = ({
   color,
   setTimeStep,
   animateTimeStep,
+  selectedVariable,
 }) => {
   const theme = useTheme()
   const { id, json: points } = data.data
 
-  const grid = {
-    lng: points.map(([lng]) => lng),
-    lat: points.map(([, lat]) => lat),
-    temperature: points.map(([, , temperature]) => temperature),
-  }
+  const grid = points.reduce(
+    (a, c) => {
+      const [lng, lat, temperature, salinity, u, v] = c
+      a.lng.push(lng)
+      a.lat.push(lat)
+      a.temperature.push(temperature)
+      a.salinity.push(salinity)
+      a.u.push(u)
+      a.v.push(v)
+      return a
+    },
+    {
+      lng: [],
+      lat: [],
+      temperature: [],
+      salinity: [],
+      u: [],
+      v: [],
+    }
+  )
 
   const polygons = contours()
     .thresholds(50)
-    .size([gridWidth, gridHeight])(grid.temperature)
+    .size([gridWidth, gridHeight])(grid[selectedVariable])
     .map(z => {
       return {
         ...z,
@@ -58,8 +74,7 @@ const ContourLayer = ({
 
   useEffect(() => {
     if (!scaleMin || !scaleMax) {
-      const [min, max] = d3.extent(grid.temperature).map(v => parseFloat(v))
-      console.log(min, max)
+      const [min, max] = d3.extent(grid[selectedVariable]).map(v => parseFloat(v))
       setScaleMin(min)
       setScaleMax(max)
     }
@@ -126,6 +141,7 @@ export default () => {
     setScaleMax,
     setTimeStep,
     animateTimeStep,
+    selectedVariable,
     color,
   } = useContext(mapContext)
   const container = map.getContainer()
@@ -151,6 +167,7 @@ export default () => {
       color={color}
       setTimeStep={setTimeStep}
       animateTimeStep={animateTimeStep}
+      selectedVariable={selectedVariable}
     />
   )
 }

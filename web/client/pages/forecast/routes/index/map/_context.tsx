@@ -11,7 +11,8 @@ export default ({ children, container }) => {
   const { max_x = 0, max_y = 0, min_x = 0, min_y = 0 } = model || {}
 
   const { ESRI_API_KEY } = useContext(configContext)
-  const basemapEnum = 'ArcGIS:ChartedTerritory'
+  // const basemapEnum = 'ArcGIS:ChartedTerritory'
+  const basemapEnum = 'ArcGIS:Oceans'
 
   const map = useMemo(
     () =>
