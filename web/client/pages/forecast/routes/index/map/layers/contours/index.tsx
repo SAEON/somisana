@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react'
+import { useContext, useEffect, useMemo } from 'react'
 import { context as mapContext } from '../../_context'
 import { createPortal } from 'react-dom'
 import { context as bandDataContext } from '../../../band-data/_context'
@@ -7,15 +7,18 @@ import { Linear as Loading } from '../../../../../../../components/loading'
 import { useTheme } from '@mui/material/styles'
 import project from './_project'
 
-const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, color }) => {
+const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, depth, color }) => {
   const theme = useTheme()
   const { id, json: points } = data.data
 
-  const grid = {
-    lng: points.map(([lng]) => lng),
-    lat: points.map(([, lat]) => lat),
-    temperature: points.map(([, , temperature]) => temperature),
-  }
+  const grid = useMemo(
+    () => ({
+      lng: points.map(([lng]) => lng),
+      lat: points.map(([, lat]) => lat),
+      temperature: points.map(([, , temperature]) => temperature),
+    }),
+    [points]
+  )
 
   const polygons = useMemo(
     () =>
@@ -51,12 +54,7 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, co
     [color, polygons]
   )
 
-  if (map.getSource(id)) {
-    map.getSource(id).setData({
-      type: 'FeatureCollection',
-      features,
-    })
-  } else {
+  if (!map.getSource(id)) {
     map.addSource(id, {
       type: 'geojson',
       data: {
@@ -66,9 +64,7 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, co
     })
   }
 
-  if (map.getLayer(id)) {
-    map.moveLayer(id)
-  } else {
+  if (!map.getLayer(id)) {
     map.addLayer({
       id,
       type: 'fill',
@@ -95,10 +91,28 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, co
         ],
       },
     })
-    map.moveLayer(id)
   }
 
-  if (map.getLayer('coordinates')) map.moveLayer('coordinates')
+  useEffect(() => {
+    if (map.getSource(id)) {
+      map.getSource(id).setData({
+        type: 'FeatureCollection',
+        features,
+      })
+    }
+  }, [scaleMin, scaleMax])
+
+  useEffect(() => {
+    map.moveLayer(id)
+    if (map.getLayer('coordinates')) map.moveLayer('coordinates')
+  })
+
+  useEffect(() => {
+    console.log('add', depth)
+    return () => {
+      console.log('remove', depth)
+    }
+  }, [depth])
 }
 
 export default () => {
@@ -108,6 +122,7 @@ export default () => {
     model: { gridWidth = 0, gridHeight = 0 } = {},
     scaleMin,
     scaleMax,
+    depth,
     color,
   } = useContext(mapContext)
   const container = map.getContainer()
@@ -129,6 +144,7 @@ export default () => {
       scaleMin={scaleMin}
       scaleMax={scaleMax}
       color={color}
+      depth={depth}
     />
   )
 }
