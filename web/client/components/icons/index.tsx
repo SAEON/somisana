@@ -25,11 +25,32 @@ import {
   mdiSkipNext,
   mdiSkipPrevious,
   mdiPause,
+  mdiTemperatureCelsius,
+  mdiSigmaLower,
+  mdiScatterPlot,
 } from '@mdi/js'
+
+export const SigmaLower = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiSigmaLower} />
+  </SvgIcon>
+))({})
+
+export const ScatterPlot = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiScatterPlot} />
+  </SvgIcon>
+))({})
 
 export const Play = styled((props: any) => (
   <SvgIcon {...props}>
     <path d={mdiPlay} />
+  </SvgIcon>
+))({})
+
+export const DegCelsius = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiTemperatureCelsius} />
   </SvgIcon>
 ))({})
 

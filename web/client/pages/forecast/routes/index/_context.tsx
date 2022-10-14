@@ -13,6 +13,7 @@ export default ({ modelid = undefined, children }) => {
   const [animateTimeStep, setAnimateTimeStep] = useState(false)
   const [scaleMin, setScaleMin] = useState(false)
   const [scaleMax, setScaleMax] = useState(false)
+  const [activeRightPane, setActiveRightPane] = useState(false)
   const [selectedVariable, setSelectedVariable] = useState('temperature')
 
   const color = useMemo(
@@ -78,6 +79,8 @@ export default ({ modelid = undefined, children }) => {
         scaleMax,
         color,
         setScaleMin,
+        activeRightPane,
+        setActiveRightPane,
         setScaleMax,
         selectedVariable,
         setSelectedVariable,

@@ -1,6 +1,29 @@
 import { useContext } from 'react'
 import { context as modelContext } from '../../_context'
 import Slider from '@mui/material/Slider'
+import IconButton from '@mui/material/IconButton'
+import { SigmaLower } from '../../../../../../components/icons'
+import Tooltip from '@mui/material/Tooltip'
+
+export const ToggleDepth = () => {
+  const { activeRightPane, setActiveRightPane } = useContext(modelContext)
+  return (
+    <Tooltip placement="left-start" title="Toggle depth control pane">
+      <IconButton
+        size="small"
+        color="primary"
+        onClick={() => setActiveRightPane(a => (a === 'depth' ? false : 'depth'))}
+      >
+        <SigmaLower
+          sx={{
+            color: theme => (activeRightPane === 'depth' ? theme.palette.success.dark : 'primary'),
+          }}
+          fontSize="small"
+        />
+      </IconButton>
+    </Tooltip>
+  )
+}
 
 const marks = [
   {
@@ -34,7 +57,9 @@ const marks = [
 ]
 
 export default () => {
-  const { setDepth } = useContext(modelContext)
+  const { setDepth, activeRightPane } = useContext(modelContext)
+
+  const isIn = activeRightPane === 'depth'
 
   return (
     <Slider

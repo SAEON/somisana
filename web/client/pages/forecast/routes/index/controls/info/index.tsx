@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react'
 import { context as modelContext } from '../../_context'
-import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
 import { About as AboutIcon } from '../../../../../../components/icons'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
@@ -25,16 +25,9 @@ export default () => {
   return (
     <>
       <Tooltip placement="left-start" title="About this forecast">
-        <Button
-          size="small"
-          onClick={() => setOpen(!open)}
-          sx={{
-            borderRadius: 0,
-            minWidth: 'unset',
-          }}
-        >
-          <AboutIcon sx={{ width: '0.8em' }} />
-        </Button>
+        <IconButton size="small" color="primary" onClick={() => setOpen(!open)}>
+          <AboutIcon fontSize="small" />
+        </IconButton>
       </Tooltip>
 
       <Dialog

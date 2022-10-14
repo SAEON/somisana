@@ -2,15 +2,15 @@ import { useContext } from 'react'
 import { context as modelContext } from '../../_context'
 import Config from './config'
 import invertColor, { padZero } from './_invert-color'
-import Paper from '@mui/material/Paper'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import Div from '../../../../../../components/div'
+import Stack from '@mui/material/Stack'
 
 export default () => {
   const { scaleMin, scaleMax, setScaleMin, setScaleMax, color } = useContext(modelContext)
   return (
-    <Paper
+    <Stack
       sx={{
         my: theme => theme.spacing(8),
         mx: theme => theme.spacing(2),
@@ -62,6 +62,6 @@ export default () => {
             </Tooltip>
           )
         })}
-    </Paper>
+    </Stack>
   )
 }

@@ -4,11 +4,15 @@ import Div from '../../../../components/div'
 import Paper from '@mui/material/Paper'
 import ModelProvider from './_context'
 import BandDataProvider from './band-data'
-import DepthControl from './controls/depth'
+import { ToggleDepth } from './controls/depth'
+import ToggleTemperature from './controls/toggle-temperature'
+import ToggleSalinity from './controls/toggle-salinity'
 import TimeControl from './controls/time'
 import InfoControl from './controls/info'
 import ColorBar from './controls/color-bar'
 import Map from './map'
+import Stack from '@mui/material/Stack'
+import RightMenu from './right-menu'
 
 export default ({ modelid = undefined }) => {
   const [ref, setRef] = useState(null)
@@ -35,36 +39,27 @@ export default ({ modelid = undefined }) => {
                 <ColorBar />
 
                 {/* FLOATING MENU */}
-                <Paper
-                  variant="outlined"
+
+                <Stack
                   sx={{
                     position: 'absolute',
-                    right: 0,
-                    flex: 1,
                     zIndex: 1,
-                    display: 'flex',
-                    flexDirection: 'column',
+                    right: 0,
                     mt: theme => theme.spacing(1),
                     mr: theme => theme.spacing(1),
                   }}
+                  direction="column"
+                  spacing={1}
                 >
                   <InfoControl />
-                </Paper>
+                  <ToggleDepth />
+                  <ToggleTemperature />
+                  <ToggleSalinity />
+                </Stack>
               </Div>
 
               {/* RIGHT MENU */}
-              <Div sx={{ display: 'flex' }}>
-                <Paper
-                  variant="outlined"
-                  sx={{
-                    borderRadius: 0,
-                    borderBottom: 'none',
-                    py: theme => theme.spacing(3),
-                  }}
-                >
-                  <DepthControl />
-                </Paper>
-              </Div>
+              <RightMenu />
             </Div>
 
             {/* BOTTOM MENU */}

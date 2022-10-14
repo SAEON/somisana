@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Tooltip from '@mui/material/Tooltip'
-import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -23,12 +23,14 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax }) => {
   return (
     <>
       <Tooltip placement="right-start" title="Configure scale and range">
-        <Button
-          sx={{ position: 'relative', borderRadius: 0, minWidth: 'unset' }}
+        <IconButton
+          sx={{ alignSelf: 'center', mb: theme => theme.spacing(1) }}
+          size="small"
+          color="primary"
           onClick={() => setOpen(!open)}
         >
-          <CogIcon sx={{ width: '0.8em' }} />
-        </Button>
+          <CogIcon fontSize="small" />
+        </IconButton>
       </Tooltip>
 
       <Dialog

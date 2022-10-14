@@ -81,13 +81,15 @@ const ContourLayer = ({
   })
 
   useEffect(() => {
-    map.addSource(id, {
-      type: 'geojson',
-      data: {
-        type: 'FeatureCollection',
-        features,
-      },
-    })
+    if (!map.getSource(id)) {
+      map.addSource(id, {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features,
+        },
+      })
+    }
 
     map.addLayer({
       id,
@@ -121,7 +123,7 @@ const ContourLayer = ({
 
     return () => {
       map.removeLayer(id)
-      map.removeSource(id)
+      // map.removeSource(id)
     }
   })
 
