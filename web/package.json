@@ -44,7 +44,7 @@
     "koa-compress": "^5.1.0",
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
-    "make-fetch-happen": "^10.2.1",
+    "make-fetch-happen": "^11.0.0",
     "maplibre-gl": "2.4.0",
     "mime": "^3.0.0",
     "mkdirp": "^1.0.4",
