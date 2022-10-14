@@ -2,13 +2,49 @@ import { useContext } from 'react'
 import { context as modelContext } from '../../_context'
 import Config from './config'
 import invertColor, { padZero } from './_invert-color'
-import Tooltip from '@mui/material/Tooltip'
-import Typography from '@mui/material/Typography'
+import Tooltip_, { tooltipClasses } from '@mui/material/Tooltip'
 import Div from '../../../../../../components/div'
 import Stack from '@mui/material/Stack'
+import { styled } from '@mui/material/styles'
+
+const Tooltip = styled(({ className, ...props }) => (
+  <Tooltip_ {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  zIndex: 1,
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[0],
+    position: 'relative',
+    top: 4,
+    left: theme.spacing(-4),
+    margin: 0,
+    padding: `${theme.spacing(0.5)} ${theme.spacing(1)}`,
+    fontSize: 10,
+  },
+}))
+
+const config = {
+  temperature: {
+    steps: 25,
+    unit: '°C',
+    fix: 1,
+  },
+  salinity: {
+    steps: 50,
+    unit: '‰',
+    fix: 3,
+  },
+}
 
 export default () => {
-  const { scaleMin, scaleMax, setScaleMin, setScaleMax, color } = useContext(modelContext)
+  const { scaleMin, scaleMax, setScaleMin, setScaleMax, color, selectedVariable } =
+    useContext(modelContext)
+
+  const { steps, unit, fix } = config[selectedVariable]
+  const range = scaleMax - scaleMin
+  const stepSize = range / steps
+
   return (
     <Stack
       sx={{
@@ -31,13 +67,18 @@ export default () => {
         setScaleMin={setScaleMin}
         setScaleMax={setScaleMax}
       />
-      {new Array((Math.ceil(scaleMax) - Math.floor(scaleMin)) / 0.2)
+      {new Array(steps)
         .fill(null)
-        .map((_, i) => parseFloat((i / 5 + scaleMin).toFixed(1)))
+        .map((_, i) => parseFloat((scaleMin + stepSize * i).toFixed(fix)))
         .reverse()
         .map((value, i) => {
           return (
-            <Tooltip key={i} placement="right-start" title={`${value} °C`}>
+            <Tooltip
+              open={i % 7 === 0 ? true : undefined}
+              key={i}
+              placement="right-start"
+              title={`${value} ${unit}`}
+            >
               <Div
                 sx={{
                   backgroundColor: color(value),
@@ -45,20 +86,7 @@ export default () => {
                   display: 'flex',
                   px: theme => theme.spacing(1),
                 }}
-              >
-                {value % 2 == 0 && (
-                  <Typography
-                    sx={{
-                      fontSize: '0.7rem',
-                      fontWeight: 'bold',
-                      color: invertColor(color(value), true),
-                    }}
-                    variant="overline"
-                  >
-                    {padZero(value)} °C
-                  </Typography>
-                )}
-              </Div>
+              />
             </Tooltip>
           )
         })}
