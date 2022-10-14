@@ -11,8 +11,9 @@ export default ({ modelid = undefined, children }) => {
   const [depth, setDepth] = useState(0)
   const [selectedCoordinate, setSelectedCoordinate] = useState(null)
   const [animateTimeStep, setAnimateTimeStep] = useState(false)
-  const [scaleMin, setScaleMin] = useState(10)
-  const [scaleMax, setScaleMax] = useState(25)
+  const [scaleMin, setScaleMin] = useState(false)
+  const [scaleMax, setScaleMax] = useState(false)
+  const [selectedVariable, setSelectedVariable] = useState('temperature')
 
   const color = useMemo(
     () =>
@@ -78,6 +79,8 @@ export default ({ modelid = undefined, children }) => {
         color,
         setScaleMin,
         setScaleMax,
+        selectedVariable,
+        setSelectedVariable,
       }}
     >
       {children}

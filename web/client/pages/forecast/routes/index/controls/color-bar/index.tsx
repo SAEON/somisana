@@ -31,9 +31,9 @@ export default () => {
         setScaleMin={setScaleMin}
         setScaleMax={setScaleMax}
       />
-      {new Array((scaleMax - scaleMin) / 0.1)
+      {new Array((Math.ceil(scaleMax) - Math.floor(scaleMin)) / 0.2)
         .fill(null)
-        .map((_, i) => i / 10 + scaleMin)
+        .map((_, i) => parseFloat((i / 5 + scaleMin).toFixed(1)))
         .reverse()
         .map((value, i) => {
           return (
@@ -46,7 +46,7 @@ export default () => {
                   px: theme => theme.spacing(1),
                 }}
               >
-                {value.toFixed(0) == value && (
+                {value % 2 == 0 && (
                   <Typography
                     sx={{
                       fontSize: '0.7rem',

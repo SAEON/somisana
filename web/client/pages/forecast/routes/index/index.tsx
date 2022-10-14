@@ -35,17 +35,21 @@ export default ({ modelid = undefined }) => {
                 <ColorBar />
 
                 {/* FLOATING MENU */}
-                <Div
+                <Paper
+                  variant="outlined"
                   sx={{
                     position: 'absolute',
                     right: 0,
+                    flex: 1,
                     zIndex: 1,
                     display: 'flex',
                     flexDirection: 'column',
+                    mt: theme => theme.spacing(1),
+                    mr: theme => theme.spacing(1),
                   }}
                 >
                   <InfoControl />
-                </Div>
+                </Paper>
               </Div>
 
               {/* RIGHT MENU */}

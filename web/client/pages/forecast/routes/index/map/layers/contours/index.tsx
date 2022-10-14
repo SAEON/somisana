@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_context'
 import { createPortal } from 'react-dom'
 import { context as bandDataContext } from '../../../band-data/_context'
@@ -6,55 +6,81 @@ import { contours } from 'd3-contour'
 import { Linear as Loading } from '../../../../../../../components/loading'
 import { useTheme } from '@mui/material/styles'
 import project from './_project'
+import * as d3 from 'd3'
 
-const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, depth, color }) => {
+const ContourLayer = ({
+  map,
+  gridWidth,
+  gridHeight,
+  data,
+  scaleMin,
+  setScaleMin,
+  scaleMax,
+  setScaleMax,
+  color,
+  setTimeStep,
+  animateTimeStep,
+  selectedVariable,
+}) => {
   const theme = useTheme()
   const { id, json: points } = data.data
 
-  const grid = useMemo(
-    () => ({
-      lng: points.map(([lng]) => lng),
-      lat: points.map(([, lat]) => lat),
-      temperature: points.map(([, , temperature]) => temperature),
-    }),
-    [points]
+  const grid = points.reduce(
+    (a, c) => {
+      const [lng, lat, temperature, salinity, u, v] = c
+      a.lng.push(lng)
+      a.lat.push(lat)
+      a.temperature.push(temperature)
+      a.salinity.push(salinity)
+      a.u.push(u)
+      a.v.push(v)
+      return a
+    },
+    {
+      lng: [],
+      lat: [],
+      temperature: [],
+      salinity: [],
+      u: [],
+      v: [],
+    }
   )
 
-  const polygons = useMemo(
-    () =>
-      contours()
-        .thresholds(50)
-        .size([gridWidth, gridHeight])(grid.temperature)
-        .map(z => {
-          return {
-            ...z,
-            value: z.value < scaleMin ? scaleMin : z.value > scaleMax ? scaleMax : z.value,
-            coordinates: z.coordinates.map(polygon => {
-              return polygon.map(ring =>
-                ring.map(p => project(grid, gridHeight, gridWidth, p)).reverse()
-              )
-            }),
-          }
+  const polygons = contours()
+    .thresholds(50)
+    .size([gridWidth, gridHeight])(grid[selectedVariable])
+    .map(z => {
+      return {
+        ...z,
+        value: z.value < scaleMin ? scaleMin : z.value > scaleMax ? scaleMax : z.value,
+        coordinates: z.coordinates.map(polygon => {
+          return polygon.map(ring =>
+            ring.map(p => project(grid, gridHeight, gridWidth, p)).reverse()
+          )
         }),
-    [scaleMin, scaleMax]
-  )
+      }
+    })
 
-  const features = useMemo(
-    () =>
-      polygons.map(({ type, coordinates, value }) => {
-        return {
-          type: 'Feature',
-          properties: { value, color: color(value) },
-          geometry: {
-            type,
-            coordinates,
-          },
-        }
-      }),
-    [color, polygons]
-  )
+  const features = polygons.map(({ type, coordinates, value }) => {
+    return {
+      type: 'Feature',
+      properties: { value, color: color(value) },
+      geometry: {
+        type,
+        coordinates,
+      },
+    }
+  })
 
-  if (!map.getSource(id)) {
+  useEffect(() => {
+    if (!scaleMin || !scaleMax) {
+      const [min, max] = d3.extent(grid[selectedVariable]).map(v => parseFloat(v))
+      setScaleMin(min)
+      setScaleMax(max)
+    }
+  })
+
+  useEffect(() => {
     map.addSource(id, {
       type: 'geojson',
       data: {
@@ -62,9 +88,7 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, de
         features,
       },
     })
-  }
 
-  if (!map.getLayer(id)) {
     map.addLayer({
       id,
       type: 'fill',
@@ -91,28 +115,19 @@ const ContourLayer = ({ map, gridWidth, gridHeight, data, scaleMin, scaleMax, de
         ],
       },
     })
-  }
 
-  useEffect(() => {
-    if (map.getSource(id)) {
-      map.getSource(id).setData({
-        type: 'FeatureCollection',
-        features,
-      })
-    }
-  }, [scaleMin, scaleMax])
-
-  useEffect(() => {
     map.moveLayer(id)
     if (map.getLayer('coordinates')) map.moveLayer('coordinates')
+
+    return () => {
+      map.removeLayer(id)
+      map.removeSource(id)
+    }
   })
 
-  useEffect(() => {
-    console.log('add', depth)
-    return () => {
-      console.log('remove', depth)
-    }
-  }, [depth])
+  if (animateTimeStep) {
+    setTimeout(() => setTimeStep(t => (t >= 240 ? 1 : t + 1)), 1000)
+  }
 }
 
 export default () => {
@@ -121,8 +136,12 @@ export default () => {
     map,
     model: { gridWidth = 0, gridHeight = 0 } = {},
     scaleMin,
+    setScaleMin,
     scaleMax,
-    depth,
+    setScaleMax,
+    setTimeStep,
+    animateTimeStep,
+    selectedVariable,
     color,
   } = useContext(mapContext)
   const container = map.getContainer()
@@ -142,9 +161,13 @@ export default () => {
       gridHeight={gridHeight}
       data={gql.data}
       scaleMin={scaleMin}
+      setScaleMin={setScaleMin}
+      setScaleMax={setScaleMax}
       scaleMax={scaleMax}
       color={color}
-      depth={depth}
+      setTimeStep={setTimeStep}
+      animateTimeStep={animateTimeStep}
+      selectedVariable={selectedVariable}
     />
   )
 }

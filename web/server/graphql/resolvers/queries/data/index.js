@@ -60,7 +60,10 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
               select
                 x,
                 y,
-                g.interpolated_temperature
+                g.interpolated_temperature,
+                g.interpolated_salinity,
+                g.interpolated_u,
+                g.interpolated_v
               from
                 grid g
               order by
@@ -74,7 +77,10 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
               select
                 v.long x,
                 v.lat y,
-                v.interpolated_temperature::float
+                v.interpolated_temperature::float,
+                v.interpolated_salinity::float,
+                v.interpolated_u::float,
+                v.interpolated_v::float
               from
                 somisana_interpolate_values(
                   target_depth => $1,
