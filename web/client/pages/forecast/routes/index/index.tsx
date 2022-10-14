@@ -39,7 +39,6 @@ export default ({ modelid = undefined }) => {
                 <ColorBar />
 
                 {/* FLOATING MENU */}
-
                 <Stack
                   sx={{
                     position: 'absolute',

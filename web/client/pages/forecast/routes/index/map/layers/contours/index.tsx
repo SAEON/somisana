@@ -23,7 +23,9 @@ const ContourLayer = ({
   selectedVariable,
 }) => {
   const theme = useTheme()
-  const { id, json: points } = data.data
+  const { id: _id, json: points } = data.data
+
+  const id = `${selectedVariable}${_id}`
 
   const grid = points.reduce(
     (a, c) => {
@@ -123,7 +125,7 @@ const ContourLayer = ({
 
     return () => {
       map.removeLayer(id)
-      // map.removeSource(id)
+      map.removeSource(id)
     }
   })
 

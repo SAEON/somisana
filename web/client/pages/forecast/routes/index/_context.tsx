@@ -1,4 +1,4 @@
-import { createContext, useState, useMemo } from 'react'
+import { createContext, useState, useMemo, useEffect } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Linear as Loading } from '../../../../components/loading'
 import * as d3 from 'd3'
@@ -23,6 +23,11 @@ export default ({ modelid = undefined, children }) => {
         .domain(d3.extent([scaleMin || 10, scaleMax || 25], v => v)),
     [scaleMin, scaleMax]
   )
+
+  useEffect(() => {
+    setScaleMin(false)
+    setScaleMax(false)
+  }, [selectedVariable])
 
   const { loading, error, data } = useQuery(
     gql`
