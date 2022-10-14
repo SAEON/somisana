@@ -14,7 +14,7 @@ const Tooltip = styled(({ className, ...props }) => (
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: theme.palette.common.white,
     color: 'rgba(0, 0, 0, 0.87)',
-    boxShadow: theme.shadows[0],
+    boxShadow: theme.shadows[7],
     position: 'relative',
     top: 4,
     left: theme.spacing(-4),

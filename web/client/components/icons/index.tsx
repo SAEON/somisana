@@ -28,11 +28,18 @@ import {
   mdiTemperatureCelsius,
   mdiSigmaLower,
   mdiScatterPlot,
+  mdiTailwind,
 } from '@mdi/js'
 
 export const SigmaLower = styled((props: any) => (
   <SvgIcon {...props}>
     <path d={mdiSigmaLower} />
+  </SvgIcon>
+))({})
+
+export const TailWind = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiTailwind} />
   </SvgIcon>
 ))({})
 

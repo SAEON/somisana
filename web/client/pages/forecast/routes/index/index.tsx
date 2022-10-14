@@ -7,6 +7,7 @@ import BandDataProvider from './band-data'
 import { ToggleDepth } from './controls/depth'
 import ToggleTemperature from './controls/toggle-temperature'
 import ToggleSalinity from './controls/toggle-salinity'
+import ToggleCurrents from './controls/toggle-currents'
 import TimeControl from './controls/time'
 import InfoControl from './controls/info'
 import ColorBar from './controls/color-bar'
@@ -44,8 +45,8 @@ export default ({ modelid = undefined }) => {
                     position: 'absolute',
                     zIndex: 1,
                     right: 0,
-                    mt: theme => theme.spacing(1),
-                    mr: theme => theme.spacing(1),
+                    mt: theme => theme.spacing(2),
+                    mr: theme => theme.spacing(2),
                   }}
                   direction="column"
                   spacing={1}
@@ -54,6 +55,7 @@ export default ({ modelid = undefined }) => {
                   <ToggleDepth />
                   <ToggleTemperature />
                   <ToggleSalinity />
+                  <ToggleCurrents />
                 </Stack>
               </Div>
 
