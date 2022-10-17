@@ -1,8 +1,7 @@
 import MapProvider from './_context'
 import CoordinatesLayer from './layers/coordinates'
 import MetadataLayer from './layers/metadata'
-import ContoursLayer from './layers/contours'
-import CurrentsLayer from './layers/currents'
+import VisualizationsLayer from './layers/visualizations'
 
 export default ({ container }) => {
   return (
@@ -10,8 +9,7 @@ export default ({ container }) => {
       <MapProvider container={container}>
         <MetadataLayer />
         <CoordinatesLayer />
-        <ContoursLayer />
-        <CurrentsLayer />
+        <VisualizationsLayer />
       </MapProvider>
     )
   )

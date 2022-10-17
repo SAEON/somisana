@@ -8,7 +8,7 @@ export default () => {
   const { showCurrents, setShowCurrents } = useContext(modelContext)
 
   return (
-    <Tooltip placement="left-start" title="Toggle currents (not implemented yet)">
+    <Tooltip placement="left-start" title="Toggle currents">
       <IconButton onClick={() => setShowCurrents(b => !b)} color="primary" size="small">
         <TailWind
           sx={{
