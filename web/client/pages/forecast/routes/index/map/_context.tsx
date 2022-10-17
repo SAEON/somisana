@@ -20,10 +20,14 @@ export default ({ children, container }) => {
         style: `https://basemaps-api.arcgis.com/arcgis/rest/services/styles/${basemapEnum}?type=style&token=${ESRI_API_KEY}`,
         zoom: 5,
         center: [24, -33],
-        attributionControl: true,
+        attributionControl: false,
       }),
     []
   )
+
+  useEffect(() => {
+    map.addControl(new maplibre.AttributionControl({ compact: false }))
+  }, [map])
 
   useEffect(() => {
     map.on('load', () => {
