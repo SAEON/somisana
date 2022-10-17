@@ -18,6 +18,8 @@ parser.add_option('--download', '-d', action="store_true", default = False, help
 downloadCLI.add_option('--workdir', default=".output", help="Directory output of forcing files")
 downloadCLI.add_option('--matlab-env', default=".output/.env", help="Path to MatLab configuration file")
 downloadCLI.add_option('--download-date', default = NOW, help="Download date (yyyymmdd)")
+downloadCLI.add_option('--gfs', action="store_true", default = False, help="Download GFS data")
+downloadCLI.add_option('--mercator', action="store_true", default = False, help="Download Mercator data")
 downloadCLI.add_option('--domain', help="Bounding box in 4326 projection (i.e. min_long,max_long,min_lat,max_lat)")
 
 transformCLI = OptionGroup(parser, '-t, --transform')

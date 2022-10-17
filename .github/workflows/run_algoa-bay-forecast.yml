@@ -205,6 +205,19 @@ jobs:
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
               ${{ needs.toolkit.outputs.image }} \
                 -d \
+                  --mercator \
+                  --workdir /tmp/somisana/current/forcing-inputs \
+                  --matlab-env /tmp/somisana/current/.env \
+                  --download-date ${{ env.MODEL_RUN_DATE }} \
+                  --domain 22,31,-37,-31 \
+            && docker run \
+              --rm \
+              -v $WORKDIR/:/tmp/somisana/current \
+              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+              ${{ needs.toolkit.outputs.image }} \
+                -d \
+                  --gfs \
                   --workdir /tmp/somisana/current/forcing-inputs \
                   --matlab-env /tmp/somisana/current/.env \
                   --download-date ${{ env.MODEL_RUN_DATE }} \
