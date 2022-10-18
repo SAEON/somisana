@@ -24,7 +24,8 @@ jobs:
     steps:
     - name: Set the BRANCH_REF
       id: BRANCH_REF
-      run: echo "::set-output name=value::${GITHUB_REF##*/}"
+      run: |
+        echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
   # Many of the env variables reference the current branch
   # Set the environment variables using the current branch reference
@@ -163,8 +164,8 @@ jobs:
       - name: Set WORKDIRs
         id: WORKDIR
         run: |
-          echo "::set-output name=WORKDIR::/tmp/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}"
-          echo "::set-output name=WORKDIR_YESTERDAY::/tmp/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}"
+          echo "WORKDIR=/tmp/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
+          echo "WORKDIR_YESTERDAY=/tmp/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
 
   # Download environmental data used to constrain model boundaries.
   # This job is retried if it fails, since the failure can be due to upstream errors
