@@ -24,7 +24,7 @@ jobs:
     steps:
     - name: Set the BRANCH_REF
       id: BRANCH_REF
-      run: echo "::set-output name=value::${GITHUB_REF##*/}"
+      run: echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
   # Many of the env variables reference the current branch
   # Set the environment variables using the current branch reference
@@ -44,18 +44,18 @@ jobs:
       - name: Configure run date
         id: run_date
         run: |
-          echo "::set-output name=value::${RUN_DATE:=$(date +'%Y%m%d')}"
+          echo "value=${RUN_DATE:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
       - name: Configure restart date
         id: restart_date
         run: |
-          echo "::set-output name=value::$(date -d '${{ steps.run_date.outputs.value }} -1 days' +'%Y%m%d')"
+          echo "value=$(date -d '${{ steps.run_date.outputs.value }} -1 days' +'%Y%m%d')" >> $GITHUB_OUTPUT
       - name: Set envs
         id: ENVS
         run: |
-          echo "::set-output name=CROCO_IMAGE::${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}"
-          echo "::set-output name=TOOLKIT_IMAGE::${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}"
-          echo "::set-output name=MODEL_RUN_DATE::${{ steps.run_date.outputs.value }}"
-          echo "::set-output name=RESTART_FILE_DATE::${{ steps.restart_date.outputs.value }}"
+          echo "CROCO_IMAGE=${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_DATE=${{ steps.run_date.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "RESTART_FILE_DATE=${{ steps.restart_date.outputs.value }}" >> $GITHUB_OUTPUT
 
   # Compile CROCO model for the Algoa Bay forecast
   compile-croco:
@@ -167,8 +167,8 @@ jobs:
       - name: Set WORKDIRs
         id: WORKDIR
         run: |
-          echo "::set-output name=WORKDIR::/tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}"
-          echo "::set-output name=WORKDIR_YESTERDAY::/tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}"
+          echo "WORKDIR=/tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
+          echo "WORKDIR_YESTERDAY=/tmp/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
 
   # Download environmental data used to constrain model boundaries.
   # This job is retried if it fails, since the failure can be due to upstream errors
