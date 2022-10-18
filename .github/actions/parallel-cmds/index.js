@@ -48,6 +48,9 @@ try {
   await Promise.all(executingCommands)
 
   const time = new Date().toTimeString()
+
+  // TODO - update to use environment files
+  // https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files
   core.setOutput('time', time)
   console.info('All done!', time)
 } catch (error) {
