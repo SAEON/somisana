@@ -81,13 +81,13 @@ jobs:
          password: ${{ secrets.GITHUB_TOKEN }}
      - name: Extract metadata (tags, labels) for Docker
        id: meta
-       uses: docker/metadata-action@v3
+       uses: docker/metadata-action@v4
        with:
          images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
          tags: |
            type=sha
      - name: Build and push
-       uses: docker/build-push-action@v2
+       uses: docker/build-push-action@v3
        with:
          context: models/false-bay-forecast
          file: models/false-bay-forecast/croco.Dockerfile
@@ -116,13 +116,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
           tags: |
             type=sha
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: toolkit
           push: true
