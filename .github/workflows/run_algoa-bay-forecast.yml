@@ -72,7 +72,7 @@ jobs:
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Log in to the Container registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -108,11 +108,11 @@ jobs:
       TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Log in to the Container registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -248,7 +248,7 @@ jobs:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Copy yesterday's restart file (if it exists)
@@ -281,7 +281,7 @@ jobs:
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Execute CROCO binary
@@ -309,7 +309,7 @@ jobs:
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Normalize the model output
