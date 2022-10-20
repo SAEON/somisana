@@ -1,4 +1,4 @@
-function make_OGCM_ocims_nest(NY,NM,ND,RSTY,RSTM,RSTD,makeini,rst_filename)
+function make_OGCM_ocims_nest(NY,NM,ND,makeini)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -10,8 +10,7 @@ function make_OGCM_ocims_nest(NY,NM,ND,RSTY,RSTM,RSTD,makeini,rst_filename)
 % script can be excuted a parent grid, parent intial/restart and 
 % childgrid file must exist. The script creates a inital 
 % file depending on the vaiable makeini which is defined within the 
-% forecast system. The restart file is create at the end of the previous
-% run there make_restart is not needed. For now the script creates 
+% forecast system.For now the script creates 
 %inital files for one child but can be adapted in the future for more nests 
 % md.carr@saeon.nrf.ac.za
 
@@ -92,10 +91,11 @@ if makeini==1
 	%Created child inital using nested_inital function 
 	nested_initial(childgrid,parent_grd,parent_ini,child_ini,...
 		vertical_correc,extrapmask,biol,bioebus,pisces)
-else
+%else 
+% Not needed as restart.nc.1 is made through the croco run
 	% Gettting the name of the parent restart file		
-	parent_rst = rst_filename
-	child_rst=[rst_filename,'.1']
+	%parent_rst = rst_filename
+	%child_rst=[rst_filename,'.1']
 	%Run the function nested restart
-	nested_restart(childgrid,parent_grd,parent_rst,child_rst,vertical_correc,extrapmask)
+	%nested_restart(childgrid,parent_grd,parent_rst,child_rst,vertical_correc,extrapmask)
 end

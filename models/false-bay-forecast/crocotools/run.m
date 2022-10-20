@@ -45,3 +45,6 @@ make_GFS_ocims_nest(date_now_year,date_now_month,date_now_day);
 
 % Run function to create ocean forcing (mercator)
 make_OGCM_ocims(date_now_year,date_now_month,date_now_day,hdays,makeini);
+
+% Run function to create child ini file (from parent)
+make_OGCM_ocims_nest(date_now_year,date_now_month,date_now_day,makeini)
