@@ -31,13 +31,36 @@ export default () => {
     return createPortal(<Loading sx={{ top: 0 }} />, container)
   }
 
+  const { json: points } = gql.data.data
+
+  const grid = points.reduce(
+    (a, c) => {
+      const [lng, lat, temperature, salinity, u, v] = c
+      a.lng.push(lng)
+      a.lat.push(lat)
+      a.temperature.push(temperature)
+      a.salinity.push(salinity)
+      a.u.push(u)
+      a.v.push(v)
+      return a
+    },
+    {
+      lng: [],
+      lat: [],
+      temperature: [],
+      salinity: [],
+      u: [],
+      v: [],
+    }
+  )
+
   return (
     <>
       <TemperatureSalinity
         map={map}
         gridWidth={gridWidth}
         gridHeight={gridHeight}
-        data={gql.data}
+        data={gql.data.data}
         scaleMin={scaleMin}
         setScaleMin={setScaleMin}
         setScaleMax={setScaleMax}
@@ -46,8 +69,16 @@ export default () => {
         setTimeStep={setTimeStep}
         animateTimeStep={animateTimeStep}
         selectedVariable={selectedVariable}
+        grid={grid}
       />
-      <Currents map={map} data={gql.data} showCurrents={showCurrents} />
+      <Currents
+        gridWidth={gridWidth}
+        gridHeight={gridHeight}
+        map={map}
+        data={gql.data.data}
+        grid={grid}
+        showCurrents={showCurrents}
+      />
     </>
   )
 }

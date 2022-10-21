@@ -18,32 +18,12 @@ export default memo(
     setTimeStep,
     animateTimeStep,
     selectedVariable,
+    grid,
   }) => {
     const theme = useTheme()
-    const { id: _id, json: points } = data.data
+    const { id: _id } = data
 
     const id = `${selectedVariable}${_id}`
-
-    const grid = points.reduce(
-      (a, c) => {
-        const [lng, lat, temperature, salinity, u, v] = c
-        a.lng.push(lng)
-        a.lat.push(lat)
-        a.temperature.push(temperature)
-        a.salinity.push(salinity)
-        a.u.push(u)
-        a.v.push(v)
-        return a
-      },
-      {
-        lng: [],
-        lat: [],
-        temperature: [],
-        salinity: [],
-        u: [],
-        v: [],
-      }
-    )
 
     const polygons = contours()
       .thresholds(50)

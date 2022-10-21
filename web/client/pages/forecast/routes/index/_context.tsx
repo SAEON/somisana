@@ -15,7 +15,7 @@ export default ({ modelid = undefined, children }) => {
   const [scaleMax, setScaleMax] = useState(false)
   const [activeRightPane, setActiveRightPane] = useState(false)
   const [selectedVariable, setSelectedVariable] = useState('temperature')
-  const [showCurrents, setShowCurrents] = useState(false)
+  const [showCurrents, setShowCurrents] = useState(true)
 
   const color = useMemo(
     () =>
