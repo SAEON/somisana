@@ -845,10 +845,10 @@ jobs:
     env:
       BRANCH: ${{ needs.branch-ref.outputs.value }}
     steps:
-      - name: Clean /tmp/somisana/false-bay-forecast/$BRANCH
+      - name: Clean /tmp/somisana/false-bay-forecast/${{ env.BRANCH }}
         run: >-
           find \
-            /tmp/somisana/false-bay-forecast/$BRANCH/* \
+            /tmp/somisana/false-bay-forecast/${{ env.BRANCH }}/* \
             -maxdepth 0 \
             -type d \
             -ctime +10 \

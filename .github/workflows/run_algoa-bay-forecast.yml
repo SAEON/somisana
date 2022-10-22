@@ -840,10 +840,10 @@ jobs:
     env:
       BRANCH: ${{ needs.branch-ref.outputs.value }}
     steps:
-      - name: Clean /tmp/somisana/algoa-bay-forecast/$BRANCH
+      - name: Clean /tmp/somisana/algoa-bay-forecast/${{ env.BRANCH }}
         run: >-
           find \
-            /tmp/somisana/algoa-bay-forecast/$BRANCH/* \
+            /tmp/somisana/algoa-bay-forecast/${{ env.BRANCH }}/* \
             -maxdepth 0 \
             -type d \
             -ctime +10 \
