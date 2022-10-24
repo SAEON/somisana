@@ -23,7 +23,7 @@ const generator = new Generator({
     'pg-query-stream',
     'JSONStream',
     'mime',
-    'cacache'
+    'cacache',
   ],
 })
 

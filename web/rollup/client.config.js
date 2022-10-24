@@ -1,4 +1,4 @@
-import swc from 'rollup-plugin-swc'
+import _swc from 'rollup-plugin-swc'
 import replace from '@rollup/plugin-replace'
 import { dirname, normalize } from 'path'
 import { fileURLToPath } from 'url'
@@ -8,6 +8,8 @@ import rimraf from 'rimraf'
 import extensions from './plugins/extensions.js'
 import css from 'rollup-plugin-import-css'
 import 'dotenv/config'
+
+const { default: swc } = _swc
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 

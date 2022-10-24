@@ -1,5 +1,6 @@
 import { memo } from 'react'
-import VectorField from './vector-field'
+// import VectorField from './vector-field'
+import customLayer from './vector-field/custom-layer'
 import modeledData from './_data'
 
 // https://observablehq.com/d/88b3d42d8403b554
@@ -46,6 +47,9 @@ export default memo(({ map, data, showCurrents, grid, gridWidth, gridHeight }) =
       //make alpha channel 255 to be able to see the image (alpha is not relevant to actual calculations)
       data[ptr + 3] = 255
     }
+
+    if (!map.getLayer(customLayer.id)) map.addLayer(customLayer)
   }
+
   return null
 })

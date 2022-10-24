@@ -12,9 +12,7 @@ const generator = new Generator({
   mapUrl: pathToFileURL(TARGET),
   env: ['browser', NODE_ENV, 'module'],
   defaultProvider: 'jspm',
-  ignore: [
-    
-  ]
+  ignore: [],
 })
 
 const htmlSource = await readFile(DEP, 'utf-8')

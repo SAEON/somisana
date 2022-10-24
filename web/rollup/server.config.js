@@ -1,9 +1,11 @@
 import rimraf from 'rimraf'
-import swc from 'rollup-plugin-swc'
+import _swc from 'rollup-plugin-swc'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { join, resolve } from 'path'
 import extensions from './plugins/extensions.js'
+
+const { default: swc } = _swc
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 

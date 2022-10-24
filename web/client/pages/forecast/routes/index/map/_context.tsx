@@ -21,6 +21,7 @@ export default ({ children, container }) => {
         zoom: 5,
         center: [24, -33],
         attributionControl: false,
+        antialias: true,
       }),
     []
   )
