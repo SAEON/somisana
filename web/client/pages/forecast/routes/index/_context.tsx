@@ -16,11 +16,12 @@ export default ({ modelid = undefined, children }) => {
   const [activeRightPane, setActiveRightPane] = useState(false)
   const [selectedVariable, setSelectedVariable] = useState('temperature')
   const [showCurrents, setShowCurrents] = useState(true)
+  const [colorScheme, setColorScheme] = useState('Magma')
 
   const color = useMemo(
     () =>
       d3
-        .scaleSequential(d3.interpolateMagma)
+        .scaleSequential(d3[`interpolate${colorScheme}`])
         .domain(d3.extent([scaleMin || 10, scaleMax || 25], v => v)),
     [scaleMin, scaleMax]
   )
@@ -92,6 +93,8 @@ export default ({ modelid = undefined, children }) => {
         setSelectedVariable,
         showCurrents,
         setShowCurrents,
+        colorScheme,
+        setColorScheme,
       }}
     >
       {children}

@@ -15,7 +15,9 @@ const PaperComponent = (props: PaperProps) => (
   </Draggable>
 )
 
-export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax }) => {
+// https://observablehq.com/@d3/color-schemes
+
+export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, setColorScheme }) => {
   const [open, setOpen] = useState(false)
 
   const title = 'Colour scale'

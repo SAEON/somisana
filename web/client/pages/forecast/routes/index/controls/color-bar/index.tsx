@@ -38,8 +38,16 @@ const config = {
 }
 
 export default () => {
-  const { scaleMin, scaleMax, setScaleMin, setScaleMax, color, selectedVariable } =
-    useContext(modelContext)
+  const {
+    scaleMin,
+    scaleMax,
+    setScaleMin,
+    setScaleMax,
+    color,
+    selectedVariable,
+    colorScheme,
+    setColorScheme,
+  } = useContext(modelContext)
 
   const { steps, unit, fix } = config[selectedVariable]
   const range = scaleMax - scaleMin
@@ -66,6 +74,8 @@ export default () => {
         scaleMax={scaleMax}
         setScaleMin={setScaleMin}
         setScaleMax={setScaleMax}
+        colorScheme={colorScheme}
+        setColorScheme={setColorScheme}
       />
       {new Array(steps)
         .fill(null)
