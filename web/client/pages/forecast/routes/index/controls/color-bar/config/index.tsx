@@ -12,14 +12,13 @@ import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
+export { default as color } from './_color'
 
 const PaperComponent = (props: PaperProps) => (
   <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
     <Paper {...props} />
   </Draggable>
 )
-
-// https://observablehq.com/@d3/color-schemes
 
 export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, setColorScheme }) => {
   const [open, setOpen] = useState(false)

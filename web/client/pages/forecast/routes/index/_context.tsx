@@ -1,7 +1,7 @@
 import { createContext, useState, useMemo, useEffect } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Linear as Loading } from '../../../../components/loading'
-import * as d3 from 'd3'
+import { color as colorFn } from './controls/color-bar/config'
 
 export const context = createContext({})
 
@@ -19,10 +19,7 @@ export default ({ modelid = undefined, children }) => {
   const [colorScheme, setColorScheme] = useState('Magma')
 
   const color = useMemo(
-    () =>
-      d3
-        .scaleSequential(d3[`interpolate${colorScheme}`])
-        .domain(d3.extent([scaleMin || 10, scaleMax || 25], v => v)),
+    () => colorFn(colorScheme, scaleMin, scaleMax),
     [scaleMin, scaleMax, colorScheme]
   )
 
