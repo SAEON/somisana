@@ -64,9 +64,18 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, set
               label="Colors"
               onChange={({ target: { value } }) => setColorScheme(value)}
             >
-              <MenuItem value={'Warm'}>Warm</MenuItem>
-              <MenuItem value={'Cool'}>Cool</MenuItem>
-              <MenuItem value={'Magma'}>Magma</MenuItem>
+              <MenuItem
+                value={'Warm'}
+                sx={{ backgroundColor: 'blue', height: theme => theme.spacing(4) }}
+              />
+              <MenuItem
+                value={'Cool'}
+                sx={{ backgroundColor: 'red', height: theme => theme.spacing(4) }}
+              />
+              <MenuItem
+                value={'Magma'}
+                sx={{ backgroundColor: 'green', height: theme => theme.spacing(4) }}
+              />
             </Select>
           </FormControl>
 
