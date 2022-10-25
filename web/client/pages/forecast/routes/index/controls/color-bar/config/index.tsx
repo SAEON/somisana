@@ -12,7 +12,10 @@ import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-export { default as color } from './_color'
+import ListSubheader from '@mui/material/ListSubheader'
+import { default as _color, presets } from './_color'
+
+export const color = _color
 
 const PaperComponent = (props: PaperProps) => (
   <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
@@ -64,18 +67,22 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, set
               label="Colors"
               onChange={({ target: { value } }) => setColorScheme(value)}
             >
-              <MenuItem
-                value={'Warm'}
-                sx={{ backgroundColor: 'blue', height: theme => theme.spacing(4) }}
-              />
-              <MenuItem
-                value={'Cool'}
-                sx={{ backgroundColor: 'red', height: theme => theme.spacing(4) }}
-              />
-              <MenuItem
-                value={'Magma'}
-                sx={{ backgroundColor: 'green', height: theme => theme.spacing(4) }}
-              />
+              {Object.entries(presets).map(([key, colors]) => {
+                return (
+                  <span key={key}>
+                    <ListSubheader>{key}</ListSubheader>
+                    {colors.map(value => (
+                      <MenuItem
+                        key={`${key}-${value}`}
+                        value={value}
+                        sx={{ backgroundColor: 'transparent', height: theme => theme.spacing(4) }}
+                      >
+                        {value}
+                      </MenuItem>
+                    ))}
+                  </span>
+                )
+              })}
             </Select>
           </FormControl>
 
