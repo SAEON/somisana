@@ -8,6 +8,10 @@ import { Cog as CogIcon } from '../../../../../../../components/icons'
 import TextField from '@mui/material/TextField'
 import Paper, { PaperProps } from '@mui/material/Paper'
 import Draggable from 'react-draggable'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
 
 const PaperComponent = (props: PaperProps) => (
   <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
@@ -20,7 +24,7 @@ const PaperComponent = (props: PaperProps) => (
 export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, setColorScheme }) => {
   const [open, setOpen] = useState(false)
 
-  const title = 'Colour scale'
+  const title = 'Colour range configuration'
 
   return (
     <>
@@ -50,6 +54,23 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, set
           {title}
         </DialogTitle>
         <DialogContent dividers>
+          <FormControl fullWidth>
+            <InputLabel id="select-color-label">Colors</InputLabel>
+            <Select
+              size="small"
+              IconComponent={null}
+              labelId="select-color-label"
+              id="select-color"
+              value={colorScheme}
+              label="Colors"
+              onChange={({ target: { value } }) => setColorScheme(value)}
+            >
+              <MenuItem value={'Warm'}>Warm</MenuItem>
+              <MenuItem value={'Cool'}>Cool</MenuItem>
+              <MenuItem value={'Magma'}>Magma</MenuItem>
+            </Select>
+          </FormControl>
+
           <TextField
             sx={{ flex: 2 }}
             fullWidth

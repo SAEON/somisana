@@ -23,7 +23,7 @@ export default ({ modelid = undefined, children }) => {
       d3
         .scaleSequential(d3[`interpolate${colorScheme}`])
         .domain(d3.extent([scaleMin || 10, scaleMax || 25], v => v)),
-    [scaleMin, scaleMax]
+    [scaleMin, scaleMax, colorScheme]
   )
 
   useEffect(() => {
