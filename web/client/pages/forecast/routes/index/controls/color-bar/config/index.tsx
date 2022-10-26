@@ -5,15 +5,14 @@ import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import { Cog as CogIcon } from '../../../../../../../components/icons'
+import Q from '../../../../../../../components/quick-form'
 import TextField from '@mui/material/TextField'
 import Paper, { PaperProps } from '@mui/material/Paper'
 import Draggable from 'react-draggable'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
-import ListSubheader from '@mui/material/ListSubheader'
-import { default as _color, presets } from './_color'
+
+import { default as _color, SelectControl } from './_color'
 
 export const color = _color
 
@@ -58,58 +57,54 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, set
         <DialogContent dividers>
           <FormControl fullWidth>
             <InputLabel id="select-color-label">Colors</InputLabel>
-            <Select
-              size="small"
-              IconComponent={null}
-              labelId="select-color-label"
-              id="select-color"
-              value={colorScheme}
-              label="Colors"
-              onChange={({ target: { value } }) => setColorScheme(value)}
-            >
-              {Object.entries(presets).map(([key, colors]) => {
-                return (
-                  <span key={key}>
-                    <ListSubheader>{key}</ListSubheader>
-                    {colors.map(value => (
-                      <MenuItem
-                        key={`${key}-${value}`}
-                        value={value}
-                        sx={{ backgroundColor: 'transparent', height: theme => theme.spacing(4) }}
-                      >
-                        {value}
-                      </MenuItem>
-                    ))}
-                  </span>
-                )
-              })}
-            </Select>
+            <SelectControl colorScheme={colorScheme} setColorScheme={setColorScheme} />
           </FormControl>
+          <Q
+            effects={({ _scaleMin, _scaleMax }) => {
+              const min =
+                typeof _scaleMin === 'number' ? _scaleMin : parseFloat(_scaleMin.replace(/,/g, '.'))
+              const max =
+                typeof _scaleMax === 'number' ? _scaleMax : parseFloat(_scaleMax.replace(/,/g, '.'))
 
-          <TextField
-            sx={{ flex: 2 }}
-            fullWidth
-            variant="outlined"
-            label="Min"
-            type="number"
-            margin="normal"
-            size="small"
-            value={scaleMin}
-            placeholder="Auto"
-            onChange={({ target: { value } }) => setScaleMin(parseFloat(value))}
-          />
-          <TextField
-            sx={{ flex: 2 }}
-            fullWidth
-            variant="outlined"
-            label="Max"
-            type="number"
-            margin="normal"
-            size="small"
-            value={scaleMax}
-            placeholder="Auto"
-            onChange={({ target: { value } }) => setScaleMax(parseFloat(value))}
-          />
+              if (!isNaN(min) && !isNaN(max) && max >= min) {
+                setScaleMin(min)
+                setScaleMax(max)
+              }
+            }}
+            _scaleMin={scaleMin}
+            _scaleMax={scaleMax}
+          >
+            {(update, { _scaleMin, _scaleMax }) => {
+              return (
+                <>
+                  <TextField
+                    sx={{ flex: 2 }}
+                    fullWidth
+                    variant="outlined"
+                    label="Min"
+                    type="number"
+                    margin="normal"
+                    size="small"
+                    value={_scaleMin}
+                    placeholder="Auto"
+                    onChange={({ target: { value: _scaleMin } }) => update({ _scaleMin })}
+                  />
+                  <TextField
+                    sx={{ flex: 2 }}
+                    fullWidth
+                    variant="outlined"
+                    label="Max"
+                    type="number"
+                    margin="normal"
+                    size="small"
+                    value={_scaleMax}
+                    placeholder="Auto"
+                    onChange={({ target: { value: _scaleMax } }) => update({ _scaleMax })}
+                  />
+                </>
+              )
+            }}
+          </Q>
         </DialogContent>
       </Dialog>
     </>

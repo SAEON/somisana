@@ -1,4 +1,4 @@
-import { createContext, useState, useMemo, useEffect } from 'react'
+import { createContext, useState, useCallback, useEffect } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Linear as Loading } from '../../../../components/loading'
 import { color as colorFn } from './controls/color-bar/config'
@@ -18,10 +18,11 @@ export default ({ modelid = undefined, children }) => {
   const [showCurrents, setShowCurrents] = useState(true)
   const [colorScheme, setColorScheme] = useState('Magma')
 
-  const color = useMemo(
-    () => colorFn(colorScheme, scaleMin, scaleMax),
-    [scaleMin, scaleMax, colorScheme]
-  )
+  const color = useCallback(colorFn(colorScheme, scaleMin, scaleMax), [
+    scaleMin,
+    scaleMax,
+    colorScheme,
+  ])
 
   useEffect(() => {
     setScaleMin(false)

@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { context as modelContext } from '../../_context'
 import Config from './config'
-import invertColor, { padZero } from './_invert-color'
+import invertColor, { padZero } from './_functions'
 import Tooltip_, { tooltipClasses } from '@mui/material/Tooltip'
 import Div from '../../../../../../components/div'
 import Stack from '@mui/material/Stack'
