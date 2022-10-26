@@ -9,7 +9,16 @@ export default () => {
 
   return (
     <Tooltip placement="left-start" title="Toggle salinity contours">
-      <IconButton onClick={() => setSelectedVariable('salinity')} color="primary" size="small">
+      <IconButton
+        onClick={() => {
+          if (selectedVariable === 'salinity') {
+          } else {
+            setSelectedVariable('salinity')
+          }
+        }}
+        color="primary"
+        size="small"
+      >
         <ScatterPlot
           sx={{
             color: theme =>

@@ -1,13 +1,13 @@
-import { createContext, useContext, useMemo, useEffect, useState } from 'react'
+import { createContext, useContext, useMemo, memo, useEffect, useState } from 'react'
 import { ctx as configContext } from '../../../../../modules/config'
 import { context as modelContext } from '../_context'
 import maplibre from 'maplibre-gl'
 
 export const context = createContext({})
 
-export default ({ children, container }) => {
+const P = memo(({ children, container, model, ...other }) => {
+  console.log('rendering provider')
   const [load, setLoad] = useState(false)
-  const { model, ...other } = useContext(modelContext)
   const { max_x = 0, max_y = 0, min_x = 0, min_y = 0 } = model || {}
 
   const { ESRI_API_KEY } = useContext(configContext)
@@ -53,4 +53,10 @@ export default ({ children, container }) => {
   }
 
   return <context.Provider value={{ map, model, ...other }}>{children}</context.Provider>
+})
+
+export default props => {
+  const { model, ...other } = useContext(modelContext)
+  console.log(other)
+  return <P model={model} {...props} {...other} />
 }

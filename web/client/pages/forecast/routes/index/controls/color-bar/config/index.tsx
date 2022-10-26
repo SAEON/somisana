@@ -11,6 +11,7 @@ import Paper, { PaperProps } from '@mui/material/Paper'
 import Draggable from 'react-draggable'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
+import debounce from '../../../../../../../lib/debounce'
 
 import { default as _color, SelectControl } from './_color'
 
@@ -60,7 +61,7 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, set
             <SelectControl colorScheme={colorScheme} setColorScheme={setColorScheme} />
           </FormControl>
           <Q
-            effects={({ _scaleMin, _scaleMax }) => {
+            effects={debounce(({ _scaleMin, _scaleMax }) => {
               const min =
                 typeof _scaleMin === 'number' ? _scaleMin : parseFloat(_scaleMin.replace(/,/g, '.'))
               const max =
@@ -70,40 +71,38 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, set
                 setScaleMin(min)
                 setScaleMax(max)
               }
-            }}
+            }, 500)}
             _scaleMin={scaleMin}
             _scaleMax={scaleMax}
           >
-            {(update, { _scaleMin, _scaleMax }) => {
-              return (
-                <>
-                  <TextField
-                    sx={{ flex: 2 }}
-                    fullWidth
-                    variant="outlined"
-                    label="Min"
-                    type="number"
-                    margin="normal"
-                    size="small"
-                    value={_scaleMin}
-                    placeholder="Auto"
-                    onChange={({ target: { value: _scaleMin } }) => update({ _scaleMin })}
-                  />
-                  <TextField
-                    sx={{ flex: 2 }}
-                    fullWidth
-                    variant="outlined"
-                    label="Max"
-                    type="number"
-                    margin="normal"
-                    size="small"
-                    value={_scaleMax}
-                    placeholder="Auto"
-                    onChange={({ target: { value: _scaleMax } }) => update({ _scaleMax })}
-                  />
-                </>
-              )
-            }}
+            {(update, { _scaleMin, _scaleMax }) => (
+              <>
+                <TextField
+                  sx={{ flex: 2 }}
+                  fullWidth
+                  variant="outlined"
+                  label="Min"
+                  type="number"
+                  margin="normal"
+                  size="small"
+                  value={_scaleMin}
+                  placeholder="Auto"
+                  onChange={({ target: { value: _scaleMin } }) => update({ _scaleMin })}
+                />
+                <TextField
+                  sx={{ flex: 2 }}
+                  fullWidth
+                  variant="outlined"
+                  label="Max"
+                  type="number"
+                  margin="normal"
+                  size="small"
+                  value={_scaleMax}
+                  placeholder="Auto"
+                  onChange={({ target: { value: _scaleMax } }) => update({ _scaleMax })}
+                />
+              </>
+            )}
           </Q>
         </DialogContent>
       </Dialog>

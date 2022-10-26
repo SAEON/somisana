@@ -9,7 +9,16 @@ export default () => {
 
   return (
     <Tooltip placement="left-start" title="Toggle temperature contours">
-      <IconButton onClick={() => setSelectedVariable('temperature')} color="primary" size="small">
+      <IconButton
+        onClick={() => {
+          if (selectedVariable === 'temperature') {
+          } else {
+            setSelectedVariable('temperature')
+          }
+        }}
+        color="primary"
+        size="small"
+      >
         <DegCelsius
           sx={{
             color: theme =>
