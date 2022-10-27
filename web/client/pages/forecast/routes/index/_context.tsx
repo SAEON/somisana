@@ -15,7 +15,7 @@ export default ({ modelid = undefined, children }) => {
   const [scaleMax, setScaleMax] = useState(false)
   const [activeRightPane, setActiveRightPane] = useState(false)
   const [selectedVariable, setSelectedVariable] = useState('temperature')
-  const [showCurrents, setShowCurrents] = useState(true)
+  const [showCurrents, setShowCurrents] = useState(false)
   const [colorScheme, setColorScheme] = useState('Magma')
 
   const color = useCallback(colorFn(colorScheme, scaleMin, scaleMax), [

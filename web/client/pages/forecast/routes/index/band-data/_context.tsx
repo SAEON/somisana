@@ -1,16 +1,10 @@
-import { createContext, useContext, useEffect } from 'react'
-import { context as modelContext } from '../_context'
+import { createContext, useContext, memo } from 'react'
+import { context as pageContext } from '../_context'
 import { gql, useQuery } from '@apollo/client'
 
 export const context = createContext({})
 
-export default ({ children }) => {
-  const {
-    depth,
-    timeStep,
-    run: { id: runId = 0 },
-  } = useContext(modelContext)
-
+const Render = memo(({ children, depth, timeStep, runId }) => {
   const graphqlRequest = useQuery(
     gql`
       query ($timeStep: Int!, $runId: Int!, $depth: Int!) {
@@ -30,4 +24,13 @@ export default ({ children }) => {
   )
 
   return <context.Provider value={{ ...graphqlRequest }}>{children}</context.Provider>
+})
+
+export default props => {
+  const {
+    depth,
+    timeStep,
+    run: { id: runId = 0 },
+  } = useContext(pageContext)
+  return <Render depth={depth} timeStep={timeStep} runId={runId} {...props} />
 }
