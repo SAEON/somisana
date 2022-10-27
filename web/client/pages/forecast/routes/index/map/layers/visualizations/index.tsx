@@ -7,8 +7,6 @@ import Currents from './currents'
 import TemperatureSalinity from './temperature-salinity'
 
 const Render = memo(({ data, points }) => {
-  console.log('re')
-
   const grid = useMemo(
     () =>
       points.reduce(
