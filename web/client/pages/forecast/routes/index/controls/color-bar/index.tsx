@@ -1,5 +1,5 @@
-import { useContext } from 'react'
-import { context as modelContext } from '../../_context'
+import { useContext, memo } from 'react'
+import { context as pageContext } from '../../_context'
 import Config from './config'
 import invertColor, { padZero } from './_functions'
 import Tooltip_, { tooltipClasses } from '@mui/material/Tooltip'
@@ -37,6 +37,73 @@ const config = {
   },
 }
 
+const Render = memo(
+  ({
+    scaleMin,
+    scaleMax,
+    setScaleMin,
+    setScaleMax,
+    color,
+    selectedVariable,
+    colorScheme,
+    setColorScheme,
+  }) => {
+    const { steps, unit, fix } = config[selectedVariable]
+    const range = scaleMax - scaleMin
+    const stepSize = range / steps
+
+    return (
+      <Stack
+        sx={{
+          my: theme => theme.spacing(8),
+          mx: theme => theme.spacing(2),
+          height: '100%',
+          maxHeight: 'fill-available',
+          position: 'absolute',
+          left: 0,
+          zIndex: 1,
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'auto',
+        }}
+      >
+        <Config
+          scaleMin={scaleMin}
+          scaleMax={scaleMax}
+          setScaleMin={setScaleMin}
+          setScaleMax={setScaleMax}
+          colorScheme={colorScheme}
+          setColorScheme={setColorScheme}
+        />
+        {new Array(steps)
+          .fill(null)
+          .map((_, i) => parseFloat((scaleMin + stepSize * i).toFixed(fix)))
+          .reverse()
+          .map((value, i) => {
+            return (
+              <Tooltip
+                open={i % 7 === 0 ? true : undefined}
+                key={i}
+                placement="right-start"
+                title={`${value} ${unit}`}
+              >
+                <Div
+                  sx={{
+                    backgroundColor: color(value),
+                    flex: 1,
+                    display: 'flex',
+                    px: theme => theme.spacing(1),
+                  }}
+                />
+              </Tooltip>
+            )
+          })}
+      </Stack>
+    )
+  }
+)
+
 export default () => {
   const {
     scaleMin,
@@ -47,59 +114,17 @@ export default () => {
     selectedVariable,
     colorScheme,
     setColorScheme,
-  } = useContext(modelContext)
-
-  const { steps, unit, fix } = config[selectedVariable]
-  const range = scaleMax - scaleMin
-  const stepSize = range / steps
-
+  } = useContext(pageContext)
   return (
-    <Stack
-      sx={{
-        my: theme => theme.spacing(8),
-        mx: theme => theme.spacing(2),
-        height: '100%',
-        maxHeight: 'fill-available',
-        position: 'absolute',
-        left: 0,
-        zIndex: 1,
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'auto',
-      }}
-    >
-      <Config
-        scaleMin={scaleMin}
-        scaleMax={scaleMax}
-        setScaleMin={setScaleMin}
-        setScaleMax={setScaleMax}
-        colorScheme={colorScheme}
-        setColorScheme={setColorScheme}
-      />
-      {new Array(steps)
-        .fill(null)
-        .map((_, i) => parseFloat((scaleMin + stepSize * i).toFixed(fix)))
-        .reverse()
-        .map((value, i) => {
-          return (
-            <Tooltip
-              open={i % 7 === 0 ? true : undefined}
-              key={i}
-              placement="right-start"
-              title={`${value} ${unit}`}
-            >
-              <Div
-                sx={{
-                  backgroundColor: color(value),
-                  flex: 1,
-                  display: 'flex',
-                  px: theme => theme.spacing(1),
-                }}
-              />
-            </Tooltip>
-          )
-        })}
-    </Stack>
+    <Render
+      scaleMin={scaleMin}
+      scaleMax={scaleMax}
+      setScaleMin={setScaleMin}
+      setScaleMax={setScaleMax}
+      color={color}
+      selectedVariable={selectedVariable}
+      colorScheme={colorScheme}
+      setColorScheme={setColorScheme}
+    />
   )
 }

@@ -1,10 +1,12 @@
-import { useEffect, memo } from 'react'
+import { useEffect, memo, useContext } from 'react'
 import * as d3 from 'd3'
+import { context as mapContext } from '../../../_context'
+import { context as pageContext } from '../../../../_context'
 import { contours } from 'd3-contour'
 import { useTheme } from '@mui/material/styles'
 import project from '../lib/project-coordinates'
 
-export default memo(
+const Render = memo(
   ({
     map,
     gridWidth,
@@ -111,3 +113,36 @@ export default memo(
     }
   }
 )
+
+export default ({ data, grid }) => {
+  const { map } = useContext(mapContext)
+  const {
+    model: { gridWidth, gridHeight },
+    scaleMin,
+    setScaleMin,
+    setScaleMax,
+    scaleMax,
+    color,
+    setTimeStep,
+    animateTimeStep,
+    selectedVariable,
+  } = useContext(pageContext)
+
+  return (
+    <Render
+      map={map}
+      gridWidth={gridWidth}
+      gridHeight={gridHeight}
+      scaleMin={scaleMin}
+      setScaleMin={setScaleMin}
+      setScaleMax={setScaleMax}
+      scaleMax={scaleMax}
+      color={color}
+      setTimeStep={setTimeStep}
+      animateTimeStep={animateTimeStep}
+      selectedVariable={selectedVariable}
+      data={data}
+      grid={grid}
+    />
+  )
+}

@@ -1,5 +1,7 @@
-import { memo } from 'react'
+import { memo, useContext } from 'react'
 // import VectorField from './vector-field'
+import { context as mapContext } from '../../../_context'
+import { context as pageContext } from '../../../../_context'
 import customLayer from './vector-field/custom-layer'
 import modeledData from './_data'
 
@@ -7,7 +9,7 @@ import modeledData from './_data'
 // https://github.com/greggman/twgl.js/
 // TODO - figure out gl, dataCanvas, customLayer, VectorField
 
-export default memo(({ map, data, showCurrents, grid, gridWidth, gridHeight }) => {
+const Render = memo(({ map, data, showCurrents, grid, gridWidth, gridHeight }) => {
   if (showCurrents) {
     const minLon = -180
     const minLat = -80
@@ -53,3 +55,22 @@ export default memo(({ map, data, showCurrents, grid, gridWidth, gridHeight }) =
 
   return null
 })
+
+export default ({ data, grid }) => {
+  const { map } = useContext(mapContext)
+  const {
+    model: { gridHeight, gridWidth },
+    showCurrents,
+  } = useContext(pageContext)
+
+  return (
+    <Render
+      data={data}
+      grid={grid}
+      gridWidth={gridWidth}
+      gridHeight={gridHeight}
+      map={map}
+      showCurrents={showCurrents}
+    />
+  )
+}

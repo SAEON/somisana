@@ -1,12 +1,11 @@
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, memo } from 'react'
 import { context as mapContext } from '../../_context'
+import { context as pageContext } from '../../../_context'
 import { ctx as configContext } from '../../../../../../../modules/config'
 import { useTheme } from '@mui/material/styles'
 
-export default () => {
+const Render = memo(({ TILESERV_BASE_URL, map, modelid }) => {
   const theme = useTheme()
-  const { TILESERV_BASE_URL } = useContext(configContext)
-  const { map, model: { _id: modelid = 0 } = {} } = useContext(mapContext)
 
   useEffect(() => {
     map.addSource('metadata', {
@@ -32,4 +31,12 @@ export default () => {
       },
     })
   }, [map])
+})
+
+export default () => {
+  const { TILESERV_BASE_URL } = useContext(configContext)
+  const { map } = useContext(mapContext)
+  const { model: { _id: modelid = 0 } = {} } = useContext(pageContext)
+
+  return <Render map={map} modelid={modelid} TILESERV_BASE_URL={TILESERV_BASE_URL} />
 }

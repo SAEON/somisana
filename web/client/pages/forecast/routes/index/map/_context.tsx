@@ -5,8 +5,7 @@ import maplibre from 'maplibre-gl'
 
 export const context = createContext({})
 
-const P = memo(({ children, container, model, ...other }) => {
-  console.log('rendering provider')
+const P = memo(({ children, container, model }) => {
   const [load, setLoad] = useState(false)
   const { max_x = 0, max_y = 0, min_x = 0, min_y = 0 } = model || {}
 
@@ -40,7 +39,7 @@ const P = memo(({ children, container, model, ...other }) => {
         ],
         {
           linear: false,
-          padding: 256,
+          padding: 64,
           curve: 1,
           speed: 1,
         }
@@ -52,11 +51,10 @@ const P = memo(({ children, container, model, ...other }) => {
     return null
   }
 
-  return <context.Provider value={{ map, model, ...other }}>{children}</context.Provider>
+  return <context.Provider value={{ map, model }}>{children}</context.Provider>
 })
 
 export default props => {
-  const { model, ...other } = useContext(modelContext)
-  console.log(other)
-  return <P model={model} {...props} {...other} />
+  const { model } = useContext(modelContext)
+  return <P model={model} {...props} />
 }
