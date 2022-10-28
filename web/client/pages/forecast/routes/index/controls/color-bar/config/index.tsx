@@ -58,7 +58,12 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, set
         <DialogContent dividers>
           <FormControl fullWidth>
             <InputLabel id="select-color-label">Colors</InputLabel>
-            <SelectControl colorScheme={colorScheme} setColorScheme={setColorScheme} />
+            <SelectControl
+              min={scaleMin}
+              max={scaleMax}
+              colorScheme={colorScheme}
+              setColorScheme={setColorScheme}
+            />
           </FormControl>
           <Q
             effects={debounce(({ _scaleMin, _scaleMax }) => {
