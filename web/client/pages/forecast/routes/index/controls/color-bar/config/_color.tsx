@@ -40,32 +40,31 @@ export const presets = {
   Cyclical: ['Rainbow', 'Sinebow'],
 }
 
-const Swatch = ({ colorScheme: name }) => {
+const Swatch = ({ colorScheme: name, min, max }) => {
+  const N = 20
+  const step = (max - min) / N
   const ref = useRef(null)
-  const colorFn = useCallback(color(name, 1, 5), [])
+  const colorFn = useCallback(color(name, min, max), [])
 
   useEffect(() => {
-    const canvas = d3.select(ref.current)
-    canvas
-      .enter()
-      .append('svg:rect')
-      .selectAll()
-      .data([1, 2, 3, 4, 5])
-      .enter()
-      .style('fill', d => {
-        console.log(d)
-        return 'blue'
-      })
+    const canvas = ref.current
+    const context = canvas.getContext('2d')
+    const w = canvas.width / N
+
+    for (let i = 0; i <= N; ++i) {
+      context.fillStyle = colorFn(min + i * step)
+      context.fillRect(i * w, 0, w, canvas.height)
+    }
   }, [])
 
   return (
-    <Tooltip title={name} placement="left-start">
-      <Canvas ref={ref} sx={{ width: '100%', height: '100%', border: '1px solid red' }} />
+    <Tooltip title={name} placement="right">
+      <Canvas ref={ref} sx={{ width: '100%', height: '100%' }} />
     </Tooltip>
   )
 }
 
-export const SelectControl = ({ colorScheme, setColorScheme }) => {
+export const SelectControl = ({ colorScheme, setColorScheme, min, max }) => {
   return (
     <Select
       size="small"
@@ -85,7 +84,7 @@ export const SelectControl = ({ colorScheme, setColorScheme }) => {
             value={colorScheme}
             sx={{ backgroundColor: 'transparent', height: theme => theme.spacing(4) }}
           >
-            <Swatch colorScheme={colorScheme} />
+            <Swatch colorScheme={colorScheme} min={min} max={max} />
           </MenuItem>
         )
       })}
@@ -96,7 +95,7 @@ export const SelectControl = ({ colorScheme, setColorScheme }) => {
           value={colorScheme}
           sx={{ backgroundColor: 'transparent', height: theme => theme.spacing(4) }}
         >
-          <Swatch colorScheme={colorScheme} />
+          <Swatch colorScheme={colorScheme} min={min} max={max} />
         </MenuItem>
       ))}
       <ListSubheader>Diverging</ListSubheader>
@@ -106,7 +105,7 @@ export const SelectControl = ({ colorScheme, setColorScheme }) => {
           value={colorScheme}
           sx={{ backgroundColor: 'transparent', height: theme => theme.spacing(4) }}
         >
-          <Swatch colorScheme={colorScheme} />
+          <Swatch colorScheme={colorScheme} min={min} max={max} />
         </MenuItem>
       ))}
       <ListSubheader>Cyclical</ListSubheader>
@@ -116,7 +115,7 @@ export const SelectControl = ({ colorScheme, setColorScheme }) => {
           value={colorScheme}
           sx={{ backgroundColor: 'transparent', height: theme => theme.spacing(4) }}
         >
-          <Swatch colorScheme={colorScheme} />
+          <Swatch colorScheme={colorScheme} min={min} max={max} />
         </MenuItem>
       ))}
     </Select>
