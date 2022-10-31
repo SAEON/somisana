@@ -15,11 +15,10 @@ export default () => {
         sx={{
           borderRadius: 0,
           borderBottom: 'none',
-          py: theme => theme.spacing(3),
         }}
       >
         <Collapse
-          sx={{ height: '100%' }}
+          sx={{ height: '100%', py: theme => theme.spacing(3) }}
           unmountOnExit
           in={activeRightPane === 'depth'}
           orientation="horizontal"

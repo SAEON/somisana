@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import { context as pageContext } from '../../../_context'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import Dialog from '@mui/material/Dialog'
@@ -23,7 +24,9 @@ const PaperComponent = (props: PaperProps) => (
   </Draggable>
 )
 
-export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, setColorScheme }) => {
+export default () => {
+  const { scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, setColorScheme } =
+    useContext(pageContext)
   const [open, setOpen] = useState(false)
 
   const title = 'Colour range configuration'
@@ -31,13 +34,13 @@ export default ({ scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, set
   return (
     <>
       <Tooltip placement="right-start" title="Configure scale and range">
-        <IconButton
-          sx={{ alignSelf: 'center', mb: theme => theme.spacing(1) }}
-          size="small"
-          color="primary"
-          onClick={() => setOpen(!open)}
-        >
-          <CogIcon fontSize="small" />
+        <IconButton size="small" color="primary" onClick={() => setOpen(!open)}>
+          <CogIcon
+            sx={{
+              color: theme => (open ? theme.palette.success.dark : 'primary'),
+            }}
+            fontSize="small"
+          />
         </IconButton>
       </Tooltip>
 

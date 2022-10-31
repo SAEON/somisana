@@ -57,9 +57,7 @@ const marks = [
 ]
 
 export default () => {
-  const { setDepth, activeRightPane } = useContext(modelContext)
-
-  const isIn = activeRightPane === 'depth'
+  const { depth, setDepth } = useContext(modelContext)
 
   return (
     <Slider
@@ -70,7 +68,7 @@ export default () => {
         },
       }}
       aria-label="Depth level"
-      defaultValue={0}
+      defaultValue={depth}
       size="small"
       scale={x => x}
       min={marks[0].value}

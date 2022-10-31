@@ -1,11 +1,12 @@
 import { useContext, memo } from 'react'
 import { context as pageContext } from '../../_context'
-import Config from './config'
-import invertColor, { padZero } from './_functions'
+import Config_ from './config'
 import Tooltip_, { tooltipClasses } from '@mui/material/Tooltip'
 import Div from '../../../../../../components/div'
 import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
+
+export const ToggleConfig = Config_
 
 const Tooltip = styled(({ className, ...props }) => (
   <Tooltip_ {...props} classes={{ popper: className }} />
@@ -41,12 +42,9 @@ const Render = memo(
   ({
     scaleMin,
     scaleMax,
-    setScaleMin,
-    setScaleMax,
+
     color,
     selectedVariable,
-    colorScheme,
-    setColorScheme,
   }) => {
     const { steps, unit, fix } = config[selectedVariable]
     const range = scaleMax - scaleMin
@@ -68,14 +66,6 @@ const Render = memo(
           overflow: 'auto',
         }}
       >
-        <Config
-          scaleMin={scaleMin}
-          scaleMax={scaleMax}
-          setScaleMin={setScaleMin}
-          setScaleMax={setScaleMax}
-          colorScheme={colorScheme}
-          setColorScheme={setColorScheme}
-        />
         {new Array(steps)
           .fill(null)
           .map((_, i) => parseFloat((scaleMin + stepSize * i).toFixed(fix)))
@@ -108,23 +98,16 @@ export default () => {
   const {
     scaleMin,
     scaleMax,
-    setScaleMin,
-    setScaleMax,
+
     color,
     selectedVariable,
-    colorScheme,
-    setColorScheme,
   } = useContext(pageContext)
   return (
     <Render
       scaleMin={scaleMin}
       scaleMax={scaleMax}
-      setScaleMin={setScaleMin}
-      setScaleMax={setScaleMax}
       color={color}
       selectedVariable={selectedVariable}
-      colorScheme={colorScheme}
-      setColorScheme={setColorScheme}
     />
   )
 }

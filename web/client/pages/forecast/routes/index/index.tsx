@@ -10,6 +10,7 @@ import ToggleSalinity from './controls/toggle-salinity'
 import ToggleCurrents from './controls/toggle-currents'
 import TimeControl from './controls/time'
 import InfoControl from './controls/info'
+import { ToggleConfig } from './controls/color-bar'
 import ColorBar from './controls/color-bar'
 import Map from './map'
 import Stack from '@mui/material/Stack'
@@ -51,6 +52,7 @@ export default ({ modelid = undefined }) => {
                   direction="column"
                   spacing={1}
                 >
+                  <ToggleConfig />
                   <InfoControl />
                   <ToggleDepth />
                   <ToggleTemperature />
