@@ -45,7 +45,7 @@ create table if not exists public.models (
 create table if not exists public.runs (
   id smallint primary key generated always as identity,
   run_date date not null,
-  modelid smallint not null references public.models (id) on delete cascade,
+  modelid smallint not null references public.models (id),
   successful boolean default null,
   constraint unique_runs_per_model unique (run_date, modelid)
 );
@@ -66,14 +66,14 @@ when not matched then
 
 create table if not exists public.raster_xref_run (
   id int primary key generated always as identity,
-  rasterid int not null unique references public.rasters (rid) on delete cascade,
-  runid smallint not null references public.runs (id) on delete cascade,
+  rasterid int not null unique references public.rasters (rid),
+  runid smallint not null references public.runs (id),
   constraint unique_rasters_per_model unique (rasterid, runid)
 );
 
 create table if not exists public.coordinates (
   id int primary key generated always as identity,
-  modelid smallint not null references models (id) on delete cascade,
+  modelid smallint not null references models (id),
   pixel geometry(point, 0) not null,
   coord geometry(point, 3857) not null,
   longitude float not null,
@@ -93,10 +93,10 @@ create index if not exists coordinates_pixel on public.coordinates using gist (p
 
 create table if not exists public.values (
   id bigint primary key generated always as identity,
-  runid smallint not null references public.runs (id) on delete cascade,
+  runid smallint not null references public.runs (id),
   depth_level smallint not null,
   time_step smallint not null,
-  coordinateid int not null references public.coordinates (id) on delete cascade,
+  coordinateid int not null references public.coordinates (id),
   depth decimal(7, 2),
   temperature decimal(4, 2),
   salinity decimal(6, 4),
@@ -105,7 +105,8 @@ create table if not exists public.values (
   constraint values_unique_cols unique (runid, time_step, depth_level, coordinateid)
 );
 
-create index if not exists values_coordinateid on public.values using btree (coordinateid asc);
+create index concurrently if not exists values_runid on public.values using btree (runid desc);
+create index concurrently if not exists values_coordinateid on public.values using btree (coordinateid asc);
 
 
 /**

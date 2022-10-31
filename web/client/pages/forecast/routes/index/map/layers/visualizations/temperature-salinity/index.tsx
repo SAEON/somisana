@@ -5,6 +5,7 @@ import { context as pageContext } from '../../../../_context'
 import { contours } from 'd3-contour'
 import { useTheme } from '@mui/material/styles'
 import project from '../lib/project-coordinates'
+import debounce from '../../../../../../../../lib/debounce'
 
 const Render = memo(
   ({
@@ -109,7 +110,11 @@ const Render = memo(
     })
 
     if (animateTimeStep) {
-      setTimeout(() => setTimeStep(t => (t >= 240 ? 1 : t + 1)), 1000)
+      const frameTime = 1000
+      setTimeout(
+        debounce(() => setTimeStep(t => (t >= 240 ? 1 : t + 1)), frameTime),
+        frameTime
+      )
     }
   }
 )
