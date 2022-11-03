@@ -24,9 +24,7 @@ const Render = memo(
     grid,
   }) => {
     const theme = useTheme()
-    const { id: _id } = data
-
-    const id = `${selectedVariable}${_id}`
+    const id = 'contour-layer'
 
     const polygons = contours()
       .thresholds(50)
@@ -71,46 +69,46 @@ const Render = memo(
             features,
           },
         })
-      }
 
-      map.addLayer({
-        id,
-        type: 'fill',
-        source: id,
-        layout: {},
-        paint: {
-          'fill-color': ['get', 'color'],
-          'fill-outline-color': [
-            'step',
-            ['zoom'],
-            ['rgba', 255, 255, 255, 0],
-            6,
-            ['rgba', 255, 255, 255, 0.1],
-            8,
-            ['rgba', 255, 255, 255, 0.2],
-            10,
-            ['rgba', 255, 255, 255, 0.3],
-            12,
-            ['rgba', 255, 255, 255, 0.5],
-            14,
-            ['rgba', 255, 255, 255, 0.75],
-            16,
-            theme.palette.common.white,
-          ],
-        },
-      })
+        map.addLayer({
+          id,
+          type: 'fill',
+          source: id,
+          layout: {},
+          paint: {
+            'fill-color': ['get', 'color'],
+            'fill-outline-color': [
+              'step',
+              ['zoom'],
+              ['rgba', 255, 255, 255, 0],
+              6,
+              ['rgba', 255, 255, 255, 0.1],
+              8,
+              ['rgba', 255, 255, 255, 0.2],
+              10,
+              ['rgba', 255, 255, 255, 0.3],
+              12,
+              ['rgba', 255, 255, 255, 0.5],
+              14,
+              ['rgba', 255, 255, 255, 0.75],
+              16,
+              theme.palette.common.white,
+            ],
+          },
+        })
 
-      map.moveLayer(id)
-      if (map.getLayer('coordinates')) map.moveLayer('coordinates')
-
-      return () => {
-        map.removeLayer(id)
-        map.removeSource(id)
+        map.moveLayer(id)
+        if (map.getLayer('coordinates')) map.moveLayer('coordinates')
+      } else {
+        map.getSource(id).setData({
+          type: 'FeatureCollection',
+          features,
+        })
       }
     })
 
     if (animateTimeStep) {
-      const frameTime = 1000
+      const frameTime = 100
       setTimeout(
         debounce(() => setTimeStep(t => (t >= 240 ? 1 : t + 1)), frameTime),
         frameTime
