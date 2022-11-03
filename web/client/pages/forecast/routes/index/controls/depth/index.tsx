@@ -27,6 +27,10 @@ export const ToggleDepth = () => {
 
 const marks = [
   {
+    value: -550,
+    label: 'B',
+  },
+  {
     value: -500,
     label: '500',
   },
@@ -62,9 +66,14 @@ export default () => {
   return (
     <Slider
       sx={{
+        '& .MuiSlider-track': {
+          height: '9% !important',
+          color: theme => theme.palette.common.black,
+        },
         '& .MuiSlider-mark': {
           height: '1px',
           width: '12px',
+          backgroundColor: theme => theme.palette.primary.main,
         },
       }}
       aria-label="Depth level"
@@ -78,7 +87,7 @@ export default () => {
       onChangeCommitted={(_, val) => setDepth(val)}
       valueLabelDisplay="off"
       marks={marks}
-      track={false}
+      track="normal"
     />
   )
 }

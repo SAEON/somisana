@@ -4,6 +4,8 @@ import { gql, useQuery } from '@apollo/client'
 
 export const context = createContext({})
 
+const BOTTOM_DEPTH_PLACEHOLDER = -550
+
 const Render = memo(({ children, depth, timeStep, runId }) => {
   const graphqlRequest = useQuery(
     gql`
@@ -17,7 +19,7 @@ const Render = memo(({ children, depth, timeStep, runId }) => {
     {
       variables: {
         runId,
-        depth,
+        depth: depth === BOTTOM_DEPTH_PLACEHOLDER ? -99999 : depth,
         timeStep,
       },
     }

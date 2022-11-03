@@ -106,6 +106,7 @@ create table if not exists public.values (
 );
 
 create index concurrently if not exists values_runid on public.values using btree (runid desc);
+
 create index concurrently if not exists values_coordinateid on public.values using btree (coordinateid asc);
 
 
@@ -332,7 +333,8 @@ create function public.somisana_interpolate_values (target_depth integer default
     interpolated_temperature decimal(4, 2),
     interpolated_salinity decimal(6, 4),
     interpolated_u decimal(5, 4),
-    interpolated_v decimal(5, 4)
+    interpolated_v decimal(5, 4),
+    _depth decimal(7, 2)
   )
   as $$
 declare
@@ -368,6 +370,7 @@ bounded_values as (
   from (
   select
     v.id,
+    v.depth,
     v.coordinateid,
     v.depth_level,
     v.target_depth,
@@ -380,7 +383,6 @@ bounded_values as (
       'UP'
     end interp_direction,
     coalesce(v_upper.depth, 0) depth_upper,
-  v.depth,
   v_lower.depth depth_lower,
   coalesce(v_upper.temp, v.temp) temp_upper,
   v.temp,
@@ -457,6 +459,7 @@ equation_vals as (
 interpolated_values as (
   select
     e.coordinateid,
+    e.depth,
     (("Δy_temp" / "Δx") * x) + c_temp interpolated_temperature,
     (("Δy_salt" / "Δx") * x) + c_salt interpolated_salinity,
     (("Δy_u" / "Δx") * x) + c_u interpolated_u,
@@ -468,6 +471,7 @@ grid as (
   select
     st_x (c.pixel) px,
     st_y (c.pixel) py,
+  v.depth,
   c.latitude lat,
   c.longitude long,
   v.interpolated_temperature,
@@ -491,7 +495,8 @@ select
   g.interpolated_temperature,
   g.interpolated_salinity,
   g.interpolated_u,
-  g.interpolated_v
+  g.interpolated_v,
+  g.depth _depth
 from
   grid g
 order by
@@ -501,3 +506,4 @@ end;
 $$
 language 'plpgsql'
 stable parallel safe;
+
