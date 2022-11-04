@@ -63,6 +63,27 @@ pyenv global 3.8.10
 ```
 
 # Deployment
+
+## Infrastructure Requirements
+
+### Application server
+The application server is a Node.js application with no special requirements
+### MongoDB
+TODO
+### PostgreSQL server
+- 8GB memory (or more)
+- 8CPUs (or more)
+- 1TB HD space (500GB operational data + 500GB spare for upgrades, etc). SSDs work best and will perform noticeably better, although the storage setup for the somisana.ac.za works fine to (spinners). TODO: work out how far back in time 500GB allows
+
+### Dedicated task server
+This server runs the CROCO application, as well as executing the CROCOTOOLS scripts. As a generalized runner it is integrated with the GitHub Actions tools and also handles deployment of the application server.
+
+- 24 CPUS
+- 16 GB memory
+- 1TB HD space (TBC)
+
+
+
 ## Deploy model-run workflows
 TODO
 ## Deploy the visualization website
