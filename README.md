@@ -10,6 +10,11 @@ SOMISANA-related tooling
   - [Install Python](#install-python)
     - [Install pyenv](#install-pyenv)
 - [Deployment](#deployment)
+  - [Infrastructure Requirements](#infrastructure-requirements)
+    - [Application server](#application-server)
+    - [MongoDB](#mongodb)
+    - [PostgreSQL server](#postgresql-server)
+    - [Dedicated task server](#dedicated-task-server)
   - [Deploy model-run workflows](#deploy-model-run-workflows)
   - [Deploy the visualization website](#deploy-the-visualization-website)
 
