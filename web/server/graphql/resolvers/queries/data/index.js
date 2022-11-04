@@ -2,10 +2,78 @@ import { pool } from '../../../../postgres/index.js'
 
 export default async (_, { timeStep, runId, depth }, ctx) => {
   const client = await pool.connect()
-
   try {
     const res =
-      depth === 0
+      depth === -99999
+        ? await client.query({
+            text: `
+          with _values as (
+            select
+              v.id,
+              v.coordinateid,
+              v.depth_level,
+              v.temperature temp,
+              v.salinity salt,
+              v.u,
+              v.v,
+              v.depth
+            from
+              public.values v
+            where
+              v.runid = $1
+              and v.time_step = $2
+              and v.depth_level = 1
+          ),
+          interpolated_values as (
+            select
+              v.coordinateid,
+              v.temp interpolated_temperature,
+              v.salt interpolated_salinity,
+              v.u interpolated_u,
+              v.v interpolated_v,
+              v.depth
+            from
+              _values v
+          ),
+          grid as (
+            select
+              st_x (c.pixel) px,
+              st_y (c.pixel) py,
+              c.latitude y,
+              c.longitude x,
+              v.interpolated_temperature,
+              v.interpolated_salinity,
+              v.interpolated_u,
+              v.interpolated_v,
+              v.depth
+          from
+            interpolated_values v
+            right join coordinates c on c.id = v.coordinateid
+            where
+              c.modelid = (
+                select
+                  modelid
+                from
+                  runs
+                where
+                  id = $1))
+          select
+            x,
+            y,
+            g.interpolated_temperature,
+            g.interpolated_salinity,
+            g.interpolated_u,
+            g.interpolated_v,
+            g.depth
+          from
+            grid g
+          order by
+            py desc,
+            px asc;`,
+            values: [runId, timeStep],
+            rowMode: 'array',
+          })
+        : depth === 0
         ? await client.query({
             text: `
               with _values as (
@@ -17,8 +85,7 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                   v.salinity salt,
                   v.u,
                   v.v,
-                  v.depth,
-                  0 target_depth
+                  v.depth
                 from
                   public.values v
                 where
@@ -32,7 +99,8 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                   v.temp interpolated_temperature,
                   v.salt interpolated_salinity,
                   v.u interpolated_u,
-                  v.v interpolated_v
+                  v.v interpolated_v,
+                  v.depth
                 from
                   _values v
               ),
@@ -45,7 +113,8 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                   v.interpolated_temperature,
                   v.interpolated_salinity,
                   v.interpolated_u,
-                  v.interpolated_v
+                  v.interpolated_v,
+                  v.depth
               from
                 interpolated_values v
                 right join coordinates c on c.id = v.coordinateid
@@ -63,7 +132,8 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                 g.interpolated_temperature,
                 g.interpolated_salinity,
                 g.interpolated_u,
-                g.interpolated_v
+                g.interpolated_v,
+                g.depth
               from
                 grid g
               order by
@@ -80,7 +150,8 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                 v.interpolated_temperature::float,
                 v.interpolated_salinity::float,
                 v.interpolated_u::float,
-                v.interpolated_v::float
+                v.interpolated_v::float,
+                v._depth depth
               from
                 somisana_interpolate_values(
                   target_depth => $1,

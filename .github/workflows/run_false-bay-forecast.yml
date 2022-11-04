@@ -14,6 +14,7 @@ env:
   REGISTRY: ghcr.io
   COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
   COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
+  MLM_LICENSE_FILE: ${{ secrets.MLM_LICENSE_FILE }}
 
 jobs:
   # Dynamically set the branch ref to the currently executing branch
@@ -263,13 +264,11 @@ jobs:
         run: >-
           docker run \
             --rm \
-            --mac-address 02:42:ff:ff:ff:ff \
-            -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
             -v $(pwd)/models/false-bay-forecast/crocotools:/crocotools/ \
             -v $(pwd)/models/false-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
             -v $(pwd)/models/false-bay-forecast/lib/grd.nc.1:/crocotools/croco/forcing/grd.nc.1 \
             -v $WORKDIR:/tmp/somisana/current \
-            -e MLM_LICENSE_FILE=/licenses/license.lic \
+            -e MLM_LICENSE_FILE=${{ env.MLM_LICENSE_FILE }} \
             ghcr.io/saeon/somisana_matlab:r2022a \
               -batch "run('/crocotools/run.m')"
 
