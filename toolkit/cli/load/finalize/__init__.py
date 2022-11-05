@@ -19,12 +19,10 @@ def run(start_time, model, runid):
                 x.rasterid
               from
                 raster_xref_run x
-                join runs r on r.id = x.runid
-                join models m on m.id = r.modelid
               where
-                m.name = %s);
+                x.runid = %s);
           """,
-            (model,),
+            (runid,),
         )
 
         # Mark this run as successful

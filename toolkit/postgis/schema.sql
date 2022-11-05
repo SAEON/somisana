@@ -66,8 +66,8 @@ when not matched then
 
 create table if not exists public.raster_xref_run (
   id int primary key generated always as identity,
-  rasterid int not null unique references public.rasters (rid),
-  runid smallint not null references public.runs (id),
+  rasterid int not null unique references public.rasters (rid) on delete cascade,
+  runid smallint not null references public.runs (id) on delete cascade,
   constraint unique_rasters_per_model unique (rasterid, runid)
 );
 
