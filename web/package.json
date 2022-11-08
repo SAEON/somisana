@@ -15,7 +15,7 @@
     "@jspm/generator": "^1.0.0-beta.38",
     "@koa/router": "^12.0.0",
     "@mdi/js": "^7.0.96",
-    "@mui/material": "^5.10.12",
+    "@mui/material": "^5.10.11",
     "@mui/system": "5.10.12",
     "@node-loader/core": "^2.0.0",
     "@node-loader/import-maps": "^1.1.0",
