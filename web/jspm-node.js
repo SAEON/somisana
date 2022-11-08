@@ -14,7 +14,7 @@ const generator = new Generator({
   ignore: [
     'mongodb',
     'graphql',
-    'graphql-tools',
+    '@graphql-tools/merge',
     'apollo-server-core',
     'apollo-server-koa',
     'apollo-server-plugin-response-cache',
