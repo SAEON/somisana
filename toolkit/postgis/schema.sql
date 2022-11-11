@@ -309,7 +309,7 @@ begin
     select
       depth_level, time_step, run_id runid, coordinateid, depth, temperature, salinity, u, v
     from
-      somisana_join_values (run_id, depth_level, time_step, total_depth_levels)) s on s.runid = t.runid
+      somisana_join_values (runid => run_id, depth_level => depth_level, time_step => time_step, total_depth_levels => total_depth_levels)) s on s.runid = t.runid
     and s.time_step = t.time_step
     and s.depth_level = t.depth_level
     and s.coordinateid = t.coordinateid
