@@ -91,7 +91,7 @@ create index if not exists coordinates_coord on public.coordinates using gist (c
 
 create index if not exists coordinates_pixel on public.coordinates using gist (pixel);
 
-create table if not exists public.values (
+create unlogged table if not exists public.values (
   id bigint primary key generated always as identity,
   runid smallint not null references public.runs (id),
   depth_level smallint not null,
