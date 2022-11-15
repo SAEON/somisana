@@ -105,8 +105,6 @@ create table if not exists public.values (
   constraint values_unique_cols unique (runid, time_step, depth_level, coordinateid)
 );
 
-create index concurrently if not exists values_runid on public.values using btree (runid desc);
-
 create index concurrently if not exists values_coordinateid on public.values using btree (coordinateid asc);
 
 
