@@ -1,24 +1,28 @@
-import { useContext, memo } from 'react'
+import { useContext, memo, useState } from 'react'
 import { context as pageContext } from '../../_context'
 import Config_ from './config'
 import Tooltip_, { tooltipClasses } from '@mui/material/Tooltip'
 import Div from '../../../../../../components/div'
 import Stack from '@mui/material/Stack'
-import { styled } from '@mui/material/styles'
+import { styled, alpha } from '@mui/material/styles'
 
 export const ToggleConfig = Config_
 
-const Tooltip = styled(({ className, ...props }) => (
-  <Tooltip_ {...props} classes={{ popper: className }} />
+const Tooltip = styled(({ className, PopperProps, ...props }) => (
+  <Tooltip_ {...props} classes={{ popper: className }} PopperProps={PopperProps} />
 ))(({ theme }) => ({
   zIndex: 1,
   [`& .${tooltipClasses.tooltip}`]: {
+    transition: theme.transitions.create(['background-color']),
     backgroundColor: theme.palette.common.white,
     color: 'rgba(0, 0, 0, 0.87)',
-    boxShadow: theme.shadows[7],
+    '&:hover': {
+      backgroundColor: theme.palette.primary.light,
+    },
+    boxShadow: theme.shadows[3],
     position: 'relative',
     top: 4,
-    left: theme.spacing(-4),
+    left: theme.spacing(-1),
     margin: 0,
     padding: `${theme.spacing(0.5)} ${theme.spacing(1)}`,
     fontSize: 10,
@@ -38,61 +42,61 @@ const config = {
   },
 }
 
-const Render = memo(
-  ({
-    scaleMin,
-    scaleMax,
+const Render = memo(({ scaleMin, scaleMax, color, selectedVariable }) => {
+  const { steps, unit, fix } = config[selectedVariable]
+  const range = scaleMax - scaleMin
+  const stepSize = range / steps
 
-    color,
-    selectedVariable,
-  }) => {
-    const { steps, unit, fix } = config[selectedVariable]
-    const range = scaleMax - scaleMin
-    const stepSize = range / steps
-
-    return (
-      <Stack
-        sx={{
-          my: theme => theme.spacing(8),
-          mx: theme => theme.spacing(2),
-          height: '100%',
-          maxHeight: 'fill-available',
-          position: 'absolute',
-          left: 0,
-          zIndex: 1,
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'auto',
-        }}
-      >
-        {new Array(steps)
-          .fill(null)
-          .map((_, i) => parseFloat((scaleMin + stepSize * i).toFixed(fix)))
-          .reverse()
-          .map((value, i) => {
-            return (
-              <Tooltip
-                open={i % 7 === 0 ? true : undefined}
-                key={i}
-                placement="right-start"
-                title={`${value} ${unit}`}
-              >
-                <Div
-                  sx={{
-                    backgroundColor: color(value),
-                    flex: 1,
-                    display: 'flex',
-                    px: theme => theme.spacing(1),
-                  }}
-                />
-              </Tooltip>
-            )
-          })}
-      </Stack>
-    )
-  }
-)
+  return (
+    <Stack
+      sx={{
+        py: theme => theme.spacing(2),
+        px: theme => theme.spacing(2),
+        backgroundColor: theme => alpha(theme.palette.common.black, 0.25),
+        boxShadow: theme => theme.shadows[1],
+        height: '100%',
+        position: 'absolute',
+        left: 0,
+        zIndex: 1,
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'auto',
+      }}
+    >
+      {new Array(steps)
+        .fill(null)
+        .map((_, i) => parseFloat((scaleMin + stepSize * i).toFixed(fix)))
+        .reverse()
+        .map((value, i) => {
+          return (
+            <Tooltip
+              open={i % 7 === 0 ? true : undefined}
+              key={i}
+              placement="right-start"
+              title={`${value} ${unit}`}
+              PopperProps={{
+                sx: { cursor: 'pointer' },
+                onClick: () =>
+                  alert(
+                    'Feature being implemented - hovering on individual temperatures will highlight those contours on the map for the duration of the hover. Clicking on a label will allow for activating specific contours on the map'
+                  ),
+              }}
+            >
+              <Div
+                sx={{
+                  backgroundColor: color(value),
+                  flex: 1,
+                  display: 'flex',
+                  width: theme => theme.spacing(2),
+                }}
+              />
+            </Tooltip>
+          )
+        })}
+    </Stack>
+  )
+})
 
 export default () => {
   const {
