@@ -50,11 +50,13 @@ const Render = memo(({ scaleMin, scaleMax, color, selectedVariable }) => {
   return (
     <Stack
       sx={{
-        py: theme => theme.spacing(2),
-        px: theme => theme.spacing(2),
-        backgroundColor: theme => alpha(theme.palette.common.black, 0.25),
+        p: theme => theme.spacing(2),
+        my: theme => theme.spacing(2),
+        ml: theme => theme.spacing(2),
+        backgroundColor: theme => alpha(theme.palette.common.black, 0.3),
+        borderRadius: theme => `${theme.shape.borderRadius}px`,
         boxShadow: theme => theme.shadows[1],
-        height: '100%',
+        height: theme => `calc(100% - ${theme.spacing(4)})`,
         position: 'absolute',
         left: 0,
         zIndex: 1,
