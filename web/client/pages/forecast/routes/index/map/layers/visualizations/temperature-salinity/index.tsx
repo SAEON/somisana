@@ -12,7 +12,6 @@ const Render = memo(
     map,
     gridWidth,
     gridHeight,
-    data,
     scaleMin,
     setScaleMin,
     scaleMax,
