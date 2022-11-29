@@ -50,7 +50,7 @@ const Render = memo(({ scaleMin, scaleMax, color, selectedVariable }) => {
   return (
     <Stack
       sx={{
-        p: theme => theme.spacing(2),
+        p: theme => theme.spacing(1.5),
         my: theme => theme.spacing(2),
         ml: theme => theme.spacing(2),
         backgroundColor: theme => alpha(theme.palette.common.black, 0.3),
@@ -87,6 +87,12 @@ const Render = memo(({ scaleMin, scaleMax, color, selectedVariable }) => {
             >
               <Div
                 sx={{
+                  ':first-child': {
+                    borderRadius: `4px 4px 0 0`,
+                  },
+                  ':last-child': {
+                    borderRadius: `0 0 4px 4px`,
+                  },
                   backgroundColor: color(value),
                   flex: 1,
                   display: 'flex',

@@ -8,10 +8,10 @@ export default () => {
     gql`
       query models {
         models {
-          id
           ... on Model {
+            id
             _id
-            name
+            title
             envelope
           }
         }
