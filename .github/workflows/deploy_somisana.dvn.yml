@@ -24,7 +24,6 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_web_next
   BRANCH_REF: next
-  DEPLOY_SOURCE: deploy/web/next/stack.yml 
 
 jobs:
   build:
@@ -82,7 +81,7 @@ jobs:
           username: ${{ env.SWARM_USERNAME }}
           password: ${{ env.SWARM_PASSWORD }}
           port: ${{ env.SWARM_SSH_PORT }}
-          source: ${{ env.DEPLOY_SOURCE }}
+          source: deploy/web/next/stack.yml 
           target: 'somisana'
 
       - name: (SSH) Deploy stack

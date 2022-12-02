@@ -1,6 +1,6 @@
 import * as config from '../config/index.js'
 const mask = str => str?.replace(/./g, '*').padEnd(60, '*')
-const MASKED_FIELDS = config.DEPLOYMENT_ENV === 'production' ? ['KEY', 'MONGO_PASSWORD'] : []
+const MASKED_FIELDS = config.DEPLOYMENT_ENV === 'production' ? ['KEY', 'MONGO_PASSWORD', 'PG_PASSWORD'] : []
 
 console.info(
   'Server configuration',
