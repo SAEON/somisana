@@ -11,6 +11,9 @@ services:
     image: $DOCKER_IMAGE
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.labels.service == apps
       rollback_config:
         parallelism: 0
       update_config:
