@@ -24,9 +24,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_web_next
   BRANCH_REF: next
-  DEPLOY_SOURCE: deploy/web/next/stack.yml
-  STACK_COMPOSE_PATH: /home/runner/somisana/deploy/web/next/stack.yml
-  STACK_CONFIG_PATH: /home/runner/somisana/deploy/web/next/stack.env
+  DEPLOY_SOURCE: deploy/web/next/stack.yml 
 
 jobs:
   build:
@@ -95,15 +93,15 @@ jobs:
           password: ${{ env.SWARM_PASSWORD }}
           port: ${{ env.SWARM_SSH_PORT }}
           script: |
-            echo "DOCKER_IMAGE=${{ needs.build.outputs.image }}" > ${{ env.STACK_CONFIG_PATH }}
-            echo "MONGO_HOST=${{ env.MONGO_HOST }}" >> ${{ env.STACK_CONFIG_PATH }}
-            echo "MONGO_DB=${{ env.MONGO_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
-            echo "MONGO_USERNAME=${{ env.MONGO_USERNAME }}" >> ${{ env.STACK_CONFIG_PATH }}
-            echo "MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}" >> ${{ env.STACK_CONFIG_PATH }}
-            echo "PG_HOST=${{ env.PG_HOST }}" >> ${{ env.STACK_CONFIG_PATH }}
-            echo "PG_PORT=${{ env.PG_PORT }}" >> ${{ env.STACK_CONFIG_PATH }}
-            echo "PG_DB=${{ env.PG_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
-            echo "PG_USERNAME=${{ env.PG_USERNAME }}" >> ${{ env.STACK_CONFIG_PATH }}
-            echo "PG_PASSWORD=${{ env.PG_PASSWORD }}" >> ${{ env.STACK_CONFIG_PATH }}
-            echo "PG_DATABASE_URL=postgres://${{ env.PG_USERNAME }}:${{ env.PG_PASSWORD }}@${{ env.PG_HOST }}:${{ env.PG_PORT }}/${{ env.PG_DB }}" >> ${{ env.STACK_CONFIG_PATH }}
-            sudo /opt/deploy-docker-stack.sh ${{ env.STACK_COMPOSE_PATH }} ${{ env.STACK_CONFIG_PATH }} somisana_next
+            echo "DOCKER_IMAGE=${{ needs.build.outputs.image }}" > /home/runner/somisana/deploy/web/next/stack.env
+            echo "MONGO_HOST=${{ env.MONGO_HOST }}" >> /home/runner/somisana/deploy/web/next/stack.env
+            echo "MONGO_DB=${{ env.MONGO_DB }}" >> /home/runner/somisana/deploy/web/next/stack.env
+            echo "MONGO_USERNAME=${{ env.MONGO_USERNAME }}" >> /home/runner/somisana/deploy/web/next/stack.env
+            echo "MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}" >> /home/runner/somisana/deploy/web/next/stack.env
+            echo "PG_HOST=${{ env.PG_HOST }}" >> /home/runner/somisana/deploy/web/next/stack.env
+            echo "PG_PORT=${{ env.PG_PORT }}" >> /home/runner/somisana/deploy/web/next/stack.env
+            echo "PG_DB=${{ env.PG_DB }}" >> /home/runner/somisana/deploy/web/next/stack.env
+            echo "PG_USERNAME=${{ env.PG_USERNAME }}" >> /home/runner/somisana/deploy/web/next/stack.env
+            echo "PG_PASSWORD=${{ env.PG_PASSWORD }}" >> /home/runner/somisana/deploy/web/next/stack.env
+            echo "PG_DATABASE_URL=postgres://${{ env.PG_USERNAME }}:${{ env.PG_PASSWORD }}@${{ env.PG_HOST }}:${{ env.PG_PORT }}/${{ env.PG_DB }}" >> /home/runner/somisana/deploy/web/next/stack.env
+            sudo /opt/deploy-docker-stack.sh /home/runner/somisana/deploy/web/next/stack.yml /home/runner/somisana/deploy/web/next/stack.env somisana_next

@@ -37,7 +37,7 @@ services:
       - somisana_stable
 
   pg_tileserv:
-    image: pramsey/pg_tileserv:20220623
+    image: pramsey/pg_tileserv:20221019
     deploy:
       replicas: 1
       rollback_config:
@@ -61,7 +61,7 @@ services:
       - somisana_stable
 
   pg_featureserv:
-    image: pramsey/pg_featureserv:20220708
+    image: pramsey/pg_featureserv:20221019
     deploy:
       replicas: 1
       rollback_config:
