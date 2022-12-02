@@ -11,6 +11,9 @@ services:
     image: $DOCKER_IMAGE
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.labels.service == apps
       rollback_config:
         parallelism: 0
       update_config:
@@ -19,7 +22,7 @@ services:
         failure_action: rollback
       restart_policy:
         condition: any
-        delay: 30s
+        delay: 15s
     environment:
       ALLOWED_ORIGINS: https://somisana.ac.za
       MONGO_HOST: $MONGO_HOST
@@ -40,6 +43,9 @@ services:
     image: pramsey/pg_tileserv:20221019
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.labels.service == apps
       rollback_config:
         parallelism: 0
       update_config:
@@ -62,6 +68,9 @@ services:
 
   pg_featureserv:
     image: pramsey/pg_featureserv:20221019
+      placement:
+        constraints:
+          - node.labels.service == apps
     deploy:
       replicas: 1
       rollback_config:
