@@ -43,6 +43,9 @@ services:
     image: pramsey/pg_tileserv:20220815
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.labels.service == apps
       rollback_config:
         parallelism: 0
       update_config:
@@ -67,6 +70,9 @@ services:
     image: pramsey/pg_featureserv:20220708
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.labels.service == apps
       rollback_config:
         parallelism: 0
       update_config:
