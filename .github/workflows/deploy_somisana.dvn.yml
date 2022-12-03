@@ -4,13 +4,10 @@ on:
   workflow_dispatch:
 
 env:
-  SWARM_HOSTNAME: ${{ secrets.SWARM_HOSTNAME }} # Organization secret
-  SWARM_USERNAME: ${{ secrets.SWARM_USERNAME }} # Organization secret
-  SWARM_PASSWORD: ${{ secrets.SWARM_PASSWORD }} # Organization secret
-  SWARM_SSH_PORT: ${{ secrets.SWARM_SSH_PORT }} # Organization secret
-  MSSQL_PASSWORD: ${{ secrets.MSSQL_PASSWORD_STABLE }} # Repository secret
-  MSSQL_USERNAME: ${{ secrets.MSSQL_USERNAME_STABLE }} # Repository secret
+  BRANCH_REF: next
   ESRI_API_KEY: ${{ secrets.ESRI_API_KEY }} # Repository secret
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  IMAGE_NAME: ${{ github.repository }}_web_next
   MONGO_DB: ${{ secrets.MONGO_DB_NEXT }} # Repository secret
   MONGO_HOST: ${{ secrets.MONGO_HOST_NEXT }} # Repository secret
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_NEXT }} # Repository secret
@@ -20,10 +17,11 @@ env:
   PG_PASSWORD: ${{ secrets.PG_PASSWORD_NEXT }} # Repository secret
   PG_PORT: ${{ secrets.PG_PORT_NEXT }} # Repository secret
   PG_USERNAME: ${{ secrets.PG_USERNAME_NEXT }} # Repository secret
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_web_next
-  BRANCH_REF: next
+  SWARM_HOSTNAME: ${{ secrets.SWARM_HOSTNAME }} # Organization secret
+  SWARM_PASSWORD: ${{ secrets.SWARM_PASSWORD }} # Organization secret
+  SWARM_SSH_PORT: ${{ secrets.SWARM_SSH_PORT }} # Organization secret
+  SWARM_USERNAME: ${{ secrets.SWARM_USERNAME }} # Organization secret
 
 jobs:
   build:

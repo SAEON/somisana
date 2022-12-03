@@ -4,25 +4,24 @@ on:
   workflow_dispatch:
 
 env:
+  BRANCH_REF: stable
+  ESRI_API_KEY: ${{ secrets.ESRI_API_KEY }} # Repository secret
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  IMAGE_NAME: ${{ github.repository }}_web_stable
+  MONGO_DB: ${{ secrets.MONGO_DB_STABLE }} # Repository secret
+  MONGO_HOST: ${{ secrets.MONGO_HOST_STABLE }} # Repository secret
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }} # Repository secret
+  MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STABLE }} # Repository secret
+  PG_DB: ${{ secrets.PG_DB_STABLE }} # Repository secret
+  PG_HOST: ${{ secrets.PG_HOST_STABLE }} # Repository secret
+  PG_PASSWORD: ${{ secrets.PG_PASSWORD_STABLE }} # Repository secret
+  PG_PORT: ${{ secrets.PG_PORT_STABLE }} # Repository secret
+  PG_USERNAME: ${{ secrets.PG_USERNAME_STABLE }} # Repository secret
+  REGISTRY: ghcr.io
   SWARM_HOSTNAME: ${{ secrets.SWARM_HOSTNAME }} # Organization secret
-  SWARM_USERNAME: ${{ secrets.SWARM_USERNAME }} # Organization secret
   SWARM_PASSWORD: ${{ secrets.SWARM_PASSWORD }} # Organization secret
   SWARM_SSH_PORT: ${{ secrets.SWARM_SSH_PORT }} # Organization secret
-  MSSQL_PASSWORD: ${{ secrets.MSSQL_PASSWORD_STABLE }} # Repository secret
-  MSSQL_USERNAME: ${{ secrets.MSSQL_USERNAME_STABLE }} # Repository secret
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_web_stable
-  BRANCH_REF: stable
-  MONGO_HOST: ${{ secrets.MONGO_HOST_STABLE }}
-  MONGO_DB: ${{ secrets.MONGO_DB_STABLE }}
-  MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STABLE }}
-  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }}
-  PG_HOST: ${{ secrets.PG_HOST_STABLE }}
-  PG_PORT: ${{ secrets.PG_PORT_STABLE }}
-  PG_DB: ${{ secrets.PG_DB_STABLE }}
-  PG_USERNAME: ${{ secrets.PG_USERNAME_STABLE }}
-  PG_PASSWORD: ${{ secrets.PG_PASSWORD_STABLE }}
-  ESRI_API_KEY: ${{ secrets.ESRI_API_KEY }}
+  SWARM_USERNAME: ${{ secrets.SWARM_USERNAME }} # Organization secret
 
 jobs:
   build:
@@ -39,7 +38,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ env.GITHUB_TOKEN }}
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@master
