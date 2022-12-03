@@ -68,11 +68,11 @@ services:
 
   pg_featureserv:
     image: pramsey/pg_featureserv:20221019
+    deploy:
+      replicas: 1
       placement:
         constraints:
           - node.labels.service == apps
-    deploy:
-      replicas: 1
       rollback_config:
         parallelism: 0
       update_config:
