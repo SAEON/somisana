@@ -76,7 +76,7 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ env.SWARM_HOSTNAME }}
-          username: ${{ env.SWARM_USERNAMEE }}
+          username: ${{ env.SWARM_USERNAME }}
           password: ${{ env.SWARM_PASSWORD }}
           port: ${{ env.SWARM_SSH_PORT }}
           source: deploy/web/stable/stack.yml
@@ -86,7 +86,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.SWARM_HOSTNAME }}
-          username: ${{ env.SWARM_USERNAMEE }}
+          username: ${{ env.SWARM_USERNAME }}
           password: ${{ env.SWARM_PASSWORD }}
           port: ${{ env.SWARM_SSH_PORT }}
           script: |
