@@ -181,9 +181,10 @@ jobs:
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
       - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
+        continue-on-error: true # Maybe Node.js exists anyway
         run: |
           source ~/.bashrc
-          nvm use 16.14.2
+          nvm use 19.1.0
       - name: Download GFS
         uses: nick-fields/retry@v2
         with:
