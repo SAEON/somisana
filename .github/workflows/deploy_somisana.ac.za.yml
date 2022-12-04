@@ -9,13 +9,13 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   IMAGE_NAME: ${{ github.repository }}_web_stable
   MONGO_DB: ${{ secrets.MONGO_DB_STABLE }} # Repository secret
-  MONGO_HOST: ${{ secrets.MONGO_HOST_STABLE }} # Repository secret
+  MONGO_HOST: ${{ secrets.MONGO_HOST_STABLE }} # Organization secret
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }} # Repository secret
   MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STABLE }} # Repository secret
   PG_DB: ${{ secrets.PG_DB_STABLE }} # Repository secret
-  PG_HOST: ${{ secrets.PG_HOST_STABLE }} # Repository secret
+  PG_HOST: ${{ secrets.PG_HOST_STABLE }} # Organization secret
   PG_PASSWORD: ${{ secrets.PG_PASSWORD_STABLE }} # Repository secret
-  PG_PORT: ${{ secrets.PG_PORT_STABLE }} # Repository secret
+  PG_PORT: ${{ secrets.PG_PORT_STABLE }} # Organization secret
   PG_USERNAME: ${{ secrets.PG_USERNAME_STABLE }} # Repository secret
   REGISTRY: ghcr.io
   SWARM_HOSTNAME: ${{ secrets.SWARM_HOSTNAME }} # Organization secret
