@@ -186,6 +186,7 @@ jobs:
       - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
         run: |
           source ~/.bashrc
+          echo $NVM_DIR
           nvm use 16.14.2
       - name: Download GFS
         uses: nick-fields/retry@v2
