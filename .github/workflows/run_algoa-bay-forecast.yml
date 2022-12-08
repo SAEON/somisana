@@ -69,24 +69,24 @@ jobs:
       image: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Log in to the Container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@master
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@master
         with:
           images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
           tags: |
             type=sha
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@master
         with:
           context: models/algoa-bay-forecast
           file: models/algoa-bay-forecast/croco.Dockerfile
@@ -109,24 +109,24 @@ jobs:
       TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Log in to the Container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@master
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@master
         with:
           images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
           tags: |
             type=sha
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@master
         with:
           context: toolkit
           push: true
@@ -189,7 +189,7 @@ jobs:
           source ~/.bashrc
           nvm use 19.1.0
       - name: Download GFS
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@master
         with:
           timeout_minutes: 30 # Script is considered failed if this limit is reached
           retry_wait_seconds: 10 # Wait 10 minutes and try again
@@ -213,7 +213,7 @@ jobs:
                   --download-date ${{ env.MODEL_RUN_DATE }} \
                   --domain 22,31,-37,-31 
       - name: Download Mercator
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@master
         with:
           timeout_minutes: 30 # Script is considered failed if this limit is reached
           retry_wait_seconds: 10 # Wait 10 minutes and try again
@@ -250,7 +250,7 @@ jobs:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Copy yesterday's restart file (if it exists)
@@ -281,7 +281,7 @@ jobs:
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Execute CROCO binary
@@ -309,7 +309,7 @@ jobs:
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Normalize the model output
@@ -363,27 +363,27 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_HOST_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PORT_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_DB_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Load normalized NetCDF output to PostGIS
@@ -422,27 +422,27 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_HOST_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PORT_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_DB_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Load normalized NetCDF output to PostGIS
@@ -480,27 +480,27 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_HOST_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PORT_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_DB_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Load normalized NetCDF output to PostGIS
@@ -538,27 +538,27 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_HOST_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PORT_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_DB_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Load normalized NetCDF output to PostGIS
@@ -596,27 +596,27 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_HOST_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PORT_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_DB_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Load normalized NetCDF output to PostGIS
@@ -654,27 +654,27 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_HOST_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PORT_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_DB_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Load normalized NetCDF output to PostGIS
@@ -712,27 +712,27 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_HOST_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PORT_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_DB_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Load normalized NetCDF output to PostGIS
@@ -770,27 +770,27 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_HOST_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PORT_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_DB_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Load normalized NetCDF output to PostGIS
@@ -858,27 +858,27 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_HOST_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PORT_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_DB_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@v4
+        uses: ASzc/change-string-case-action@master
         with:
           string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
       - name: Cleanup rasters that have been loaded into values table and mark run as complete
