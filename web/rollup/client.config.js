@@ -55,7 +55,9 @@ export default {
     }),
     {
       resolveId(id, parentId) {
-        if (parentId && !id.startsWith('../') && !id.startsWith('./')) return { id, external: true }
+        if (parentId && !id.startsWith('../') && !id.startsWith('./')) {
+          return { id, external: true }
+        }
       },
     },
     replace({

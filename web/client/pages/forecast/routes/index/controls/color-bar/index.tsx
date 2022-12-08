@@ -87,10 +87,10 @@ const Render = memo(({ scaleMin, scaleMax, color, selectedVariable }) => {
             >
               <Div
                 sx={{
-                  ':first-child': {
+                  ':first-of-type': {
                     borderRadius: `4px 4px 0 0`,
                   },
-                  ':last-child': {
+                  ':last-of-type': {
                     borderRadius: `0 0 4px 4px`,
                   },
                   backgroundColor: color(value),

@@ -1,24 +1,12 @@
 import maplibregl from 'maplibre-gl'
+import { vs_ex as vertexSource, fs_ex as fragmentSource } from './_shaders'
 
 export default {
-  id: 'highlight',
+  id: 'current-vectors',
   type: 'custom',
 
-  // method called when the layer is added to the map
   // https://maplibre.org/maplibre-gl-js-docs/api/properties/#styleimageinterface#onadd
-  onAdd: function (map, gl) {
-    // create GLSL source for vertex shader
-    var vertexSource =
-      '' +
-      'uniform mat4 u_matrix;' +
-      'attribute vec2 a_pos;' +
-      'void main() {' +
-      '    gl_Position = u_matrix * vec4(a_pos, 0.0, 1.0);' +
-      '}'
-
-    // create GLSL source for fragment shader
-    var fragmentSource = '' + 'void main() {' + '    gl_FragColor = vec4(1.0, 0.0, 0.0, 0.5);' + '}'
-
+  onAdd(map, gl) {
     // create a vertex shader
     var vertexShader = gl.createShader(gl.VERTEX_SHADER)
     gl.shaderSource(vertexShader, vertexSource)
@@ -37,33 +25,27 @@ export default {
 
     this.aPos = gl.getAttribLocation(this.program, 'a_pos')
 
-    // define vertices of the triangle to be rendered in the custom style layer
-    var helsinki = maplibregl.MercatorCoordinate.fromLngLat({
-      lng: 25.004,
-      lat: 60.239,
+    var a = maplibregl.MercatorCoordinate.fromLngLat({
+      lng: 17,
+      lat: -35,
     })
-    var berlin = maplibregl.MercatorCoordinate.fromLngLat({
-      lng: 13.403,
-      lat: 52.562,
+    var b = maplibregl.MercatorCoordinate.fromLngLat({
+      lng: 18,
+      lat: -34,
     })
-    var kyiv = maplibregl.MercatorCoordinate.fromLngLat({
-      lng: 30.498,
-      lat: 50.541,
+    var c = maplibregl.MercatorCoordinate.fromLngLat({
+      lng: 20,
+      lat: -35,
     })
 
     // create and initialize a WebGLBuffer to store vertex and color data
     this.buffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array([helsinki.x, helsinki.y, berlin.x, berlin.y, kyiv.x, kyiv.y]),
-      gl.STATIC_DRAW
-    )
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([b.x, b.y, a.x, a.y, c.x, c.y]), gl.STATIC_DRAW)
   },
 
-  // method fired on each animation frame
   // https://maplibre.org/maplibre-gl-js-docs/api/map/#map.event:render
-  render: function (gl, matrix) {
+  render(gl, matrix) {
     gl.useProgram(this.program)
     gl.uniformMatrix4fv(gl.getUniformLocation(this.program, 'u_matrix'), false, matrix)
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)

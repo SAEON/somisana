@@ -1,3 +1,11 @@
+export const vs_ex = `
+    uniform mat4 u_matrix;
+    attribute vec2 a_pos;
+
+    void main() {
+        gl_Position = u_matrix * vec4(a_pos, 0.0, 1.0);
+    }`
+
 export const vs = `
   precision highp float;
 
@@ -21,6 +29,12 @@ export const vs = `
       gl_PointSize = 1.0;
       gl_Position = vec4(2.0 * v_particle_pos.x - 1.0, 1.0 - 2.0 * v_particle_pos.y, 0, 1);
   }`
+
+export const fs_ex = `
+  void main() {
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 0.5);
+  }
+`
 
 export const fs = `
   precision highp float;

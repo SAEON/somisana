@@ -26,7 +26,7 @@ const Render = memo(
     const id = 'contour-layer'
 
     const polygons = contours()
-      .thresholds(50)
+      .thresholds(24)
       .size([gridWidth, gridHeight])(grid[selectedVariable])
       .map(z => {
         return {
