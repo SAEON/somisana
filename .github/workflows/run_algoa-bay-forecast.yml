@@ -142,7 +142,7 @@ jobs:
   ##     - scratch/
   workdir:
     needs: [envs]
-    runs-on: saeon
+    runs-on: somisana
     outputs:
       WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
       WORKDIR_YESTERDAY: ${{ steps.WORKDIR.outputs.WORKDIR_YESTERDAY }}
@@ -178,7 +178,7 @@ jobs:
   # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
   boundary-data:
     needs: [toolkit, workdir, envs]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -241,7 +241,7 @@ jobs:
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
   crocotools:
     needs: [boundary-data, workdir, envs]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -274,7 +274,7 @@ jobs:
   # As such the CROCO model run must be in the context of a container instantiated from that Docker image
   croco:
     needs: [compile-croco, crocotools, envs, workdir]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
@@ -303,7 +303,7 @@ jobs:
   # and work out depth levels in meters
   normalize-output:
     needs: [branch-ref, croco, toolkit, envs, workdir]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -328,7 +328,7 @@ jobs:
   # Archive croco output and load zarr to HTTP-range server
   archive-data:
     needs: [normalize-output, workdir, envs]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -356,7 +356,7 @@ jobs:
   # Load raster data into postgis using raster2pgsql
   load-postgis:
     needs: [normalize-output, branch-ref, toolkit, envs, workdir]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -415,7 +415,7 @@ jobs:
   # Depth levels 1 - 3
   refresh-values-depths_1_3:
     needs: [load-postgis, branch-ref, toolkit, envs, workdir]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -473,7 +473,7 @@ jobs:
   # Depth levels 4 - 6
   refresh-values-depths_4_6:
     needs: [load-postgis, branch-ref, toolkit, envs, workdir]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -531,7 +531,7 @@ jobs:
   # Depth levels 7 - 9
   refresh-values-depths_7_9:
     needs: [load-postgis, branch-ref, toolkit, envs, workdir]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -589,7 +589,7 @@ jobs:
   # Depth levels 10 - 12
   refresh-values-depths_10_12:
     needs: [load-postgis, branch-ref, toolkit, envs, workdir]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -647,7 +647,7 @@ jobs:
   # Depth levels 13 - 15
   refresh-values-depths_13_15:
     needs: [load-postgis, branch-ref, toolkit, envs, workdir]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -705,7 +705,7 @@ jobs:
   # Depth levels 16 - 18
   refresh-values-depths_16_18:
     needs: [load-postgis, branch-ref, toolkit, envs, workdir]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -763,7 +763,7 @@ jobs:
   # Depth levels 19 - 20
   refresh-values-depths_19_20:
     needs: [load-postgis, branch-ref, toolkit, envs, workdir]
-    runs-on: saeon
+    runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
@@ -828,7 +828,7 @@ jobs:
       refresh-values-depths_16_18,
       refresh-values-depths_19_20
     ]
-    runs-on: saeon
+    runs-on: somisana
     steps:
       - name: noop
         run: echo done
@@ -836,7 +836,7 @@ jobs:
   # Cleanup old runs temp files
   cleanup-temp-files:
     needs: [gather-jobs, branch-ref]
-    runs-on: saeon
+    runs-on: somisana
     env:
       BRANCH: ${{ needs.branch-ref.outputs.value }}
     steps:
@@ -854,7 +854,7 @@ jobs:
   # Cleanup rasters, and mark run as complete
   finalize-run:
     needs: [branch-ref, toolkit, gather-jobs]
-    runs-on: saeon
+    runs-on: somisana
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
