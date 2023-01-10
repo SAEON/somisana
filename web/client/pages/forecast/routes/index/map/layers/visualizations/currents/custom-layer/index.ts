@@ -1,5 +1,6 @@
 import maplibregl from 'maplibre-gl'
 import { vs_ex as vertexSource, fs_ex as fragmentSource } from './_shaders'
+import * as twgl from 'twgl.js'
 
 export default {
   id: 'current-vectors',
@@ -7,6 +8,7 @@ export default {
 
   // https://maplibre.org/maplibre-gl-js-docs/api/properties/#styleimageinterface#onadd
   onAdd(map, gl) {
+    console.log(twgl)
     // create a vertex shader
     var vertexShader = gl.createShader(gl.VERTEX_SHADER)
     gl.shaderSource(vertexShader, vertexSource)
