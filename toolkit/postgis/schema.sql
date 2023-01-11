@@ -108,8 +108,15 @@ create table if not exists public.values (
 );
 
 create unique index concurrently if not exists values_unique_cols on public.values using btree (runid desc, time_step asc, depth_level desc, coordinateid);
+
 create index concurrently if not exists values_coordinateid on public.values using btree (coordinateid asc);
 
+-- Optimise this table for many deleted rows
+alter table public.values set (autovacuum_vacuum_cost_delay = 0.5);
+alter table public.values set (autovacuum_vacuum_cost_limit = 5000);
+alter table public.values set (autovacuum_vacuum_threshold = 25000000);
+alter table public.values set (autovacuum_vacuum_insert_threshold = 25000000);
+alter table public.values set (autovacuum_analyze_threshold = 25000000);
 
 /**
  * VIEWS
