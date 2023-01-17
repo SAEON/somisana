@@ -295,7 +295,7 @@ jobs:
             -v $WORKDIR:/false-bay-forecast/current \
             -v $(pwd)/models/false-bay-forecast/lib/grd.nc:/false-bay-forecast/current/croco/forcing/grd.nc \
             -v $(pwd)/models/false-bay-forecast/lib/grd.nc.1:/false-bay-forecast/current/croco/forcing/grd.nc.1 \
-            --cpus 10 \
+            --cpus 12 \
             ${{ needs.compile-croco.outputs.image }} \
               ./run_croco.bash \
                 /false-bay-forecast/current \

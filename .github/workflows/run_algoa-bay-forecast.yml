@@ -290,7 +290,7 @@ jobs:
             --rm \
             -v $WORKDIR:/algoa-bay-forecast/current \
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
-            --cpus 10 \
+            --cpus 12 \
             ${{ needs.compile-croco.outputs.image }} \
               ./run_croco.bash \
                 /algoa-bay-forecast/current \
