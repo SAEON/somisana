@@ -148,25 +148,25 @@ jobs:
       dirname_yesterday: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
       branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
-      - name: Create /tmp/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} directory structure
+      - name: Create /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} directory structure
         run: >-
-          rm -rf /tmp/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} \
+          rm -rf /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} \
           && mkdir \
             -p \
-            /tmp/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch},forcing-inputs} \
+            /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch},forcing-inputs} \
           && chown \
             -R \
             :runners \
-            /tmp/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} \
+            /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} \
           && chmod \
             -R \
             774 \
-            /tmp/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
+            /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
       - name: Set WORKDIRs
         id: WORKDIR
         run: |
-          echo "WORKDIR=/tmp/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
-          echo "WORKDIR_YESTERDAY=/tmp/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
+          echo "WORKDIR=/home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
+          echo "WORKDIR_YESTERDAY=/home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
 
   # Download environmental data used to constrain model boundaries.
   # This job is retried if it fails, since the failure can be due to upstream errors
@@ -845,10 +845,10 @@ jobs:
     env:
       BRANCH: ${{ needs.branch-ref.outputs.value }}
     steps:
-      - name: Clean /tmp/somisana/false-bay-forecast/${{ env.BRANCH }}
+      - name: Clean /home/runner/somisana/false-bay-forecast/${{ env.BRANCH }}
         run: >-
           find \
-            /tmp/somisana/false-bay-forecast/${{ env.BRANCH }}/* \
+            /home/runner/somisana/false-bay-forecast/${{ env.BRANCH }}/* \
             -maxdepth 0 \
             -type d \
             -ctime +10 \
