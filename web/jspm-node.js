@@ -13,18 +13,16 @@ const generator = new Generator({
   defaultProvider: 'jspm',
   ignore: [
     'mongodb',
-    'graphql',
-    '@graphql-tools/merge',
     'apollo-server-core',
     'apollo-server-koa',
     'apollo-server-plugin-response-cache',
     'koa-bodyparser',
-    'http-errors',
     'pg',
     'pg-query-stream',
     'JSONStream',
     'mime',
-    'cacache',
+    'graphql-type-json',
+    'http-errors'
   ],
 })
 

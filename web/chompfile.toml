@@ -27,9 +27,17 @@ deps = [
 run = """
 node \
   --trace-warnings \
-  --loader @node-loader/core \
+  --experimental-loader ./loaders/http-loader/index.js \
+  --experimental-loader ./loaders/import-maps/index.js \
+  --experimental-loader ./loaders/ssr-client-imports/index.js \
+  --experimental-loader ./loaders/std-lib-imports/index.js \
   server
 """
+
+  
+  # --loader ./loaders/node-loader-http.js \
+  # --loader ./loaders/ssr-client-imports.js \
+  # --loader ./loaders/standard-lib-imports.js \
 
 [[task]]
 name = 'client'
