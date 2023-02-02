@@ -2,6 +2,7 @@ import { gql, useQuery } from '@apollo/client'
 import { Linear as Loading } from '../../../../../components/loading'
 import Provider from './_context'
 import Models from './_models'
+import MPAs from './_mpas'
 
 export default () => {
   const { loading, error, data } = useQuery(
@@ -31,6 +32,7 @@ export default () => {
     <>
       <Provider>
         <Models models={data.models} />
+        <MPAs />
       </Provider>
     </>
   )
