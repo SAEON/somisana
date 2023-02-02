@@ -20,9 +20,6 @@ const generator = new Generator({
     'pg',
     'pg-query-stream',
     'JSONStream',
-    'mime',
-    'graphql-type-json',
-    'http-errors'
   ],
 })
 

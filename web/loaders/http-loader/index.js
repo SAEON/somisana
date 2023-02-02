@@ -1,8 +1,8 @@
 import fetch from 'make-fetch-happen'
 import { HTTP_IMPORT_CACHING, HTTP_IMPORT_CACHDIR } from './_cache-dir.js'
 
-export function resolve(specifier, context, nextResolve) {
-  const { parentURL = null } = context
+export function resolve(specifier, ctx, nextResolve) {
+  const { parentURL = null } = ctx
 
   if (useLoader(specifier)) {
     return {
@@ -10,16 +10,18 @@ export function resolve(specifier, context, nextResolve) {
       shortCircuit: true,
     }
   } else if (parentURL && useLoader(parentURL)) {
-    return {
-      shortCircuit: true,
-      url: new URL(specifier, parentURL).href,
+    if (specifier.startsWith('./') || specifier.startsWith('../')) {
+      return {
+        shortCircuit: true,
+        url: new URL(specifier, parentURL).href,
+      }
+    } else {
+      const { parentURL, ...context } = ctx
+      return nextResolve(specifier, context)
     }
   }
 
-  // TODO start here
-  console.log(specifier)
-
-  return nextResolve(specifier)
+  return nextResolve(specifier, ctx)
 }
 
 export async function load(url, context, nextLoad) {

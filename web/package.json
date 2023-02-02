@@ -18,6 +18,7 @@
     "@mui/material": "^5.11.7",
     "@mui/system": "5.11.7",
     "@node-loader/core": "^2.0.0",
+    "@node-loader/import-maps": "^1.1.0",
     "@rollup/plugin-replace": "^5.0.2",
     "@swc/cli": "^0.1.60",
     "@types/react": "^18.0.27",
