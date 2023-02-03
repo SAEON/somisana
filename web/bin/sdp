@@ -1,0 +1,7 @@
+#!/bin/sh
+
+node \
+  --no-warnings \
+  --experimental-json-modules \
+  cli/index.js \
+    $@
