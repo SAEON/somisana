@@ -82,3 +82,14 @@ The build process will automatically configure routes from specific files in the
 3. Update `index.importmap.js` to include an import to `.client/ssr.<your-new-route>.js` so that the imports defined in the client are available at SSR time
 
 The `Rollup` build will look for the `index.js` and `ssr.js` files and process them so that the Node.js application can find them. Note that the `ssr.js` file should not run code except via invoking functions (otherwise browser-specific APIs cause the SSR process to fail) and there should be a default export that is the entry point to the React code.
+
+# CLI (Command Line Interface)
+From the root of the repository:
+
+```sh
+cd web
+source env.sh
+
+# And then use the CLI ("s" is short for somisana)
+s
+```

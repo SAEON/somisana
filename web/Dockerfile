@@ -69,7 +69,7 @@ RUN chomp build
 
 # Install CLI
 ENV PATH="$PATH:/somisana/bin"
-RUN chmod +x bin/sdp
+RUN chmod +x bin/s
 
 # Expose the Noode.js HTTP port
 EXPOSE 3000
