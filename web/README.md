@@ -9,6 +9,7 @@
   - [Start a local `pg_tileserv` server](#start-a-local-pg_tileserv-server)
   - [Start a local `pg_featureserv` server](#start-a-local-pg_featureserv-server)
   - [Add an HTML page to the app](#add-an-html-page-to-the-app)
+- [CLI (Command Line Interface)](#cli-command-line-interface)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
