@@ -20,7 +20,7 @@ interface SiteSettings {
 
 const DEFAULT_SITE_SETTINGS: SiteSettings = {
   accepted: false,
-  disableGoogleAnalytics: false,
+  disableGoogleAnalytics: true,
 }
 
 export const context = createContext(DEFAULT_SITE_SETTINGS)
@@ -37,7 +37,7 @@ export const Provider = ({ cookie, acceptLanguage, ...props }) => {
 
   const {
     accepted = false,
-    disableGoogleAnalytics = false,
+    disableGoogleAnalytics = true,
     language = acceptLanguage,
   } = JSON.parse(existingCookie || '{}')
 
@@ -68,9 +68,13 @@ export const Provider = ({ cookie, acceptLanguage, ...props }) => {
    * This can only be done on the client, since the window
    * object is being updated
    */
-  useEffect(() => {
-    window['ga-disable-G-6ZM4ST1XCC'] = siteSettings.disableGoogleAnalytics
-  })
+  if (typeof window !== 'undefined') {
+    if (siteSettings.disableGoogleAnalytics) {
+      window?.gaOptout()
+    } else {
+      window?.gaOptin()
+    }
+  }
 
   /**
    * Client only

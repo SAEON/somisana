@@ -37,7 +37,7 @@ const CookieSettings = memo(
               for more information&#41;
             </SectionDescription>
             <FormGroup aria-label="Cookie settings" row>
-              <Tooltip placement="left-start" title="These settings are stored in a cookie">
+              <Tooltip placement="left-start" title="Some cookies are necessary to use this site">
                 <Toggle
                   labelProps={{
                     value: 'Site settings',
@@ -91,7 +91,7 @@ const CookieSettings = memo(
                   }}
                 />
               </Tooltip>
-              <Tooltip placement="left-start" title="We get it!">
+              <Tooltip placement="left-start" title="Enable Google Analytics (disabled by default)">
                 <Toggle
                   labelProps={{
                     value: 'Google analytics',

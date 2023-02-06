@@ -23,6 +23,33 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
+    <!-- Google analytics opt-out -->
+    <script>
+      // Set to the same value as the web property used on the site
+      const gaProperty = 'G-6ZM4ST1XCC'
+      const disableStr = 'ga-disable-' + gaProperty
+
+      // Disable tracking if the opt-out cookie exists.
+      if (document.cookie.indexOf(disableStr + '=true') > -1) {
+        window[disableStr] = true
+      }
+
+      const makeCookie = value =>
+        `${disableStr}=${value}; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/`
+
+      // Opt-out function
+      window.gaOptout = function () {
+        document.cookie = makeCookie('true')
+        window[disableStr] = true
+      }
+
+      // Opt-in function
+      window.gaOptin = function () {
+        document.cookie = makeCookie('false')
+        window[disableStr] = false
+      }
+    </script>
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6ZM4ST1XCC"></script>
     <script>

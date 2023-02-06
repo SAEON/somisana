@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-import { context as siteSettingsContext } from '../site-settings'
 import '../../css/index.css'
 import { API_GQL } from '../config/env'
 import { hydrateRoot } from 'react-dom/client'
