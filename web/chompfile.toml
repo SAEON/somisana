@@ -17,7 +17,7 @@ serial = true
 
 [[task]]
 name = 'start'
-env = { TZ='UTC', NODE_LOADER_CONFIG='loaders/config.js' }
+env = { TZ='UTC', NODE_ENV='development' }
 serial = true
 deps = [
   'client',
