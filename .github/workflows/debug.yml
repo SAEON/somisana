@@ -12,4 +12,5 @@ jobs:
           echo $PATH
           pwd
           source ~/.bashrc
+          node --version
           nvm use 19.6.0
