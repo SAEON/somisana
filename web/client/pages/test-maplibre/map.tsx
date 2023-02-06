@@ -1,6 +1,6 @@
 import { useEffect, useRef, useContext } from 'react'
 import maplibre from 'maplibre-gl'
-import { ctx as configContext } from '../../modules/config'
+import { context as configContext } from '../../modules/config'
 import Div from '../../components/div'
 
 export default () => {

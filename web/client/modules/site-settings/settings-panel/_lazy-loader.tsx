@@ -7,7 +7,7 @@ import { Close, CheckAll } from '../../../components/icons'
 import { Linear as Loading } from '../../../components/loading'
 import Button from '@mui/material/Button'
 import Fade from '@mui/material/Fade'
-import { ctx as siteSettingsContext } from '../_provider'
+import { context as siteSettingsContext } from '../_provider'
 
 const DrawerContent = lazy(() => import('./_drawer-content'))
 

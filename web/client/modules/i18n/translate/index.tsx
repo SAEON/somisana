@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, lazy, Suspense } from 'react'
-import { ctx as i18nContext } from '../index'
+import { context as i18nContext } from '../index'
 import Box from '@mui/material/Box'
 
 const Form = lazy(() => import('./form'))

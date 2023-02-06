@@ -23,7 +23,7 @@ const DEFAULT_SITE_SETTINGS: SiteSettings = {
   disableGoogleAnalytics: false,
 }
 
-export const ctx = createContext(DEFAULT_SITE_SETTINGS)
+export const context = createContext(DEFAULT_SITE_SETTINGS)
 
 export const Provider = ({ cookie, acceptLanguage, ...props }) => {
   /**
@@ -85,5 +85,5 @@ export const Provider = ({ cookie, acceptLanguage, ...props }) => {
     }
   }, [])
 
-  return <ctx.Provider value={{ ...siteSettings, updateSetting }} {...props} />
+  return <context.Provider value={{ ...siteSettings, updateSetting }} {...props} />
 }

@@ -1,5 +1,5 @@
 import { useContext, memo } from 'react'
-import { ctx as siteSettingsContext } from '../../_provider'
+import { context as siteSettingsContext } from '../../_provider'
 import ComboBox from '../../../../components/combo-box'
 import { Linear as Loading } from '../../../../components/loading'
 import Tooltip from '@mui/material/Tooltip'

@@ -1,7 +1,7 @@
 import { useContext, useEffect, memo } from 'react'
 import { context as mapContext } from '../../_context'
 import { context as pageContext } from '../../../_context'
-import { ctx as configContext } from '../../../../../../../modules/config'
+import { context as configContext } from '../../../../../../../modules/config'
 import { useTheme } from '@mui/material/styles'
 
 const Render = memo(({ TILESERV_BASE_URL, map, modelid }) => {

@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react'
-import { ctx as siteSettingsContext } from '../../site-settings'
+import { context as siteSettingsContext } from '../../site-settings'
 import SettingsPanel from '../../site-settings/settings-panel'
 import { Cog } from '../../../components/icons'
 import MuiIcon from '@mui/material/Icon'

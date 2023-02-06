@@ -1,5 +1,5 @@
 import { createContext, useContext, useRef, useEffect, useMemo } from 'react'
-import { ctx as configContext } from '../../../../../modules/config'
+import { context as configContext } from '../../../../../modules/config'
 import Div from '../../../../../components/div'
 import Map from '@arcgis/core/Map'
 import SceneView from '@arcgis/core/views/SceneView'

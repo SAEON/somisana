@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from 'react'
-import { ctx as siteSettingsContext } from '../../../../modules/site-settings'
+import { context as siteSettingsContext } from '../../../../modules/site-settings'
 import SettingsPanel from '../../../../modules/site-settings/settings-panel'
 import Button from '@mui/material/Button'
 

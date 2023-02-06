@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react'
 import { context as mapContext } from './_context'
-import { ctx as configContext } from '../../../../../modules/config'
+import { context as configContext } from '../../../../../modules/config'
 import VectorTileLayer from '@arcgis/core/layers/VectorTileLayer'
 import { useTheme } from '@mui/material/styles'
 import Div from '../../../../../components/div'

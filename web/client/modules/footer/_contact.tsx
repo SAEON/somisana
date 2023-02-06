@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { ctx as configContext } from '../../modules/config'
+import { context as configContext } from '../../modules/config'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 

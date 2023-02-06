@@ -1,5 +1,5 @@
 import { useContext, createContext } from 'react'
-import { ctx as siteSettingsContext } from '../site-settings'
+import { context as siteSettingsContext } from '../site-settings'
 
 const text = {
   '/home_h2': {
@@ -38,10 +38,10 @@ const t = (s, language) => {
   }
 }
 
-export const ctx = createContext({ t })
+export const context = createContext({ t })
 
 const P = ({ language, ...props }) => {
-  return <ctx.Provider value={{ t, language }} {...props} />
+  return <context.Provider value={{ t, language }} {...props} />
 }
 
 /**

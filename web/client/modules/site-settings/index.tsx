@@ -1,3 +1,3 @@
-import { Provider, ctx as ctx_ } from './_provider'
-export const ctx = ctx_
+import { Provider, context as context_ } from './_provider'
+export const context = context_
 export default Provider

@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, memo, useEffect, useState } from 'react'
-import { ctx as configContext } from '../../../../../modules/config'
+import { context as configContext } from '../../../../../modules/config'
 import { context as modelContext } from '../_context'
 import maplibre from 'maplibre-gl'
 

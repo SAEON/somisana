@@ -4,13 +4,13 @@ import Map from '@arcgis/core/Map'
 import esriConfig from '@arcgis/core/config'
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer'
 import OGCFeatureLayer from '@arcgis/core/layers/OGCFeatureLayer'
-import { ctx as configContext } from '../../../modules/config'
+import { context as configContext } from '../../../modules/config'
 import { useTheme } from '@mui/material/styles'
 import VectorTileLayer from '@arcgis/core/layers/VectorTileLayer'
 import Div from '../../../components/div'
 import ExaggeratedElevationLayer from '../../../modules/arcgis/exaggerated-elevation-layer'
 
-export const ctx = createContext(null)
+export const context = createContext(null)
 
 export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
   const { ESRI_API_KEY, ESRI_BASEMAP, TILESERV_BASE_URL, FEATURESERV_BASE_URL } =
@@ -159,7 +159,7 @@ export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
   }
 
   return (
-    <ctx.Provider value={{}}>
+    <context.Provider value={{}}>
       <Div
         ref={ref}
         sx={{
@@ -171,6 +171,6 @@ export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
         }}
       />
       {children}
-    </ctx.Provider>
+    </context.Provider>
   )
 }
