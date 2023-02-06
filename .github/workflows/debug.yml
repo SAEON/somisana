@@ -4,10 +4,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  boundary-data:
+  debugger:
     runs-on: somisana
     steps:
       - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
         run: |
+          echo $PATH
+          pwd
           source ~/.bashrc
           nvm use 19.6.0
