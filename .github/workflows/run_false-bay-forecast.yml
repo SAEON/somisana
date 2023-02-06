@@ -345,7 +345,7 @@ jobs:
       - name: Upload Zarr to mnemosyne HTTP-range server
         continue-on-error: true
         run: >-
-          cd $WORKDIR/croco/forecast \
+          cd ${{ env.WORKDIR}}/croco/forecast \
           && find \
             ${{ env.RUN_DATE }}.zarr \
             -type f \
