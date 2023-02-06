@@ -1,0 +1,14 @@
+name: Debug
+
+on:
+  workflow_dispatch:
+
+jobs:
+  boundary-data:
+    runs-on: somisana
+    env:
+    steps:
+      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
+        run: |
+          source ~/.bashrc
+          nvm use 19.6.0
