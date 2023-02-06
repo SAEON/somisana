@@ -18,7 +18,7 @@
 From the `somisana/web` directory, setup your environment:
 
 ```sh
-# Install Node.js (v19.6.2 - lower versions not supported)
+# Install Node.js (v19.6.0 - lower versions not supported)
 
 # Install chomp
 npm install -g chomp

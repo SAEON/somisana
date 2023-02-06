@@ -1,4 +1,4 @@
-FROM node:19.6.2
+FROM node:19.6.0
 
 ##############
 # BUILD CONFIG
