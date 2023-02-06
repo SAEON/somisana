@@ -9,6 +9,7 @@ jobs:
     steps:
       - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
         run: |
+          echo $NVM_DIR
           echo $PATH
           pwd
           source ~/.bashrc
