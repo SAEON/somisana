@@ -1,12 +1,12 @@
-# name: Debug
+name: Debug
 
-# on:
-#   workflow_dispatch:
+on:
+  workflow_dispatch:
 
-# jobs:
-#   debugger:
-#     runs-on: somisana
-#     steps:
-#       - name: Debugger
-#         run: |
-#           echo "Test commands here"
+jobs:
+  debugger:
+    runs-on: somisana
+    steps:
+      - name: Debugger
+        run: |
+          echo "Test commands here"
