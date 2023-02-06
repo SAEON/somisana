@@ -6,7 +6,6 @@ on:
 jobs:
   boundary-data:
     runs-on: somisana
-    env:
     steps:
       - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
         run: |
