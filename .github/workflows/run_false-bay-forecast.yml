@@ -184,7 +184,7 @@ jobs:
         continue-on-error: true # Maybe Node.js exists anyway
         run: |
           source ~/.bashrc
-          nvm use 19.1.0
+          nvm use 19.6.0
       - name: Download GFS
         uses: nick-fields/retry@master
         with:
