@@ -26,13 +26,14 @@ deps = [
 ]
 run = """
 node \
+  --loader ./loaders/http-loader/index.js \
+  --loader @node-loader/import-maps \
+  --loader ./loaders/std-lib-imports/index.js \
   --trace-warnings \
-  --experimental-loader ./loaders/http-loader/index.js \
-  --experimental-loader @node-loader/import-maps \
-  --experimental-loader ./loaders/ssr-client-imports/index.js \
-  --experimental-loader ./loaders/std-lib-imports/index.js \
   server
 """
+  
+  
 
 [[task]]
 name = 'client'

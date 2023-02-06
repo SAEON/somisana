@@ -6,18 +6,20 @@ export function resolve(specifier, ctx, nextResolve) {
 
   if (useLoader(specifier)) {
     return {
+      format: null,
       url: specifier,
       shortCircuit: true,
     }
   } else if (parentURL && useLoader(parentURL)) {
     if (specifier.startsWith('./') || specifier.startsWith('../')) {
       return {
+        format: null,
         shortCircuit: true,
         url: new URL(specifier, parentURL).href,
       }
     } else {
-      const { parentURL, ...context } = ctx
-      return nextResolve(specifier, context)
+      ctx.parentURL = undefined
+      return nextResolve(specifier, ctx)
     }
   }
 

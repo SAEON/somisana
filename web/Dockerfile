@@ -72,4 +72,4 @@ EXPOSE 3000
 
 # Start command
 ENTRYPOINT [ "node" ]
-CMD ["--no-warnings", "--loader", "@node-loader/core", "server"]
+CMD ["--no-warnings", "--loader", "./loaders/http-loader/index.js", "--loader", "@node-loader/import-maps", "--loader", "./loaders/std-lib-imports/index.js", "server"]
