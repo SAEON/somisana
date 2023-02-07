@@ -1,4 +1,4 @@
-from cli.load.values.load_band import load
+from cli.ops.load.values.load_band import load
 
 
 def upsert(runid, start_time, depths, datetimes, total_depth_levels):

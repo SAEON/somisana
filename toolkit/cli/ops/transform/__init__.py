@@ -2,8 +2,8 @@ import xarray as xr
 import numpy as np
 import os
 from datetime import timedelta, datetime
-from cli.transform.depth_functions import z_levels
-from cli.transform.functions import hour_rounder, u2rho_4d, v2rho_4d
+from cli.ops.transform.depth_functions import z_levels
+from cli.ops.transform.functions import hour_rounder, u2rho_4d, v2rho_4d
 import subprocess
 
 # All dates in the CROCO output are represented
@@ -16,13 +16,13 @@ REFERENCE_DATE = datetime(2000, 1, 1, 0, 0, 0)
 # from grid points to real lat and lon data.
 
 
-def transform(options, arguments):
+def transform(args):
     now = datetime.now()
 
-    grid_input_path = os.path.abspath(options.grid_input_path)
-    nc_input_path = os.path.abspath(options.nc_input_path)
-    nc_output_path = os.path.abspath(options.nc_output_path)
-    zarr_output_path = os.path.abspath(options.zarr_output_path)
+    grid_input_path = os.path.abspath(args.grid_input_path)
+    nc_input_path = os.path.abspath(args.nc_input_path)
+    nc_output_path = os.path.abspath(args.nc_output_path)
+    zarr_output_path = os.path.abspath(args.zarr_output_path)
 
     print("\n== Running Algoa Bay Forecast post-processing ==")
     print("nc-input-path", nc_input_path)

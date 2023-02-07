@@ -1,19 +1,19 @@
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
-from cli.download.mercator import download as mercator_download
-from cli.download.gfs import download as gfs_download
+from cli.ops.download.mercator import download as mercator_download
+from cli.ops.download.gfs import download as gfs_download
 
 
-def download(options, arguments):
+def download(args):
     print("Downloading forecast model boundary data...")
 
-    workdir = options.workdir
-    matlab_env = options.matlab_env
-    gfs = options.gfs
-    mercator = options.mercator
-    run_date = datetime.strptime(options.download_date, "%Y%m%d")
-    domain = list(map(lambda i: float(i), options.domain.split(",")))
+    workdir = args.workdir
+    matlab_env = args.matlab_env
+    gfs = args.gfs
+    mercator = args.mercator
+    run_date = datetime.strptime(args.download_date, "%Y%m%d")
+    domain = list(map(lambda i: float(i), args.domain.split(",")))
 
     hdays = 5
     fdays = 5

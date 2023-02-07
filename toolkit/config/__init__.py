@@ -1,5 +1,4 @@
 from environs import Env
-from os import getcwd, path
 env = Env()
 
 PY_ENV = env.str('PY_ENV', 'development')
