@@ -406,13 +406,14 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-rasters \
-                --upsert-coordinates \
-                --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --model algoa-bay-forecast \
-                --reload-data \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-rasters \
+                  --upsert-coordinates \
+                  --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --model algoa-bay-forecast \
+                  --reload-data \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 1 - 3
@@ -465,12 +466,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 1,3 \
-                --model algoa-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 1,3 \
+                  --model algoa-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 4 - 6
@@ -523,12 +525,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 4,6 \
-                --model algoa-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 4,6 \
+                  --model algoa-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 7 - 9
@@ -581,12 +584,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 7,9 \
-                --model algoa-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 7,9 \
+                  --model algoa-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 10 - 12
@@ -639,12 +643,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 10,12 \
-                --model algoa-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 10,12 \
+                  --model algoa-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 13 - 15
@@ -697,12 +702,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 13,15 \
-                --model algoa-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 13,15 \
+                  --model algoa-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 16 - 18
@@ -755,12 +761,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 16,18 \
-                --model algoa-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 16,18 \
+                  --model algoa-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 19 - 20
@@ -813,12 +820,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 19,20 \
-                --model algoa-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 19,20 \
+                  --model algoa-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
 
   gather-jobs:
@@ -900,6 +908,7 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --finalize-run \
-                --model algoa-bay-forecast
+              ops \
+                load \
+                  --finalize-run \
+                  --model algoa-bay-forecast

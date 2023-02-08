@@ -18,9 +18,10 @@
 - [Usage examples](#usage-examples)
   - [Use compiled CLI](#use-compiled-cli)
   - [Locally](#locally)
-  - [Operational models](#operational-models)
-    - [Downloading forcing data](#downloading-forcing-data)
-    - [Post-process CROCO NetCDF output (transform CLI)](#post-process-croco-netcdf-output-transform-cli)
+  - [Operational models (somisana ops)](#operational-models-somisana-ops)
+    - [Downloading forcing data (somisana ops download)](#downloading-forcing-data-somisana-ops-download)
+    - [Post-process CROCO NetCDF output (somisana ops transform)](#post-process-croco-netcdf-output-somisana-ops-transform)
+    - [Load processed CROCO output into PostGIS (somisana ops load)](#load-processed-croco-output-into-postgis-somisana-ops-load)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -170,12 +171,12 @@ $ somisana
 
 NOTE: All path-argument inputs that are relative paths are treated as relative to `<repo root>/toolkit`
 
-## Operational models
+## Operational models (somisana ops)
 ```sh
 $ somisana ops
 ```
 
-### Downloading forcing data
+### Downloading forcing data (somisana ops download)
 By default, downloads are placed in `toolkit/.output/` (relative to the root of the repository). Read the CLI help output to see how to confiture this.
 
 _**Access help**_
@@ -200,7 +201,7 @@ $ somisana \
      --domain 22,31,-37,-31
 ```
 
-### Post-process CROCO NetCDF output (transform CLI)
+### Post-process CROCO NetCDF output (somisana ops transform)
 By default output is in your current directory (`output.zarr` and `output.nc`). Refer to the help to see how to configure this.
 
 _**Access help**_
@@ -216,4 +217,14 @@ $ somisana \
     transform \
      --nc-input-path /path/to/croco/output.nc \
      --grid-input-path models/algoa-bay-forecast/lib/grd.nc
+```
+
+### Load processed CROCO output into PostGIS (somisana ops load)
+TODO
+
+This CLI command needs to be re-worked to run operations on a PostgreSQL server in parallel. Currently this is achieved by running several instances of the command in parallel, which is cumbersome. Additionally alternative options to PostgreSQL are also being investigated (for example, a Zarr/client-only workflow)
+
+_**Access help**_
+```sh
+$ somisana ops load -h
 ```
