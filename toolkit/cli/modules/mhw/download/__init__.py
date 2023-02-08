@@ -25,7 +25,15 @@ def download(args):
     )
     print('Downloading', url)
 
+    progress = 0
     with requests.get(url, stream=True) as response:
         with open(nc_output_path, "wb") as f:
-            for chunk in response.iter_content(chunk_size=(1024 * 1024)):
+            for chunk in response.iter_content(chunk_size=8192):
+                progress = progress + len(chunk)
+                msg = "Downloaded {progress}MB".format(
+                    progress=str(round(progress / 1000 / 1000, 2))
+                )
+                print(msg)
                 f.write(chunk)
+
+    print('Complete!')
