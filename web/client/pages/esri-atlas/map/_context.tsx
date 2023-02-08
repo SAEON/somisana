@@ -81,7 +81,7 @@ export default ({ model: { max_x, min_x, max_y, min_y }, children }) => {
   const xyzPoints = new OGCFeatureLayer({
     id: 'datapoints',
     url: FEATURESERV_BASE_URL,
-    collectionId: 'public.values',
+    collectionId: 'public.coordinates',
     objectIdField: 'id',
     // maxScale: 1,
     // minScale: 22,
