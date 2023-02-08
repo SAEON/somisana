@@ -1,8 +1,8 @@
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
-from cli.ops.download.mercator import download as mercator_download
-from cli.ops.download.gfs import download as gfs_download
+from cli.modules.ops.download.mercator import download as mercator_download
+from cli.modules.ops.download.gfs import download as gfs_download
 
 
 def download(args):

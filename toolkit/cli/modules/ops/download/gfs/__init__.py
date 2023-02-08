@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, time
-from cli.ops.download.gfs.functions import (
+from cli.modules.ops.download.gfs.functions import (
     download_file,
     get_latest_available_dt,
 )

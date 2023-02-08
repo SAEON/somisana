@@ -1,15 +1,12 @@
 import argparse
 from datetime import datetime
-from cli.ops import download as opsDownload, transform as opsTransform, load as opsLoad
+from cli.modules import ops as opsModule
 
 NOW = datetime.now().strftime("%Y%m%d")
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        prog="somisana",
-        description="SOMISANA TOOLKIT"
-    )
+    parser = argparse.ArgumentParser(prog="somisana", description="SOMISANA TOOLKIT")
 
     # --version
     parser.add_argument("-v", "--version", action="version", version="0.0.1")
@@ -19,12 +16,8 @@ def main():
         title="Toolkit modules",
         description="Sub-programs that are part of the SOMISANA toolkit",
         dest="command",
-        metavar="Available commands"
+        metavar="Applications",
     )
-
-    # LACCE module
-    lacce_module = module_parser.add_parser("lacce", help="LACCE module")
-    lacce_module.add_argument("item", help="Item to add")
 
     # MHW module
     mhw = module_parser.add_parser("mhw", help="Marine Heat Waves (MHW) module")
@@ -32,7 +25,7 @@ def main():
         title="Marine Heat Waves (MHW)",
         description="Look for high normal variance of SST compared to the previous decades",
         dest="mhw_command",
-        metavar="Available commands"
+        metavar="Available commands",
     )
     mhw_download = mhw_parser.add_parser("download", help="Download NOAA data")
     mhw_download.add_argument("-d", "--date-range", help="Date range")
@@ -54,7 +47,7 @@ def main():
         title="Operational ocean forecasting",
         description="Run localised, high resolution ocean forecasts using the CROCO modelling suite",
         dest="ops_command",
-        metavar="Available commands"
+        metavar="Available commands",
     )
     ops_download = ops_parser.add_parser(
         "download", help="Download forcing input files"
@@ -141,20 +134,27 @@ def main():
         help="Remove temp rasters, re-analyze tables, and mark run as finished",
     )
 
+    # LACCE module
+    lacce = module_parser.add_parser("lacce", help="LACCE module")
+    lacce.add_argument("--input", help="Path to input NetCDF file")
+    lacce.add_argument("--output", help="Path to output NetCDF file")
+
     # parse the arguments
     args = parser.parse_args()
 
     # OPERATIONAL MODELS
     if args.command == "ops":
         if args.ops_command == "download":
-            opsDownload(args)
+            opsModule.download(args)
             return
         if args.ops_command == "transform":
-            opsTransform(args)
+            opsModule.transform(args)
             return
         if args.ops_command == "load":
-            opsLoad(args)
+            opsModule.load(args)
             return
+        print(ops.format_help())
+        return
 
     # MHW
     if args.command == "mhw":
@@ -171,10 +171,17 @@ def main():
             thresholds_input_path = args.thresholds_input_path
             print("mhw -> detect -> thresholds", input_path, thresholds_input_path)
             return
+        print(mhw.format_help())
+        return
 
     # LACCE
     if args.command == "lacce":
-        print(f"Adding item: {args.item}")
+        input = args.input
+        output = args.output
+        if input and output:
+            print("LACCE", input, output)
+            return
+        print(lacce.format_help())
         return
 
     # Otherwise print help

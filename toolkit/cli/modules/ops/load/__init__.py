@@ -3,10 +3,10 @@ import yaml
 from datetime import datetime
 from postgis import setup as installDb, drop as dropSchema, pool
 from config import PY_ENV
-from cli.ops.load.raster2pgsql import register as refresh_rasters
-from cli.ops.load.coordinates import upsert as refresh_coordinates
-from cli.ops.load.values import upsert as refresh_values
-from cli.ops.load.finalize import run as finalize
+from cli.modules.ops.load.raster2pgsql import register as refresh_rasters
+from cli.modules.ops.load.coordinates import upsert as refresh_coordinates
+from cli.modules.ops.load.values import upsert as refresh_values
+from cli.modules.ops.load.finalize import run as finalize
 
 
 def load(args):

@@ -2,8 +2,8 @@ import xarray as xr
 import numpy as np
 import os
 from datetime import timedelta, datetime
-from cli.ops.transform.depth_functions import z_levels
-from cli.ops.transform.functions import hour_rounder, u2rho_4d, v2rho_4d
+from cli.modules.ops.transform.depth_functions import z_levels
+from cli.modules.ops.transform.functions import hour_rounder, u2rho_4d, v2rho_4d
 import subprocess
 
 # All dates in the CROCO output are represented
