@@ -70,9 +70,9 @@ export const Provider = ({ cookie, acceptLanguage, ...props }) => {
    */
   if (typeof window !== 'undefined') {
     if (siteSettings.disableGoogleAnalytics) {
-      window?.gaOptout()
+      window.gaOptout?.()
     } else {
-      window?.gaOptin()
+      window.gaOptin?.()
     }
   }
 
