@@ -139,7 +139,7 @@ Please read the instructions at [https://github.com/SAEON/postgis](https://githu
 # Usage examples
 
 ## Use compiled CLI
-This is the easiest way to run the CLI, the only caveat is that all files must be in your `/home/$USER` directory, and all argument path references must be absolute paths.
+This is the easiest way to run the CLI, the only caveat is that all files must be in your `/home/$USER` directory, and all argument path references must be absolute paths (although you can also use command substitution `$(pwd)` in the pathname, so really not much of a caveat at all!).
 
 Ensure that [docker](https://www.docker.com/) is installed on your system. Update your `.bash_profile` (or `.bashrc`) file with an alias to the [SOMISANA cli Docker image](https://github.com/SAEON/somisana/pkgs/container/somisana_toolkit_stable):
 
@@ -153,7 +153,10 @@ alias somisana="docker run -v /home/$USER:/home/$USER --rm ghcr.io/saeon/somisan
 source ~/.bash_profile
 
 # Run the CLI
-somisana
+$ somisana
+$ somisana ops download --input-path /abs/path/to/current/directory/file.nc
+$ somisana ops download --input-path $(pwd)/file.nc
+$ ... etc
 ```
 
 NOTE: To update the docker image with a newer version, pull the image manaually:
@@ -178,13 +181,13 @@ NOTE: All path-argument inputs that are relative paths are treated as relative t
 $ somisana mhw
 ```
 
-### somisana mhw download
+### somisana mhw
 This command is useful for downloading... TODO
 
 ```sh
 $ somisana \
    mhw \
-    donwload \
+    start \
      --nc-output-path /path/to/output/file.nc
         
 ```

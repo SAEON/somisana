@@ -1,9 +1,18 @@
+import os
 import requests
 from datetime import date
 import datetime
 
+# (1) Check if thresholds file exists, if it doesn't (or is older than 1 month)
+#  => download back data
+#  => generate thresholds data
+#
+# (2) Download today's SST
+# (3) Run the tracker function to produce the output NetCDF file
+# (4) Make that available to web -> PostGIS? JSON? NetCDF?
 
-def download(args):
+
+def start(args):
     nc_output_path = args.nc_output_path
 
     # Account for latency of the SST product
@@ -23,7 +32,7 @@ def download(args):
         n_day=str(n_day),
         n_hour=str(n_hour),
     )
-    print('Downloading', url)
+    print('Downloading', url, 'to', os.path.abspath(nc_output_path))
 
     progress = 0
     with requests.get(url, stream=True) as response:
