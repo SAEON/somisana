@@ -2,10 +2,14 @@ import argparse
 from cli.commands import lacce as lacce_cmd, mhw as mhw_cmd, ops as ops_cmd
 from cli.exe import lacce as lacce_exe, mhw as mhw_exe, ops as ops_exe
 
+prog = "somisana"
+description = "SOMISANA Toolkit"
+version = "0.0.1"
+
 
 def main():
-    parser = argparse.ArgumentParser(prog="somisana", description="SOMISANA TOOLKIT")
-    parser.add_argument("-v", "--version", action="version", version="0.0.1")
+    parser = argparse.ArgumentParser(prog=prog, description=description)
+    parser.add_argument("-v", "--version", action="version", version=version)
     module_parser = parser.add_subparsers(
         title="Toolkit modules",
         description="Sub-programs that are part of the SOMISANA toolkit",
