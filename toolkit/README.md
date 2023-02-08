@@ -15,6 +15,12 @@
     - [Setup 3rd party services for local development](#setup-3rd-party-services-for-local-development)
       - [MongoDB](#mongodb)
       - [PostGIS](#postgis)
+- [Usage examples](#usage-examples)
+  - [Use compiled CLI](#use-compiled-cli)
+  - [Locally](#locally)
+  - [Operational models](#operational-models)
+    - [Downloading forcing data](#downloading-forcing-data)
+    - [Post-process CROCO NetCDF output (transform CLI)](#post-process-croco-netcdf-output-transform-cli)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -126,3 +132,88 @@ Please read the instructions at [https://github.com/SAEON/mongo](https://github.
 #### PostGIS
 
 Please read the instructions at [https://github.com/SAEON/postgis](https://github.com/SAEON/postgis#local-development) for setting up a local PostGIS server (and PGAdmin4 interface) via Docker
+
+# Usage examples
+
+## Use compiled CLI
+This is the easiest way to run the CLI, the only caveat is that all files must be in your `/home/$USER` directory, and all argument path references must be absolute paths.
+
+Ensure that [docker](https://www.docker.com/) is installed on your system. Update your `.bash_profile` (or `.bashrc`) file with an alias to the [SOMISANA cli Docker image](https://github.com/SAEON/somisana/pkgs/container/somisana_toolkit_stable):
+
+```sh
+vi ~/.bash_profile
+
+# Add the following line to the bottom of the file
+alias somisana="docker run -v /home/$USER:/home/$USER --rm ghcr.io/saeon/somisana_toolkit_stable:latest"
+
+# Re-source your profile configuration
+source ~/.bash_profile
+
+# Run the CLI
+somisana
+```
+
+NOTE: To update the docker image with a newer version, pull the image manaually:
+
+```sh
+docker pull ghcr.io/saeon/somisana_toolkit_stable:latest
+```
+
+## Locally
+Working locally in the context of this repository, run `source env.sh` either from the root of the repo or from the `./toolkit` directory.
+
+You should now be able to use the CLI via the `somisana` command:
+
+```sh
+$ somisana
+```
+
+NOTE: All path-argument inputs that are relative paths are treated as relative to `<repo root>/toolkit`
+
+## Operational models
+```sh
+$ somisana ops
+```
+
+### Downloading forcing data
+By default, downloads are placed in `toolkit/.output/` (relative to the root of the repository). Read the CLI help output to see how to confiture this.
+
+_**Access help**_
+```sh
+$ somisana ops download -h
+```
+
+_**Download Algoa Bay forcing inputs (determined by domain)**_
+```sh
+# GFS input data
+$ somisana \
+   ops \
+    download \
+     --provider gfs \
+     --domain 22,31,-37,-31
+
+# Mercator input data
+$ somisana \
+   ops \
+    download \
+     --provider mercator \
+     --domain 22,31,-37,-31
+```
+
+### Post-process CROCO NetCDF output (transform CLI)
+By default output is in your current directory (`output.zarr` and `output.nc`). Refer to the help to see how to configure this.
+
+_**Access help**_
+```sh
+$ somisana ops transform -h
+```
+
+_**Transform Aloa Bay output**_
+```sh
+# paths are relative to <repo root>/toolkit (unless abs paths used)
+$ somisana \
+   ops \
+    transform \
+     --nc-input-path /path/to/croco/output.nc \
+     --grid-input-path models/algoa-bay-forecast/lib/grd.nc
+```

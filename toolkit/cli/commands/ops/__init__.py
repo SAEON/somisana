@@ -11,6 +11,8 @@ def build(module_parser):
         dest="ops_command",
         metavar="Available commands",
     )
+
+    # DOWNLOAD
     ops_download = ops_parser.add_parser(
         "download", help="Download forcing input files"
     )
@@ -24,19 +26,25 @@ def build(module_parser):
         "--download-date", default=NOW, help="Download date (yyyymmdd)"
     )
     ops_download.add_argument(
-        "--gfs", action="store_true", default=False, help="Dwonload GFS data"
-    )
-    ops_download.add_argument(
-        "--mercator", action="store_true", default=False, help="Download Mercator data"
+        "--provider",
+        type=str,
+        choices=["gfs", "mercator"],
+        help="Forcing data provider",
+        required=True,
     )
     ops_download.add_argument(
         "--domain",
         help="Bounding box in 4326 projection (i.e. min_long,max_long,min_lat,max_lat)",
+        required=True,
     )
+
+    # TRANSFORM (process CROCO output)
     ops_transform = ops_parser.add_parser(
         "transform", help="Normalize model output grids"
     )
-    ops_transform.add_argument("--nc-input-path", help="Path of NetCDF input file")
+    ops_transform.add_argument(
+        "--nc-input-path", help="Path of NetCDF input file", required=True
+    )
     ops_transform.add_argument(
         "--nc-output-path", default=".output.nc", help="Path of NetCDF output path"
     )
@@ -44,8 +52,10 @@ def build(module_parser):
         "--zarr-output-path", default=".output.zarr", help="Path of Zarr output path"
     )
     ops_transform.add_argument(
-        "--grid-input-path", help="Path of NetCDF grid input path"
+        "--grid-input-path", help="Path of NetCDF grid input path", required=True
     )
+
+    # LOAD (to Zarr server and/or PostgeSQL)
     ops_load = ops_parser.add_parser("load", help="Download forcing input files")
     ops_load.add_argument(
         "--upsert-rasters",

@@ -10,8 +10,8 @@ def download(args):
 
     workdir = args.workdir
     matlab_env = args.matlab_env
-    gfs = args.gfs
-    mercator = args.mercator
+    gfs = args.provider == 'gfs'
+    mercator = args.provider == 'mercator'
     run_date = datetime.strptime(args.download_date, "%Y%m%d")
     domain = list(map(lambda i: float(i), args.domain.split(",")))
 
@@ -29,7 +29,7 @@ def download(args):
         str(domain),
     )
 
-    print("Downloads path", workdir)
+    print("Downloads path", os.path.abspath(workdir))
     Path(workdir).mkdir(parents=True, exist_ok=True)
 
     if mercator:
