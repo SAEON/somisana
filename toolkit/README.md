@@ -18,6 +18,8 @@
 - [Usage examples](#usage-examples)
   - [Use compiled CLI](#use-compiled-cli)
   - [Locally](#locally)
+  - [Marine Heat Wave analysis (somisana mhw)](#marine-heat-wave-analysis-somisana-mhw)
+    - [somisana mhw download](#somisana-mhw-download)
   - [Operational models (somisana ops)](#operational-models-somisana-ops)
     - [Downloading forcing data (somisana ops download)](#downloading-forcing-data-somisana-ops-download)
     - [Post-process CROCO NetCDF output (somisana ops transform)](#post-process-croco-netcdf-output-somisana-ops-transform)
@@ -171,6 +173,22 @@ $ somisana
 
 NOTE: All path-argument inputs that are relative paths are treated as relative to `<repo root>/toolkit`
 
+## Marine Heat Wave analysis (somisana mhw)
+```sh
+$ somisana mhw
+```
+
+### somisana mhw download
+This command is useful for downloading... TODO
+
+```sh
+$ somisana \
+   mhw \
+    donwload \
+     --nc-output-path /path/to/output/file.nc
+        
+```
+
 ## Operational models (somisana ops)
 ```sh
 $ somisana ops
@@ -211,12 +229,11 @@ $ somisana ops transform -h
 
 _**Transform Aloa Bay output**_
 ```sh
-# paths are relative to <repo root>/toolkit (unless abs paths used)
 $ somisana \
    ops \
     transform \
      --nc-input-path /path/to/croco/output.nc \
-     --grid-input-path models/algoa-bay-forecast/lib/grd.nc
+     --grid-input-path /path/to/repo/models/algoa-bay-forecast/lib/grd.nc
 ```
 
 ### Load processed CROCO output into PostGIS (somisana ops load)
