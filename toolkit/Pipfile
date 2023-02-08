@@ -4,25 +4,27 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-numpy = "*"
-xarray = "*"
-cython = "*"
-netcdf4 = "*"
-pymongo = "*"
-environs= "*"
-requests = "*"
-pathlib = "*"
-motuclient = "*"
-pyyaml = "*"
-zarr = "*"
-psycopg-pool = "*"
-psycopg = "*"
-pandas = "*"
+numpy = "==1.24.2"
+xarray = "==2023.2.0"
+cython = "==0.29.33"
+netcdf4 = "==1.6.2"
+pymongo = "==4.3.3"
+environs= "==9.5.0"
+requests = "==2.28.2"
+pathlib = "==1.0.1"
+motuclient = "==3.0.0"
+pyyaml = "==6.0"
+zarr = "==2.13.6"
+psycopg = "==3.1.8"
+psycopg-pool = "==3.1.6"
+pandas = "==1.5.3"
+natsort = "==8.2.0"
+matplotlib = "==3.6.3"
 
 [dev-packages]
 
 [requires]
-python_version = "3.8.10"
+python_version = "3.11.1"
 
 [scripts]
 script = "python __main__.py"
