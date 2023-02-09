@@ -2,18 +2,39 @@ import os
 import requests
 from datetime import date
 import datetime
+from cli.modules.mhw.thresholds import create_thresholds
+import time
 
-# (1) Check if thresholds file exists, if it doesn't (or is older than 1 month)
-#  => download back data
-#  => generate thresholds data
-#
+# (1) Generate thresholds if required (or use existing)
 # (2) Download today's SST
 # (3) Run the tracker function to produce the output NetCDF file
 # (4) Make that available to web -> PostGIS? JSON? NetCDF?
 
 
 def start(args):
+    nc_thresholds_path = os.path.abspath(args.nc_thresholds_path)
     nc_output_path = args.nc_output_path
+
+    # Expiry is in days, needed in seconds
+    thresholds_expiry = args.thresholds_expiry * 86400
+
+    # Create new thresholds if they don't exist or are expired
+    generate_thresholds = False
+    try:
+        thresholds_stats = os.stat(nc_thresholds_path)
+        ctime = thresholds_stats.st_ctime
+        age = time.time() - ctime
+        if thresholds_expiry >= 0:
+            if age > thresholds_expiry:
+                generate_thresholds = True
+    except FileNotFoundError:
+        generate_thresholds = True
+    except Exception as error:
+        print("Unkown error", error)
+        exit(1)
+
+    if generate_thresholds:
+        create_thresholds(args)
 
     # Account for latency of the SST product
     today = date.today()
@@ -32,7 +53,7 @@ def start(args):
         n_day=str(n_day),
         n_hour=str(n_hour),
     )
-    print('Downloading', url, 'to', os.path.abspath(nc_output_path))
+    print("Downloading", url, "to", os.path.abspath(nc_output_path))
 
     progress = 0
     with requests.get(url, stream=True) as response:
@@ -45,4 +66,4 @@ def start(args):
                 print(msg)
                 f.write(chunk)
 
-    print('Complete!')
+    print("Complete!")
