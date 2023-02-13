@@ -1,4 +1,4 @@
-FROM ghcr.io/saeon/somisana_geopython:3.8.10
+FROM ghcr.io/saeon/somisana_geopython:3.10.0
 
 # BUILD TIME
 
