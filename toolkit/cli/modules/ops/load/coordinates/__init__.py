@@ -12,7 +12,7 @@ updates
 
 def upsert(model, now):
     print("\n-> Calculating and loading coordinates", str(datetime.now() - now))
-    with open("cli/load/coordinates/coordinates.sql", "r") as file:
+    with open("cli/modules/ops/load/coordinates/coordinates.sql", "r") as file:
         sql = file.read()
         with pool().connection() as client:
             client.execute(sql, (model,))
