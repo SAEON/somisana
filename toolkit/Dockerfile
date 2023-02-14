@@ -1,4 +1,4 @@
-FROM ghcr.io/saeon/somisana_geopython:3.10.6
+FROM ghcr.io/saeon/somisana_geopython:3.10
 
 # BUILD TIME
 
@@ -31,11 +31,11 @@ ENV PY_ENV=$PY_ENV
 # Setup a non-root user (Python complains about this)
 RUN groupadd -g 1999 runners \
   && useradd \
-    -u 1998 \
-    -g 1999 \
-    -m \
-    -s /bin/bash \
-    somisana
+  -u 1998 \
+  -g 1999 \
+  -m \
+  -s /bin/bash \
+  somisana
 
 USER somisana
 WORKDIR /home/somisana
@@ -44,11 +44,11 @@ WORKDIR /home/somisana
 ENV PATH="/home/somisana/.local/bin:$PATH"
 ENV PIPENV_VENV_IN_PROJECT="enabled"
 ENV LANG="en_US.UTF-8"
-RUN pip install --user pipenv==2022.10.25
+RUN pip install --user pipenv==2023.2.4
 
 COPY --chown=somisana:somisana . .
 
-# Install "post-processing"
+# Bake the Toolkit CLI into the image
 RUN rm -rf .venv && mkdir .venv
 RUN pipenv sync
 
