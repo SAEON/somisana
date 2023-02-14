@@ -1,4 +1,10 @@
 import os
+from os.path import join
+from lib import CACHDIR
+
+OHW_BULK_CACHE = join(CACHDIR, 'ohw', 'thresholds', 'bulk')
+os.makedirs(OHW_BULK_CACHE, exist_ok=True)
+
 
 
 def create_thresholds(args):

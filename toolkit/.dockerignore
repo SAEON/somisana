@@ -1,3 +1,4 @@
 .output*
 .venv
 .env
+.cache

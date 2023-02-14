@@ -2,6 +2,7 @@ from environs import Env
 env = Env()
 
 PY_ENV = env.str('PY_ENV', 'development')
+CACHDIR = env.str('CACHDIR', False)
 
 PG_HOST = env.str('PG_HOST', 'localhost')
 PG_PORT = env.int('PG_PORT', 5432)
