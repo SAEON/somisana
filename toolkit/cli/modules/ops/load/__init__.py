@@ -8,7 +8,6 @@ from cli.modules.ops.load.coordinates import upsert as refresh_coordinates
 from cli.modules.ops.load.values import upsert as refresh_values
 from cli.modules.ops.load.finalize import run as finalize
 
-
 def load(args):
     start_time = datetime.now()
     model_config = None
@@ -121,7 +120,7 @@ def load(args):
             (run_date, model),
         ).fetchall()[0][0]
 
-    with open("cli/load/models.yml") as file:
+    with open("cli/modules/ops/load/models.yml") as file:
         model_config = yaml.load(file, yaml.Loader)["models"]
 
     if upsert_rasters:
