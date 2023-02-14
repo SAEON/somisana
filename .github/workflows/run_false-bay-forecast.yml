@@ -203,12 +203,13 @@ jobs:
               -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
               ${{ needs.toolkit.outputs.image }} \
-                -d \
-                  --gfs \
-                  --workdir /tmp/somisana/current/forcing-inputs \
-                  --matlab-env /tmp/somisana/current/.env \
-                  --download-date ${{ env.MODEL_RUN_DATE }} \
-                  --domain 15,24.5,-37,-31 
+                ops \
+                  download \
+                    --provider gfs \
+                    --workdir /tmp/somisana/current/forcing-inputs \
+                    --matlab-env /tmp/somisana/current/.env \
+                    --download-date ${{ env.MODEL_RUN_DATE }} \
+                    --domain 15,24.5,-37,-31 
       - name: Download Mercator
         uses: nick-fields/retry@master
         with:
@@ -227,12 +228,13 @@ jobs:
               -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
               ${{ needs.toolkit.outputs.image }} \
-                -d \
-                  --mercator \
-                  --workdir /tmp/somisana/current/forcing-inputs \
-                  --matlab-env /tmp/somisana/current/.env \
-                  --download-date ${{ env.MODEL_RUN_DATE }} \
-                  --domain 15,24.5,-37,-31 
+                ops \
+                  download \
+                    --provider mercator \
+                    --workdir /tmp/somisana/current/forcing-inputs \
+                    --matlab-env /tmp/somisana/current/.env \
+                    --download-date ${{ env.MODEL_RUN_DATE }} \
+                    --domain 15,24.5,-37,-31 
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
@@ -325,11 +327,12 @@ jobs:
             -v $(pwd)/models/false-bay-forecast/lib/grd.nc:/tmp/somisana/current/croco/forcing/grd.nc \
             -v $(pwd)/models/false-bay-forecast/lib/grd.nc.1:/tmp/somisana/current/croco/forcing/grd.nc.1 \
             ${{ needs.toolkit.outputs.image }} \
-              -t \
-                --grid-input-path /tmp/somisana/current/croco/forcing/grd.nc.1 \
-                --nc-input-path /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1 \
-                --nc-output-path /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --zarr-output-path /tmp/somisana/current/croco/forecast/${{ env.RUN_DATE }}.zarr
+              ops \
+                transform \
+                  --grid-input-path /tmp/somisana/current/croco/forcing/grd.nc.1 \
+                  --nc-input-path /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1 \
+                  --nc-output-path /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --zarr-output-path /tmp/somisana/current/croco/forecast/${{ env.RUN_DATE }}.zarr
 
   # Archive croco output and load zarr to HTTP-range server
   archive-data:
@@ -409,13 +412,14 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-rasters \
-                --upsert-coordinates \
-                --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --model false-bay-forecast \
-                --reload-data \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-rasters \
+                  --upsert-coordinates \
+                  --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --model false-bay-forecast \
+                  --reload-data \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 1 - 6
@@ -468,12 +472,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 1,6 \
-                --model false-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 1,6 \
+                  --model false-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 7 - 12
@@ -526,12 +531,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 7,12 \
-                --model false-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 7,12 \
+                  --model false-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 13 - 18
@@ -584,12 +590,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 13,18 \
-                --model false-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 13,18 \
+                  --model false-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 19 - 24
@@ -642,12 +649,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 19,24 \
-                --model false-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 19,24 \
+                  --model false-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 25 - 30
@@ -700,12 +708,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 25,30 \
-                --model false-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 25,30 \
+                  --model false-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 31 - 36
@@ -758,12 +767,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 31,36 \
-                --model false-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 31,36 \
+                  --model false-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   # Refresh the values table with new data
   # Depth levels 37 - 40
@@ -816,12 +826,13 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --upsert-values \
-                --depths 37,40 \
-                --model false-bay-forecast \
-                --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
-                --run-date ${{ env.RUN_DATE }}
+              ops \
+                load \
+                  --upsert-values \
+                  --depths 37,40 \
+                  --model false-bay-forecast \
+                  --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --run-date ${{ env.RUN_DATE }}
 
   gather-jobs:
     needs: [
@@ -902,6 +913,7 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }} \
-              -l \
-                --finalize-run \
-                --model false-bay-forecast
+              ops \
+                load \
+                  --finalize-run \
+                  --model false-bay-forecast

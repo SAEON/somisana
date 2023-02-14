@@ -9,13 +9,23 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_geopython
-  BRANCH_REF: stable
 
 jobs:
-  build:
+  # Dynamically set the branch ref to the currently executing branch
+  branch-ref:
     runs-on: ubuntu-latest
     outputs:
-      image: ${{ steps.meta.outputs.tags }}
+      value: ${{ steps.BRANCH_REF.outputs.value }}
+    steps:
+    - name: Set the BRANCH_REF
+      id: BRANCH_REF
+      run: echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+
+  build:
+    needs: [branch-ref]
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@master

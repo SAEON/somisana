@@ -3,27 +3,26 @@ import yaml
 from datetime import datetime
 from postgis import setup as installDb, drop as dropSchema, pool
 from config import PY_ENV
-from cli.load.raster2pgsql import register as refresh_rasters
-from cli.load.coordinates import upsert as refresh_coordinates
-from cli.load.values import upsert as refresh_values
-from cli.load.finalize import run as finalize
+from cli.modules.ops.load.raster2pgsql import register as refresh_rasters
+from cli.modules.ops.load.coordinates import upsert as refresh_coordinates
+from cli.modules.ops.load.values import upsert as refresh_values
+from cli.modules.ops.load.finalize import run as finalize
 
-
-def load(options, arguments):
+def load(args):
     start_time = datetime.now()
     model_config = None
 
-    model = options.model
-    model_data = options.model_data
-    run_date = options.run_date
-    drop_db = options.drop_db
-    reload_data = options.reload_data
-    upsert_rasters = options.upsert_rasters
-    upsert_coordinates = options.upsert_coordinates
-    upsert_values = options.upsert_values
-    depths = options.depths
-    install_db = options.install_db
-    finalize_run = options.finalize_run
+    model = args.model
+    model_data = args.model_data
+    run_date = args.run_date
+    drop_db = args.drop_db
+    reload_data = args.reload_data
+    upsert_rasters = args.upsert_rasters
+    upsert_coordinates = args.upsert_coordinates
+    upsert_values = args.upsert_values
+    depths = args.depths
+    install_db = args.install_db
+    finalize_run = args.finalize_run
 
     if (
         not upsert_rasters
@@ -121,7 +120,7 @@ def load(options, arguments):
             (run_date, model),
         ).fetchall()[0][0]
 
-    with open("cli/load/models.yml") as file:
+    with open("cli/modules/ops/load/models.yml") as file:
         model_config = yaml.load(file, yaml.Loader)["models"]
 
     if upsert_rasters:
