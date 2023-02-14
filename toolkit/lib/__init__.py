@@ -1,3 +1,3 @@
-from lib.cache import CACHDIR
+from lib.fetch import fetch
 
-__all__ = ["CACHDIR"]
+__all__ = ["fetch"]

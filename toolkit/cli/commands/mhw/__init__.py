@@ -20,8 +20,8 @@ def build(module_parser):
         help="Path to SST Thresholds NetCDF file",
     )
     mhw_start.add_argument(
-        "--nc-thresholds-src-dir",
-        default=".thresholds-src",
+        "--mhw-bulk-cache",
+        required=False,
         help="Path to directory containing back data (AVHRR OISST data from NOAA)",
     )
     mhw_start.add_argument(

@@ -20,6 +20,7 @@ psycopg-pool = "==3.1.6"
 pandas = "==1.5.3"
 natsort = "==8.2.0"
 matplotlib = "==3.6.3"
+aiohttp = "*"
 
 [dev-packages]
 
