@@ -69,6 +69,7 @@ def download(run_date, hdays, fdays, domain, workdir):
         if os.system(runcommand) != 0:
             raise Exception("Mercator download failed from cmd: " + runcommand)
         else:
+            # TODO - check the download using gdalinfo to make sure the headers display correctly
             print("mercator download completed", str(datetime.now() - startTime))
     else:
         print(

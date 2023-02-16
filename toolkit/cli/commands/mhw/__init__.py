@@ -15,6 +15,17 @@ def build(module_parser):
         "--nc-output-path", default=".output.nc", help="Path of NetCDF output path"
     )
     mhw_start.add_argument(
+        "--reset-cache",
+        action="store_true",
+        default=False,
+        help="Re-download data used for calculating thresholds",
+    )
+    mhw_start.add_argument(
+        "--domain",
+        help="Bounding box in 4326 projection (i.e. min_long,max_long,min_lat,max_lat)",
+        required=True,
+    )
+    mhw_start.add_argument(
         "--nc-thresholds-path",
         default=".thresholds.nc",
         help="Path to SST Thresholds NetCDF file",
@@ -22,12 +33,13 @@ def build(module_parser):
     mhw_start.add_argument(
         "--mhw-bulk-cache",
         required=False,
-        help="Path to directory containing back data (AVHRR OISST data from NOAA)",
+        help="Path to directory containing back data (AVHRR OISST data from NOAA) used to calculate thresholds NetCDF file",
     )
     mhw_start.add_argument(
         "--thresholds-expiry",
         type=int,
         choices=range(-1, 9999),
+        metavar="",
         default=100,
         help="Maximum age in days of thresholds, before requireing new thresholds be calculated (0, always expire the thresholds file. -1 == never expire the thresholds file)",
     )
