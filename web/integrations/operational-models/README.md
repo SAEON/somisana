@@ -1,5 +1,7 @@
 # TODO
-schedule a cleanup of public.values table. Currently the command must be run manually. Either this should be added to a CRON or specified in the web app. Be careful not to delete all the public.values rows in the case that this query gets run twice in quick succession
+schedule a cleanup of public.values table. Currently the command must be run manually. Either this should be added to a CRON or specified in the web app. Be careful not to delete all the public.values rows in the case that this query gets run twice in quick succession.
+
+This can definitely be simpliefied
 
 ```sh
 docker \
