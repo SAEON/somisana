@@ -1,10 +1,8 @@
 import os
-from asyncio import run
 from os.path import join
 from config import CACHDIR
-from lib import fetch
 from siphon.catalog import TDSCatalog
-from cli.modules.mhw.thresholds.catalogue import find_downloads, download_files
+from cli.modules.mhw.thresholds.catalogue import update_cache
 from cli.modules.mhw.thresholds.climatolgy import calculate_daily_clim
 
 MHW_BULK_CACHE = join(CACHDIR, "ohw", "thresholds", "bulk")
@@ -22,11 +20,11 @@ def create_thresholds(args):
         os.path.abspath(args.mhw_bulk_cache) if args.mhw_bulk_cache else MHW_BULK_CACHE
     )
     print("Searching ncie.noaa catalogues")
-    # catalog = TDSCatalog("{url}/catalog.xml".format(url=OISST_DATA))
-    # refs = catalog.catalog_refs
-    # files = run(find_downloads(refs, OISST_DATA))
-    # run(download_files(files, domain, mhw_bulk_cache, reset_cache))
-    # download_files(files, domain, mhw_bulk_cache, reset_cache)
+    catalog = TDSCatalog("{url}/catalog.xml".format(url=OISST_DATA))
+    refs = catalog.catalog_refs
+    print("Updating OISST repository with new data")
+    update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache)
+    print("Updating daily thresholds")
     calculate_daily_clim(domain, mhw_bulk_cache, nc_thresholds_path)
     exit()
 

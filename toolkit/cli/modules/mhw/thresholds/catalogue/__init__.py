@@ -1,3 +1,3 @@
-from cli.modules.mhw.thresholds.catalogue.update_cache import find_downloads, download_files
+from cli.modules.mhw.thresholds.catalogue.update_cache import update_cache
 
-__all__ = ['find_downloads', 'download_files']
+__all__ = ['update_cache']
