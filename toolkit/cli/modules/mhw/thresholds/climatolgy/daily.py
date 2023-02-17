@@ -4,39 +4,9 @@ import xarray as xr
 from glob import glob
 from natsort import natsorted
 
-
-def getDailyClim(daily_data, month_median, day_range):
-    moving_avg = xr.concat([daily_data[-month_median::], daily_data, daily_data[0:month_median]], dim="dayofyear")
-    moving_avg.dayofyear[0:month_median].values[:] = moving_avg.dayofyear[0:month_median].values - day_range
-    moving_avg.dayofyear[-month_median::].values[:] = moving_avg.dayofyear[-month_median::].values + day_range
-    ds_clim = np.empty(np.shape(daily_data))
-    # moving average over 31 days to make daily climatology
-    for i in np.arange(day_range):
-        ds_clim[i, :, :] = moving_avg[i : i + 31, :, :].mean(dim="dayofyear").values
-    ds_clim = xr.DataArray(data=ds_clim, dims=daily_data.dims, coords=daily_data.coords)
-    ds_clim.name = "sst_clim"
-    return ds_clim
-
-
-def getDailytres(sst, day_range, day_i_min, day_i_max, month_median):
-    ds_day = sst.groupby("time.dayofyear")
-    sst_shape = np.empty(np.shape(sst[0]))
-    daily_per = np.repeat(sst_shape[None, :], day_range, axis=0)
-    for i, day in enumerate(range(day_i_min, day_i_max)):
-        daily_per[i, :, :] = np.percentile(sst[ds_day.groups[day]], 90, axis=0)
-    crap = np.concatenate([daily_per[-month_median::], daily_per, daily_per[0:month_median]])
-    # moving average over 31 days to make daily climatology
-    ds_tres = np.repeat(sst_shape[None, :], day_range, axis=0)
-    for x in np.arange(day_range):
-        ds_tres[x, :, :] = crap[x : x + 31, :, :].mean(axis=0)
-    return ds_tres
-
-
 def calculate_daily_clim(domain, mhw_bulk_cache, nc_thresholds_path):
     mhw_bulk_cache = os.path.abspath(mhw_bulk_cache)
     west, east, south, north = domain
-    lat = "lat"
-    lon = "lon"
 
     # Selecting files in folder
     files = natsorted(glob(mhw_bulk_cache + "/*.nc"))
@@ -50,44 +20,78 @@ def calculate_daily_clim(domain, mhw_bulk_cache, nc_thresholds_path):
 
     # Computes the daily climatology using def below
     sst = sst_ds.sst
-    daily_data = sst.groupby("time.dayofyear").mean(dim="time")
-    day_i_min = daily_data.dayofyear[0].values
-    day_i_max = daily_data.dayofyear[-1].values
-    day_range = day_i_max - day_i_min
-    month_median = 15
-    ds_clim = getDailyClim(daily_data, month_median, day_range)
 
-    # Computes marine heat wave threshold
-    ds_tres = getDailytres(sst, day_range, day_i_min, day_i_max, month_median)
+    ############################################### 
+    #Computes the daily climatology using def below
+
+    # Find daily climatology
+    daily_clim_tmp = sst.groupby("time.dayofyear").mean(dim="time")
+
+    # Adding 15 days on each year of timeseries from beginning and end (need overlap for rolling mean 31 days)
+    daily_clim_pad = xr.concat([daily_clim_tmp[-15::],daily_clim_tmp,daily_clim_tmp[0:15]],dim='dayofyear')
+
+    # Find 31 day rolling mean of the climatology 
+    daily_clim = daily_clim_pad.rolling(dayofyear=31, center=15).mean().dropna("dayofyear")
+
+    ################################### 
+    #Computes marine heat wave threshold
+
+    # Group by day of year 
+    day_of_year = sst.groupby('time.dayofyear') 
+    day_of_year_values = daily_clim.dayofyear.values 
 
 
-    thres = ds_tres[:, :, :]
-    clim = ds_clim.values
+    #Still have to loop
+    #Create empty variable to populate
+    daily_percentile = np.zeros(np.shape(daily_clim))
+    count = 0
+    for i in np.arange(len(day_of_year)):
+        count = count+1
+        #Find 90th percentile
+        daily_percentile[i,:,:]=np.percentile(sst[day_of_year.groups[count]],90,axis=0)
+      
+    
+    #Convert back to xarray dataset (maybe lazy way)    
+    daily_percentile = xr.DataArray(daily_percentile, 
+                        dims=['dayofyear','lon','lat'], 
+                        coords=dict(
+                                    lon= lon.values,
+                                    lat= lat.values,
+                                    dayofyear=day_of_year_values,
+                                    ))
+
+    # Adding 15 days on each year of timeseries from beginning and end
+    daily_percentile_pad = xr.concat([daily_percentile[-15::],daily_percentile,daily_percentile[0:15]],dim='dayofyear')
+
+    # Find 31 day rolling mean of the climatology 
+    thres = daily_percentile_pad.rolling(dayofyear=31, center=15).mean().dropna("dayofyear")
+
+    #Laoding variables to add to netcdf file 
     day_of_year = ds_clim.dayofyear.values
     lon = ds_clim.lon.values
     lat = ds_clim.lat.values
 
-    # ds = xr.Dataset(
-    #     {
-    #         "clim": (["time", "latitude", "longitude"], clim),
-    #         "thres": (["time", "latitude", "longitude"], thres),
-    #     },
-    #     coords={
-    #         "day_of_yar": day_of_year,
-    #         "latitude": (["latitude"], lat),
-    #         "longitude": (["longitude"], lon),
-    #     },
-    # )
+    ds = xr.Dataset(
+         {
+             "clim": (["time", "latitude", "longitude"], daily_clim.values),
+             "thres": (["time", "latitude", "longitude"], thres.values),
+         },
+         coords={
+             "day_of_yar": day_of_year,
+             "latitude": (["latitude"], lat),
+             "longitude": (["longitude"], lon),
+         },
+     )
 
-    # ds.clim.attrs[
-    #     "comment"
-    # ] = "The daily climatology calculated on a 31 day moving average"
-    # ds.clim.attrs["units"] = "^oC"
+    ds.clim.attrs[
+         "comment"
+     ] = "The daily climatology calculated on a 31 day moving average"
+    ds.clim.attrs["units"] = "^oC"
 
-    # ds.thres.attrs[
-    #     "comment"
-    # ] = "The daily climatology calculated on a 31 day moving average"
-    # ds.thres.attrs["units"] = "^oC"
+    ds.thres.attrs[
+         "comment"
+     ] = "The daily climatology calculated on a 31 day moving average"
+    ds.thres.attrs["units"] = "^oC"
 
-    # # Saving dataset to saving path and filename
-    # ds.to_netcdf(nc_thresholds_path)
+    # Saving dataset to saving path and filename
+    ds.to_netcdf(nc_thresholds_path)
