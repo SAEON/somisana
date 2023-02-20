@@ -28,6 +28,7 @@ def create_thresholds(args):
         with Catalogue("{url}/catalog.xml".format(url=OISST_DATA)) as catalogue:
             refs = catalogue.catalog_refs
             update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, clear_cache)
+            print('OISST cache updated!')
 
     # Create thresholds from OISST cache
     calculate_daily_clim(domain, mhw_bulk_cache, nc_thresholds_path)

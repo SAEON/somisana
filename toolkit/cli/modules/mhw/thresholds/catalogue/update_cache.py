@@ -5,7 +5,7 @@ import aiofiles
 from config import PY_ENV
 from oisst import Catalogue
 
-MAX_CONCURRENT_NET_IO = 31
+MAX_CONCURRENT_NET_IO = 1000
 
 
 async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):
