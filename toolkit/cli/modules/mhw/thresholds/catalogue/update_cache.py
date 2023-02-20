@@ -5,6 +5,8 @@ import aiofiles
 from config import PY_ENV
 from oisst import Catalogue
 
+MAX_CONCURRENT_NET_IO = 31
+
 
 async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):
     uri = file["uri"]
@@ -40,26 +42,29 @@ async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):
     print("Completed", file_path)
 
 
-async def resolve_download_uris(ref, OISST_DATA, domain, mhw_bulk_cache, reset_cache):
-    print("{base}/{ref}".format(base=OISST_DATA, ref=ref), "Finding downloads")
-    url = "{url}/{ref}/catalog.xml".format(url=OISST_DATA, ref=ref)
-    async with Catalogue(url) as catalogue:
-        datasets = list(catalogue.datasets.values())
-        files = [
-            {"uri": dataset.access_urls["NetcdfSubset"], "name": dataset.name}
-            for dataset in datasets
-        ]
+async def resolve_download_uris(
+    semaphore, refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache
+):
+    tasks = []
+    for ref in refs:
+        async with Catalogue(
+            "{url}/{ref}/catalog.xml".format(url=OISST_DATA, ref=ref)
+        ) as catalogue:
+            datasets = list(catalogue.datasets.values())
+            files = [
+                {"uri": dataset.access_urls["NetcdfSubset"], "name": dataset.name}
+                for dataset in datasets
+            ]
 
-        # Allow for downloading one months worth of data concurrently
-        semaphore = asyncio.Semaphore(31)
-        tasks = []
-        for file in files:     
-            tasks.append(
-                asyncio.create_task(
-                    download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache)
+            for file in files:
+                tasks.append(
+                    asyncio.create_task(
+                        download_file(
+                            semaphore, file, domain, mhw_bulk_cache, reset_cache
+                        )
+                    )
                 )
-            )
-        await asyncio.gather(*tasks)
+    await asyncio.gather(*tasks)
 
 
 def update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache):
@@ -67,10 +72,11 @@ def update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache):
         print(
             "Warning! PY_ENV == development (for sanity sake, only a couple years of back data are checked)"
         )
-        refs = refs[:12]
-    for ref in refs:
-        asyncio.run(
-            resolve_download_uris(
-                ref, OISST_DATA, domain, mhw_bulk_cache, reset_cache
-            )
+        refs = refs[:24]
+
+    semaphore = asyncio.Semaphore(MAX_CONCURRENT_NET_IO)
+    asyncio.run(
+        resolve_download_uris(
+            semaphore, refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache
         )
+    )

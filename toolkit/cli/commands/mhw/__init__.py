@@ -21,6 +21,12 @@ def build(module_parser):
         help="Re-download data used for calculating thresholds",
     )
     mhw_start.add_argument(
+        "--skip-caching-oisst",
+        action="store_true",
+        default=False,
+        help="Skip checking for new OISST entries",
+    )
+    mhw_start.add_argument(
         "--domain",
         help="Bounding box in 4326 projection (i.e. min_long,max_long,min_lat,max_lat)",
         required=True,
