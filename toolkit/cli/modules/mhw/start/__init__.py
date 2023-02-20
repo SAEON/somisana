@@ -1,9 +1,9 @@
 import os
 import requests
-from datetime import date
+import time
 import datetime
 from cli.modules.mhw.thresholds import create_thresholds
-import time
+
 
 # (1) Generate thresholds if required (or use existing)
 # (2) Download today's SST
@@ -37,7 +37,7 @@ def start(args):
         create_thresholds(args)
 
     # Account for latency of the SST product
-    today = date.today()
+    today = datetime.date.today()
     yesterday = today - datetime.timedelta(days=2)
     n_day = yesterday.strftime("%d")
     long_day = yesterday.strftime("%j")

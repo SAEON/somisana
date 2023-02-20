@@ -2,8 +2,8 @@ import os
 import asyncio
 import aiohttp
 import aiofiles
-from siphon.catalog import TDSCatalog
 from config import PY_ENV
+from cli.modules.mhw.oisst import Catalogue
 
 
 async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):
@@ -43,28 +43,23 @@ async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):
 async def resolve_download_uris(ref, OISST_DATA, domain, mhw_bulk_cache, reset_cache):
     print("{base}/{ref}".format(base=OISST_DATA, ref=ref), "Finding downloads")
     url = "{url}/{ref}/catalog.xml".format(url=OISST_DATA, ref=ref)
-    catalogue = await asyncio.to_thread(TDSCatalog, url) # TODO add retries
-    datasets = list(catalogue.datasets.values())
-    print(
-        "{base}/{ref}".format(base=OISST_DATA, ref=ref),
-        "Found {i} files".format(i=len(datasets)),
-        "Updating cache...",
-    )
-    files = [
-        {"uri": dataset.access_urls["NetcdfSubset"], "name": dataset.name}
-        for dataset in datasets
-    ]
+    async with Catalogue(url) as catalogue:
+        datasets = list(catalogue.datasets.values())
+        files = [
+            {"uri": dataset.access_urls["NetcdfSubset"], "name": dataset.name}
+            for dataset in datasets
+        ]
 
-    # Allow for downloading one months worth of data concurrently
-    semaphore = asyncio.Semaphore(31)
-    tasks = []
-    for file in files:     
-        tasks.append(
-            asyncio.create_task(
-                download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache)
+        # Allow for downloading one months worth of data concurrently
+        semaphore = asyncio.Semaphore(31)
+        tasks = []
+        for file in files:     
+            tasks.append(
+                asyncio.create_task(
+                    download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache)
+                )
             )
-        )
-    await asyncio.gather(*tasks)
+        await asyncio.gather(*tasks)
 
 
 def update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache):

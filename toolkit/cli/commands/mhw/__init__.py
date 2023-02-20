@@ -15,7 +15,7 @@ def build(module_parser):
         "--nc-output-path", default=".output.nc", help="Path of NetCDF output path"
     )
     mhw_start.add_argument(
-        "--reset-cache",
+        "--clear-cache",
         action="store_true",
         default=False,
         help="Re-download data used for calculating thresholds",
