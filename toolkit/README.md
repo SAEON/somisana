@@ -113,6 +113,9 @@ sudo apt install postgis
 
 ### Run the script
 ```sh
+# In the toolkit directory, create the ".venv" directory. This hints to pipenv that you want your virtual environment to be local
+mkdir .venv
+
 # First install python dependencies
 pipenv install
 
