@@ -5,7 +5,8 @@ import aiofiles
 from config import PY_ENV
 from oisst import Catalogue
 
-MAX_CONCURRENT_NET_IO = 1000
+# Throttle to 31 concurrent HTTP requests ( +/- 1 months data)
+MAX_CONCURRENT_NET_IO = 31
 
 
 async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):
@@ -18,7 +19,6 @@ async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):
             print("Cache hit", file_path)
             return
 
-    print("Downloading", file_path)
     west, east, south, north = domain
     async with semaphore:
         async with aiohttp.ClientSession() as session:
@@ -39,31 +39,32 @@ async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):
                             break
                         await f.write(chunk)
 
-    print("Completed", file_path)
+    print("Downloaded", file_path)
 
 
 async def resolve_download_uris(
     semaphore, refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache
 ):
     tasks = []
-    for ref in refs:
-        async with Catalogue(
-            "{url}/{ref}/catalog.xml".format(url=OISST_DATA, ref=ref)
-        ) as catalogue:
-            datasets = list(catalogue.datasets.values())
-            files = [
-                {"uri": dataset.access_urls["NetcdfSubset"], "name": dataset.name}
-                for dataset in datasets
-            ]
+    async with semaphore:
+        for ref in refs:
+            async with Catalogue(
+                "{url}/{ref}/catalog.xml".format(url=OISST_DATA, ref=ref)
+            ) as catalogue:
+                datasets = list(catalogue.datasets.values())
+                files = [
+                    {"uri": dataset.access_urls["NetcdfSubset"], "name": dataset.name}
+                    for dataset in datasets
+                ]
 
-            for file in files:
-                tasks.append(
-                    asyncio.create_task(
-                        download_file(
-                            semaphore, file, domain, mhw_bulk_cache, reset_cache
+                for file in files:
+                    tasks.append(
+                        asyncio.create_task(
+                            download_file(
+                                semaphore, file, domain, mhw_bulk_cache, reset_cache
+                            )
                         )
                     )
-                )
     await asyncio.gather(*tasks)
 
 
@@ -74,7 +75,7 @@ def update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache):
         )
         refs = refs[:24]
 
-    semaphore = asyncio.Semaphore(MAX_CONCURRENT_NET_IO)
+    semaphore = asyncio.BoundedSemaphore(MAX_CONCURRENT_NET_IO)
     asyncio.run(
         resolve_download_uris(
             semaphore, refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache
