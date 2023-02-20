@@ -19,11 +19,13 @@ def create_thresholds(args):
     mhw_bulk_cache = (
         os.path.abspath(args.mhw_bulk_cache) if args.mhw_bulk_cache else MHW_BULK_CACHE
     )
+
+    # Update the OISST cache
     with Catalogue("{url}/catalog.xml".format(url=OISST_DATA)) as catalogue:
         refs = catalogue.catalog_refs
         update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, clear_cache)
-    exit()
 
+    # Create thresholds from OISST cache
     calculate_daily_clim(domain, mhw_bulk_cache, nc_thresholds_path)
 
     # Download the back SST data
