@@ -121,6 +121,10 @@ pipenv install
 
 # And then you can run the script
 pipenv run script
+
+# Or register the somisana alias
+# From the toolkit (or repo root) directory run:
+source env.sh
 ```
 
 ### Setup script-environment variables 
