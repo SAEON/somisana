@@ -3,7 +3,7 @@ import asyncio
 import aiohttp
 import aiofiles
 from config import PY_ENV
-from cli.modules.mhw.oisst import Catalogue
+from oisst import Catalogue
 
 
 async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):

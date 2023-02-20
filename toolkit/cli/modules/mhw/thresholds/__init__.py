@@ -3,7 +3,7 @@ from os.path import join
 from config import CACHDIR
 from cli.modules.mhw.thresholds.catalogue import update_cache
 from cli.modules.mhw.thresholds.climatolgy import calculate_daily_clim
-from cli.modules.mhw.oisst import Catalogue
+from oisst import Catalogue
 
 MHW_BULK_CACHE = join(CACHDIR, "ohw", "thresholds", "bulk")
 OISST_DATA = "https://www.ncei.noaa.gov/thredds/catalog/OisstBase/NetCDF/V2.1/AVHRR"
