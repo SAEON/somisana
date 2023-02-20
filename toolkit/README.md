@@ -39,7 +39,7 @@ The automatic installer concludes with instructions on adding something to `.bas
 ```sh
 # Make the pyenv CLI available via $PATH, and set $PYENV_VERSION
 export PATH="$HOME/.pyenv/bin:$PATH"
-export PYENV_VERSION=3.8.10
+export PYENV_VERSION=3.10.6
 
 # Configure pyenv virtual environment on shell start
 eval "$(pyenv init --path)"
@@ -56,7 +56,7 @@ Install and set a Python version via `pyenv` to use
 
 ```sh
 pyenv install --list
-pyenv install 3.11.1
+pyenv install $PYENV_VERSION
 ```
 
 ### Install pipenv (for dependency management/locks)
