@@ -56,7 +56,7 @@ def register(config, now, nc_input_path, raster, model, reload_data, runid):
     # So far as I'm aware there is no way to check uniqueness of rasters loaded
     # via raster2pgsql. This query should never fail as the table should be created
     # as part of the DDL specification (schema.sql)
-    if raster != 'time':
+    if raster != "time":
         return
     with pool().connection() as client:
         client.cursor().execute(
@@ -116,7 +116,7 @@ def register(config, now, nc_input_path, raster, model, reload_data, runid):
                 case "time":
                     attrs = ds[raster].attrs
                     initial_time = ds[raster][0].values
-                    timestamp = np.datetime_as_string(initial_time, unit='s')
+                    timestamp = np.datetime_as_string(initial_time, unit="s")
                     client.cursor().execute(
                         """
                         merge into public.runs t
@@ -131,9 +131,5 @@ def register(config, now, nc_input_path, raster, model, reload_data, runid):
                                 step1_timestamp = s.step1_timestamp::timestamp,
                                 timestep_attrs = s.timestep_attrs::json;
                         """,
-                        (
-                            runid,
-                            timestamp,
-                            json.dumps(attrs)
-                        ),
+                        (runid, timestamp, json.dumps(attrs)),
                     )
