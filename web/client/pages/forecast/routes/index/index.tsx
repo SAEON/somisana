@@ -15,6 +15,7 @@ import ColorBar from './controls/color-bar'
 import Map from './map'
 import Stack from '@mui/material/Stack'
 import RightMenu from './right-menu'
+import Timestamp from './controls/timestamp'
 
 export default ({ modelid = undefined }) => {
   const [ref, setRef] = useState(null)
@@ -37,6 +38,9 @@ export default ({ modelid = undefined }) => {
           <Div sx={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
             <Div sx={{ display: 'flex', flex: 1, flexDirection: 'row' }}>
               <Div sx={{ flex: 1 }} ref={el => setRef(el)}>
+                {/* FLOATING TIMESTAMP */}
+                <Timestamp />
+
                 {/* COLOR BAR */}
                 <ColorBar />
 

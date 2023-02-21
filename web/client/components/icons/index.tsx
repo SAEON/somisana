@@ -29,7 +29,28 @@ import {
   mdiSigmaLower,
   mdiScatterPlot,
   mdiTailwind,
+  mdiDragVertical,
+  mdiSkipBackward,
+  mdiSkipForward,
 } from '@mdi/js'
+
+export const SkipBackward = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiSkipBackward} />
+  </SvgIcon>
+))({})
+
+export const SkipForward = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiSkipForward} />
+  </SvgIcon>
+))({})
+
+export const DragVertical = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiDragVertical} />
+  </SvgIcon>
+))({})
 
 export const SigmaLower = styled((props: any) => (
   <SvgIcon {...props}>

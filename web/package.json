@@ -32,6 +32,7 @@
     "d3-contour": "^4.0.2",
     "d3-tricontour": "^1.0.2",
     "dataloader": "^2.2.2",
+    "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "echarts": "^5.4.1",
     "echarts-for-react": "^3.0.2",

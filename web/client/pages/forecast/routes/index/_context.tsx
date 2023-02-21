@@ -8,6 +8,7 @@ export const context = createContext({})
 export default ({ modelid = undefined, children }) => {
   const id = modelid || new URL(window.location.href).searchParams.get('id')
   const [timeStep, setTimeStep] = useState(120)
+  const [activeRun, setActiveRun] = useState(0)
   const [depth, setDepth] = useState(0)
   const [selectedCoordinate, setSelectedCoordinate] = useState(null)
   const [animateTimeStep, setAnimateTimeStep] = useState(false)
@@ -78,6 +79,9 @@ export default ({ modelid = undefined, children }) => {
         setTimeStep,
         animateTimeStep,
         setAnimateTimeStep,
+        runs: model?.runs,
+        activeRun,
+        setActiveRun,
         run,
         model,
         scaleMin,
