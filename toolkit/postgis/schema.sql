@@ -39,7 +39,9 @@ create table if not exists public.models (
   min_x float,
   max_x float,
   min_y float,
-  max_y float
+  max_y float,
+  convexhull geometry(Polygon, 3857),
+  envelope geometry(Polygon, 4326)
 );
 
 create table if not exists public.runs (
@@ -51,6 +53,9 @@ create table if not exists public.runs (
 
 create unique index concurrently if not exists unique_runs_per_model on public.runs using btree (run_date desc, modelid);
 
+/**
+ * TODO - move this to a CLI command
+ */
 merge into public.models t
 using (
   select
@@ -64,6 +69,39 @@ when not matched then
     when matched then
       update set
         title = s.title, description = s.description, creator = s.creator, creator_contact_email = s.creator_contact_email, type = s.type, grid_width = s.grid_width, grid_height = s.grid_height, sigma_levels = s.sigma_levels, min_x = s.min_x, max_x = s.max_x, min_y = s.min_y, max_y = s.max_y;
+
+/**
+ * TODO - move this to a CLI command
+ */
+merge into public.models t
+using (
+  select
+    t.id,
+    st_convexhull (t.coords)::geometry(Polygon, 3857) convexhull,
+    (st_makeenvelope (t.min_x, t.min_y, t.max_x, t.max_y, 4326))::geometry(Polygon, 4326) envelope
+  from (
+    select
+      m.id,
+      m.min_x,
+      m.max_x,
+      m.max_y,
+      m.min_y,
+      st_collect (c.coord) coords
+    from
+      public.coordinates c
+      join public.models m on m.id = c.modelid
+    group by
+      m.id,
+      m.min_x,
+      m.max_x,
+      m.min_y,
+      m.max_y
+  ) t
+) s on s.id = t.id
+when matched then
+  update set
+    convexhull = s.convexhull,
+    envelope = s.envelope;
 
 create table if not exists public.raster_xref_run (
   id int primary key generated always as identity,
@@ -117,76 +155,6 @@ alter table public.values set (autovacuum_vacuum_cost_limit = 5000);
 alter table public.values set (autovacuum_vacuum_threshold = 25000000);
 alter table public.values set (autovacuum_vacuum_insert_threshold = 25000000);
 alter table public.values set (autovacuum_analyze_threshold = 25000000);
-
-/**
- * VIEWS
- */
-drop view if exists public.metadata;
-
-create view public.metadata as
-select
-  modelid id,
-  name,
-  title,
-  description,
-  creator,
-  creator_contact_email,
-  type,
-  min_x,
-  max_x,
-  min_y,
-  max_y,
-  grid_width,
-  grid_height,
-  st_convexhull (coords)::geometry(Polygon, 3857) convexhull,
-  (st_makeenvelope (min_x, min_y, max_x, max_y, 4326))::geometry(Polygon, 4326) envelope,
-  (
-    select
-      json_agg(t_runs)
-    from (
-      select
-        *
-      from
-        runs
-      where
-        runs.modelid = t.modelid
-        and runs.successful = true
-      order by
-        runs.run_date desc
-      limit 10) t_runs) runs
-from (
-  select
-    c.modelid,
-    m.name,
-    m.title,
-    m.description,
-    m.creator,
-    m.creator_contact_email,
-    m.type,
-    m.grid_width,
-    m.grid_height,
-    m.min_x,
-    m.max_x,
-    m.max_y,
-    m.min_y,
-    st_collect (coord) coords
-  from
-    coordinates c
-    join models m on m.id = c.modelid
-  group by
-    modelid,
-    name,
-    title,
-    grid_width,
-    grid_height,
-    description,
-    creator,
-    creator_contact_email,
-    type,
-    min_x,
-    max_x,
-    min_y,
-    max_y) t;
 
 
 /**

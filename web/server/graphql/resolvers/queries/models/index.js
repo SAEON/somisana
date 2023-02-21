@@ -6,25 +6,42 @@ export default async (self, { id = undefined }, ctx) => {
   try {
     const models = (
       await client.query(`
-        select
-          id,
-          name,
-          title,
-          description,
-          creator,
-          creator_contact_email,
-          type,
-          min_x,
-          min_y,
-          max_x,
-          max_y,
-          grid_width,
-          grid_height,
-          st_asgeojson(convexhull) convexhull,
-          st_asgeojson(envelope) envelope,
-          runs,
-          'Model' "_gqlType"
-        from metadata;`)
+        select 
+          m.id, 
+          m.name, 
+          m.title, 
+          m.description, 
+          m.creator, 
+          m.creator_contact_email, 
+          m.type, 
+          m.min_x, 
+          m.min_y, 
+          m.max_x, 
+          m.max_y, 
+          m.grid_width, 
+          m.grid_height, 
+          st_asgeojson(m.convexhull) convexhull, 
+          st_asgeojson(m.envelope) envelope, 
+          'Model' "_gqlType", 
+          ( select 
+              json_agg(t_runs) 
+            from 
+              (
+                select 
+                  * 
+                from 
+                  runs 
+                where 
+                  runs.modelid = m.id 
+                  and runs.successful = true 
+                order by 
+                  runs.run_date desc 
+                limit 
+                  10
+              ) t_runs
+          ) runs 
+      from 
+        models m;`)
     ).rows
 
     return id ? [models.find(({ id: _id }) => _id == id)].filter(_ => _) : models
