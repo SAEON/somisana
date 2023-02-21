@@ -1,4 +1,5 @@
 import os
+import json
 from re import sub
 import xarray as xr
 import numpy as np
@@ -55,6 +56,8 @@ def register(config, now, nc_input_path, raster, model, reload_data, runid):
     # So far as I'm aware there is no way to check uniqueness of rasters loaded
     # via raster2pgsql. This query should never fail as the table should be created
     # as part of the DDL specification (schema.sql)
+    if raster != 'time':
+        return
     with pool().connection() as client:
         client.cursor().execute(
             """delete from public.rasters where filename = %s""",
@@ -111,6 +114,7 @@ def register(config, now, nc_input_path, raster, model, reload_data, runid):
         with xr.open_dataset(nc_input_path) as ds:
             match raster:
                 case "time":
+                    attrs = ds[raster].attrs
                     initial_time = ds[raster][0].values
                     timestamp = np.datetime_as_string(initial_time, unit='s')
                     client.cursor().execute(
@@ -119,14 +123,17 @@ def register(config, now, nc_input_path, raster, model, reload_data, runid):
                         using (
                             select
                                 %s runid,
-                                %s step1_timestamp
+                                %s step1_timestamp,
+                                %s timestep_attrs
                         ) s on s.runid = t.id
                         when matched then
                             update set
-                                step1_timestamp = s.step1_timestamp::timestamp;
+                                step1_timestamp = s.step1_timestamp::timestamp,
+                                timestep_attrs = s.timestep_attrs::json;
                         """,
                         (
                             runid,
                             timestamp,
+                            json.dumps(attrs)
                         ),
                     )

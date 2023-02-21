@@ -49,6 +49,7 @@ create table if not exists public.runs (
   run_date date not null,
   modelid smallint not null references public.models (id),
   step1_timestamp timestamp null,
+  timestep_attrs json null,
   successful boolean default null
 );
 
