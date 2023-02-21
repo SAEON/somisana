@@ -1,5 +1,7 @@
 import os
 from re import sub
+import xarray as xr
+import numpy as np
 from postgis import pool
 from datetime import datetime
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME, PY_ENV
@@ -102,3 +104,29 @@ def register(config, now, nc_input_path, raster, model, reload_data, runid):
                     runid,
                 ),
             )
+
+    # Register raster metadata in the run table
+    # This is configured per raster
+    with pool().connection() as client:
+        with xr.open_dataset(nc_input_path) as ds:
+            match raster:
+                case "time":
+                    initial_time = ds[raster][0].values
+                    timestamp = np.datetime_as_string(initial_time, unit='s')
+                    client.cursor().execute(
+                        """
+                        merge into public.runs t
+                        using (
+                            select
+                                %s runid,
+                                %s step1_timestamp
+                        ) s on s.runid = t.id
+                        when matched then
+                            update set
+                                step1_timestamp = s.step1_timestamp::timestamp;
+                        """,
+                        (
+                            runid,
+                            timestamp,
+                        ),
+                    )

@@ -48,6 +48,7 @@ create table if not exists public.runs (
   id smallint primary key generated always as identity,
   run_date date not null,
   modelid smallint not null references public.models (id),
+  step1_timestamp timestamp null,
   successful boolean default null
 );
 

@@ -182,7 +182,7 @@ def transform(args):
             "time": xr.Variable(
                 ["time"],
                 time_steps,
-                {"description": "Time steps in hours - TODO improve this description"},
+                {"description": "Time steps"},
             ),
         },
     )
