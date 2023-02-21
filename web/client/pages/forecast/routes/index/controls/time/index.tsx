@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { context as modelContext } from '../../_context'
 import Div from '../../../../../../components/div'
+import Span from '../../../../../../components/span'
 import Slider from './_slider'
 import { styled } from '@mui/material/styles'
 import IconButton_ from '@mui/material/IconButton'
@@ -15,22 +16,22 @@ export default () => {
   return (
     <Div sx={{ alignItems: 'center', position: 'relative', display: 'flex', flexDirection: 'row' }}>
       <Tooltip title="Go to previous time frame" placement="top-start">
-        <span>
+        <Span>
           <IconButton onClick={() => setTimeStep(t => t - 1)} disabled={timeStep <= 1} size="small">
             <SkipBack />
           </IconButton>
-        </span>
+        </Span>
       </Tooltip>
       <Tooltip title="Auto-increment time frames" placement="top-start">
-        <span>
+        <Span>
           <IconButton onClick={() => setAnimateTimeStep(v => !v)} size="small">
             {animateTimeStep && <Pause />}
             {!animateTimeStep && <Play />}
           </IconButton>
-        </span>
+        </Span>
       </Tooltip>
       <Tooltip title="Go to next time frame" placement="top-start">
-        <span>
+        <Span>
           <IconButton
             onClick={() => setTimeStep(t => t + 1)}
             disabled={timeStep >= 240}
@@ -39,7 +40,7 @@ export default () => {
           >
             <SkipNext />
           </IconButton>
-        </span>
+        </Span>
       </Tooltip>
       <Slider timeStep={timeStep} setTimeStep={setTimeStep} />
     </Div>
