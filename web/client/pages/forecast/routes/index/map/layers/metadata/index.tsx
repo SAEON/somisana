@@ -11,11 +11,11 @@ const Render = memo(({ TILESERV_BASE_URL, map, modelid }) => {
     map.addSource('metadata', {
       type: 'vector',
       tiles: [
-        `${TILESERV_BASE_URL}/public.metadata/{z}/{x}/{y}.pbf?filter=${encodeURIComponent(
+        `${TILESERV_BASE_URL}/public.models/{z}/{x}/{y}.pbf?filter=${encodeURIComponent(
           `id=${modelid}`
         )}`,
       ],
-      url: `${TILESERV_BASE_URL}/public.metadata.json`,
+      url: `${TILESERV_BASE_URL}/public.models.json`,
       promoteId: 'id',
     })
 
@@ -23,7 +23,7 @@ const Render = memo(({ TILESERV_BASE_URL, map, modelid }) => {
       id: 'metadata',
       type: 'line',
       source: 'metadata',
-      'source-layer': 'public.metadata',
+      'source-layer': 'public.models',
       paint: {
         'line-color': theme.palette.grey[900],
         'line-width': 1,
