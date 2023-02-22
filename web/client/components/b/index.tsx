@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles'
 
-const A = styled('a')({})
+const B = styled('b')({})
 
-export default A
+export default B

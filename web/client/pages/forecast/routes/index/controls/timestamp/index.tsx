@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography'
 import Span from '../../../../../../components/span'
 import { DragVertical as DragHandle } from '../../../../../../components/icons'
 import Divider from '@mui/material/Divider'
+import B from '../../../../../../components/b'
+import I from '../../../../../../components/i'
 
 export default () => {
   const { run, timeStep } = useContext(modelContext)
@@ -36,7 +38,7 @@ export default () => {
             cursor: 'move',
             boxShadow: theme => theme.shadows[3],
             px: 2,
-            py: 1.5,
+            py: 1,
             textAlign: 'center',
             display: 'flex',
             alignItems: 'center',
@@ -47,10 +49,12 @@ export default () => {
             fontSize="small"
             sx={{ position: 'relative', left: theme => `-${theme.spacing(1)}` }}
           />
-          <Typography variant="body1">{format(runDate, 'do MMM')}</Typography>
+          <Typography variant="overline">
+            <B>{format(runDate, 'dd MMM yyyy')}</B>
+          </Typography>
           <Divider sx={{ mx: 1 }} flexItem orientation="vertical" />
-          <Typography variant="body1">
-            {run?.step1_timestamp ? format(ts, 'HH:mm dd MMM yyyy') : 'Missing timestamp'}
+          <Typography variant="overline">
+            <I>{run?.step1_timestamp ? format(ts, 'MMM dd HH:mm ') : 'Missing timestamp'}</I>
           </Typography>
         </Paper>
       </Draggable>
