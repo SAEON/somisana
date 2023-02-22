@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-
+import format from 'date-fns/format'
+import add from 'date-fns/add'
 import Slider from '@mui/material/Slider'
 
-export default ({ timeStep, setTimeStep }) => {
+export default ({ timeStep, setTimeStep, t0 }) => {
   const [step, setStep] = useState(timeStep)
 
   useEffect(() => {
@@ -31,7 +32,16 @@ export default ({ timeStep, setTimeStep }) => {
       value={step}
       onChange={(_, val) => setStep(val)}
       onChangeCommitted={(_, val) => setTimeStep(val)}
-      valueLabelFormat={val => `TIMESTAMP ${val}`}
+      valueLabelFormat={val =>
+        t0.constructor === Date
+          ? format(
+              add(t0, {
+                hours: val - 1,
+              }),
+              'MMM dd HH:mm'
+            )
+          : val
+      }
     />
   )
 }

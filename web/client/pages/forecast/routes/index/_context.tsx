@@ -2,6 +2,16 @@ import { createContext, useState, useCallback, useEffect } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Linear as Loading } from '../../../../components/loading'
 import { color as colorFn } from './controls/color-bar/config'
+import format from 'date-fns/format'
+import add from 'date-fns/add'
+
+const fixStep1_timestamp = (i, step1_timestamp) => {
+  const step1Timestamp = new Date(step1_timestamp)
+  const dt = add(step1Timestamp, {
+    days: -i,
+  })
+  return `${format(dt, 'yyyy-MM-dd')}T${format(dt, 'HH:mm:ss')}`
+}
 
 export const context = createContext({})
 
@@ -65,8 +75,27 @@ export default ({ modelid = undefined, children }) => {
     throw error
   }
 
+  /**
+   * Updates to the system often involve
+   * more recent runs having additional run
+   * metadata. Assume that new information in
+   * the most recent run applies to the older
+   * runs
+   */
   const model = data.models.find(({ _id }) => _id == id)
-  const run = model?.runs[0] || {}
+  const runs = [...(model?.runs || [])].map((r, i) => {
+    r = Object.fromEntries(
+      Object.entries(r).filter(([, value]) => {
+        return Boolean(value)
+      })
+    )
+    const mostRecentRun = model?.runs[0] || {}
+    if (!r.step1_timestamp) {
+      r.step1_timestamp = fixStep1_timestamp(i, mostRecentRun.step1_timestamp)
+    }
+    return { ...mostRecentRun, ...r }
+  })
+  const run = runs[activeRun]
 
   return (
     <context.Provider
@@ -79,10 +108,10 @@ export default ({ modelid = undefined, children }) => {
         setTimeStep,
         animateTimeStep,
         setAnimateTimeStep,
-        runs: model?.runs,
+        runs,
+        run,
         activeRun,
         setActiveRun,
-        run,
         model,
         scaleMin,
         scaleMax,

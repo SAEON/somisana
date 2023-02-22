@@ -12,8 +12,8 @@ import B from '../../../../../../components/b'
 import I from '../../../../../../components/i'
 
 export default () => {
-  const { run, timeStep } = useContext(modelContext)
-
+  const { runs, timeStep, activeRun } = useContext(modelContext)
+  const run = runs[activeRun]
   const stepDifference = timeStep - 1
   const startTime = new Date(run?.step1_timestamp)
   const ts = add(startTime, {
@@ -29,12 +29,14 @@ export default () => {
         display: 'flex',
         justifyContent: 'center',
         width: '100%',
-        mt: 3,
+        top: theme => theme.spacing(-8),
       }}
     >
       <Draggable handle="#draggable-time-info">
         <Paper
           sx={{
+            position: 'relative',
+            top: theme => theme.spacing(11),
             cursor: 'move',
             boxShadow: theme => theme.shadows[3],
             px: 2,
@@ -50,11 +52,13 @@ export default () => {
             sx={{ position: 'relative', left: theme => `-${theme.spacing(1)}` }}
           />
           <Typography variant="overline">
-            <B>{format(runDate, 'dd MMM yyyy')}</B>
+            <B>Run: {format(runDate, 'dd MMM yyyy')}</B>
           </Typography>
           <Divider sx={{ mx: 1 }} flexItem orientation="vertical" />
           <Typography variant="overline">
-            <I>{run?.step1_timestamp ? format(ts, 'MMM dd HH:mm ') : 'Missing timestamp'}</I>
+            <I>
+              Forecast: {run?.step1_timestamp ? format(ts, 'MMM dd HH:mm') : 'Missing timestamp'}
+            </I>
           </Typography>
         </Paper>
       </Draggable>

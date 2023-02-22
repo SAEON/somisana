@@ -16,6 +16,8 @@ const PaperComponent = (props: PaperProps) => (
   </Draggable>
 )
 
+const showFields = ['max_x', 'max_y', 'min_x', 'min_y', 'gridWidth', 'gridHeight'].sort()
+
 export default () => {
   const [open, setOpen] = useState(false)
   const {
@@ -41,7 +43,7 @@ export default () => {
         </DialogTitle>
         <DialogContent dividers>
           <Typography gutterBottom>{description}</Typography>
-          <pre>{JSON.stringify(model, null, 2)}</pre>
+          <pre>{showFields.map(f => `${f}: ${model[f]}`).join('\n')}</pre>
         </DialogContent>
       </Dialog>
     </>
