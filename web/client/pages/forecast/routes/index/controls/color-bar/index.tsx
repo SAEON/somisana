@@ -107,13 +107,7 @@ const Render = memo(({ scaleMin, scaleMax, color, selectedVariable }) => {
 })
 
 export default () => {
-  const {
-    scaleMin,
-    scaleMax,
-
-    color,
-    selectedVariable,
-  } = useContext(pageContext)
+  const { scaleMin, scaleMax, color, selectedVariable } = useContext(pageContext)
   return (
     <Render
       scaleMin={scaleMin}
