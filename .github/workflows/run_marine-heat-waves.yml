@@ -97,7 +97,7 @@ jobs:
       CACHDIR: ${{ steps.CACHDIR.outputs.CACHDIR}}
       WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
     env:
-      dirname: ${{ needs.envs.outputs.RUNDATE }}
+      dirname: ${{ needs.envs.outputs.RUN_DATE }}
       branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Create /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/${{ env.dirname }} directory structure
