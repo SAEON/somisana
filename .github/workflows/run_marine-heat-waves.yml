@@ -84,17 +84,13 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   # Create a tmp folder structure for mode run assets. The format is:
+  ## oisst/
   ## YYYYMMDD/
-  ##  - forcing-inputs/
-  ##  - croco/
-  ##     - forcing/
-  ##     - forecast/
-  ##     - scratch/
   workdir:
     needs: [envs]
     runs-on: somisana
     outputs:
-      CACHDIR: ${{ steps.CACHDIR.outputs.CACHDIR}}
+      CACHDIR: ${{ steps.WORKDIR.outputs.CACHDIR}}
       WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
     env:
       dirname: ${{ needs.envs.outputs.RUN_DATE }}
@@ -106,8 +102,34 @@ jobs:
           mkdir -p /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
           chown -R :runners /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
           chmod -R 774 /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
-      - name: Set WORKDIRs
+      - name: Set directories
         id: WORKDIR
         run: |
           echo "CACHDIR=/home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/oisst" >> $GITHUB_OUTPUT
           echo "WORKDIR=/home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
+
+  normalize-output:
+    needs: [branch-ref, toolkit, envs, workdir]
+    runs-on: somisana
+    env:
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+      CACHDIR: ${{ needs.workdir.outputs.CACHDIR }}
+      RUN_DATE: ${{ needs.envs.outputs.RUN_DATE }}
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@master
+        with:
+          ref: ${{ env.BRANCH_REF }}
+      - name: Run the MHW thresholds script
+        run: >-
+          docker run \
+            --rm \
+            -v $WORKDIR:/tmp/somisana/current \
+            -v $CACHDIR:/tmp/somisana/cache \
+            ${{ needs.toolkit.outputs.image }} \
+              mhw \
+                start \
+                  --domain 9,12,-40,-11 \
+                  --nc-thresholds-path /tmp/somisana/current/thresholds.nc \
+                  --mhw-bulk-cache /tmp/somisana/cache/ \
+                  --nc-mhw-output-path /tmp/somisana/current/mhw-${{ env.RUN_DATE }}.nc 

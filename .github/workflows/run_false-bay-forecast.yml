@@ -149,19 +149,11 @@ jobs:
       branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Create /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} directory structure
-        run: >-
-          rm -rf /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} \
-          && mkdir \
-            -p \
-            /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch},forcing-inputs} \
-          && chown \
-            -R \
-            :runners \
-            /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} \
-          && chmod \
-            -R \
-            774 \
-            /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
+        run: |
+          rm -rf /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
+          mkdir -p /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch},forcing-inputs}
+          chown -R :runners /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
+          chmod -R 774 /home/runner/somisana/false-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
       - name: Set WORKDIRs
         id: WORKDIR
         run: |
