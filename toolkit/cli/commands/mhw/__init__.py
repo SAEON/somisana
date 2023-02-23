@@ -37,6 +37,11 @@ def build(module_parser):
         help="Path to SST Thresholds NetCDF file",
     )
     mhw_start.add_argument(
+        "--nc-mhw-output-path",
+        default=".marine-heat-waves.nc",
+        help="Path to SST Marine Heat Waves events NetCDF file",
+    )
+    mhw_start.add_argument(
         "--mhw-bulk-cache",
         required=False,
         help="Path to directory containing back data (AVHRR OISST data from NOAA) used to calculate thresholds NetCDF file",

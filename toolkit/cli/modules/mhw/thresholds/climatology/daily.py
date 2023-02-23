@@ -4,9 +4,8 @@ import xarray as xr
 from glob import glob
 from natsort import natsorted
 
-def calculate_daily_clim(domain, mhw_bulk_cache, nc_thresholds_path):
+def calculate_daily_clim(mhw_bulk_cache, nc_thresholds_path):
     mhw_bulk_cache = os.path.abspath(mhw_bulk_cache)
-    west, east, south, north = domain
 
     # Selecting files in folder
     files = natsorted(glob(mhw_bulk_cache + "/*.nc"))

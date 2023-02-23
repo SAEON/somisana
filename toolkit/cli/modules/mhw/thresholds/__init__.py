@@ -2,8 +2,8 @@ import os
 from os.path import join
 from config import CACHDIR
 from cli.modules.mhw.thresholds.catalogue import update_cache
-from cli.modules.mhw.thresholds.climatolgy import calculate_daily_clim
-from cli.modules.mhw.thresholds.climatolgy import calculate_mhw
+from cli.modules.mhw.thresholds.climatology import calculate_daily_clim
+from cli.modules.mhw.thresholds.climatology import calculate_mhw
 from oisst import Catalogue
 
 MHW_BULK_CACHE = join(CACHDIR, "ohw", "thresholds", "bulk")
@@ -15,6 +15,7 @@ os.makedirs(MHW_BULK_CACHE, exist_ok=True)
 
 def create_thresholds(args):
     nc_thresholds_path = os.path.abspath(args.nc_thresholds_path)
+    nc_mhw_output_path = os.path.abspath(args.nc_mhw_output_path)
     domain = [float(x) for x in args.domain.split(",")]
     skip_caching_oisst = args.skip_caching_oisst
     clear_cache = args.clear_cache
@@ -32,15 +33,8 @@ def create_thresholds(args):
             print('OISST cache updated!')
 
     # Create thresholds from OISST cache
-    calculate_daily_clim(domain, mhw_bulk_cache, nc_thresholds_path)
+    calculate_daily_clim(mhw_bulk_cache, nc_thresholds_path)
 
     # Create mhw output classifications of cached data? or part of cache data?
-    calculate_mhw(domain, mhw_bulk_cache, nc_thresholds_path)
-
-
-
-    # Download the back SST data
-    # Then figure out the logic of updating the cache
-
-    # Download new SST data
-    # Generate new thresholds file
+    calculate_mhw(mhw_bulk_cache, nc_thresholds_path, nc_mhw_output_path)
+    print("""Marine Heat Wave events saved to {filename}""". format(filename=args.nc_mhw_output_path))
