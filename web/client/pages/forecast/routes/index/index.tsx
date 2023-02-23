@@ -1,8 +1,7 @@
-import { Suspense, useState, useEffect } from 'react'
+import { Suspense, useState, useEffect, lazy } from 'react'
 import { Linear as Loading } from '../../../../components/loading'
 import Div from '../../../../components/div'
 import Paper from '@mui/material/Paper'
-import ModelProvider from './_context'
 import BandDataProvider from './band-data'
 import { ToggleDepth } from './controls/depth'
 import ToggleTemperature from './controls/toggle-temperature'
@@ -16,6 +15,8 @@ import Map from './map'
 import Stack from '@mui/material/Stack'
 import RightMenu from './right-menu'
 import Timestamp from './controls/timestamp'
+
+const ModelProvider = lazy(() => import('./_context'))
 
 export default ({ modelid = undefined }) => {
   const [ref, setRef] = useState(null)

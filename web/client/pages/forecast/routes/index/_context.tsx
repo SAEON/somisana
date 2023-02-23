@@ -21,6 +21,7 @@ export default ({ modelid = undefined, children }) => {
   const [activeRun, setActiveRun] = useState(0)
   const [depth, setDepth] = useState(0)
   const [selectedCoordinate, setSelectedCoordinate] = useState(null)
+  const [thresholds, setThresholds] = useState(12)
   const [animateTimeStep, setAnimateTimeStep] = useState(false)
   const [scaleMin, setScaleMin] = useState(false)
   const [scaleMax, setScaleMax] = useState(false)
@@ -112,6 +113,8 @@ export default ({ modelid = undefined, children }) => {
         run,
         activeRun,
         setActiveRun,
+        thresholds,
+        setThresholds,
         model,
         scaleMin,
         scaleMax,

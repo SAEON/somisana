@@ -5,6 +5,7 @@ import MenuItem from '@mui/material/MenuItem'
 import ListSubheader from '@mui/material/ListSubheader'
 import Canvas from '../../../../../../../components/canvas'
 import Tooltip from '@mui/material/Tooltip'
+import { ExpandMore as ChevronDownIcon } from '../../../../../../../components/icons'
 
 // https://observablehq.com/@d3/color-schemes
 
@@ -68,7 +69,7 @@ export const SelectControl = ({ colorScheme, setColorScheme, min, max }) => {
   return (
     <Select
       size="small"
-      IconComponent={null}
+      IconComponent={ChevronDownIcon}
       labelId="select-color-label"
       id="select-color"
       value={colorScheme}

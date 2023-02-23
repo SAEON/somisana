@@ -22,6 +22,16 @@ export default ({ container }) => {
           },
         }
       )
+      enqueueSnackbar(
+        'Configure color scale, min/max, and contouring thresholds in the settings menu',
+        {
+          variant: 'default',
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'left',
+          },
+        }
+      )
       setNoticeSeen(true)
     }
   }, [noticeSeen])

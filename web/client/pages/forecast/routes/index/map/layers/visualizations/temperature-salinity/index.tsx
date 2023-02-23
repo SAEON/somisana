@@ -20,13 +20,14 @@ const Render = memo(
     setTimeStep,
     animateTimeStep,
     selectedVariable,
+    thresholds,
     grid,
   }) => {
     const theme = useTheme()
     const id = 'contour-layer'
 
     const polygons = contours()
-      .thresholds(24)
+      .thresholds(thresholds)
       .size([gridWidth, gridHeight])(grid[selectedVariable])
       .map(z => {
         return {
@@ -128,11 +129,13 @@ export default ({ data, grid }) => {
     setTimeStep,
     animateTimeStep,
     selectedVariable,
+    thresholds,
   } = useContext(pageContext)
 
   return (
     <Render
       map={map}
+      thresholds={thresholds}
       gridWidth={gridWidth}
       gridHeight={gridHeight}
       scaleMin={scaleMin}

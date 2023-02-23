@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react'
-import { context as pageContext } from '../../../_context'
+import { context as modelContext } from '../../../_context'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import Dialog from '@mui/material/Dialog'
@@ -25,8 +25,16 @@ const PaperComponent = (props: PaperProps) => (
 )
 
 export default () => {
-  const { scaleMin, scaleMax, setScaleMin, setScaleMax, colorScheme, setColorScheme } =
-    useContext(pageContext)
+  const {
+    scaleMin,
+    scaleMax,
+    setScaleMin,
+    setScaleMax,
+    colorScheme,
+    setColorScheme,
+    thresholds,
+    setThresholds,
+  } = useContext(modelContext)
   const [open, setOpen] = useState(false)
 
   const title = 'Colour range configuration'
@@ -69,22 +77,43 @@ export default () => {
             />
           </FormControl>
           <Q
-            effects={debounce(({ _scaleMin, _scaleMax }) => {
+            effects={debounce(({ _scaleMin, _scaleMax, _thresholds }) => {
+              const ts =
+                typeof _thresholds === 'number'
+                  ? _thresholds
+                  : parseFloat(_thresholds.replace(/,/g, '.'))
               const min =
                 typeof _scaleMin === 'number' ? _scaleMin : parseFloat(_scaleMin.replace(/,/g, '.'))
               const max =
                 typeof _scaleMax === 'number' ? _scaleMax : parseFloat(_scaleMax.replace(/,/g, '.'))
 
               if (!isNaN(min) && !isNaN(max) && max >= min) {
-                setScaleMin(min)
-                setScaleMax(max)
+                if (scaleMin !== min) setScaleMin(min)
+                if (scaleMax !== max) setScaleMax(max)
+              }
+
+              if (!isNaN(ts) && ts !== thresholds) {
+                setThresholds(ts)
               }
             }, 500)}
             _scaleMin={scaleMin}
             _scaleMax={scaleMax}
+            _thresholds={thresholds}
           >
-            {(update, { _scaleMin, _scaleMax }) => (
+            {(update, { _scaleMin, _scaleMax, _thresholds }) => (
               <>
+                <TextField
+                  sx={{ flex: 2 }}
+                  fullWidth
+                  variant="outlined"
+                  label="Thresholds"
+                  type="number"
+                  margin="normal"
+                  size="small"
+                  value={_thresholds}
+                  placeholder="Auto"
+                  onChange={({ target: { value: _thresholds } }) => update({ _thresholds })}
+                />
                 <TextField
                   sx={{ flex: 2 }}
                   fullWidth
