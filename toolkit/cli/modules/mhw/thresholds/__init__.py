@@ -3,6 +3,7 @@ from os.path import join
 from config import CACHDIR
 from cli.modules.mhw.thresholds.catalogue import update_cache
 from cli.modules.mhw.thresholds.climatolgy import calculate_daily_clim
+from cli.modules.mhw.thresholds.climatolgy import calculate_mhw
 from oisst import Catalogue
 
 MHW_BULK_CACHE = join(CACHDIR, "ohw", "thresholds", "bulk")
@@ -32,6 +33,11 @@ def create_thresholds(args):
 
     # Create thresholds from OISST cache
     calculate_daily_clim(domain, mhw_bulk_cache, nc_thresholds_path)
+
+    # Create mhw output classifications of cached data? or part of cache data?
+    calculate_mhw(domain, mhw_bulk_cache, nc_thresholds_path)
+
+
 
     # Download the back SST data
     # Then figure out the logic of updating the cache

@@ -11,65 +11,68 @@ def calculate_daily_clim(domain, mhw_bulk_cache, nc_thresholds_path):
     # Selecting files in folder
     files = natsorted(glob(mhw_bulk_cache + "/*.nc"))
 
-    # Importing data through loop saving memory
-    sst_ds = xr.open_mfdataset(files)
+    # Importing data through loop saving memory (Seems like there is a issue with rolling means and xarray https://github.com/pydata/xarray/issues/3277 need to loop the load)
+    list_of_arrays = []
+    for file in files:
+        ds = xr.open_dataset(file)
+        list_of_arrays.append(np.squeeze(ds['sst']))
+       
+    sst_ds = xr.concat(list_of_arrays[0:len(list_of_arrays)],dim='time')
+
+    #Dropping empty dimesion zlev
+    sst_ds = sst_ds.drop_vars('zlev')
+    #Add a fill values as the rolling mean can't handle the land values
+    sst_ds = sst_ds.fillna(9999)
 
     # # loading lon and lat
-    # lon = ds.lon.values
-    # lat = ds.lat.values
-
-    # Computes the daily climatology using def below
-    sst = sst_ds.sst
+    lon = sst_ds.lon.values
+    lat = sst_ds.lat.values
 
     ############################################### 
-    #Computes the daily climatology using def below
+    #Computes the daily climatology
 
     # Find daily climatology
-    daily_clim_tmp = sst.groupby("time.dayofyear").mean(dim="time")
-
+    daily_clim_tmp = sst_ds.groupby("time.dayofyear").mean(dim="time")
     # Adding 15 days on each year of timeseries from beginning and end (need overlap for rolling mean 31 days)
     daily_clim_pad = xr.concat([daily_clim_tmp[-15::],daily_clim_tmp,daily_clim_tmp[0:15]],dim='dayofyear')
-
-    # Find 31 day rolling mean of the climatology 
+    #print(daily_clim_pad)
+    # Find 31 day rolling mean of the climatology
     daily_clim = daily_clim_pad.rolling(dayofyear=31, center=15).mean().dropna("dayofyear")
-
+    #print(daily_clim)
     ################################### 
     #Computes marine heat wave threshold
 
     # Group by day of year 
-    day_of_year = sst.groupby('time.dayofyear') 
+    day_of_year = sst_ds.groupby('time.dayofyear') 
     day_of_year_values = daily_clim.dayofyear.values 
-
 
     #Still have to loop
     #Create empty variable to populate
     daily_percentile = np.zeros(np.shape(daily_clim))
     count = 0
-    for i in np.arange(len(day_of_year)):
-        count = count+1
+
+    #Loop through days of year not indices 
+    for i in day_of_year_values:
         #Find 90th percentile
-        daily_percentile[i,:,:]=np.percentile(sst[day_of_year.groups[count]],90,axis=0)
-      
-    
+        daily_percentile[count,:,:]=np.percentile(sst_ds[day_of_year.groups[i]],90,axis=0)
+        count = count+1
+
     #Convert back to xarray dataset (maybe lazy way)    
     daily_percentile = xr.DataArray(daily_percentile, 
-                        dims=['dayofyear','lon','lat'], 
+                       dims=['dayofyear','lat','lon'], 
                         coords=dict(
-                                    lon= lon.values,
-                                    lat= lat.values,
-                                    dayofyear=day_of_year_values,
+                                   lat= lat,
+                                   lon= lon,
+                                   dayofyear=day_of_year_values,
                                     ))
-
     # Adding 15 days on each year of timeseries from beginning and end
     daily_percentile_pad = xr.concat([daily_percentile[-15::],daily_percentile,daily_percentile[0:15]],dim='dayofyear')
-
     # Find 31 day rolling mean of the climatology 
     thres = daily_percentile_pad.rolling(dayofyear=31, center=15).mean().dropna("dayofyear")
-
-    #Laoding variables to add to netcdf file 
-    day_of_year = ds_clim.dayofyear.values
-    lon = ds_clim.lon.values
-    lat = ds_clim.lat.values
+    ################################### 
+    #Replace fill values with nans
+    daily_clim = daily_clim.where(daily_clim < 9998, np.nan)
+    thres = thres.where(thres < 9998, np.nan)
 
     ds = xr.Dataset(
          {
@@ -77,7 +80,7 @@ def calculate_daily_clim(domain, mhw_bulk_cache, nc_thresholds_path):
              "thres": (["time", "latitude", "longitude"], thres.values),
          },
          coords={
-             "day_of_yar": day_of_year,
+             "day_of_year": day_of_year_values,
              "latitude": (["latitude"], lat),
              "longitude": (["longitude"], lon),
          },
@@ -95,3 +98,5 @@ def calculate_daily_clim(domain, mhw_bulk_cache, nc_thresholds_path):
 
     # Saving dataset to saving path and filename
     ds.to_netcdf(nc_thresholds_path)
+    print('daily clim finished')
+    

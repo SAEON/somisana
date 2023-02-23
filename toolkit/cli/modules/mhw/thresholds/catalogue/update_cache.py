@@ -73,7 +73,7 @@ def update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache):
         print(
             "Warning! PY_ENV == development (for sanity sake, only a couple years of back data are checked)"
         )
-        refs = refs[:24]
+        refs = refs[:44]
 
     semaphore = asyncio.BoundedSemaphore(MAX_CONCURRENT_NET_IO)
     asyncio.run(
