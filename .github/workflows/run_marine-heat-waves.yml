@@ -108,7 +108,7 @@ jobs:
           echo "CACHDIR=/home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/oisst" >> $GITHUB_OUTPUT
           echo "WORKDIR=/home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
 
-  normalize-output:
+  calculate-thresholds:
     needs: [branch-ref, toolkit, envs, workdir]
     runs-on: somisana
     env:
@@ -132,4 +132,28 @@ jobs:
                   --domain 9,12,-40,-11 \
                   --nc-thresholds-path /tmp/somisana/current/thresholds.nc \
                   --mhw-bulk-cache /tmp/somisana/cache/ \
-                  --nc-mhw-output-path /tmp/somisana/current/mhw-${{ env.RUN_DATE }}.nc 
+                  --nc-mhw-output-path /tmp/somisana/current/mhw-${{ env.RUN_DATE }}.nc
+
+  # Upload the combined thresholds and Marine Heat Waves events data to Mnemosyne
+  archive-output:
+    needs: [normalize-output, workdir, envs]
+    runs-on: somisana
+    env:
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+      RUN_DATE: ${{ needs.envs.outputs.RUN_DATE }}
+    steps:
+      - name: Load $PATH
+        run: |
+          source ~/.bashrc
+      - name: Upload Zarr to mnemosyne HTTP-range server
+        continue-on-error: false
+        run: >-
+          cat ${{ env.WORKDIR}}/${{ env.RUN_DATE }}/mhw-${{ env.RUN_DATE }}.nc \
+            | curl \
+              --silent \
+              --keepalive-time 1200 \
+              -X PUT \
+              -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+              --data-binary @- \
+              -H "Content-Type: application/octet-stream" \
+              https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc
