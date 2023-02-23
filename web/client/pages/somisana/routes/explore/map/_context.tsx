@@ -18,7 +18,7 @@ export default ({ children }) => {
     () =>
       new Map({
         ground: {
-          layers: [new ExaggeratedElevationLayer({ exaggeration: 1 })],
+          layers: [new ExaggeratedElevationLayer({ exaggeration: 10 })],
         },
         basemap: ESRI_BASEMAP,
         layers: [],

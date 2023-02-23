@@ -6,7 +6,7 @@
   "author": "zd.smith@saeon.nrf.ac.za",
   "dependencies": {
     "@apollo/client": "3.7.9",
-    "@arcgis/core": "^4.25.5",
+    "@arcgis/core": "^4.26.0",
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.10.6",
     "@emotion/server": "^11.10.0",
