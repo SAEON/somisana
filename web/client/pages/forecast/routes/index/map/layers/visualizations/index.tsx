@@ -1,10 +1,11 @@
-import { useContext, memo, useMemo } from 'react'
+import { useContext, memo, useMemo, lazy, Suspense } from 'react'
 import { context as mapContext } from '../../_context'
 import { createPortal } from 'react-dom'
 import { context as bandDataContext } from '../../../band-data/_context'
 import { Linear as Loading } from '../../../../../../../components/loading'
-import Currents from './currents'
-import TemperatureSalinity from './temperature-salinity'
+
+const TemperatureSalinity = lazy(() => import('./temperature-salinity'))
+const Currents = lazy(() => import('./currents'))
 
 const Render = memo(({ data, points }) => {
   const grid = useMemo(
@@ -33,10 +34,10 @@ const Render = memo(({ data, points }) => {
   )
 
   return (
-    <>
+    <Suspense fallback={<Loading />}>
       <TemperatureSalinity data={data} grid={grid} />
       <Currents data={data} grid={grid} />
-    </>
+    </Suspense>
   )
 })
 

@@ -1,21 +1,9 @@
-import { memo, useContext, useEffect } from 'react'
-// import VectorField from './vector-field'
+import { useContext, lazy, Suspense } from 'react'
 import { context as mapContext } from '../../../_context'
 import { context as pageContext } from '../../../../_context'
-import customLayer from './custom-layer'
+import { Linear as Loading } from '../../../../../../../../components/loading'
 
-// // https://observablehq.com/d/88b3d42d8403b554
-// // https://github.com/greggman/twgl.js/
-
-const Render = memo(({ map, data, showCurrents, grid, gridWidth, gridHeight }) => {
-  useEffect(() => {
-    if (showCurrents) {
-      if (!map.getLayer()) map.addLayer(customLayer)
-    } else {
-      if (map.getLayer(customLayer.id)) map.removeLayer(customLayer.id)
-    }
-  })
-})
+const Render = lazy(() => import('./_render'))
 
 export default ({ data, grid }) => {
   const { map } = useContext(mapContext)
@@ -25,13 +13,15 @@ export default ({ data, grid }) => {
   } = useContext(pageContext)
 
   return (
-    <Render
-      data={data}
-      grid={grid}
-      gridWidth={gridWidth}
-      gridHeight={gridHeight}
-      map={map}
-      showCurrents={showCurrents}
-    />
+    <Suspense fallback={<Loading />}>
+      <Render
+        data={data}
+        grid={grid}
+        gridWidth={gridWidth}
+        gridHeight={gridHeight}
+        map={map}
+        showCurrents={showCurrents}
+      />
+    </Suspense>
   )
 }
