@@ -1,0 +1,121 @@
+name: Run Marine Heat Waves
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_date:
+        description: Run date (default = today). yyyymmdd
+        required: false
+        default:
+  schedule:
+    - cron: '0 02 * * *' # 0400 SAST
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  # Dynamically set the branch ref to the currently executing branch
+  branch-ref:
+    runs-on: ubuntu-latest
+    outputs:
+      value: ${{ steps.BRANCH_REF.outputs.value }}
+    steps:
+    - name: Set the BRANCH_REF
+      id: BRANCH_REF
+      run: echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+
+
+  # Many of the env variables reference the current branch
+  # Set the environment variables using the current branch reference
+  # (which is set dynamically)
+  envs:
+    needs: [branch-ref]
+    runs-on: ubuntu-latest
+    env:
+      RUN_DATE: ${{ inputs.run_date }}
+    outputs:
+      BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
+      TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
+      RUN_DATE: ${{ steps.ENVS.outputs.RUN_DATE }}
+    steps:
+      - name: Configure run date
+        id: run_date
+        run: |
+          echo "value=${RUN_DATE:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
+      - name: Set envs
+        id: ENVS
+        run: |
+          echo "CROCO_IMAGE=${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_mhw_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "RUN_DATE=${{ steps.run_date.outputs.value }}" >> $GITHUB_OUTPUT
+
+  toolkit:
+    needs: [envs]
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+    env:
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@master
+        with:
+          ref: ${{ env.BRANCH_REF }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@master
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@master
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
+          tags: |
+            type=sha
+      - name: Build and push
+        uses: docker/build-push-action@master
+        with:
+          context: toolkit
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  # Create a tmp folder structure for mode run assets. The format is:
+  ## YYYYMMDD/
+  ##  - forcing-inputs/
+  ##  - croco/
+  ##     - forcing/
+  ##     - forecast/
+  ##     - scratch/
+  workdir:
+    needs: [envs]
+    runs-on: somisana
+    outputs:
+      CACHDIR: ${{ steps.CACHDIR.outputs.CACHDIR}}
+      WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
+    env:
+      dirname: ${{ needs.envs.outputs.RUNDATE }}
+      branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
+    steps:
+      - name: Create /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/${{ env.dirname }} directory structure
+        run: >-
+          rm -rf /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/${{ env.dirname }} \
+          && mkdir \
+            -p \
+            /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
+          && chown \
+            -R \
+            :runners \
+            /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
+          && chmod \
+            -R \
+            774 \
+            /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
+      - name: Set WORKDIRs
+        id: WORKDIR
+        run: |
+          echo "CACHDIR=/home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/oisst" >> $GITHUB_OUTPUT
+          echo "WORKDIR=/home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
