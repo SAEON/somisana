@@ -44,6 +44,27 @@ create table if not exists public.models (
   envelope geometry(Polygon, 4326)
 );
 
+create table if not exists public.coordinates (
+  id int primary key generated always as identity,
+  modelid smallint not null references models (id),
+  pixel geometry(point, 0) not null,
+  coord geometry(point, 3857) not null,
+  longitude float not null,
+  latitude float not null,
+  bathymetry decimal(7, 2) not null,
+  has_value boolean default false
+);
+
+create unique index if not exists unique_coordinates on public.coordinates using btree (modelid, pixel);
+
+create index if not exists coordinates_has_value on public.coordinates using btree (has_value);
+
+create index if not exists coordinates_modelid on public.coordinates using btree (modelid);
+
+create index if not exists coordinates_coord on public.coordinates using gist (coord);
+
+create index if not exists coordinates_pixel on public.coordinates using gist (pixel);
+
 create table if not exists public.runs (
   id smallint primary key generated always as identity,
   run_date date not null,
@@ -112,27 +133,6 @@ create table if not exists public.raster_xref_run (
 );
 
 create unique index if not exists unique_rasters_per_model on public.raster_xref_run using btree (rasterid, runid);
-
-create table if not exists public.coordinates (
-  id int primary key generated always as identity,
-  modelid smallint not null references models (id),
-  pixel geometry(point, 0) not null,
-  coord geometry(point, 3857) not null,
-  longitude float not null,
-  latitude float not null,
-  bathymetry decimal(7, 2) not null,
-  has_value boolean default false
-);
-
-create unique index if not exists unique_coordinates on public.coordinates using btree (modelid, pixel);
-
-create index if not exists coordinates_has_value on public.coordinates using btree (has_value);
-
-create index if not exists coordinates_modelid on public.coordinates using btree (modelid);
-
-create index if not exists coordinates_coord on public.coordinates using gist (coord);
-
-create index if not exists coordinates_pixel on public.coordinates using gist (pixel);
 
 create table if not exists public.values (
   id bigint primary key generated always as identity,
