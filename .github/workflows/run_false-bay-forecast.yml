@@ -15,6 +15,7 @@ env:
   COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
   COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
   MLM_LICENSE_FILE: ${{ secrets.MLM_LICENSE_FILE }}
+  MNEMOSYNE_ADDRESS: ${{ secrets.MNEMOSYNE_INTERNAL_ADDRESS }}
 
 jobs:
   # Dynamically set the branch ref to the currently executing branch
@@ -339,9 +340,9 @@ jobs:
           source ~/.bashrc
       - name: Upload Zarr to mnemosyne HTTP-range server
         continue-on-error: true
-        run: >-
-          cd ${{ env.WORKDIR}}/croco/forecast \
-          && find \
+        run: |
+          cd ${{ env.WORKDIR }}/croco/forecast
+          find \
             ${{ env.RUN_DATE }}.zarr \
             -type f \
             -exec \
@@ -352,7 +353,7 @@ jobs:
               -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
               --create-dirs \
               -T {} \
-              https://mnemosyne.somisana.ac.za/egagasini/somisana/false-bay-forecast/{} \;
+              ${{ env.MNEMOSYNE_ADDRESS }}/somisana/false-bay-forecast/{} \;
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:

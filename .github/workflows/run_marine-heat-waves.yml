@@ -12,6 +12,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  MNEMOSYNE_ADDRESS: ${{ secrets.MNEMOSYNE_INTERNAL_ADDRESS }}
 
 jobs:
   # Dynamically set the branch ref to the currently executing branch
@@ -147,13 +148,14 @@ jobs:
           source ~/.bashrc
       - name: Upload Zarr to mnemosyne HTTP-range server
         continue-on-error: false
-        run: >-
-          cat ${{ env.WORKDIR}}/${{ env.RUN_DATE }}/mhw-${{ env.RUN_DATE }}.nc \
-            | curl \
-              --silent \
-              --keepalive-time 1200 \
-              -X PUT \
-              -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-              --data-binary @- \
-              -H "Content-Type: application/octet-stream" \
-              https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc
+        run: |
+          cat \
+            ${{ env.WORKDIR}}/${{ env.RUN_DATE }}/mhw-${{ env.RUN_DATE }}.nc \
+              | curl \
+                --silent \
+                --keepalive-time 1200 \
+                -X PUT \
+                -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+                --data-binary @- \
+                -H "Content-Type: application/octet-stream" \
+                ${{ env.MNEMOSYNE_ADDRESS }}/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc;
