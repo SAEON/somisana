@@ -1,6 +1,7 @@
 import { createContext, useContext, memo } from 'react'
 import { context as pageContext } from '../_context'
 import { gql, useQuery } from '@apollo/client'
+import Typography from '@mui/material/Typography'
 
 export const context = createContext({})
 
@@ -29,10 +30,11 @@ const Render = memo(({ children, depth, timeStep, runId }) => {
 })
 
 export default props => {
-  const {
-    depth,
-    timeStep,
-    run: { id: runId = 0 },
-  } = useContext(pageContext)
+  const { model, depth, timeStep, run: { id: runId = undefined } = {} } = useContext(pageContext)
+
+  if (!runId) {
+    return <Typography sx={{ m: 2 }}>No completed runs for the ({model.title}) model</Typography>
+  }
+
   return <Render depth={depth} timeStep={timeStep} runId={runId} {...props} />
 }
