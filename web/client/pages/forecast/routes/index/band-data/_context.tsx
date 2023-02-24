@@ -33,7 +33,7 @@ export default props => {
   const { model, depth, timeStep, run: { id: runId = undefined } = {} } = useContext(pageContext)
 
   if (!runId) {
-    return <Typography sx={{ m: 2 }}>No completed runs for the ({model.title}) model</Typography>
+    return <Typography sx={{ m: 2 }}>No completed runs for the {model.title} model</Typography>
   }
 
   return <Render depth={depth} timeStep={timeStep} runId={runId} {...props} />
