@@ -24,6 +24,7 @@ aiohttp = "==3.8.4"
 siphon = "==0.9"
 dask = "==2023.2.0"
 aiofiles = "*"
+kerchunk = "*"
 
 [dev-packages]
 

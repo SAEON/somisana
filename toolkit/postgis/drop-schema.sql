@@ -5,9 +5,6 @@ drop function if exists public.somisana_upsert_values cascade;
 
 drop function if exists public.somisana_interpolate_values cascade;
 
--- VIEWS
-drop view if exists public.metadata cascade;
-
 -- TABLES
 drop table if exists public.values cascade;
 

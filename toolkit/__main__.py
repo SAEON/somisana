@@ -1,6 +1,16 @@
 import argparse
-from cli.commands import lacce as lacce_cmd, mhw as mhw_cmd, ops as ops_cmd
-from cli.exe import lacce as lacce_exe, mhw as mhw_exe, ops as ops_exe
+from cli.commands import (
+    lacce as lacce_cmd,
+    mhw as mhw_cmd,
+    ops as ops_cmd,
+    kerchunk as kerchunk_cmd,
+)
+from cli.exe import (
+    lacce as lacce_exe,
+    mhw as mhw_exe,
+    ops as ops_exe,
+    kerchunk as kerchunk_exe,
+)
 
 prog = "somisana"
 description = "SOMISANA Toolkit"
@@ -21,6 +31,7 @@ def main():
     mhw = mhw_cmd.build(module_parser)
     ops = ops_cmd.build(module_parser)
     lacce = lacce_cmd.build(module_parser)
+    kerchunk = kerchunk_cmd.build(module_parser)
 
     # Parse args
     args = parser.parse_args()
@@ -32,6 +43,8 @@ def main():
         mhw_exe.run(mhw, args)
     elif args.command == "lacce":
         lacce_exe.run(lacce, args)
+    elif args.command == "kerchunk":
+        kerchunk_exe.run(kerchunk, args)
     else:
         parser.print_help()
 

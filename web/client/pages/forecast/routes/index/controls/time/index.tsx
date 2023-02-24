@@ -50,9 +50,13 @@ export default () => {
   return (
     <Div sx={{ alignItems: 'center', position: 'relative', display: 'flex', flexDirection: 'row' }}>
       {/* PREV RUN */}
-      <Tooltip title="Go to previous run" placement="top-start">
+      <Tooltip
+        title={activeRun >= runs.length - 1 ? 'No previous runs' : 'Go to previous run'}
+        placement="top-start"
+      >
         <Span>
           <IconButton
+            disabled={activeRun >= runs.length - 1}
             onClick={() => {
               const nextTimeStep = timeStep + TIMESTEP_OFFSET
               if (nextTimeStep > 240) {
