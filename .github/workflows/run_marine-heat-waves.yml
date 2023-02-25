@@ -137,7 +137,7 @@ jobs:
 
   # Upload the combined thresholds and Marine Heat Waves events data to Mnemosyne
   archive-output:
-    needs: [normalize-output, workdir, envs]
+    needs: [calculate-thresholds, workdir, envs]
     runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
