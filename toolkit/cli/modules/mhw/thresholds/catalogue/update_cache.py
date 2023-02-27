@@ -4,6 +4,7 @@ import aiohttp
 import aiofiles
 from config import PY_ENV
 from oisst import Catalogue
+import subprocess
 
 # Throttle to 31 concurrent HTTP requests ( +/- 1 months data)
 MAX_CONCURRENT_NET_IO = 31
@@ -38,7 +39,8 @@ async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):
                         if not chunk:
                             break
                         await f.write(chunk)
-
+    subprocess.call(["chown", "runner:runners", file_path])
+    subprocess.call(["chmod", "775", file_path])
     print("Downloaded", file_path)
 
 

@@ -1,6 +1,8 @@
 {
   "cSpell.words": [
     "adduser",
+    "aiofiles",
+    "aiohttp",
     "Algoa",
     "appleboy",
     "arange",
@@ -80,6 +82,7 @@
     "pypi",
     "pyplot",
     "rasterid",
+    "refs",
     "rightlon",
     "Roboto",
     "rundate",

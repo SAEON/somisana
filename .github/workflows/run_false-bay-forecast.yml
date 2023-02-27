@@ -338,6 +338,22 @@ jobs:
       - name: Load $PATH
         run: |
           source ~/.bashrc
+      - name: Upload NetCDF files to mnemosyne HTTP-range server
+        continue-on-error: true
+        run: |
+          cd ${{ env.WORKDIR }}/croco/forecast
+          find \
+            *.nc \
+            -type f \
+            -exec \
+              curl \
+              --silent \
+              --keepalive-time 1200 \
+              -X PUT \
+              -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+              --create-dirs \
+              -T {} \
+              ${{ env.MNEMOSYNE_ADDRESS }}/somisana/false-bay-forecast/{} \;
       - name: Upload Zarr to mnemosyne HTTP-range server
         continue-on-error: true
         run: |
