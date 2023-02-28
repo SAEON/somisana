@@ -28,10 +28,10 @@ ENV COPERNICUS_USERNAME=$COPERNICUS_USERNAME
 ENV COPERNICUS_PASSWORD=$COPERNICUS_PASSWORD
 ENV PY_ENV=$PY_ENV
 
-# Setup a non-root user (Python complains about this)
+# Setup a non-root user with specific IDs
 RUN groupadd -g 1999 runners \
   && useradd \
-  -u 1998 \
+  -u 1003 \
   -g 1999 \
   -m \
   -s /bin/bash \

@@ -101,7 +101,7 @@ jobs:
         run: |
           rm -rf /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/${{ env.dirname }}
           mkdir -p /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
-          chown -R :runners /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
+          chown -R runner:runners /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
           chmod -R 774 /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
       - name: Set directories
         id: WORKDIR
