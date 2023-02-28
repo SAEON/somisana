@@ -7,6 +7,24 @@ import { useTheme } from '@mui/material/styles'
 import project from '../lib/project-coordinates'
 import debounce from '../../../../../../../../lib/debounce'
 
+const drawIsolines = color => [
+  'step',
+  ['zoom'],
+  ['rgba', 255, 255, 255, 0],
+  6,
+  ['rgba', 255, 255, 255, 0.1],
+  8,
+  ['rgba', 255, 255, 255, 0.2],
+  10,
+  ['rgba', 255, 255, 255, 0.3],
+  12,
+  ['rgba', 255, 255, 255, 0.5],
+  14,
+  ['rgba', 255, 255, 255, 0.75],
+  16,
+  color,
+]
+
 const Render = memo(
   ({
     map,
@@ -22,6 +40,7 @@ const Render = memo(
     selectedVariable,
     thresholds,
     grid,
+    showIsolines,
   }) => {
     const theme = useTheme()
     const id = 'contour-layer'
@@ -60,52 +79,58 @@ const Render = memo(
       }
     })
 
-    useEffect(() => {
-      if (!map.getSource(id)) {
-        map.addSource(id, {
-          type: 'geojson',
-          data: {
-            type: 'FeatureCollection',
-            features,
-          },
-        })
-
-        map.addLayer({
-          id,
-          type: 'fill',
-          source: id,
-          layout: {},
-          paint: {
-            'fill-color': ['get', 'color'],
-            'fill-outline-color': [
-              'step',
-              ['zoom'],
-              ['rgba', 255, 255, 255, 0],
-              6,
-              ['rgba', 255, 255, 255, 0.1],
-              8,
-              ['rgba', 255, 255, 255, 0.2],
-              10,
-              ['rgba', 255, 255, 255, 0.3],
-              12,
-              ['rgba', 255, 255, 255, 0.5],
-              14,
-              ['rgba', 255, 255, 255, 0.75],
-              16,
-              theme.palette.common.white,
-            ],
-          },
-        })
-
-        map.moveLayer(id)
-        if (map.getLayer('coordinates')) map.moveLayer('coordinates')
-      } else {
-        map.getSource(id).setData({
+    if (!map.getSource(id)) {
+      map.addSource(id, {
+        type: 'geojson',
+        data: {
           type: 'FeatureCollection',
           features,
-        })
-      }
-    })
+        },
+      })
+
+      map.addLayer({
+        id,
+        type: 'fill',
+        source: id,
+        layout: {},
+        paint: {
+          'fill-color': ['get', 'color'],
+          'fill-outline-color': [
+            'step',
+            ['zoom'],
+            ['rgba', 255, 255, 255, 0],
+            6,
+            ['rgba', 255, 255, 255, 0.1],
+            8,
+            ['rgba', 255, 255, 255, 0.2],
+            10,
+            ['rgba', 255, 255, 255, 0.3],
+            12,
+            ['rgba', 255, 255, 255, 0.5],
+            14,
+            ['rgba', 255, 255, 255, 0.75],
+            16,
+            theme.palette.common.white,
+          ],
+        },
+      })
+
+      map.moveLayer(id)
+      if (map.getLayer('coordinates')) map.moveLayer('coordinates')
+    } else {
+      map.getSource(id).setData({
+        type: 'FeatureCollection',
+        features,
+      })
+    }
+
+    useEffect(() => {
+      map.setPaintProperty(
+        id,
+        'fill-outline-color',
+        showIsolines ? drawIsolines(theme.palette.common.white) : 'transparent'
+      )
+    }, [showIsolines])
 
     if (animateTimeStep) {
       const frameTime = 100
@@ -130,6 +155,7 @@ export default ({ data, grid }) => {
     animateTimeStep,
     selectedVariable,
     thresholds,
+    showIsolines,
   } = useContext(pageContext)
 
   return (
@@ -148,6 +174,7 @@ export default ({ data, grid }) => {
       selectedVariable={selectedVariable}
       data={data}
       grid={grid}
+      showIsolines={showIsolines}
     />
   )
 }

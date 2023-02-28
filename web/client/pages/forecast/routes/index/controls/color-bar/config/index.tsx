@@ -13,6 +13,9 @@ import Draggable from 'react-draggable'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import debounce from '../../../../../../../lib/debounce'
+import Switch from '@mui/material/Switch'
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
 
 import { default as _color, SelectControl } from './_color'
 
@@ -34,6 +37,8 @@ export default () => {
     setColorScheme,
     thresholds,
     setThresholds,
+    showIsolines,
+    setShowIsolines,
   } = useContext(modelContext)
   const [open, setOpen] = useState(false)
 
@@ -76,6 +81,22 @@ export default () => {
               max={scaleMax}
             />
           </FormControl>
+          <FormGroup
+            sx={{
+              py: 2,
+            }}
+          >
+            <FormControlLabel
+              sx={{
+                display: 'flex',
+                flexDirection: 'row-reverse',
+                justifyContent: 'flex-start',
+                margin: 0,
+              }}
+              control={<Switch checked={showIsolines} onChange={() => setShowIsolines(b => !b)} />}
+              label="Show isolines"
+            />
+          </FormGroup>
           <Q
             effects={debounce(({ _scaleMin, _scaleMax, _thresholds }) => {
               const ts =

@@ -29,6 +29,7 @@ export default ({ modelid = undefined, children }) => {
   const [selectedVariable, setSelectedVariable] = useState('temperature')
   const [showCurrents, setShowCurrents] = useState(false)
   const [colorScheme, setColorScheme] = useState('Magma')
+  const [showIsolines, setShowIsolines] = useState(true)
 
   const color = useCallback(colorFn(colorScheme, scaleMin, scaleMax), [
     scaleMin,
@@ -129,6 +130,8 @@ export default ({ modelid = undefined, children }) => {
         setShowCurrents,
         colorScheme,
         setColorScheme,
+        showIsolines,
+        setShowIsolines,
       }}
     >
       {children}
