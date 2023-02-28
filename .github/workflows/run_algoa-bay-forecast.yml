@@ -16,6 +16,7 @@ env:
   COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
   MLM_LICENSE_FILE: ${{ secrets.MLM_LICENSE_FILE }}
   MNEMOSYNE_ADDRESS: ${{ secrets.MNEMOSYNE_INTERNAL_ADDRESS }}
+  MNEMOSYNE_TOKEN: ${{ secrets.MNEMOSYNE_TOKEN }}
 
 jobs:
   # Dynamically set the branch ref to the currently executing branch
@@ -319,7 +320,7 @@ jobs:
                   --grid-input-path /tmp/somisana/current/croco/forcing/grd.nc \
                   --nc-input-path /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
                   --nc-output-path /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-                  --zarr-output-path /tmp/somisana/current/croco/forecast/${{ env.RUN_DATE }}.zarr
+                  --zarr-output-path /tmp/somisana/current/croco/forecast/${{ env.RUN_DATE }}-hourly-avg-processed.zarr
 
   # Archive croco output and load zarr to HTTP-range server
   archive-data:
@@ -332,22 +333,34 @@ jobs:
       - name: Load $PATH
         run: |
           source ~/.bashrc
-      - name: Upload NetCDF files to mnemosyne HTTP-range server
+      - name: Upload raw CROCO NetCDF file to mnemosyne HTTP-range server
         continue-on-error: true
         run: |
           cd ${{ env.WORKDIR }}/croco/forecast
-          find \
-            *.nc \
-            -type f \
-            -exec \
-              curl \
-              --silent \
-              --keepalive-time 1200 \
-              -X PUT \
-              -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-              --create-dirs \
-              -T {} \
-              ${{ env.MNEMOSYNE_ADDRESS }}/somisana/algoa-bay-forecast/{} \;
+          cat \
+            hourly-avg-${{ env.RUN_DATE }}.nc \
+              | curl \
+                --silent \
+                --keepalive-time 2400 \
+                -X PUT \
+                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+                --data-binary @- \
+                -H "Content-Type: application/octet-stream" \
+                ${{ env.MNEMOSYNE_ADDRESS }}/somisana/algoa-bay-forecast/${{ env.RUN_DATE }}-hourly-avg.nc;
+      - name: Upload processed CROCO NetCDF file to mnemosyne HTTP-range server
+        continue-on-error: true
+        run: |
+          cd ${{ env.WORKDIR }}/croco/forecast
+          cat \
+            algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+              | curl \
+                --silent \
+                --keepalive-time 2400 \
+                -X PUT \
+                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+                --data-binary @- \
+                -H "Content-Type: application/octet-stream" \
+                ${{ env.MNEMOSYNE_ADDRESS }}/somisana/algoa-bay-forecast/${{ env.RUN_DATE }}-hourly-avg-processed.nc;
       - name: Upload Zarr to mnemosyne HTTP-range server
         continue-on-error: true
         run: |
@@ -360,7 +373,7 @@ jobs:
               --silent \
               --keepalive-time 1200 \
               -X PUT \
-              -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+              -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
               --create-dirs \
               -T {} \
               ${{ env.MNEMOSYNE_ADDRESS }}/somisana/algoa-bay-forecast/{} \;
