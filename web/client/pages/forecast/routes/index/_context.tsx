@@ -30,6 +30,7 @@ export default ({ modelid = undefined, children }) => {
   const [showCurrents, setShowCurrents] = useState(false)
   const [colorScheme, setColorScheme] = useState('Magma')
   const [showIsolines, setShowIsolines] = useState(true)
+  const [showData, setShowData] = useState(false)
 
   const color = useCallback(colorFn(colorScheme, scaleMin, scaleMax), [
     scaleMin,
@@ -132,6 +133,8 @@ export default ({ modelid = undefined, children }) => {
         setColorScheme,
         showIsolines,
         setShowIsolines,
+        showData,
+        setShowData,
       }}
     >
       {children}

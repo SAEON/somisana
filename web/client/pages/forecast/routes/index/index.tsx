@@ -15,6 +15,7 @@ import Map from './map'
 import Stack from '@mui/material/Stack'
 import RightMenu from './right-menu'
 import Timestamp from './controls/timestamp'
+import { ToggleData } from './controls/data'
 
 const ModelProvider = lazy(() => import('./_context'))
 
@@ -59,6 +60,7 @@ export default ({ modelid = undefined }) => {
                 >
                   <ToggleConfig />
                   <InfoControl />
+                  <ToggleData />
                   <ToggleDepth />
                   <ToggleTemperature />
                   <ToggleSalinity />

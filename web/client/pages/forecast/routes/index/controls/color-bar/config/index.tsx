@@ -91,9 +91,15 @@ export default () => {
                 display: 'flex',
                 flexDirection: 'row-reverse',
                 justifyContent: 'flex-start',
-                margin: 0,
+                m: 0,
               }}
-              control={<Switch checked={showIsolines} onChange={() => setShowIsolines(b => !b)} />}
+              control={
+                <Switch
+                  sx={{ ml: 2 }}
+                  checked={showIsolines}
+                  onChange={() => setShowIsolines(b => !b)}
+                />
+              }
               label="Show isolines"
             />
           </FormGroup>

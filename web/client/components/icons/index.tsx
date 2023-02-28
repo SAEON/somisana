@@ -32,7 +32,21 @@ import {
   mdiDragVertical,
   mdiSkipBackward,
   mdiSkipForward,
+  mdiFileMultiple,
+  mdiTableLarge,
 } from '@mdi/js'
+
+export const TableLarge = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiTableLarge} />
+  </SvgIcon>
+))({})
+
+export const FileMultiple = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiFileMultiple} />
+  </SvgIcon>
+))({})
 
 export const SkipBackward = styled((props: any) => (
   <SvgIcon {...props}>
