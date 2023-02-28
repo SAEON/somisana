@@ -25,6 +25,8 @@ siphon = "==0.9"
 dask = "==2023.2.0"
 aiofiles = "*"
 kerchunk = "*"
+fsspec = "*"
+h5py = "*"
 
 [dev-packages]
 

@@ -37,6 +37,7 @@
     "fileout",
     "forcings",
     "frcst",
+    "fsspec",
     "gdalinfo",
     "geopython",
     "GEOWEBCACHE",

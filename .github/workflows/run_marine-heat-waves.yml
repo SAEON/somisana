@@ -21,10 +21,9 @@ jobs:
     outputs:
       value: ${{ steps.BRANCH_REF.outputs.value }}
     steps:
-    - name: Set the BRANCH_REF
-      id: BRANCH_REF
-      run: echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
-
+      - name: Set the BRANCH_REF
+        id: BRANCH_REF
+        run: echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
   # Many of the env variables reference the current branch
   # Set the environment variables using the current branch reference
@@ -146,11 +145,11 @@ jobs:
       - name: Load $PATH
         run: |
           source ~/.bashrc
-      - name: Upload Zarr to mnemosyne HTTP-range server
+      - name: Upload NetCDF output to mnemosyne HTTP-range server
         continue-on-error: false
         run: |
           cat \
-            ${{ env.WORKDIR}}/${{ env.RUN_DATE }}/mhw-${{ env.RUN_DATE }}.nc \
+            ${{ env.WORKDIR}}/mhw-${{ env.RUN_DATE }}.nc \
               | curl \
                 --silent \
                 --keepalive-time 1200 \
@@ -159,3 +158,28 @@ jobs:
                 --data-binary @- \
                 -H "Content-Type: application/octet-stream" \
                 ${{ env.MNEMOSYNE_ADDRESS }}/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc;
+      - name: Kerchunk the NetCDF file output
+        continue-on-error: false
+        run: >-
+          docker run \
+            --rm \
+            -v $WORKDIR:/tmp/somisana/current \
+            ${{ needs.toolkit.outputs.image }} \
+              kerchunk \
+                run \
+                  --inputs ${{ env.MNEMOSYNE_ADDRESS }}/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc \
+                  --output /tmp/somisana/current/${{ env.RUN_DATE }}.kerchunk.json \
+                  --replace-uri http:\\/\\/192.168.118.193:6008\\/somisana\\/marine-heat-waves\\/${{ env.RUN_DATE }}.nc,https:\\/\\/mnemosyne.somisana.ac.za\\/somisana\\/marine-heat-waves\\/${{ env.RUN_DATE }}.nc
+      - name: Upload Kerchunk output to Mnemosyne
+        continue-on-error: false
+        run: |
+          cat \
+            ${{ env.WORKDIR}}/${{ env.RUN_DATE }}.kerchunk.json \
+              | curl \
+                --silent \
+                --keepalive-time 1200 \
+                -X PUT \
+                -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+                --data-binary @- \
+                -H "Content-Type: application/octet-stream" \
+                ${{ env.MNEMOSYNE_ADDRESS }}/somisana/marine-heat-waves/${{ env.RUN_DATE }}.kerchunk.json;
