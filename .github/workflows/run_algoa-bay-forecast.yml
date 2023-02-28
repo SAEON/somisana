@@ -366,7 +366,7 @@ jobs:
         run: |
           cd ${{ env.WORKDIR }}/croco/forecast
           find \
-            ${{ env.RUN_DATE }}.zarr \
+            ${{ env.RUN_DATE }}-hourly-avg-processed.zarr \
             -type f \
             -exec \
               curl \
