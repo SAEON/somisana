@@ -154,9 +154,10 @@ jobs:
                 --silent \
                 --keepalive-time 1200 \
                 -X PUT \
-                -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-                --data-binary @- \
                 -H "Content-Type: application/octet-stream" \
+                -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+                -T \
+                - \
                 ${{ env.MNEMOSYNE_ADDRESS }}/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc;
       - name: Kerchunk the NetCDF file output
         continue-on-error: false
@@ -180,6 +181,7 @@ jobs:
                 --keepalive-time 1200 \
                 -X PUT \
                 -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-                --data-binary @- \
                 -H "Content-Type: application/octet-stream" \
+                -T \
+                - \
                 ${{ env.MNEMOSYNE_ADDRESS }}/somisana/marine-heat-waves/${{ env.RUN_DATE }}.kerchunk.json;

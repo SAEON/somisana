@@ -8,7 +8,7 @@ on:
         required: false
         default:
   schedule:
-    - cron:  '0 02 * * *' # 0400 SAST
+    - cron: '0 02 * * *' # 0400 SAST
 
 env:
   REGISTRY: ghcr.io
@@ -25,9 +25,9 @@ jobs:
     outputs:
       value: ${{ steps.BRANCH_REF.outputs.value }}
     steps:
-    - name: Set the BRANCH_REF
-      id: BRANCH_REF
-      run: echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+      - name: Set the BRANCH_REF
+        id: BRANCH_REF
+        run: echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
   # Many of the env variables reference the current branch
   # Set the environment variables using the current branch reference
@@ -231,7 +231,7 @@ jobs:
                     --workdir /tmp/somisana/current/forcing-inputs \
                     --matlab-env /tmp/somisana/current/.env \
                     --download-date ${{ env.MODEL_RUN_DATE }} \
-                    --domain 22,31,-37,-31 
+                    --domain 22,31,-37,-31
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
@@ -340,12 +340,13 @@ jobs:
           cat \
             hourly-avg-${{ env.RUN_DATE }}.nc \
               | curl \
+                -X PUT \
                 --silent \
                 --keepalive-time 2400 \
-                -X PUT \
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
-                --data-binary @- \
                 -H "Content-Type: application/octet-stream" \
+                -T \
+                - \
                 ${{ env.MNEMOSYNE_ADDRESS }}/somisana/algoa-bay-forecast/${{ env.RUN_DATE }}-hourly-avg.nc;
       - name: Upload processed CROCO NetCDF file to mnemosyne HTTP-range server
         continue-on-error: true
@@ -357,9 +358,10 @@ jobs:
                 --silent \
                 --keepalive-time 2400 \
                 -X PUT \
-                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
-                --data-binary @- \
                 -H "Content-Type: application/octet-stream" \
+                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+                -T \
+                - \
                 ${{ env.MNEMOSYNE_ADDRESS }}/somisana/algoa-bay-forecast/${{ env.RUN_DATE }}-hourly-avg-processed.nc;
       - name: Upload Zarr to mnemosyne HTTP-range server
         continue-on-error: true
@@ -850,17 +852,17 @@ jobs:
                   --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
 
-
   gather-jobs:
-    needs: [
-      refresh-values-depths_1_3,
-      refresh-values-depths_4_6,
-      refresh-values-depths_7_9,
-      refresh-values-depths_10_12,
-      refresh-values-depths_13_15,
-      refresh-values-depths_16_18,
-      refresh-values-depths_19_20
-    ]
+    needs:
+      [
+        refresh-values-depths_1_3,
+        refresh-values-depths_4_6,
+        refresh-values-depths_7_9,
+        refresh-values-depths_10_12,
+        refresh-values-depths_13_15,
+        refresh-values-depths_16_18,
+        refresh-values-depths_19_20,
+      ]
     runs-on: somisana
     steps:
       - name: noop

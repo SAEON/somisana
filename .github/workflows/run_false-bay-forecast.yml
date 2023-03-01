@@ -8,7 +8,7 @@ on:
         required: false
         default:
   schedule:
-    - cron:  '0 06 * * *' # 0800 SAST
+    - cron: '0 06 * * *' # 0800 SAST
 
 env:
   REGISTRY: ghcr.io
@@ -25,10 +25,10 @@ jobs:
     outputs:
       value: ${{ steps.BRANCH_REF.outputs.value }}
     steps:
-    - name: Set the BRANCH_REF
-      id: BRANCH_REF
-      run: |
-        echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+      - name: Set the BRANCH_REF
+        id: BRANCH_REF
+        run: |
+          echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
   # Many of the env variables reference the current branch
   # Set the environment variables using the current branch reference
@@ -64,39 +64,39 @@ jobs:
 
   # Compile CROCO model for the False Bay forecast
   compile-croco:
-   needs: [envs]
-   runs-on: ubuntu-latest
-   env:
-     BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-     CROCO_IMAGE: ${{ needs.envs.outputs.CROCO_IMAGE }}
-   outputs:
-     image: ${{ steps.meta.outputs.tags }}
-   steps:
-     - name: Checkout source code
-       uses: actions/checkout@master
-       with:
-         ref: ${{ env.BRANCH_REF }}
-     - name: Log in to the Container registry
-       uses: docker/login-action@master
-       with:
-         registry: ${{ env.REGISTRY }}
-         username: ${{ github.actor }}
-         password: ${{ secrets.GITHUB_TOKEN }}
-     - name: Extract metadata (tags, labels) for Docker
-       id: meta
-       uses: docker/metadata-action@master
-       with:
-         images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
-         tags: |
-           type=sha
-     - name: Build and push
-       uses: docker/build-push-action@master
-       with:
-         context: models/false-bay-forecast
-         file: models/false-bay-forecast/croco.Dockerfile
-         push: true
-         tags: ${{ steps.meta.outputs.tags }}
-         labels: ${{ steps.meta.outputs.labels }}
+    needs: [envs]
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+      CROCO_IMAGE: ${{ needs.envs.outputs.CROCO_IMAGE }}
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@master
+        with:
+          ref: ${{ env.BRANCH_REF }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@master
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@master
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
+          tags: |
+            type=sha
+      - name: Build and push
+        uses: docker/build-push-action@master
+        with:
+          context: models/false-bay-forecast
+          file: models/false-bay-forecast/croco.Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   toolkit:
     needs: [envs]
@@ -203,7 +203,7 @@ jobs:
                     --workdir /tmp/somisana/current/forcing-inputs \
                     --matlab-env /tmp/somisana/current/.env \
                     --download-date ${{ env.MODEL_RUN_DATE }} \
-                    --domain 15,24.5,-37,-31 
+                    --domain 15,24.5,-37,-31
       - name: Download Mercator
         uses: nick-fields/retry@master
         with:
@@ -228,7 +228,7 @@ jobs:
                     --workdir /tmp/somisana/current/forcing-inputs \
                     --matlab-env /tmp/somisana/current/.env \
                     --download-date ${{ env.MODEL_RUN_DATE }} \
-                    --domain 15,24.5,-37,-31 
+                    --domain 15,24.5,-37,-31
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
@@ -350,8 +350,9 @@ jobs:
                 --keepalive-time 2400 \
                 -X PUT \
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
-                --data-binary @- \
                 -H "Content-Type: application/octet-stream" \
+                -T \
+                - \
                 ${{ env.MNEMOSYNE_ADDRESS }}/somisana/false-bay-forecast/${{ env.RUN_DATE }}-hourly-avg.nc;
       - name: Upload processed CROCO NetCDF file to mnemosyne HTTP-range server
         continue-on-error: true
@@ -363,9 +364,10 @@ jobs:
                 --silent \
                 --keepalive-time 2400 \
                 -X PUT \
-                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
-                --data-binary @- \
                 -H "Content-Type: application/octet-stream" \
+                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+                -T \
+                - \
                 ${{ env.MNEMOSYNE_ADDRESS }}/somisana/false-bay-forecast/${{ env.RUN_DATE }}-hourly-avg-processed.nc;
       - name: Upload Zarr (processed CROCO output) to mnemosyne HTTP-range server
         continue-on-error: true
@@ -857,15 +859,16 @@ jobs:
                   --run-date ${{ env.RUN_DATE }}
 
   gather-jobs:
-    needs: [
-      refresh-values-depths_1_6,
-      refresh-values-depths_7_12,
-      refresh-values-depths_13_18,
-      refresh-values-depths_19_24,
-      refresh-values-depths_25_30,
-      refresh-values-depths_31_36,
-      refresh-values-depths_37_40
-    ]
+    needs:
+      [
+        refresh-values-depths_1_6,
+        refresh-values-depths_7_12,
+        refresh-values-depths_13_18,
+        refresh-values-depths_19_24,
+        refresh-values-depths_25_30,
+        refresh-values-depths_31_36,
+        refresh-values-depths_37_40,
+      ]
     runs-on: somisana
     steps:
       - name: noop
