@@ -17,7 +17,7 @@ const Title = () => {
         <Typography
           sx={{
             textAlign: 'center',
-            color: theme => alpha(theme.palette.primary.main, 0.9),
+            color: theme => alpha(theme.palette.common.white, 0.9),
           }}
           variant="h1"
         >
@@ -26,7 +26,7 @@ const Title = () => {
         <Typography
           sx={{
             textAlign: 'center',
-            color: theme => alpha(theme.palette.primary.main, 0.9),
+            color: theme => alpha(theme.palette.common.white, 0.9),
           }}
           variant="h5"
           variantMapping={{

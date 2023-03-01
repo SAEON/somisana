@@ -52,7 +52,11 @@ cp -r public/* .client/
 
 [[task]]
 name = 'rollup:server'
-deps = ['prettier:server']
+deps = [
+  'server/**/*',
+  'loaders/**/*',
+  'ssr/**/*'
+]
 run = 'rollup -c rollup/server.config.js'
 
 [[task]]
@@ -73,7 +77,10 @@ run = "node jspm-client.js"
 
 [[task]]
 name = "rollup:client"
-deps = ['prettier:client']
+deps = [
+  'client/**/*',
+  'common/**/*'
+]
 run = 'rollup --config rollup/client.config.js'
 
 [[task]]
@@ -82,10 +89,6 @@ deps = ['prettier:server', 'prettier:client', 'prettier:other']
 
 [[task]]
 name = 'prettier:client'
-deps = [
-  'client/**/*',
-  'common/**/*'
-]
 template = 'prettier'
 [task.template-options]
 ignore-path = '../.prettierignore'
@@ -94,11 +97,6 @@ files = 'client/**/*.@(js|jsx|json|mjs|cjs|graphql|html|yml|ts|tsx|css) common/*
 
 [[task]]
 name = 'prettier:server'
-deps = [
-  'server/**/*',
-  'loaders/**/*',
-  'ssr/**/*'
-]
 template = 'prettier'
 [task.template-options]
 ignore-path = '../.prettierignore'

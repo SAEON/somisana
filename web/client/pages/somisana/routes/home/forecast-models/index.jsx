@@ -9,13 +9,6 @@ import Grid from '@mui/material/Grid'
 import { Linear as Loading } from '../../../../../components/loading'
 import Link from '@mui/material/Link'
 
-{
-  /* Forecast models
-     regional models,
-     high resolution bathymetry,
-    */
-}
-
 export default () => {
   const { loading, data } = useContext(homeContext)
 
@@ -27,7 +20,7 @@ export default () => {
     )
   }
 
-  const models = data.models
+  const models = data?.models || []
 
   return (
     <Grid justifyContent="center" container spacing={6} sx={{ mt: theme => theme.spacing(1) }}>

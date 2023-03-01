@@ -51,6 +51,11 @@ const Home = () => {
         {/* TITLE */}
         <Div
           sx={{
+            background: theme =>
+              `linear-gradient(45deg, ${alpha(theme.palette.common.black, 0.5)} 25%, ${alpha(
+                theme.palette.common.black,
+                0.7
+              )} 85%)`,
             height: theme => `calc(100vh - ${theme.spacing(6)})`,
             display: 'flex',
             flex: 1,
@@ -68,7 +73,15 @@ const Home = () => {
         {/* CONTENT */}
         <Div ref={ref}>
           {/* PAGE LINKS */}
-          <Bg sx={{ backgroundColor: theme => theme.palette.primary.dark }}>
+          <Bg
+            sx={{
+              background: theme =>
+                `linear-gradient(200deg, ${alpha(theme.palette.common.black, 0.45)} 25%, ${alpha(
+                  theme.palette.common.black,
+                  0.7
+                )} 85%)`,
+            }}
+          >
             <Container>
               <Heading color="white">Our Work</Heading>
               <PageLinks />
@@ -76,7 +89,11 @@ const Home = () => {
           </Bg>
 
           {/* FORECAST MODELS */}
-          <Bg sx={{ backgroundColor: theme => theme.palette.grey[100] }}>
+          <Bg
+            sx={{
+              backgroundColor: theme => alpha(theme.palette.common.white, 0.7),
+            }}
+          >
             <Container>
               <Heading color="black">Forecast Models</Heading>
               <ForecastModels />
@@ -84,7 +101,15 @@ const Home = () => {
           </Bg>
 
           {/* ABOUT US */}
-          <Bg sx={{ backgroundColor: theme => theme.palette.primary.main }}>
+          <Bg
+            sx={{
+              background: theme =>
+                `linear-gradient(90deg, ${alpha(theme.palette.common.black, 0.5)} 25%, ${alpha(
+                  theme.palette.common.black,
+                  0.7
+                )} 85%)`,
+            }}
+          >
             <Container>
               <Heading color="white">Our partners</Heading>
               <About />

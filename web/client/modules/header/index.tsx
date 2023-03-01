@@ -16,7 +16,7 @@ const Header = ({ children, routes = [], ...props }) => {
             borderTop: 'none',
             borderLeft: 'none',
             borderRight: 'none',
-            opacity: 0.95,
+            opacity: 1,
           }}
           position="fixed"
           color="inherit"

@@ -6,7 +6,7 @@ import zlib from 'node:zlib'
 import koaBody from 'koa-bodyparser'
 import koaCompress from 'koa-compress'
 import dirname from './lib/dirname.js'
-import { KEY, PORT } from './config/index.js'
+import { KEY, PORT, NODE_ENV } from './config/index.js'
 import globalError from './middleware/error.js'
 import restrictCors from './middleware/restrict-cors.js'
 // import openCors from './middleware/open-cors.js'
@@ -74,5 +74,8 @@ try {
   await updateCoordinatesMask()
 } catch (error) {
   console.error('Error updating coordinates mask on startup', error)
-  process.exit(1)
+
+  if (NODE_ENV === 'production') {
+    process.exit(1)
+  }
 }

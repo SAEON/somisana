@@ -8,6 +8,7 @@ import I18nProvider from '../client/modules/i18n'
 import createCache from '@emotion/cache'
 import { ApolloProvider } from '@apollo/client'
 import ErrorBoundary from '../client/components/error-boundary'
+import NativeExtensions from '../client/modules/native-extensions'
 import { SnackbarProvider } from 'notistack'
 
 export const createEmotionCache = () => createCache({ key: 'css' })
@@ -29,9 +30,11 @@ const App = ({
               <I18nProvider>
                 <ApolloProvider client={apolloClient}>
                   <ErrorBoundary>
-                    <SnackbarProvider>
-                      <Router>{children}</Router>
-                    </SnackbarProvider>
+                    <NativeExtensions>
+                      <SnackbarProvider>
+                        <Router>{children}</Router>
+                      </SnackbarProvider>
+                    </NativeExtensions>
                   </ErrorBoundary>
                 </ApolloProvider>
               </I18nProvider>

@@ -1,9 +1,11 @@
-import { createContext } from 'react'
+import { useContext, createContext } from 'react'
 import { gql, useQuery } from '@apollo/client'
+import { context as configContext } from '../../../../modules/config'
 
 export const context = createContext({})
 
 export default ({ children }) => {
+  const { NODE_ENV } = useContext(configContext)
   const { error, ...res } = useQuery(
     gql`
       query models {
@@ -22,7 +24,11 @@ export default ({ children }) => {
   )
 
   if (error) {
-    throw error
+    if (NODE_ENV === 'production') {
+      throw error
+    } else {
+      console.error(error)
+    }
   }
 
   return <context.Provider value={{ ...res }}>{children}</context.Provider>
