@@ -2,7 +2,8 @@
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+**Table of Contents** _generated with [DocToc](https://github.com/thlorenz/doctoc)_
 
 - [Quick start](#quick-start)
   - [Install Python](#install-python)
@@ -27,12 +28,17 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Quick start
+# Local development
 
 ## Install Python
 
+You need to be able to specify specific Python versions for the toolkit. I use the `pyenv` tool for this, though there are other options.
+
 ### Install pyenv
-First, follow the instructions for [installing pyenv dependencies](https://github.com/pyenv/pyenv#installation). Then install `pyenv` via the [Automatic installer](https://github.com/pyenv/pyenv#automatic-installer). *Note - `pypenv` is NOT the same as `pyvenv`. See [this Stack Overflow answer](https://stackoverflow.com/a/41573588/3114742)*
+
+The pyenv tool adds entries to the beginning of your $PATH variable. So that when you type in the "python" or "pip" commands, you actually run the "pyenv" tool instead of python or pip (since the first entries on $PATH are from pyenv). Pyenv then manages python versions, and you can easily switch between python versions in your terminal. The pyenv tool just redirects the python/pip commands to specific Python versions.
+
+To install, [follow the instructions](https://github.com/pyenv/pyenv#installation) (including first installing dependencies)
 
 The automatic installer concludes with instructions on adding something to `.bashrc`. However, I found that I had to add the location of the `pyenv` installation to $PATH (`pyenv` installs a binary to `$HOME/.pyenv/`). So, I ignored the output instructions of the installer and instead adjusted `~/.bashrc` to include the following lines:
 
@@ -55,11 +61,12 @@ Run `source ~/.bashrc` so that changes to your shell environment take effect.
 Install and set a Python version via `pyenv` to use
 
 ```sh
+PYENV_VERSION=3.10.6
 pyenv install --list
 pyenv install $PYENV_VERSION
 ```
 
-### Install pipenv (for dependency management/locks)
+### Install pipenv
 
 ```sh
 pip install --user pipenv
@@ -112,6 +119,7 @@ sudo apt install postgis
 ```
 
 ### Run the script
+
 ```sh
 # In the toolkit directory, create the ".venv" directory. This hints to pipenv that you want your virtual environment to be local
 mkdir .venv
@@ -127,7 +135,7 @@ pipenv run script
 source env.sh
 ```
 
-### Setup script-environment variables 
+### Setup script-environment variables
 
 Run this command `cp .env.example .env`, and the adjust the environment variables accordingly in the `.env` file
 
@@ -146,6 +154,7 @@ Please read the instructions at [https://github.com/SAEON/postgis](https://githu
 # Usage examples
 
 ## Use compiled CLI
+
 This is the easiest way to run the CLI, the only caveat is that all files must be in your `/home/$USER` directory, and all argument path references must be absolute paths (although you can also use command substitution `$(pwd)` in the pathname, so really not much of a caveat at all!).
 
 Ensure that [docker](https://www.docker.com/) is installed on your system. Update your `.bash_profile` (or `.bashrc`) file with an alias to the [SOMISANA cli Docker image](https://github.com/SAEON/somisana/pkgs/container/somisana_toolkit_stable):
@@ -173,6 +182,7 @@ docker pull ghcr.io/saeon/somisana_toolkit_stable:latest
 ```
 
 ## Locally
+
 Working locally in the context of this repository, run `source env.sh` either from the root of the repo or from the `./toolkit` directory.
 
 You should now be able to use the CLI via the `somisana` command:
@@ -184,11 +194,13 @@ $ somisana
 NOTE: All path-argument inputs that are relative paths are treated as relative to `<repo root>/toolkit`
 
 ## Marine Heat Wave analysis (somisana mhw)
+
 ```sh
 $ somisana mhw
 ```
 
 ### somisana mhw
+
 This command is useful for downloading... TODO
 
 ```sh
@@ -196,23 +208,27 @@ $ somisana \
    mhw \
     start \
      --nc-output-path /path/to/output/file.nc
-        
+
 ```
 
 ## Operational models (somisana ops)
+
 ```sh
 $ somisana ops
 ```
 
 ### Downloading forcing data (somisana ops download)
+
 By default, downloads are placed in `toolkit/.output/` (relative to the root of the repository). Read the CLI help output to see how to confiture this.
 
 _**Access help**_
+
 ```sh
 $ somisana ops download -h
 ```
 
 _**Download Algoa Bay forcing inputs (determined by domain)**_
+
 ```sh
 # GFS input data
 $ somisana \
@@ -230,14 +246,17 @@ $ somisana \
 ```
 
 ### Post-process CROCO NetCDF output (somisana ops transform)
+
 By default output is in your current directory (`output.zarr` and `output.nc`). Refer to the help to see how to configure this.
 
 _**Access help**_
+
 ```sh
 $ somisana ops transform -h
 ```
 
 _**Transform Aloa Bay output**_
+
 ```sh
 $ somisana \
    ops \
@@ -247,11 +266,13 @@ $ somisana \
 ```
 
 ### Load processed CROCO output into PostGIS (somisana ops load)
+
 TODO
 
 This CLI command needs to be re-worked to run operations on a PostgreSQL server in parallel. Currently this is achieved by running several instances of the command in parallel, which is cumbersome. Additionally alternative options to PostgreSQL are also being investigated (for example, a Zarr/client-only workflow)
 
 _**Access help**_
+
 ```sh
 $ somisana ops load -h
 ```
