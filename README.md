@@ -15,20 +15,16 @@ SOMISANA-related tooling
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Quick start
+# Local development
 
-Follow this guide to setup the source code on your local computer for development
-
-## Configure the repository
-
-There are some general tools that require Node.js - please install Node.js `v19.7.0`. Then in the root of the repo, run the following:
+Please install Node.js, then in the root of the repo, run the following commands to configure global settings (such as git pre-commit hooks):
 
 ```sh
 npm install -g chomp
 chomp init
 ```
 
-Look in the `chompfile.toml` file to see available scripts. Running `chomp init` should configure a default Git commit message template and register some pre-commit hooks.
+Look in the `chompfile.toml` file to see available scripts, and feel free to add your own! The pre-commit hook is defined in [.husky/pre-commit](/.husky/pre-commit). This is just a shell script and can easily be extended.
 
 # Deployment
 
