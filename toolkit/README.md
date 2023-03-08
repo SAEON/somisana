@@ -3,36 +3,31 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-**Table of Contents** _generated with [DocToc](https://github.com/thlorenz/doctoc)_
-
-- [Quick start](#quick-start)
-  - [Install Python](#install-python)
+- [Local development](#local-development)
+  - [Configure Python](#configure-python)
     - [Install pyenv](#install-pyenv)
-    - [Install pipenv (for dependency management/locks)](#install-pipenv-for-dependency-managementlocks)
-  - [Setup your local dev environment](#setup-your-local-dev-environment)
-    - [Install 3rd party dependencies](#install-3rd-party-dependencies)
-    - [Run the script](#run-the-script)
-    - [Setup script-environment variables](#setup-script-environment-variables)
-    - [Setup 3rd party services for local development](#setup-3rd-party-services-for-local-development)
-      - [MongoDB](#mongodb)
-      - [PostGIS](#postgis)
+    - [Install pipenv](#install-pipenv)
+  - [Install 3rd party dependencies](#install-3rd-party-dependencies)
+  - [Start the CLI](#start-the-cli)
+  - [Setup script-environment variables](#setup-script-environment-variables)
+  - [3rd party services](#3rd-party-services)
+    - [PostGIS](#postgis)
 - [Usage examples](#usage-examples)
-  - [Use compiled CLI](#use-compiled-cli)
-  - [Locally](#locally)
   - [Marine Heat Wave analysis (somisana mhw)](#marine-heat-wave-analysis-somisana-mhw)
     - [somisana mhw](#somisana-mhw)
   - [Operational models (somisana ops)](#operational-models-somisana-ops)
     - [Downloading forcing data (somisana ops download)](#downloading-forcing-data-somisana-ops-download)
     - [Post-process CROCO NetCDF output (somisana ops transform)](#post-process-croco-netcdf-output-somisana-ops-transform)
     - [Load processed CROCO output into PostGIS (somisana ops load)](#load-processed-croco-output-into-postgis-somisana-ops-load)
+  - [Use compiled CLI](#use-compiled-cli)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Local development
 
-## Install Python
+## Configure Python
 
-You need to be able to specify specific Python versions for the toolkit. I use the `pyenv` tool for this, though there are other options.
+You need to be able to specify specific Python versions for the toolkit. I use the `pyenv` tool for this, though there are other options for achieving this.
 
 ### Install pyenv
 
@@ -68,6 +63,8 @@ pyenv install $PYENV_VERSION
 
 ### Install pipenv
 
+Pipenv is a wrapper over the regular pip package manager, but with a slightly better mechanism for locking dependencies of referenced libraries (I believe). Dependencies are managed via the `Pipfile` and the `Pipfile.lock`.
+
 ```sh
 pip install --user pipenv
 ```
@@ -81,11 +78,9 @@ export PIPENV_VENV_IN_PROJECT="enabled"
 
 Run `source ~/.bashrc` so that changes to your shell environment take effect.
 
-## Setup your local dev environment
+## Install 3rd party dependencies
 
-The python libraries included in this project require binaries that need to be installed explicitly. Apparently... conda does this for you (I'll believe it when I see it!). Here are the steps to setup a local dev environment
-
-### Install 3rd party dependencies
+The python libraries included in this project require binaries that need to be installed explicitly. Run the following commands to install required dependencies in an Ubuntu environment.
 
 ```sh
 # Install required binaries
@@ -118,80 +113,46 @@ sudo cp -a proj-9.0.0/build/lib/. /usr/lib/
 sudo apt install postgis
 ```
 
-### Run the script
+## Start the CLI
+
+Finally, start the CLI by installing dependencies as configured in `Pipfile`, and register the `somisana` keyword on your `$PATH`.
 
 ```sh
 # In the toolkit directory, create the ".venv" directory. This hints to pipenv that you want your virtual environment to be local
 mkdir .venv
-
-# First install python dependencies
 pipenv install
-
-# And then you can run the script
-pipenv run script
-
-# Or register the somisana alias
-# From the toolkit (or repo root) directory run:
-source env.sh
+pipenv run script # This executes Python in the context of your virtual environment
 ```
 
-### Setup script-environment variables
+Because starting the script via `pipenv run script` seems a little cumbersome, that command is used via the `bin/somisana` file. This file is just a bash script, and needs to be configured to be executable and on the `$PATH` variable. The commands to register `bin/somisana` as an executable script are in the `env.sh` file, which can be sourced:
 
-Run this command `cp .env.example .env`, and the adjust the environment variables accordingly in the `.env` file
+```sh
+# From the toolkit (or repo root) directory run:
+source env.sh
 
-### Setup 3rd party services for local development
+# And then try the CLI
+somisana -h
+```
+
+## Setup script-environment variables
+
+The CLI is configured via flags and environment variables (in the case of passwords/etc.). Copy the example config into you directory as `.env` and adjust accordingly. The `.env` file is kept out of source control.
+
+```sh
+cp .env.example .env
+```
+
+NOTE: There is also a `env.sh` script in the root of the repo that can be sourced so that you don't have to be in the toolkit directory to run the CLI. All path-argument inputs that are relative paths are treated as relative to `<repo root>/toolkit`
+
+## 3rd party services
 
 Run 3rd party services via Docker. These commands setup Docker containers that should work with default configuration.
 
-#### MongoDB
-
-Please read the instructions at [https://github.com/SAEON/mongo](https://github.com/SAEON/mongo#local-development) for setting up a local MongoDB server on a local computer
-
-#### PostGIS
+### PostGIS
 
 Please read the instructions at [https://github.com/SAEON/postgis](https://github.com/SAEON/postgis#local-development) for setting up a local PostGIS server (and PGAdmin4 interface) via Docker
 
 # Usage examples
-
-## Use compiled CLI
-
-This is the easiest way to run the CLI, the only caveat is that all files must be in your `/home/$USER` directory, and all argument path references must be absolute paths (although you can also use command substitution `$(pwd)` in the pathname, so really not much of a caveat at all!).
-
-Ensure that [docker](https://www.docker.com/) is installed on your system. Update your `.bash_profile` (or `.bashrc`) file with an alias to the [SOMISANA cli Docker image](https://github.com/SAEON/somisana/pkgs/container/somisana_toolkit_stable):
-
-```sh
-vi ~/.bash_profile
-
-# Add the following line to the bottom of the file
-alias somisana="docker run -v /home/$USER:/home/$USER --rm ghcr.io/saeon/somisana_toolkit_stable:latest"
-
-# Re-source your profile configuration
-source ~/.bash_profile
-
-# Run the CLI
-$ somisana
-$ somisana ops download --input-path /abs/path/to/current/directory/file.nc
-$ somisana ops download --input-path $(pwd)/file.nc
-$ ... etc
-```
-
-NOTE: To update the docker image with a newer version, pull the image manaually:
-
-```sh
-docker pull ghcr.io/saeon/somisana_toolkit_stable:latest
-```
-
-## Locally
-
-Working locally in the context of this repository, run `source env.sh` either from the root of the repo or from the `./toolkit` directory.
-
-You should now be able to use the CLI via the `somisana` command:
-
-```sh
-$ somisana
-```
-
-NOTE: All path-argument inputs that are relative paths are treated as relative to `<repo root>/toolkit`
 
 ## Marine Heat Wave analysis (somisana mhw)
 
@@ -275,4 +236,35 @@ _**Access help**_
 
 ```sh
 $ somisana ops load -h
+```
+
+## Use compiled CLI
+
+To run the most recent build of the CLI, use the Docker Image
+
+This is the easiest way to run the CLI, the only caveat is that all files must be in your `/home/$USER` directory, and all argument path references must be absolute paths (although you can also use command substitution `$(pwd)` in the pathname, so really not much of a caveat at all!).
+
+Ensure that [docker](https://www.docker.com/) is installed on your system. Update your `.bash_profile` (or `.bashrc`) file with an alias to the [SOMISANA cli Docker image](https://github.com/SAEON/somisana/pkgs/container/somisana_toolkit_stable):
+
+```sh
+vi ~/.bash_profile
+
+# Add the following line to the bottom of the file
+# TODO - the latest tag is not actually being created yet
+alias somisana="docker run -v /home/$USER:/home/$USER --rm ghcr.io/saeon/somisana_toolkit_stable:latest"
+
+# Re-source your profile configuration
+source ~/.bash_profile
+
+# Run the CLI
+$ somisana
+$ somisana ops download --input-path /abs/path/to/current/directory/file.nc
+$ somisana ops download --input-path $(pwd)/file.nc
+$ ... etc
+```
+
+NOTE: To update the docker image with a newer version, pull the image manaually:
+
+```sh
+docker pull ghcr.io/saeon/somisana_toolkit_stable:latest
 ```
