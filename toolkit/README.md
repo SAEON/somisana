@@ -19,7 +19,8 @@
     - [Downloading forcing data (somisana ops download)](#downloading-forcing-data-somisana-ops-download)
     - [Post-process CROCO NetCDF output (somisana ops transform)](#post-process-croco-netcdf-output-somisana-ops-transform)
     - [Load processed CROCO output into PostGIS (somisana ops load)](#load-processed-croco-output-into-postgis-somisana-ops-load)
-  - [Use compiled CLI](#use-compiled-cli)
+- [Compiled CLI usage](#compiled-cli-usage)
+  - [Run the Algoa Bay Forecast Model using the CLI](#run-the-algoa-bay-forecast-model-using-the-cli)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -91,6 +92,7 @@ sudo apt-get install -y \
   libtiff-dev \
   curl \
   libssl-dev \
+  libpq-dev \
   libcurl4-openssl-dev \
   libgeos++-dev \
   libgeos-3.8.0 \
@@ -238,33 +240,85 @@ _**Access help**_
 $ somisana ops load -h
 ```
 
-## Use compiled CLI
+# Compiled CLI usage
+The SOMISANA toolkit is packaged as a Docker image, and can be used without downloading or configuring source code.
 
-To run the most recent build of the CLI, use the Docker Image
+Ensure that [docker](https://www.docker.com/) is installed on your system. This is the easiest way to run the CLI, the only caveat is that all files must be in your `/home/$USER/..` directory, and all argument path references must be absolute paths (although you can also use command substitution `$(pwd)` in the pathname, so really not much of a caveat at all!).
 
-This is the easiest way to run the CLI, the only caveat is that all files must be in your `/home/$USER` directory, and all argument path references must be absolute paths (although you can also use command substitution `$(pwd)` in the pathname, so really not much of a caveat at all!).
-
-Ensure that [docker](https://www.docker.com/) is installed on your system. Update your `.bash_profile` (or `.bashrc`) file with an alias to the [SOMISANA cli Docker image](https://github.com/SAEON/somisana/pkgs/container/somisana_toolkit_stable):
+To 'install' the CLI, update your `.bashrc` configuration:
 
 ```sh
-vi ~/.bash_profile
+vi ~/.bashrc
 
 # Add the following line to the bottom of the file
-# TODO - the latest tag is not actually being created yet
-alias somisana="docker run -v /home/$USER:/home/$USER --rm ghcr.io/saeon/somisana_toolkit_stable:latest"
-
-# Re-source your profile configuration
-source ~/.bash_profile
-
-# Run the CLI
-$ somisana
-$ somisana ops download --input-path /abs/path/to/current/directory/file.nc
-$ somisana ops download --input-path $(pwd)/file.nc
-$ ... etc
+alias somisana="docker run -v /home/$USER:/home/$USER -it --rm ghcr.io/saeon/somisana_toolkit_stable:sha-21585b6"
 ```
 
-NOTE: To update the docker image with a newer version, pull the image manaually:
+Then re-load your bash configuration: `srouce ~/.bashrc`, and the `somisana` CLI should run when you type `somisana` into the terminal.
+
+## Run the Algoa Bay Forecast Model using the CLI
+**_(1) Create a directory workspace_**
+```sh
+export SOMISANA_DIR="/home/$USER/temp/somisana"
+export WORKDIR=$SOMISANA_DIR/local-run
+mkdir -p $WORKDIR/{croco/{forcing,forecast,scratch},forcing-inputs}
+touch $SOMISANA_DIR/.env
+echo COPERNICUS_USERNAME=username >> $SOMISANA_DIR/.env
+echo COPERNICUS_PASSWORD=password >> $SOMISANA_DIR/.env
+touch $WORKDIR/.env
+chmod -R 777 $SOMISANA_DIR
+cd $SOMISANA_DIR
+```
+
+**_(2) Download GFS boundary data_**
+```sh
+somisana \
+  ops \
+    download \
+    --workdir $WORKDIR/forcing-inputs \
+    --matlab-env $WORKDIR/.env \
+    --provider gfs \
+    --domain 22,31,-37,-31
+```
+
+**_(3) Download Mercator boundary data_**
+```sh
+somisana \
+  ops \
+    download \
+    --workdir $WORKDIR/forcing-inputs \
+    --matlab-env $WORKDIR/.env \
+    --provider mercator \
+    --domain 22,31,-37,-31
+```
+
+**_(4) Create forcing files_**
+For this step you do need the source code currently. From the root of the repository (and on the SAEON VPN):
 
 ```sh
-docker pull ghcr.io/saeon/somisana_toolkit_stable:latest
+docker run \
+  --rm \
+  -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
+  -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
+  -v $WORKDIR:/tmp/somisana/current \
+  -e MLM_LICENSE_FILE=http://matlab-license-manager.saeon.int:27000 \
+  ghcr.io/saeon/somisana_matlab:r2022a \
+    -batch "run('/crocotools/run.m')"
+```
+
+**(5) _Run the compiled CROCO model_**
+For this step you do need the source code currently. From the root of the repository:
+
+```sh
+TODAY=08032023
+YESTERDAY=070320233
+docker run \
+  --rm \
+  -v $WORKDIR:/algoa-bay-forecast/current \
+  -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
+  ghcr.io/saeon/somisana_algoa_bay_forecast_croco_stable:sha-c2a9c9f \
+    ./run_croco.bash \
+      /algoa-bay-forecast/current \
+      $TODAY \
+      $YESTERDAY
 ```
