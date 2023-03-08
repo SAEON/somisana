@@ -7,7 +7,6 @@
   "devDependencies": {
     "doctoc": "^2.2.1",
     "husky": "^8.0.3",
-    "prettier": "^2.8.3",
     "pretty-quick": "^3.1.3"
   }
 }

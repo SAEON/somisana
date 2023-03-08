@@ -6,15 +6,12 @@ SOMISANA-related tooling
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Quick start](#quick-start)
-  - [Setup the repository for local development](#setup-the-repository-for-local-development)
+  - [Configure the repository](#configure-the-repository)
 - [Deployment](#deployment)
-  - [Infrastructure Requirements](#infrastructure-requirements)
-    - [Application server](#application-server)
-    - [MongoDB](#mongodb)
-    - [PostgreSQL server](#postgresql-server)
-    - [Dedicated task server](#dedicated-task-server)
-  - [Deploy model-run workflows](#deploy-model-run-workflows)
-  - [Deploy the visualization website](#deploy-the-visualization-website)
+- [Documentation](#documentation)
+  - [Operational models](#operational-models)
+  - [Python toolkit](#python-toolkit)
+  - [Web application](#web-application)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -22,41 +19,53 @@ SOMISANA-related tooling
 
 Follow this guide to setup the source code on your local computer for development
 
-## Setup the repository for local development
+## Configure the repository
+
+There are some general tools that require Node.js - please install Node.js `v19.7.0`. Then in the root of the repo, run the following:
 
 ```sh
-# Install Node.js 16.14.2 (exactly this version). I recommend doing this via nvm (https://github.com/nvm-sh/nvm)
-
-# Install chomp
 npm install -g chomp
-
-# Initialize repository
 chomp init
 ```
 
+Look in the `chompfile.toml` file to see available scripts. Running `chomp init` should configure a default Git commit message template and register some pre-commit hooks.
+
 # Deployment
 
-## Infrastructure Requirements
+The following infrastructure is required:
 
-### Application server
-The application server is a Node.js application with no special requirements
-### MongoDB
-TODO
-### PostgreSQL server
-- 8GB memory (or more)
-- 8CPUs (or more)
-- 1TB HD space (500GB operational data + 500GB spare for upgrades, etc). SSDs work best and will perform noticeably better, although the storage setup for the somisana.ac.za works fine to (spinners). TODO: work out how far back in time 500GB allows
+**_An application server_**
 
-### Dedicated task server
-This server runs the CROCO application, as well as executing the CROCOTOOLS scripts. As a generalized runner it is integrated with the GitHub Actions tools and also handles deployment of the application server.
+- 4GB memory
+- 2CPUs
 
-- 24 CPUS
-- 16 GB memory
-- 1TB HD space (TBC)
+**_MongoDB database server_**
 
+- 4GB memory
+- 2CPUs
 
+**_PostgreSQL database server_**
 
-## Deploy model-run workflows
-TODO
-## Deploy the visualization website
-TODO
+- 12GB memory
+- 16 CPUs
+
+**_Dedicated task server_**
+This server runs GitHub Actions pipelines on a self-hosted actions runner.
+
+- 12GB memory
+- 16 CPUs
+
+**_Volume mounts_**
+Volumes should be mounted to the GitHub runner server for temporary files, to the application server for archiving products, and to the PostgreSQL server for a working dataset
+
+- 1TB for GitHub Runner
+- Several TB for the application server
+- 1TB for PostgreSQL
+
+# Documentation
+
+## [Operational models](/models/)
+
+## [Python toolkit](/toolkit/)
+
+## [Web application](/web/)
