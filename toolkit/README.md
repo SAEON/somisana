@@ -312,8 +312,8 @@ docker run \
 For this step you do need the source code currently. From the root of the repository:
 
 ```sh
-TODAY=08032023
-YESTERDAY=070320233
+export TODAY=08032023
+export YESTERDAY=070320233
 docker run \
   --rm \
   -v $WORKDIR:/algoa-bay-forecast/current \
