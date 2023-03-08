@@ -5,8 +5,7 @@ SOMISANA-related tooling
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Quick start](#quick-start)
-  - [Configure the repository](#configure-the-repository)
+- [Local development](#local-development)
 - [Deployment](#deployment)
 - [Documentation](#documentation)
   - [Operational models](#operational-models)
