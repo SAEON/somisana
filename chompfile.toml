@@ -13,7 +13,7 @@ run = '''
 name = 'doc'
 run = '''
   doctoc *.md
-  doctoc web/*.md
+  doctoc **/*.md
   doctoc models/**/*.md
   doctoc models/**/**/*.md
   doctoc docker/**/*.md

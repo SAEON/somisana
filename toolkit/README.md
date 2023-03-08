@@ -19,7 +19,7 @@
   - [Use compiled CLI](#use-compiled-cli)
   - [Locally](#locally)
   - [Marine Heat Wave analysis (somisana mhw)](#marine-heat-wave-analysis-somisana-mhw)
-    - [somisana mhw download](#somisana-mhw-download)
+    - [somisana mhw](#somisana-mhw)
   - [Operational models (somisana ops)](#operational-models-somisana-ops)
     - [Downloading forcing data (somisana ops download)](#downloading-forcing-data-somisana-ops-download)
     - [Post-process CROCO NetCDF output (somisana ops transform)](#post-process-croco-netcdf-output-somisana-ops-transform)

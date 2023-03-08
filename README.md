@@ -50,8 +50,7 @@ This server runs GitHub Actions pipelines on a self-hosted actions runner.
 - 12GB memory
 - 16 CPUs
 
-**_Volume mounts_**
-Volumes should be mounted to the GitHub runner server for temporary files, to the application server for archiving products, and to the PostgreSQL server for a working dataset
+**_Volumes_** should be mounted to the GitHub runner server for temporary files, to the application server for archiving products, and to the PostgreSQL server for a working dataset
 
 - 1TB for GitHub Runner
 - Several TB for the application server
