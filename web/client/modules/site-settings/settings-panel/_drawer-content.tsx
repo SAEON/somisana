@@ -28,9 +28,9 @@ const DrawerContent = forwardRef(({ forceLanguage, ...props }, ref) => {
       <Suspense fallback={<StyledLoading />}>
         <CookieSettings />
       </Suspense>
-      {/* <Suspense fallback={<StyledLoading />}>
+      <Suspense fallback={<StyledLoading />}>
         <ThemeSettings />
-      </Suspense> */}
+      </Suspense>
     </Box>
   )
 })

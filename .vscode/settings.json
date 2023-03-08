@@ -64,6 +64,7 @@
     "ncei",
     "Neue",
     "NOPASSWD",
+    "notistack",
     "numpy",
     "OISST",
     "Parens",
@@ -100,8 +101,10 @@
     "Terrestris",
     "tileserv",
     "timestep",
+    "tinygradient",
     "TOPO",
     "tricontour",
+    "twgl",
     "ULWAPPSWARM",
     "usermod",
     "VENV",
@@ -115,7 +118,5 @@
     "xzvf",
     "Zarr"
   ],
-  "python.analysis.extraPaths": [
-    "./toolkit"
-  ]
+  "python.analysis.extraPaths": ["./toolkit"]
 }

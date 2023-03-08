@@ -1,6 +1,0 @@
-
-		begin
-      f = addfile("/home/zach/code/saeon/repositories/somisana/toolkit/.marine-heat-waves.nc","r")
-      print(f)
-		end
-    
