@@ -12,11 +12,6 @@ def build(module_parser):
         "--inputs", default=".output.nc", help="Path to input NetCDF files"
     )
     kerchunk_run.add_argument(
-        "--replace-uri",
-        help="Replace URIs (or other strings) in the JSON output (--replace-uri http:\\\/\\\/localhost:3000\\\/marine-heat-waves\\\/20230223.nc,new-url)",
-        required=False,
-    )
-    kerchunk_run.add_argument(
         "--output",
         default=".output/kerchunk.json",
         help="Path to output file",

@@ -241,6 +241,7 @@ $ somisana ops load -h
 ```
 
 # Compiled CLI usage
+
 The SOMISANA toolkit is packaged as a Docker image, and can be used without downloading or configuring source code.
 
 Ensure that [docker](https://www.docker.com/) is installed on your system. This is the easiest way to run the CLI, the only caveat is that all files must be in your `/home/$USER/..` directory, and all argument path references must be absolute paths (although you can also use command substitution `$(pwd)` in the pathname, so really not much of a caveat at all!).
@@ -257,7 +258,9 @@ alias somisana="docker run -v /home/$USER:/home/$USER -it --rm ghcr.io/saeon/som
 Then re-load your bash configuration: `srouce ~/.bashrc`, and the `somisana` CLI should run when you type `somisana` into the terminal.
 
 ## Run the Algoa Bay Forecast Model using the CLI
+
 **_(1) Create a directory workspace_**
+
 ```sh
 export SOMISANA_DIR="/home/$USER/temp/somisana"
 export WORKDIR=$SOMISANA_DIR/local-run
@@ -271,6 +274,7 @@ cd $SOMISANA_DIR
 ```
 
 **_(2) Download GFS boundary data_**
+
 ```sh
 somisana \
   ops \
@@ -282,6 +286,7 @@ somisana \
 ```
 
 **_(3) Download Mercator boundary data_**
+
 ```sh
 somisana \
   ops \
@@ -302,7 +307,7 @@ docker run \
   -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
   -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
   -v $WORKDIR:/tmp/somisana/current \
-  -e MLM_LICENSE_FILE=http://matlab-license-manager.saeon.int:27000 \
+  -e MLM_LICENSE_FILE=27000@matlab-license-manager.saeon.int \
   ghcr.io/saeon/somisana_matlab:r2022a \
     -batch "run('/crocotools/run.m')"
 ```

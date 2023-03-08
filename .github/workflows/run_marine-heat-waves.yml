@@ -12,7 +12,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  MNEMOSYNE_ADDRESS: ${{ secrets.MNEMOSYNE_INTERNAL_ADDRESS }}
 
 jobs:
   # Dynamically set the branch ref to the currently executing branch
@@ -158,7 +157,7 @@ jobs:
                 -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                ${{ env.MNEMOSYNE_ADDRESS }}/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc;
+                https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc;
       - name: Kerchunk the NetCDF file output
         continue-on-error: false
         run: >-
@@ -168,9 +167,8 @@ jobs:
             ${{ needs.toolkit.outputs.image }} \
               kerchunk \
                 run \
-                  --inputs ${{ env.MNEMOSYNE_ADDRESS }}/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc \
-                  --output /tmp/somisana/current/${{ env.RUN_DATE }}.kerchunk.json \
-                  --replace-uri http:\\/\\/192.168.118.193:6008\\/somisana\\/marine-heat-waves\\/${{ env.RUN_DATE }}.nc,https:\\/\\/mnemosyne.somisana.ac.za\\/somisana\\/marine-heat-waves\\/${{ env.RUN_DATE }}.nc
+                  --inputs https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc \
+                  --output /tmp/somisana/current/${{ env.RUN_DATE }}.kerchunk.json
       - name: Upload Kerchunk output to Mnemosyne
         continue-on-error: false
         run: |
@@ -184,4 +182,4 @@ jobs:
                 -H "Content-Type: application/octet-stream" \
                 -T \
                 - \
-                ${{ env.MNEMOSYNE_ADDRESS }}/somisana/marine-heat-waves/${{ env.RUN_DATE }}.kerchunk.json;
+                https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.kerchunk.json;
