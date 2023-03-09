@@ -47,18 +47,18 @@ def build(module_parser):
         choices=range(-1, 9999),
         metavar="",
         default=100,
-        help="Maximum age in days of thresholds, before requireing new thresholds be calculated (0, always expire the thresholds file. -1 == never expire the thresholds file)",
+        help="Maximum age in days of thresholds, before requiring new thresholds be calculated (0, always expire the thresholds file. -1 == never expire the thresholds file)",
     )
     mhw_start.add_argument(
-        '--chown',
+        "--chown",
         type=str,
         required=False,
-        help='Run "chown" system call on downloaded/created files with the provided user:group (i.e. "runner:runners"")'
+        help='Run "chown" system call on downloaded/created files with the provided user:group (i.e. "runner:runners"")',
     )
     mhw_start.add_argument(
         "--domain",
-        help="Bounding box in 4326 projection (i.e. min_long,max_long,min_lat,max_lat)",
-        required=True
+        help="Bounding box in 4326 projection (i.e. west,east,south,north)",
+        required=True,
     )
 
     return mhw
