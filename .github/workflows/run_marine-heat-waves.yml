@@ -129,6 +129,7 @@ jobs:
               mhw \
                 start \
                   --domain="-40,-10,-4,-55" \
+                  --chown="runner:runners" \
                   --nc-thresholds-path /tmp/somisana/current/thresholds.nc \
                   --mhw-bulk-cache /tmp/somisana/cache/ \
                   --nc-mhw-output-path /tmp/somisana/current/mhw-${{ env.RUN_DATE }}.nc

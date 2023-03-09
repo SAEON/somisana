@@ -40,7 +40,7 @@ async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache, ch
                             break
                         await f.write(chunk)
     if chown:
-        subprocess.call(["chown", "runner:runners", file_path])
+        subprocess.call(["chown", chown, file_path])
     subprocess.call(["chmod", "775", file_path])
     print("Downloaded", file_path)
 
