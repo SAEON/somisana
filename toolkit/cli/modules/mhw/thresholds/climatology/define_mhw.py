@@ -142,8 +142,6 @@ def min_time_array(x):
 def calculate_mhw(mhw_bulk_cache, nc_thresholds_path, nc_mhw_output_path):
     # Loading threshold netcdf file
     ds_mhw = xr.open_dataset(nc_thresholds_path)
-    # print(ds_mhw)
-    # exit()
 
     # Loads the daily climatology from NC file
     clim = ds_mhw.clim.values
@@ -156,6 +154,9 @@ def calculate_mhw(mhw_bulk_cache, nc_thresholds_path, nc_mhw_output_path):
 
     # Selecting files in folder
     files = natsorted(glob(mhw_bulk_cache + "/*.nc"))
+
+    #Detect MHW for only last 20 days 
+    files = files[-30:]
 
     # Load SST files from previous 5 days
     list_of_arrays = []
