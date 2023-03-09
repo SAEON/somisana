@@ -1,4 +1,5 @@
 import os
+from glob import glob
 import asyncio
 import aiohttp
 import aiofiles
@@ -12,7 +13,9 @@ MAX_CONCURRENT_NET_IO = 31
 
 async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache, chown):
     uri = file["uri"]
-    filename = file["name"]
+    filename = file["name"].replace(
+        ".nc", "_{domain}.nc".format(domain="".join(str(v) for v in domain))
+    )
     file_path = os.path.join(mhw_bulk_cache, filename)
     if not reset_cache:
         if os.path.isfile(file_path):
@@ -76,12 +79,22 @@ async def resolve_download_uris(
     await asyncio.gather(*tasks)
 
 
+def delete_cached_preliminary_files(mhw_bulk_cache):
+    search = "_preliminary_"
+    files = glob(os.path.join(mhw_bulk_cache, f"*{search}*"))
+    for p in files:
+        os.remove(p)
+
+
 def update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache, chown):
     if PY_ENV == "development":
         print(
             "Warning! PY_ENV == development (for sanity sake, only a couple years of back data are checked)"
         )
-        refs = refs[:44]
+        refs = refs[-48:]
+
+    # First delete any cached preliminary files
+    delete_cached_preliminary_files(mhw_bulk_cache)
 
     semaphore = asyncio.BoundedSemaphore(MAX_CONCURRENT_NET_IO)
     asyncio.run(
