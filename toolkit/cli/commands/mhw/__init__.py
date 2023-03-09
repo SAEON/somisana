@@ -27,11 +27,6 @@ def build(module_parser):
         help="Skip checking for new OISST entries",
     )
     mhw_start.add_argument(
-        "--domain",
-        help="Bounding box in 4326 projection (i.e. min_long,max_long,min_lat,max_lat)",
-        required=True,
-    )
-    mhw_start.add_argument(
         "--nc-thresholds-path",
         default=".thresholds.nc",
         help="Path to SST Thresholds NetCDF file",
@@ -53,6 +48,17 @@ def build(module_parser):
         metavar="",
         default=100,
         help="Maximum age in days of thresholds, before requireing new thresholds be calculated (0, always expire the thresholds file. -1 == never expire the thresholds file)",
+    )
+    mhw_start.add_argument(
+        '--chown',
+        type=str,
+        required=False,
+        help='Run "chown" system call on downloaded/created files with the provided user:group (i.e. "runner:runners"")'
+    )
+    mhw_start.add_argument(
+        "--domain",
+        help="Bounding box in 4326 projection (i.e. min_long,max_long,min_lat,max_lat)",
+        required=True
     )
 
     return mhw

@@ -10,13 +10,13 @@ import subprocess
 MAX_CONCURRENT_NET_IO = 31
 
 
-async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):
+async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache, chown):
     uri = file["uri"]
     filename = file["name"]
     file_path = os.path.join(mhw_bulk_cache, filename)
     if not reset_cache:
         if os.path.isfile(file_path):
-            # TODO check the file is vali otherwise overwrite it
+            # TODO check the file is valid otherwise overwrite it
             print("Cache hit", file_path)
             return
 
@@ -39,13 +39,14 @@ async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache):
                         if not chunk:
                             break
                         await f.write(chunk)
-    subprocess.call(["chown", "runner:runners", file_path])
+    if chown:
+        subprocess.call(["chown", "runner:runners", file_path])
     subprocess.call(["chmod", "775", file_path])
     print("Downloaded", file_path)
 
 
 async def resolve_download_uris(
-    semaphore, refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache
+    semaphore, refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache, chown
 ):
     tasks = []
     async with semaphore:
@@ -63,14 +64,19 @@ async def resolve_download_uris(
                     tasks.append(
                         asyncio.create_task(
                             download_file(
-                                semaphore, file, domain, mhw_bulk_cache, reset_cache
+                                semaphore,
+                                file,
+                                domain,
+                                mhw_bulk_cache,
+                                reset_cache,
+                                chown,
                             )
                         )
                     )
     await asyncio.gather(*tasks)
 
 
-def update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache):
+def update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache, chown):
     if PY_ENV == "development":
         print(
             "Warning! PY_ENV == development (for sanity sake, only a couple years of back data are checked)"
@@ -80,6 +86,6 @@ def update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache):
     semaphore = asyncio.BoundedSemaphore(MAX_CONCURRENT_NET_IO)
     asyncio.run(
         resolve_download_uris(
-            semaphore, refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache
+            semaphore, refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache, chown
         )
     )

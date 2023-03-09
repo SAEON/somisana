@@ -18,6 +18,6 @@ def run(args):
         singles,
         remote_protocol="https",
         remote_options={"anon": True},
-        concat_dims=["time"],
+        concat_dims=[],
     )
     mzz.translate(output)

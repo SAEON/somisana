@@ -16,6 +16,7 @@ os.makedirs(MHW_BULK_CACHE, exist_ok=True)
 def create_thresholds(args):
     nc_thresholds_path = os.path.abspath(args.nc_thresholds_path)
     nc_mhw_output_path = os.path.abspath(args.nc_mhw_output_path)
+    chown = args.chown
     domain = [float(x) for x in args.domain.split(",")]
     skip_caching_oisst = args.skip_caching_oisst
     clear_cache = args.clear_cache
@@ -29,12 +30,16 @@ def create_thresholds(args):
     else:
         with Catalogue("{url}/catalog.xml".format(url=OISST_DATA)) as catalogue:
             refs = catalogue.catalog_refs
-            update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, clear_cache)
-            print('OISST cache updated!')
+            update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, clear_cache, chown)
+            print("OISST cache updated!")
 
     # Create thresholds from OISST cache
     calculate_daily_clim(mhw_bulk_cache, nc_thresholds_path)
 
     # Create mhw output classifications of cached data? or part of cache data?
     calculate_mhw(mhw_bulk_cache, nc_thresholds_path, nc_mhw_output_path)
-    print("""Marine Heat Wave events saved to {filename}""". format(filename=args.nc_mhw_output_path))
+    print(
+        """Marine Heat Wave events saved to {filename}""".format(
+            filename=args.nc_mhw_output_path
+        )
+    )
