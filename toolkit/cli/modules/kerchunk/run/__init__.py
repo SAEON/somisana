@@ -16,7 +16,7 @@ def run(args):
 
     mzz = MultiZarrToZarr(
         singles,
-        remote_protocol="http",
+        remote_protocol="https",
         remote_options={"anon": True},
         concat_dims=["time"],
     )
