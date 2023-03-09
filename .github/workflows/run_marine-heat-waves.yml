@@ -128,7 +128,7 @@ jobs:
             ${{ needs.toolkit.outputs.image }} \
               mhw \
                 start \
-                  --domain="-40,-10,-4,-55" \
+                  --domain="4,55,-40,-10" \
                   --chown="runner:runners" \
                   --nc-thresholds-path /tmp/somisana/current/thresholds.nc \
                   --mhw-bulk-cache /tmp/somisana/cache/ \
