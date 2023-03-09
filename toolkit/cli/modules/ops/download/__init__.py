@@ -10,8 +10,8 @@ def download(args):
 
     workdir = args.workdir
     matlab_env = args.matlab_env
-    gfs = args.provider == 'gfs'
-    mercator = args.provider == 'mercator'
+    gfs = args.provider == "gfs"
+    mercator = args.provider == "mercator"
     run_date = datetime.strptime(args.download_date, "%Y%m%d")
     domain = list(map(lambda i: float(i), args.domain.split(",")))
 
@@ -41,11 +41,16 @@ def download(args):
         with open(matlab_env, "w+") as env:
             env.writelines(
                 [
-                    "RUN_DATE=" + str(datetime.strftime(run_date, '%Y-%m-%d')) + "\n",
+                    "RUN_DATE=" + str(datetime.strftime(run_date, "%Y-%m-%d")) + "\n",
                     "DELTA_DAYS_GFS=" + str(delta_days_gfs) + "\n",
                 ]
             )
-        os.chmod(matlab_env, 0o777)
+        try:
+            os.chmod(matlab_env, 0o777)
+        except:
+            print(
+                "Unable to run os.chmod on the .env file - you may have to do this manually"
+            )
 
     # Script complete
     print("Complete!")
