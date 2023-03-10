@@ -252,7 +252,8 @@ To 'install' the CLI, update your `.bashrc` configuration:
 vi ~/.bashrc
 
 # Add the following line to the bottom of the file
-alias somisana="docker run -v /home/$USER:/home/$USER -it --rm ghcr.io/saeon/somisana_toolkit_stable:sha-21585b6"
+TOOLKIT_VERSION=sha-08a8b05
+alias somisana="docker run -v /home/$USER:/home/$USER -it --rm ghcr.io/saeon/somisana_toolkit_stable:$TOOLKIT_VERSION"
 ```
 
 Then re-load your bash configuration: `srouce ~/.bashrc`, and the `somisana` CLI should run when you type `somisana` into the terminal.
@@ -264,6 +265,7 @@ Then re-load your bash configuration: `srouce ~/.bashrc`, and the `somisana` CLI
 ```sh
 export SOMISANA_DIR="/home/$USER/temp/somisana"
 export WORKDIR=$SOMISANA_DIR/local-run
+
 mkdir -p $WORKDIR/{croco/{forcing,forecast,scratch},forcing-inputs}
 touch $SOMISANA_DIR/.env
 echo COPERNICUS_USERNAME=username >> $SOMISANA_DIR/.env
@@ -317,8 +319,9 @@ docker run \
 For this step you do need the source code currently. From the root of the repository:
 
 ```sh
-export TODAY=08032023
-export YESTERDAY=070320233
+export TODAY=$(date +"%Y%m%d")
+export YESTERDAY=$(date -d "yesterday" +"%Y%m%d")
+
 docker run \
   --rm \
   -v $WORKDIR:/algoa-bay-forecast/current \
