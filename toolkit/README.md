@@ -4,7 +4,10 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Documentation](#documentation)
-  - [Run the Algoa Bay Forecast Model using the CLI](#run-the-algoa-bay-forecast-model-using-the-cli)
+  - [Install](#install)
+  - [Examples](#examples)
+    - [Algoa Bay operational model](#algoa-bay-operational-model)
+    - [Marine Heat Waves](#marine-heat-waves)
 - [Local development](#local-development)
   - [Configure Python](#configure-python)
     - [Install pyenv](#install-pyenv)
@@ -14,13 +17,6 @@
   - [Setup script-environment variables](#setup-script-environment-variables)
   - [3rd party services](#3rd-party-services)
     - [PostGIS](#postgis)
-- [Usage examples](#usage-examples)
-  - [Marine Heat Wave analysis (somisana mhw)](#marine-heat-wave-analysis-somisana-mhw)
-    - [somisana mhw](#somisana-mhw)
-  - [Operational models (somisana ops)](#operational-models-somisana-ops)
-    - [Downloading forcing data (somisana ops download)](#downloading-forcing-data-somisana-ops-download)
-    - [Post-process CROCO NetCDF output (somisana ops transform)](#post-process-croco-netcdf-output-somisana-ops-transform)
-    - [Load processed CROCO output into PostGIS (somisana ops load)](#load-processed-croco-output-into-postgis-somisana-ops-load)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
