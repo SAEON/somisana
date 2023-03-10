@@ -3,6 +3,8 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+- [Documentation](#documentation)
+  - [Run the Algoa Bay Forecast Model using the CLI](#run-the-algoa-bay-forecast-model-using-the-cli)
 - [Local development](#local-development)
   - [Configure Python](#configure-python)
     - [Install pyenv](#install-pyenv)
@@ -19,14 +21,14 @@
     - [Downloading forcing data (somisana ops download)](#downloading-forcing-data-somisana-ops-download)
     - [Post-process CROCO NetCDF output (somisana ops transform)](#post-process-croco-netcdf-output-somisana-ops-transform)
     - [Load processed CROCO output into PostGIS (somisana ops load)](#load-processed-croco-output-into-postgis-somisana-ops-load)
-- [Compiled CLI usage](#compiled-cli-usage)
-  - [Run the Algoa Bay Forecast Model using the CLI](#run-the-algoa-bay-forecast-model-using-the-cli)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Documentation
 
 The SOMISANA toolkit is packaged as a Docker image, and can be used without configuring a local dev environment.
+
+## Install
 
 Ensure that [docker](https://www.docker.com/) is installed on your system, and install the CLI:
 
@@ -44,7 +46,9 @@ sudo service docker start
 somisana -h
 ```
 
-## Run the Algoa Bay Forecast Model using the CLI
+## Examples
+
+### Algoa Bay operational model
 
 **_(1) Create a directory workspace_**
 
@@ -118,6 +122,10 @@ docker run \
       $TODAY \
       $YESTERDAY
 ```
+
+### Marine Heat Waves
+
+TODAY
 
 # Local development
 
@@ -248,89 +256,3 @@ Run 3rd party services via Docker. These commands setup Docker containers that s
 ### PostGIS
 
 Please read the instructions at [https://github.com/SAEON/postgis](https://github.com/SAEON/postgis#local-development) for setting up a local PostGIS server (and PGAdmin4 interface) via Docker
-
-# Usage examples
-
-## Marine Heat Wave analysis (somisana mhw)
-
-```sh
-$ somisana mhw
-```
-
-### somisana mhw
-
-This command is useful for downloading... TODO
-
-```sh
-$ somisana \
-   mhw \
-    start \
-     --nc-output-path /path/to/output/file.nc
-
-```
-
-## Operational models (somisana ops)
-
-```sh
-$ somisana ops
-```
-
-### Downloading forcing data (somisana ops download)
-
-By default, downloads are placed in `toolkit/.output/` (relative to the root of the repository). Read the CLI help output to see how to confiture this.
-
-_**Access help**_
-
-```sh
-$ somisana ops download -h
-```
-
-_**Download Algoa Bay forcing inputs (determined by domain)**_
-
-```sh
-# GFS input data
-$ somisana \
-   ops \
-    download \
-     --provider gfs \
-     --domain 22,31,-37,-31
-
-# Mercator input data
-$ somisana \
-   ops \
-    download \
-     --provider mercator \
-     --domain 22,31,-37,-31
-```
-
-### Post-process CROCO NetCDF output (somisana ops transform)
-
-By default output is in your current directory (`output.zarr` and `output.nc`). Refer to the help to see how to configure this.
-
-_**Access help**_
-
-```sh
-$ somisana ops transform -h
-```
-
-_**Transform Aloa Bay output**_
-
-```sh
-$ somisana \
-   ops \
-    transform \
-     --nc-input-path /path/to/croco/output.nc \
-     --grid-input-path /path/to/repo/models/algoa-bay-forecast/lib/grd.nc
-```
-
-### Load processed CROCO output into PostGIS (somisana ops load)
-
-TODO
-
-This CLI command needs to be re-worked to run operations on a PostgreSQL server in parallel. Currently this is achieved by running several instances of the command in parallel, which is cumbersome. Additionally alternative options to PostgreSQL are also being investigated (for example, a Zarr/client-only workflow)
-
-_**Access help**_
-
-```sh
-$ somisana ops load -h
-```
