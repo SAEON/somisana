@@ -1,8 +1,16 @@
 #!/bin/bash
 
+TOOLKIT_VERSION="sha-89a5f54"
+
+# check if an argument was passed and set the TOOLKIT_VERSION accordingly
+if [[ "$1" != "" ]]; then
+  TOOLKIT_VERSION="$1"
+fi
+
 # The lines to ensure in the .bashrc file
 lines=(
-  "TOOLKIT_VERSION=sha-08a8b05"
+  "## Added by SOMISANA Toolkit installer ##",  
+  "export TOOLKIT_VERSION=$TOOLKIT_VERSION"
   "alias somisana=\"docker run -v /home/\$USER:/home/\$USER -it --rm ghcr.io/saeon/somisana_toolkit_stable:\$TOOLKIT_VERSION\""
 )
 

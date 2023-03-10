@@ -4,12 +4,14 @@ from cli.commands import (
     mhw as mhw_cmd,
     ops as ops_cmd,
     kerchunk as kerchunk_cmd,
+    update as update_cmd,
 )
 from cli.exe import (
     lacce as lacce_exe,
     mhw as mhw_exe,
     ops as ops_exe,
     kerchunk as kerchunk_exe,
+    update as update_exe,
 )
 
 prog = "somisana"
@@ -32,6 +34,7 @@ def main():
     ops = ops_cmd.build(module_parser)
     lacce = lacce_cmd.build(module_parser)
     kerchunk = kerchunk_cmd.build(module_parser)
+    update = update_cmd.build(module_parser)
 
     # Parse args
     args = parser.parse_args()
@@ -45,6 +48,8 @@ def main():
         lacce_exe.run(lacce, args)
     elif args.command == "kerchunk":
         kerchunk_exe.run(kerchunk, args)
+    elif args.command == "update":
+        update_exe.run(update, args)
     else:
         parser.print_help()
 

@@ -5,6 +5,7 @@
 
 - [Documentation](#documentation)
   - [Install](#install)
+    - [Update the CLI](#update-the-cli)
   - [Examples](#examples)
     - [Algoa Bay operational model](#algoa-bay-operational-model)
     - [Marine Heat Waves](#marine-heat-waves)
@@ -40,6 +41,17 @@ sudo service docker start
 
 # Run the CLI
 somisana -h
+```
+
+### Update the CLI
+
+Use the CLI to update itself, referencing a newer version. choose the version of the CLI to use from the listed versions https://github.com/SAEON/somisana/pkgs/container/somisana_toolkit_stable (for example, `sha-89a5f54`), and then run the update command:
+
+```sh
+somisana update --version sha-89a5f54
+
+# Or to reset to the original installed version
+somisana update --reset
 ```
 
 ## Examples
@@ -112,7 +124,7 @@ docker run \
   --rm \
   -v $WORKDIR:/algoa-bay-forecast/current \
   -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
-  ghcr.io/saeon/somisana_algoa_bay_forecast_croco_stable:sha-c2a9c9f \
+  ghcr.io/saeon/somisana_algoa_bay_forecast_croco_stable:$TOOLKIT_VERSION \
     ./run_croco.bash \
       /algoa-bay-forecast/current \
       $TODAY \
