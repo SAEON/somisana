@@ -24,6 +24,101 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+# Documentation
+
+The SOMISANA toolkit is packaged as a Docker image, and can be used without configuring a local dev environment.
+
+Ensure that [docker](https://www.docker.com/) is installed on your system, and install the CLI:
+
+```sh
+# Download and execute the install script
+wget -qO- https://raw.githubusercontent.com/SAEON/somisana/stable/toolkit/install.sh | bash
+
+# Reload your terminal configuration
+source ~/.bashrc
+
+# Start Docker if it's not running
+sudo service docker start
+
+# Run the CLI
+somisana -h
+```
+
+## Run the Algoa Bay Forecast Model using the CLI
+
+**_(1) Create a directory workspace_**
+
+```sh
+export SOMISANA_DIR="/home/$USER/temp/somisana"
+export WORKDIR=$SOMISANA_DIR/local-run
+
+mkdir -p $WORKDIR/{croco/{forcing,forecast,scratch},forcing-inputs}
+touch $SOMISANA_DIR/.env
+echo COPERNICUS_USERNAME=username >> $SOMISANA_DIR/.env
+echo COPERNICUS_PASSWORD=password >> $SOMISANA_DIR/.env
+touch $WORKDIR/.env
+chmod -R 777 $SOMISANA_DIR
+cd $SOMISANA_DIR
+```
+
+**_(2) Download GFS boundary data_**
+
+```sh
+somisana \
+  ops \
+    download \
+    --workdir $WORKDIR/forcing-inputs \
+    --matlab-env $WORKDIR/.env \
+    --provider gfs \
+    --domain 22,31,-37,-31
+```
+
+**_(3) Download Mercator boundary data_**
+
+```sh
+somisana \
+  ops \
+    download \
+    --workdir $WORKDIR/forcing-inputs \
+    --matlab-env $WORKDIR/.env \
+    --provider mercator \
+    --domain 22,31,-37,-31
+```
+
+**_(4) Create forcing files_**
+
+For this step you do need the source code currently. From the root of the repository (and on the SAEON VPN):
+
+```sh
+docker run \
+  --rm \
+  -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
+  -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
+  -v $WORKDIR:/tmp/somisana/current \
+  -e MLM_LICENSE_FILE=27000@matlab-license-manager.saeon.int \
+  ghcr.io/saeon/somisana_matlab:r2022a \
+    -batch "run('/crocotools/run.m')"
+```
+
+**(5) _Run the compiled CROCO model_**
+
+For this step you do need the source code currently. From the root of the repository:
+
+```sh
+export TODAY=$(date +"%Y%m%d")
+export YESTERDAY=$(date -d "yesterday" +"%Y%m%d")
+
+docker run \
+  --rm \
+  -v $WORKDIR:/algoa-bay-forecast/current \
+  -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
+  ghcr.io/saeon/somisana_algoa_bay_forecast_croco_stable:sha-c2a9c9f \
+    ./run_croco.bash \
+      /algoa-bay-forecast/current \
+      $TODAY \
+      $YESTERDAY
+```
+
 # Local development
 
 ## Configure Python
@@ -238,99 +333,4 @@ _**Access help**_
 
 ```sh
 $ somisana ops load -h
-```
-
-# Compiled CLI usage
-
-The SOMISANA toolkit is packaged as a Docker image, and can be used without configuring a local dev environment.
-
-Ensure that [docker](https://www.docker.com/) is installed on your system, and install the CLI:
-
-```sh
-# Download and execute the install script
-wget -qO- https://raw.githubusercontent.com/SAEON/somisana/stable/toolkit/install.sh | bash
-
-# Reload your terminal configuration
-source ~/.bashrc
-
-# Start Docker if it's not running
-sudo service docker start
-
-# Run the CLI
-somisana -h
-```
-
-## Run the Algoa Bay Forecast Model using the CLI
-
-**_(1) Create a directory workspace_**
-
-```sh
-export SOMISANA_DIR="/home/$USER/temp/somisana"
-export WORKDIR=$SOMISANA_DIR/local-run
-
-mkdir -p $WORKDIR/{croco/{forcing,forecast,scratch},forcing-inputs}
-touch $SOMISANA_DIR/.env
-echo COPERNICUS_USERNAME=username >> $SOMISANA_DIR/.env
-echo COPERNICUS_PASSWORD=password >> $SOMISANA_DIR/.env
-touch $WORKDIR/.env
-chmod -R 777 $SOMISANA_DIR
-cd $SOMISANA_DIR
-```
-
-**_(2) Download GFS boundary data_**
-
-```sh
-somisana \
-  ops \
-    download \
-    --workdir $WORKDIR/forcing-inputs \
-    --matlab-env $WORKDIR/.env \
-    --provider gfs \
-    --domain 22,31,-37,-31
-```
-
-**_(3) Download Mercator boundary data_**
-
-```sh
-somisana \
-  ops \
-    download \
-    --workdir $WORKDIR/forcing-inputs \
-    --matlab-env $WORKDIR/.env \
-    --provider mercator \
-    --domain 22,31,-37,-31
-```
-
-**_(4) Create forcing files_**
-
-For this step you do need the source code currently. From the root of the repository (and on the SAEON VPN):
-
-```sh
-docker run \
-  --rm \
-  -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
-  -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
-  -v $WORKDIR:/tmp/somisana/current \
-  -e MLM_LICENSE_FILE=27000@matlab-license-manager.saeon.int \
-  ghcr.io/saeon/somisana_matlab:r2022a \
-    -batch "run('/crocotools/run.m')"
-```
-
-**(5) _Run the compiled CROCO model_**
-
-For this step you do need the source code currently. From the root of the repository:
-
-```sh
-export TODAY=$(date +"%Y%m%d")
-export YESTERDAY=$(date -d "yesterday" +"%Y%m%d")
-
-docker run \
-  --rm \
-  -v $WORKDIR:/algoa-bay-forecast/current \
-  -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
-  ghcr.io/saeon/somisana_algoa_bay_forecast_croco_stable:sha-c2a9c9f \
-    ./run_croco.bash \
-      /algoa-bay-forecast/current \
-      $TODAY \
-      $YESTERDAY
 ```
