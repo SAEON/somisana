@@ -5,11 +5,14 @@ from glob import glob
 from natsort import natsorted
 
 
-def calculate_daily_clim(mhw_bulk_cache, nc_thresholds_path):
+def calculate_daily_clim(mhw_bulk_cache, nc_thresholds_path, domain):
     mhw_bulk_cache = os.path.abspath(mhw_bulk_cache)
 
+    # Files for multiple domains may be cached - we want this one
+    cache_identifier = "".join(str(v) for v in domain)
+
     # Selecting files in folder
-    files = natsorted(glob(mhw_bulk_cache + "/*.nc"))
+    files = natsorted(glob(mhw_bulk_cache + "/*{id}.nc".format(id=cache_identifier)))
 
     # Importing data through loop saving memory (Seems like there is a issue with rolling means and xarray https://github.com/pydata/xarray/issues/3277 need to loop the load)
     list_of_arrays = []

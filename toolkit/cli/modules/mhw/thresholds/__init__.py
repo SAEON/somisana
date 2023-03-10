@@ -34,7 +34,7 @@ def create_thresholds(args):
             print("OISST cache updated!")
 
     # Create thresholds from OISST cache
-    calculate_daily_clim(mhw_bulk_cache, nc_thresholds_path)
+    calculate_daily_clim(mhw_bulk_cache, nc_thresholds_path, domain)
 
     # Create mhw output classifications of cached data? or part of cache data?
     calculate_mhw(mhw_bulk_cache, nc_thresholds_path, nc_mhw_output_path)

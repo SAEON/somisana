@@ -358,7 +358,7 @@ jobs:
         run: |
           cd ${{ env.WORKDIR }}/croco/forecast
           cat \
-            algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+            false-bay-forecast-${{ env.RUN_DATE }}.nc \
               | curl \
                 --silent \
                 --keepalive-time 2400 \
