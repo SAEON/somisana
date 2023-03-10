@@ -121,7 +121,7 @@ docker run \
 
 ### Marine Heat Waves
 
-TODAY
+TODO
 
 # Local development
 
@@ -216,7 +216,7 @@ sudo apt install postgis
 
 ## Start the CLI
 
-Finally, start the CLI by installing dependencies as configured in `Pipfile`, and register the `somisana` keyword on your `$PATH`.
+Finally, start the CLI by installing dependencies as configured in `Pipfile`, and register the `toolkit` keyword on your `$PATH`.
 
 ```sh
 # In the toolkit directory, create the ".venv" directory. This hints to pipenv that you want your virtual environment to be local
@@ -225,14 +225,14 @@ pipenv install
 pipenv run script # This executes Python in the context of your virtual environment
 ```
 
-Because starting the script via `pipenv run script` seems a little cumbersome, that command is used via the `bin/somisana` file. This file is just a bash script, and needs to be configured to be executable and on the `$PATH` variable. The commands to register `bin/somisana` as an executable script are in the `env.sh` file, which can be sourced:
+Because starting the script via `pipenv run script` seems a little cumbersome, that command is used via the `bin/toolkit` file. This file is just a bash script, and needs to be configured to be executable and on the `$PATH` variable. The commands to register `bin/toolkit` as an executable script are in the `env.sh` file, which can be sourced:
 
 ```sh
 # From the toolkit (or repo root) directory run:
 source env.sh
 
 # And then try the CLI
-somisana -h
+toolkit -h
 ```
 
 ## Setup script-environment variables

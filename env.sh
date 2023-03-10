@@ -6,5 +6,4 @@ chmod +x $(pwd)/web/bin/s
 
 # Toolkit CLI
 export "PATH=$PATH:$(pwd)/toolkit/bin"
-alias som="somisana"
-chmod +x $(pwd)/toolkit/bin/somisana
+chmod +x $(pwd)/toolkit/bin/toolkit

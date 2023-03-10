@@ -52,5 +52,5 @@ COPY --chown=somisana:somisana . .
 RUN rm -rf .venv && mkdir .venv
 RUN pipenv sync
 
-ENTRYPOINT [ "bin/somisana" ]
+ENTRYPOINT [ "bin/toolkit" ]
 CMD [ "$@" ]
