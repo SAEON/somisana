@@ -4,8 +4,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Documentation](#documentation)
-  - [Install](#install)
-    - [Update the CLI](#update-the-cli)
+  - [Install the CLI](#install-the-cli)
+  - [Update the CLI](#update-the-cli)
   - [Examples](#examples)
     - [Algoa Bay operational model](#algoa-bay-operational-model)
     - [Marine Heat Waves](#marine-heat-waves)
