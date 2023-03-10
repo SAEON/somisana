@@ -23,9 +23,9 @@
 
 # Documentation
 
-The SOMISANA toolkit is packaged as a Docker image, and can be used without configuring a local dev environment.
+The SOMISANA toolkit CLI (Command Line Interface) is packaged as a Docker image, and can be used without configuring a local dev environment.
 
-## Install
+## Install the CLI
 
 Ensure that [docker](https://www.docker.com/) is installed on your system, and install the CLI:
 
@@ -43,7 +43,7 @@ sudo service docker start
 somisana -h
 ```
 
-### Update the CLI
+## Update the CLI
 
 Use the CLI to update itself, referencing a newer version. choose the version of the CLI to use from the listed versions https://github.com/SAEON/somisana/pkgs/container/somisana_toolkit_stable (for example, `sha-89a5f54`), and then run the update command:
 
