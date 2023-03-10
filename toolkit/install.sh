@@ -14,6 +14,7 @@ do
   else
     # Add the line to the .bashrc file
     echo "$line" >> ~/.bashrc
-    echo "Line added to .bashrc"
   fi
 done
+
+echo "SOMISANA Toolkit installed!"

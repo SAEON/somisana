@@ -244,13 +244,21 @@ $ somisana ops load -h
 
 The SOMISANA toolkit is packaged as a Docker image, and can be used without configuring a local dev environment.
 
-Ensure that [docker](https://www.docker.com/) is installed on your system, and install the CLI with the following command:
+Ensure that [docker](https://www.docker.com/) is installed on your system, and install the CLI:
 
 ```sh
+# Download and execute the install script
 wget -qO- https://raw.githubusercontent.com/SAEON/somisana/stable/toolkit/install.sh | bash
-```
 
-Re-load your bash configuration (`source ~/.bashrc`), and try the `somisana` command in your terminal
+# Reload your terminal configuration
+source ~/.bashrc
+
+# Start Docker if it's not running
+sudo service docker start
+
+# Run the CLI
+somisana -h
+```
 
 ## Run the Algoa Bay Forecast Model using the CLI
 
