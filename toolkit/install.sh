@@ -10,7 +10,8 @@ lines=(
 for line in "${lines[@]}"
 do
   if grep -q "$line" ~/.bashrc; then
-    echo "Line already exists in .bashrc"
+    # Replace the line in the .bashrc file
+    sed -i "s|^$line$|$line|" ~/.bashrc
   else
     # Add the line to the .bashrc file
     echo "$line" >> ~/.bashrc
