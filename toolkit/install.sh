@@ -14,6 +14,11 @@ lines=(
   "alias somisana=\"docker run -v /home/\$USER:/home/\$USER -it --rm ghcr.io/saeon/somisana_toolkit_stable:\$TOOLKIT_VERSION\""
 )
 
+# Delete existing line with TOOLKIT_VERSION
+sed -i '/## Added by SOMISANA/d' ~/.bashrc
+sed -i '/export TOOLKIT_VERSION=/d' ~/.bashrc
+sed -i '/alias somisana=/d' ~/.bashrc
+
 # Iterate over each line and check if it exists in the .bashrc file
 for line in "${lines[@]}"
 do

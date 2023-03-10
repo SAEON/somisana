@@ -1,4 +1,5 @@
 import argparse
+import os
 from cli.commands import (
     lacce as lacce_cmd,
     mhw as mhw_cmd,
@@ -16,7 +17,7 @@ from cli.exe import (
 
 prog = "somisana"
 description = "SOMISANA Toolkit"
-version = "0.0.1"
+version = os.getenv("TOOLKIT_VERSION", "development")
 
 
 def main():
