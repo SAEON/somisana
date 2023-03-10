@@ -242,21 +242,15 @@ $ somisana ops load -h
 
 # Compiled CLI usage
 
-The SOMISANA toolkit is packaged as a Docker image, and can be used without downloading or configuring source code.
+The SOMISANA toolkit is packaged as a Docker image, and can be used without configuring a local dev environment.
 
-Ensure that [docker](https://www.docker.com/) is installed on your system. This is the easiest way to run the CLI, the only caveat is that all files must be in your `/home/$USER/..` directory, and all argument path references must be absolute paths (although you can also use command substitution `$(pwd)` in the pathname, so really not much of a caveat at all!).
-
-To 'install' the CLI, update your `.bashrc` configuration:
+Ensure that [docker](https://www.docker.com/) is installed on your system, and install the CLI with the following command:
 
 ```sh
-vi ~/.bashrc
-
-# Add the following line to the bottom of the file
-TOOLKIT_VERSION=sha-08a8b05
-alias somisana="docker run -v /home/$USER:/home/$USER -it --rm ghcr.io/saeon/somisana_toolkit_stable:$TOOLKIT_VERSION"
+wget -qO- https://raw.githubusercontent.com/SAEON/somisana/stable/toolkit/install.sh | bash
 ```
 
-Then re-load your bash configuration: `srouce ~/.bashrc`, and the `somisana` CLI should run when you type `somisana` into the terminal.
+Re-load your bash configuration (`source ~/.bashrc`), and try the `somisana` command in your terminal
 
 ## Run the Algoa Bay Forecast Model using the CLI
 
