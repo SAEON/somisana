@@ -321,7 +321,7 @@ jobs:
                   --nc-output-path /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --zarr-output-path /tmp/somisana/current/croco/forecast/${{ env.RUN_DATE }}-hourly-avg-processed.zarr
 
-  # Archive croco output and load zarr to HTTP-range server
+  # Archive CROCO output
   archive-data:
     needs: [normalize-output, workdir, envs]
     runs-on: somisana
@@ -362,22 +362,6 @@ jobs:
                 -T \
                 - \
                 https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.RUN_DATE }}-hourly-avg-processed.nc;
-      - name: Upload Zarr to mnemosyne HTTP-range server
-        continue-on-error: true
-        run: |
-          cd ${{ env.WORKDIR }}/croco/forecast
-          find \
-            ${{ env.RUN_DATE }}-hourly-avg-processed.zarr \
-            -type f \
-            -exec \
-              curl \
-              --silent \
-              --keepalive-time 1200 \
-              -X PUT \
-              -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
-              --create-dirs \
-              -T {} \
-              https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/{} \;
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:
