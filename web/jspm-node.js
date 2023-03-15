@@ -10,7 +10,7 @@ const TARGET = process.env.TARGET
 const generator = new Generator({
   mapUrl: import.meta.url,
   env: ['node', NODE_ENV, 'module'],
-  defaultProvider: 'jspm',
+  defaultProvider: 'jspm.io',
   ignore: [
     '@graphql-tools/merge',
     'apollo-server-core',

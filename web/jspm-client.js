@@ -11,7 +11,7 @@ const TARGET = process.env.TARGET
 const generator = new Generator({
   mapUrl: pathToFileURL(TARGET),
   env: ['browser', NODE_ENV, 'module'],
-  defaultProvider: 'jspm',
+  defaultProvider: 'jspm.io',
   ignore: [],
 })
 
