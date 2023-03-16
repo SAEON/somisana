@@ -148,17 +148,14 @@ jobs:
       - name: Upload NetCDF output to mnemosyne HTTP-range server
         continue-on-error: false
         run: |
-          cat \
-            ${{ env.WORKDIR}}/mhw-${{ env.RUN_DATE }}.nc \
-              | curl \
-                --silent \
-                --keepalive-time 1200 \
-                -X PUT \
-                -H "Content-Type: application/octet-stream" \
-                -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-                -T \
-                - \
-                https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc;
+          curl \
+            --silent \
+            --keepalive-time 1200 \
+            -X PUT \
+            -H "Content-Type: application/octet-stream" \
+            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+            -T ${{ env.WORKDIR}}/mhw-${{ env.RUN_DATE }}.nc \
+            https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc;
       - name: Kerchunk the NetCDF file output
         continue-on-error: false
         run: >-
@@ -173,14 +170,11 @@ jobs:
       - name: Upload Kerchunk output to Mnemosyne
         continue-on-error: false
         run: |
-          cat \
-            ${{ env.WORKDIR}}/${{ env.RUN_DATE }}.kerchunk.json \
-              | curl \
-                --silent \
-                --keepalive-time 1200 \
-                -X PUT \
-                -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-                -H "Content-Type: application/octet-stream" \
-                -T \
-                - \
-                https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.kerchunk.json;
+          curl \
+            --silent \
+            --keepalive-time 1200 \
+            -X PUT \
+            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+            -H "Content-Type: application/octet-stream" \
+            -T ${{ env.WORKDIR}}/${{ env.RUN_DATE }}.kerchunk.json \
+            https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.kerchunk.json;
