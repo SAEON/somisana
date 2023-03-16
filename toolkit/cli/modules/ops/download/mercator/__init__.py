@@ -1,6 +1,16 @@
 from datetime import datetime, timedelta
 import os
 from config import COPERNICUS_PASSWORD, COPERNICUS_USERNAME
+import xarray as xr
+
+
+def is_valid_netcdf_file(file_path):
+    try:
+        with xr.open_dataset(file_path) as ds:
+            return True
+    except:
+        return False
+
 
 """
 Download latest daily ocean forecasts from CMEMS GLOBAL-ANALYSIS-FORECAST-PHY-001-024
@@ -63,14 +73,17 @@ def download(run_date, hdays, fdays, domain, workdir):
         + fname
     )
 
-    if os.path.exists(os.path.normpath(os.path.join(workdir, fname))) == False:
+    f = os.path.normpath(os.path.join(workdir, fname))
+    if os.path.exists(f) == False:
         print("downloading latest mercator ocean forecast from CMEMS...")
         startTime = datetime.now()
         if os.system(runcommand) != 0:
             raise Exception("Mercator download failed from cmd: " + runcommand)
         else:
-            # TODO - check the download using gdalinfo to make sure the headers display correctly
-            print("mercator download completed", str(datetime.now() - startTime))
+            if is_valid_netcdf_file(f):
+                print("mercator download completed", str(datetime.now() - startTime))
+            else:
+                raise Exception("Mercator download failed (bad NetCDF output)")
     else:
         print(
             os.path.normpath(os.path.join(workdir, fname)),

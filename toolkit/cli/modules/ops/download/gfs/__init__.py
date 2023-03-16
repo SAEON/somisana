@@ -20,7 +20,7 @@ side then a slightly older initialization will be found
 
 # nomads.ncep.noaa.gov has strict rate limits,
 # so keep this number low
-MAX_CONCURRENT_NET_IO = 5
+MAX_CONCURRENT_NET_IO = 2
 
 
 async def download_hindcast(semaphore, start, end, workdir, params):

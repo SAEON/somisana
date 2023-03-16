@@ -44,7 +44,8 @@ async def download_file(semaphore, fname, workdir, params):
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, params=params) as response:
                     if response.status == 200:
-                        print("Downloading", fileout)
+                        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        print(f"[{now}] Downloading {fileout}")
                         async with aiofiles.open(fileout, mode="wb") as f:
                             async for chunk in response.content.iter_chunked(1024):
                                 if chunk:
