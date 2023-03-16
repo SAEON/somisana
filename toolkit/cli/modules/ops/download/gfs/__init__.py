@@ -2,6 +2,8 @@ from datetime import datetime, timedelta, time
 from cli.modules.ops.download.gfs.functions import (
     download_file,
     get_latest_available_dt,
+    set_params,
+    create_fname,
 )
 
 """
@@ -26,32 +28,47 @@ def download(run_date, hdays, fdays, domain, workdir):
     latest_available_date = get_latest_available_dt(run_date)
     delta_days = (latest_available_date - run_date).total_seconds() / 86400
 
-    params = (
-        "&lev_10_m_above_ground=on&lev_2_m_above_ground=on&lev_surface=on&var_DLWRF=on&var_DSWRF=on&var_LAND"
-        + "=on&var_PRATE=on&var_RH=on&var_TMP=on&var_UFLX=on&var_UGRD=on&var_ULWRF=on&var_USWRF=on&var_VFLX=on&var_VGRD=on&"
-        + "subregion=&leftlon="
-        + str(domain[0])
-        + "&rightlon="
-        + str(domain[1])
-        + "&toplat="
-        + str(domain[3])
-        + "&bottomlat="
-        + str(domain[2])
-        + "&dir=/gfs."
-    )
+    params = {
+        "lev_10_m_above_ground": "on",
+        "lev_2_m_above_ground": "on",
+        "lev_surface": "on",
+        "var_DLWRF": "on",
+        "var_DSWRF": "on",
+        "var_LAND": "on",
+        "var_PRATE": "on",
+        "var_RH": "on",
+        "var_TMP": "on",
+        "var_UFLX": "on",
+        "var_UGRD": "on",
+        "var_ULWRF": "on",
+        "var_USWRF": "on",
+        "var_VFLX": "on",
+        "var_VGRD": "on",
+        "subregion": "",
+        "leftlon": str(domain[0]),
+        "rightlon": str(domain[1]),
+        "toplat": str(domain[3]),
+        "bottomlat": str(domain[2]),
+    }
 
     # Download forcing files up to latest available date
-    print('\nDOWNLOADING HINDCAST files')
+    print("\nDOWNLOADING HINDCAST files")
     while start_date < latest_available_date:
         for i in range(1, 7):  # hours 1 to 6
-            download_file(start_date, i, workdir, params)
+            download_file(
+                create_fname(start_date, i), workdir, set_params(params, start_date, i)
+            )
         start_date = start_date + timedelta(hours=6)
 
     # Download forecast forcing files
-    print('\nDOWNLOADING FORECAST files')
+    print("\nDOWNLOADING FORECAST files")
     total_forecast_hours = int((fdays - delta_days) * 24)
     for i in range(1, total_forecast_hours + 1):
-        download_file(latest_available_date, i, workdir, params)
+        download_file(
+            create_fname(latest_available_date, i),
+            workdir,
+            set_params(params, latest_available_date, i),
+        )
 
     print("GFS download completed (in " + str(datetime.now() - _now) + " h:m:s)")
     return delta_days

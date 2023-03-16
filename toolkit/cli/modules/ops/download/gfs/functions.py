@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 import requests as r
 
-BASE_URL = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25_1hr.pl?file=gfs.t"
+url = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25_1hr.pl"
 
 
 def yyyymmdd(dt):
@@ -26,37 +26,28 @@ def validate_download_or_remove(fileout):
         os.remove(fileout)
 
 
-def make_cURL(url, fileout):
-    return "curl --silent '" + url + "'" + " -o " + fileout
-
-
-def make_url(dt, i, URL_PARAMS):
-    return (
-        BASE_URL
-        + dt.strftime("%H")
-        + "z.pgrb2.0p25.f"
-        + str(i).zfill(3)
-        + URL_PARAMS
-        + time_param(dt)
+def set_params(_params, dt, i):
+    params = dict(_params)
+    params["file"] = "gfs.t{h}{z}{f}".format(
+        h=dt.strftime("%H"), z="z.pgrb2.0p25.f", f=str(i).zfill(3)
     )
+    params["dir"] = "/gfs.{t}".format(t=time_param(dt))
+    return params
 
 
-def exec_cmd(cmd, fileout):
-    if os.system(cmd) != 0:
-        raise Exception("GFS download failed from command: " + cmd)
-    else:
-        validate_download_or_remove(fileout)
-
-
-def download_file(dt, i, workdir, PARAMS):
-    fname = create_fname(dt, i)
+def download_file(fname, workdir, params):
     fileout = os.path.join(workdir, fname)
-
     if not (os.path.isfile(fileout)):
-        url = make_url(dt, i, PARAMS)
-        cmd = make_cURL(url, fileout)
-        print('', cmd)
-        exec_cmd(cmd, fileout)
+        response = r.get(url, params=params, stream=True)
+        if response.status_code == 200:
+            print("Downloading", fileout)
+            with open(fileout, "wb") as f:
+                for chunk in response.iter_content(chunk_size=1024):
+                    if chunk:
+                        f.write(chunk)
+        else:
+            print(f"Request failed with status code {response.status_code}")
+        validate_download_or_remove(fileout)
     else:
         print("File already exists", fileout)
 
