@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime, timedelta, time
 from cli.modules.ops.download.gfs.functions import (
     download_file,
@@ -16,6 +17,46 @@ The forecast data gets downloaded from the latest available initialisation
 The latest initialisation is used at the time this is run, so that if there is an error on GFS
 side then a slightly older initialization will be found
 """
+
+# nomads.ncep.noaa.gov has strict rate limits,
+# so keep this number low
+MAX_CONCURRENT_NET_IO = 5
+
+
+async def download_hindcast(semaphore, start, end, workdir, params):
+    tasks = []
+    while start < end:
+        for i in range(1, 7):  # hours 1 to 6
+            tasks.append(
+                asyncio.create_task(
+                    download_file(
+                        semaphore,
+                        create_fname(start, i),
+                        workdir,
+                        set_params(params, start, i),
+                    )
+                )
+            )
+        start = start + timedelta(hours=6)
+    await asyncio.gather(*tasks)
+
+
+async def download_forecast(
+    semaphore, total_forecast_hours, latest_available_date, workdir, params
+):
+    tasks = []
+    for i in range(1, total_forecast_hours + 1):
+        tasks.append(
+            asyncio.create_task(
+                download_file(
+                    semaphore,
+                    create_fname(latest_available_date, i),
+                    workdir,
+                    set_params(params, latest_available_date, i),
+                )
+            )
+        )
+    await asyncio.gather(*tasks)
 
 
 def download(run_date, hdays, fdays, domain, workdir):
@@ -53,22 +94,28 @@ def download(run_date, hdays, fdays, domain, workdir):
 
     # Download forcing files up to latest available date
     print("\nDOWNLOADING HINDCAST files")
-    while start_date < latest_available_date:
-        for i in range(1, 7):  # hours 1 to 6
-            download_file(
-                create_fname(start_date, i), workdir, set_params(params, start_date, i)
-            )
-        start_date = start_date + timedelta(hours=6)
+    asyncio.run(
+        download_hindcast(
+            asyncio.BoundedSemaphore(MAX_CONCURRENT_NET_IO),
+            start_date,
+            latest_available_date,
+            workdir,
+            params,
+        )
+    )
 
     # Download forecast forcing files
     print("\nDOWNLOADING FORECAST files")
     total_forecast_hours = int((fdays - delta_days) * 24)
-    for i in range(1, total_forecast_hours + 1):
-        download_file(
-            create_fname(latest_available_date, i),
+    asyncio.run(
+        download_forecast(
+            asyncio.BoundedSemaphore(MAX_CONCURRENT_NET_IO),
+            total_forecast_hours,
+            latest_available_date,
             workdir,
-            set_params(params, latest_available_date, i),
+            params,
         )
+    )
 
     print("GFS download completed (in " + str(datetime.now() - _now) + " h:m:s)")
     return delta_days

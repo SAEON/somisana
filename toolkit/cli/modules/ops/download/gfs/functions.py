@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from datetime import datetime, timedelta
 import requests as r
+import aiofiles
+import aiohttp
 
 url = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25_1hr.pl"
 
@@ -35,19 +37,21 @@ def set_params(_params, dt, i):
     return params
 
 
-def download_file(fname, workdir, params):
+async def download_file(semaphore, fname, workdir, params):
     fileout = os.path.join(workdir, fname)
-    if not (os.path.isfile(fileout)):
-        response = r.get(url, params=params, stream=True)
-        if response.status_code == 200:
-            print("Downloading", fileout)
-            with open(fileout, "wb") as f:
-                for chunk in response.iter_content(chunk_size=1024):
-                    if chunk:
-                        f.write(chunk)
-        else:
-            print(f"Request failed with status code {response.status_code}")
-        validate_download_or_remove(fileout)
+    if not os.path.isfile(fileout):
+        async with semaphore:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, params=params) as response:
+                    if response.status == 200:
+                        print("Downloading", fileout)
+                        async with aiofiles.open(fileout, mode="wb") as f:
+                            async for chunk in response.content.iter_chunked(1024):
+                                if chunk:
+                                    await f.write(chunk)
+                        validate_download_or_remove(fileout)
+                    else:
+                        print(f"Request failed with status code {response.status}")
     else:
         print("File already exists", fileout)
 
