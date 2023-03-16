@@ -343,9 +343,8 @@ jobs:
       - name: Upload raw CROCO NetCDF file to mnemosyne HTTP-range server
         continue-on-error: true
         run: |
-          cd ${{ env.WORKDIR }}/croco/forecast
           cat \
-            hourly-avg-${{ env.RUN_DATE }}.nc \
+            ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
               | curl \
                 --silent \
                 --keepalive-time 2400 \
@@ -356,7 +355,7 @@ jobs:
                 - \
                 https://mnemosyne.somisana.ac.za/somisana/false-bay-forecast/${{ env.RUN_DATE }}-hourly-avg.nc;
           cat \
-            hourly-avg-${{ env.RUN_DATE }}.nc.1 \
+            ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1 \
               | curl \
                 --silent \
                 --keepalive-time 2400 \
@@ -369,9 +368,8 @@ jobs:
       - name: Upload processed CROCO NetCDF file to mnemosyne HTTP-range server
         continue-on-error: true
         run: |
-          cd ${{ env.WORKDIR }}/croco/forecast
           cat \
-            false-bay-forecast-${{ env.RUN_DATE }}.nc \
+            ${{ env.WORKDIR }}/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
               | curl \
                 --silent \
                 --keepalive-time 2400 \

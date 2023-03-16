@@ -335,24 +335,22 @@ jobs:
       - name: Upload raw CROCO NetCDF file to mnemosyne HTTP-range server
         continue-on-error: true
         run: |
-          cd ${{ env.WORKDIR }}/croco/forecast
           cat \
-            hourly-avg-${{ env.RUN_DATE }}.nc \
+            ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
               | curl \
-                -X PUT \
                 --silent \
                 --keepalive-time 2400 \
-                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+                -X PUT \
                 -H "Content-Type: application/octet-stream" \
+                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
                 https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.RUN_DATE }}-hourly-avg.nc;
       - name: Upload processed CROCO NetCDF file to mnemosyne HTTP-range server
         continue-on-error: true
         run: |
-          cd ${{ env.WORKDIR }}/croco/forecast
           cat \
-            algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+            ${{ env.WORKDIR }}/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
               | curl \
                 --silent \
                 --keepalive-time 2400 \
