@@ -27,7 +27,7 @@ env:
 jobs:
   build:
     env:
-      SHA: ${{ github.sha }}
+      SHA: sha-${{ github.sha }}
     runs-on: ubuntu-latest
     steps:
       - name: Get image name lowercase
@@ -86,7 +86,7 @@ jobs:
     needs: [build]
     runs-on: saeon
     env:
-      SHA: ${{ github.sha }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Check out source code (shared)
         uses: actions/checkout@master

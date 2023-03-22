@@ -103,12 +103,18 @@ jobs:
   toolkit:
     needs: [envs]
     runs-on: ubuntu-latest
-    outputs:
-      image: ${{ steps.meta.outputs.tags }}
     env:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
+      SHA: sha-${{ github.sha }}
+    outputs:
+      image: ${{ steps.lowercase.outputs.IMAGE_NAME_LOWER }}
     steps:
+      - name: Get image name lowercase
+        id: 'lowercase'
+        run: |
+          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
+          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
       - name: Check out source code
         uses: actions/checkout@master
         with:
@@ -125,7 +131,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
           tags: |
-            type=sha
+            latest
+            ${{ env.SHA }}
       - name: Build and push
         uses: docker/build-push-action@master
         with:
@@ -175,6 +182,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
         continue-on-error: true # Maybe Node.js exists anyway
@@ -198,7 +206,7 @@ jobs:
               -v $WORKDIR/:/tmp/somisana/current \
               -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-              ${{ needs.toolkit.outputs.image }} \
+              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
                 ops \
                   download \
                     --provider gfs \
@@ -223,7 +231,7 @@ jobs:
               -v $WORKDIR/:/tmp/somisana/current \
               -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-              ${{ needs.toolkit.outputs.image }} \
+              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
                 ops \
                   download \
                     --provider mercator \
@@ -302,6 +310,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Check out source code
         uses: actions/checkout@master
@@ -313,7 +322,7 @@ jobs:
             --rm \
             -v $WORKDIR:/tmp/somisana/current \
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/tmp/somisana/current/croco/forcing/grd.nc \
-            ${{ needs.toolkit.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               ops \
                 transform \
                   --grid-input-path /tmp/somisana/current/croco/forcing/grd.nc \
@@ -368,6 +377,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
@@ -410,7 +420,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.toolkit.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               ops \
                 load \
                   --upsert-rasters \
@@ -428,6 +438,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
@@ -470,7 +481,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.toolkit.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               ops \
                 load \
                   --upsert-values \
@@ -487,6 +498,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
@@ -529,7 +541,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.toolkit.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               ops \
                 load \
                   --upsert-values \
@@ -546,6 +558,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
@@ -588,7 +601,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.toolkit.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               ops \
                 load \
                   --upsert-values \
@@ -605,6 +618,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
@@ -647,7 +661,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.toolkit.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               ops \
                 load \
                   --upsert-values \
@@ -664,6 +678,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
@@ -706,7 +721,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.toolkit.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               ops \
                 load \
                   --upsert-values \
@@ -723,6 +738,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
@@ -765,7 +781,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.toolkit.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               ops \
                 load \
                   --upsert-values \
@@ -782,6 +798,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
@@ -824,7 +841,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.toolkit.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               ops \
                 load \
                   --upsert-values \
@@ -871,6 +888,8 @@ jobs:
   finalize-run:
     needs: [branch-ref, toolkit, gather-jobs]
     runs-on: somisana
+    env:
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
@@ -912,7 +931,7 @@ jobs:
             -e PG_USERNAME=$PG_USERNAME \
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
-            ${{ needs.toolkit.outputs.image }} \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               ops \
                 load \
                   --finalize-run \
