@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TOOLKIT_VERSION="sha-89a5f54"
+TOOLKIT_VERSION="latest"
 
 # check if an argument was passed and set the TOOLKIT_VERSION accordingly
 if [[ "$1" != "" ]]; then
