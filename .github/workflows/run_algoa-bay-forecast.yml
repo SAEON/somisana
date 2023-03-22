@@ -108,7 +108,7 @@ jobs:
       TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
       SHA: sha-${{ github.sha }}
     outputs:
-      image: ${{ steps.lowercase.outputs.IMAGE_NAME_LOWER }}
+      image: ${{ steps.lowercase.outputs.image_name }}
     steps:
       - name: Get image name lowercase
         id: 'lowercase'
