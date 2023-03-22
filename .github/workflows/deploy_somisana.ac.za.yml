@@ -8,7 +8,7 @@ env:
   ESRI_API_KEY: ${{ secrets.ESRI_API_KEY }} # Repository secret
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   REGISTRY: ghcr.io
-  IMAGE_NAME: saeon/somisana_web_stable
+  IMAGE_NAME: ${{ github.repository }}_web_stable
   MONGO_DB: ${{ secrets.MONGO_DB_STABLE }} # Repository secret
   MONGO_HOST: ${{ secrets.MONGO_HOST_STABLE }} # Organization secret
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }} # Repository secret
@@ -28,6 +28,7 @@ jobs:
   build:
     env:
       SHA: ${{ github.sha }}
+      IMAGE_NAME: ${{ env.IMAGE_NAME }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
@@ -82,6 +83,7 @@ jobs:
     runs-on: saeon
     env:
       SHA: ${{ github.sha }}
+      IMAGE_NAME: ${{ env.IMAGE_NAME }}
     steps:
       - name: Check out source code (shared)
         uses: actions/checkout@master

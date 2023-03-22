@@ -3,10 +3,15 @@ name: Debug
 on:
   workflow_dispatch:
 
+env:
+  TEST: 'HELLO WORLD'
+
 jobs:
   debugger:
     runs-on: somisana
+    env:
+      T: ${{ env.TEST | tr '[:upper:]' '[:lower:]' }}
     steps:
       - name: Debugger
         run: |
-          echo "Test commands here"
+          echo ${{ env.T }}
