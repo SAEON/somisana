@@ -11,10 +11,10 @@ fi
 lines=(
   "## Added by SOMISANA Toolkit installer ##",  
   "export TOOLKIT_VERSION=$TOOLKIT_VERSION"
-  "alias somisana=\"docker run -v /home/\$USER:/home/\$USER -it --rm ghcr.io/saeon/somisana_toolkit_stable:\$TOOLKIT_VERSION\""
+  "alias somisana=\"docker run -e TOOLKIT_VERSION=$TOOLKIT_VERSION -e PY_ENV=production -v /home/\$USER:/home/\$USER -it --rm ghcr.io/saeon/somisana_toolkit_stable:\$TOOLKIT_VERSION\""
 )
 
-# Delete existing line with TOOLKIT_VERSION
+# Delete existing lines related to the SOMISANA toolkit
 sed -i '/## Added by SOMISANA/d' ~/.bashrc
 sed -i '/export TOOLKIT_VERSION=/d' ~/.bashrc
 sed -i '/alias somisana=/d' ~/.bashrc

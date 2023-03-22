@@ -27,8 +27,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      image: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@master
@@ -95,7 +93,7 @@ jobs:
           password: ${{ env.SWARM_PASSWORD }}
           port: ${{ env.SWARM_SSH_PORT }}
           script: |
-            echo "DOCKER_IMAGE=${{ needs.build.outputs.image }}:${{ env.SHA }}" > /home/runner/somisana/deploy/web/stable/stack.env
+            echo "DOCKER_IMAGE=${{ env.IMAGE_NAME }}:${{ env.SHA }}" > /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_HOST=${{ env.MONGO_HOST }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_DB=${{ env.MONGO_DB }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_USERNAME=${{ env.MONGO_USERNAME }}" >> /home/runner/somisana/deploy/web/stable/stack.env
