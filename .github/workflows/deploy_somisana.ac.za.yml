@@ -23,7 +23,7 @@ env:
   SWARM_SSH_PORT: ${{ secrets.SWARM_SSH_PORT }} # Organization secret
   SWARM_USERNAME: ${{ secrets.SWARM_USERNAME }} # Organization secret
   SOMISANA_CONTACT_EMAIL: ${{ vars.SOMISANA_CONTACT_EMAIL}}
-  SHA: ${{ github.sha }}
+  SHA: sha-${{ github.sha }}
 
 jobs:
   build:
@@ -57,7 +57,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             latest
-            sha-${{ env.SHA }}
+            ${{ env.SHA }}
       - name: Build and push
         if: steps.check-image.outputs.image_exists == 'false'
         uses: docker/build-push-action@master
