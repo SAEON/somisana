@@ -125,7 +125,18 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check if image with sha tag already exists
+        id: check-image
+        run: |
+          set -e
+          SHA_IMAGE=$(docker images -q ${REGISTRY}/${{ steps.lowercase.outputs.image_name }}:${SHA} || true)
+          if [ -z "$SHA_IMAGE" ]; then
+            echo "image_exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "image_exists=true" >> $GITHUB_OUTPUT
+          fi
       - name: Extract metadata (tags, labels) for Docker
+        if: steps.check-image.outputs.image_exists == 'false'
         id: meta
         uses: docker/metadata-action@master
         with:
@@ -134,6 +145,7 @@ jobs:
             latest
             ${{ env.SHA }}
       - name: Build and push
+        if: steps.check-image.outputs.image_exists == 'false'
         uses: docker/build-push-action@master
         with:
           context: toolkit
