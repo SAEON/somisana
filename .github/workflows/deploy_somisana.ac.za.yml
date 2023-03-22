@@ -23,10 +23,11 @@ env:
   SWARM_SSH_PORT: ${{ secrets.SWARM_SSH_PORT }} # Organization secret
   SWARM_USERNAME: ${{ secrets.SWARM_USERNAME }} # Organization secret
   SOMISANA_CONTACT_EMAIL: ${{ vars.SOMISANA_CONTACT_EMAIL}}
-  SHA: sha-${{ github.sha }}
 
 jobs:
   build:
+    env:
+      SHA: sha-${{ github.sha }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
@@ -79,6 +80,8 @@ jobs:
   deploy:
     needs: [build]
     runs-on: saeon
+    env:
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Check out source code (shared)
         uses: actions/checkout@master
