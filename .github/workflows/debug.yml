@@ -8,10 +8,13 @@ env:
 
 jobs:
   debugger:
-    runs-on: somisana
-    env:
-      T: ${{ env.TEST | tr '[:upper:]' '[:lower:]' }}
+    runs-on: ubuntu-latest
     steps:
-      - name: Debugger
+      - name: Debug 1
+        id: 'lowercase'
         run: |
-          echo ${{ env.T }}
+          T=$(echo $TEST | tr '[:upper:]' '[:lower:]')
+          echo "image_name=$T" >> $GITHUB_OUTPUT
+      - name: Debug 2
+        run: |
+          echo ${{ steps.lowercase.outputs.image_name }}
