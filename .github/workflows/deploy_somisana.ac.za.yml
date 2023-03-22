@@ -43,11 +43,11 @@ jobs:
         id: check-image
         run: |
           set -e
-          SHA_IMAGE=$(docker images -q ${DOCKER_REGISTRY}/${IMAGE_NAME}:${SHA} || true)
+          SHA_IMAGE=$(docker images -q ${REGISTRY}/${IMAGE_NAME}:${SHA} || true)
           if [ -z "$SHA_IMAGE" ]; then
-            echo "::set-output name=image_exists::false"
+            echo "image_exists=false" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=image_exists::true"
+            echo "image_exists=true" >> $GITHUB_OUTPUT
           fi
       - name: Extract metadata (tags, labels) for Docker
         if: steps.check-image.outputs.image_exists == 'false'
@@ -57,7 +57,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             latest
-            ${{ env.SHA }}
+            sha-${{ env.SHA }}
       - name: Build and push
         if: steps.check-image.outputs.image_exists == 'false'
         uses: docker/build-push-action@master
