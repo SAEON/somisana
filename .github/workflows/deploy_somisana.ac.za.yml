@@ -22,6 +22,7 @@ env:
   SWARM_PASSWORD: ${{ secrets.SWARM_PASSWORD }} # Organization secret
   SWARM_SSH_PORT: ${{ secrets.SWARM_SSH_PORT }} # Organization secret
   SWARM_USERNAME: ${{ secrets.SWARM_USERNAME }} # Organization secret
+  SOMISANA_CONTACT_EMAIL: ${{ vars.SOMISANA_CONTACT_EMAIL}}
   SHA: ${{ github.sha }}
 
 jobs:
@@ -57,9 +58,6 @@ jobs:
           tags: |
             latest
             ${{ env.SHA }}
-          labels: |
-            maintainer=Somisana Project <info@somisana.ac.za>
-            org.opencontainers.image.source=https://github.com/SAEON/somisana
       - name: Build and push
         if: steps.check-image.outputs.image_exists == 'false'
         uses: docker/build-push-action@master
