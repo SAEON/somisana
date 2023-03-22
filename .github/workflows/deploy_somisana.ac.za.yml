@@ -7,7 +7,8 @@ env:
   BRANCH_REF: stable
   ESRI_API_KEY: ${{ secrets.ESRI_API_KEY }} # Repository secret
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  IMAGE_NAME: ${{ github.repository }}_web_stable
+  REGISTRY: ghcr.io
+  IMAGE_NAME: saeon/somisana_web_stable
   MONGO_DB: ${{ secrets.MONGO_DB_STABLE }} # Repository secret
   MONGO_HOST: ${{ secrets.MONGO_HOST_STABLE }} # Organization secret
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }} # Repository secret
@@ -17,17 +18,17 @@ env:
   PG_PASSWORD: ${{ secrets.PG_PASSWORD_STABLE }} # Repository secret
   PG_PORT: ${{ secrets.PG_PORT_STABLE }} # Organization secret
   PG_USERNAME: ${{ secrets.PG_USERNAME_STABLE }} # Repository secret
-  REGISTRY: ghcr.io
   SWARM_HOSTNAME: ${{ secrets.SWARM_HOSTNAME }} # Organization secret
   SWARM_PASSWORD: ${{ secrets.SWARM_PASSWORD }} # Organization secret
   SWARM_SSH_PORT: ${{ secrets.SWARM_SSH_PORT }} # Organization secret
   SWARM_USERNAME: ${{ secrets.SWARM_USERNAME }} # Organization secret
+  SOMISANA_CONTACT_EMAIL: ${{ vars.SOMISANA_CONTACT_EMAIL}}
 
 jobs:
   build:
+    env:
+      SHA: ${{ github.sha }}
     runs-on: ubuntu-latest
-    outputs:
-      image: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@master
@@ -39,14 +40,27 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ env.GITHUB_TOKEN }}
+      - name: Check if image with sha tag already exists
+        id: check-image
+        run: |
+          set -e
+          SHA_IMAGE=$(docker images -q ${REGISTRY}/${IMAGE_NAME}:${SHA} || true)
+          if [ -z "$SHA_IMAGE" ]; then
+            echo "image_exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "image_exists=true" >> $GITHUB_OUTPUT
+          fi
       - name: Extract metadata (tags, labels) for Docker
+        if: steps.check-image.outputs.image_exists == 'false'
         id: meta
         uses: docker/metadata-action@master
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=sha
+            latest
+            ${{ env.SHA }}
       - name: Build and push
+        if: steps.check-image.outputs.image_exists == 'false'
         uses: docker/build-push-action@master
         with:
           context: web
@@ -66,6 +80,8 @@ jobs:
   deploy:
     needs: [build]
     runs-on: saeon
+    env:
+      SHA: ${{ github.sha }}
     steps:
       - name: Check out source code (shared)
         uses: actions/checkout@master
@@ -90,7 +106,7 @@ jobs:
           password: ${{ env.SWARM_PASSWORD }}
           port: ${{ env.SWARM_SSH_PORT }}
           script: |
-            echo "DOCKER_IMAGE=${{ needs.build.outputs.image }}" > /home/runner/somisana/deploy/web/stable/stack.env
+            echo "DOCKER_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.SHA }}" > /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_HOST=${{ env.MONGO_HOST }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_DB=${{ env.MONGO_DB }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_USERNAME=${{ env.MONGO_USERNAME }}" >> /home/runner/somisana/deploy/web/stable/stack.env
