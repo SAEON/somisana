@@ -27,7 +27,7 @@ env:
 jobs:
   build:
     env:
-      SHA: sha-${{ github.sha }}:0:7
+      SHA: ${{ github.sha }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
@@ -81,7 +81,7 @@ jobs:
     needs: [build]
     runs-on: saeon
     env:
-      SHA: sha-${{ github.sha }}:0:7
+      SHA: ${{ github.sha }}
     steps:
       - name: Check out source code (shared)
         uses: actions/checkout@master
