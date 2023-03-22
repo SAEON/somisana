@@ -1,3 +1,5 @@
+import { ORIGIN } from '../../modules/config/env'
+
 export default `
 # Another heading
 Some content
@@ -14,5 +16,5 @@ This is another heading
 - bullet point:
 ## New Heading:
 Lets improve this.
-
+![A test image](${ORIGIN}/content/richard-horvath~cPccYbPrF-A~unsplash.jpg)
 `
