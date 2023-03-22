@@ -8,7 +8,7 @@ env:
   ESRI_API_KEY: ${{ secrets.ESRI_API_KEY }} # Repository secret
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_web_stable
+  IMAGE_NAME: ${{ tolower(github.repository) }}_web_stable
   MONGO_DB: ${{ secrets.MONGO_DB_STABLE }} # Repository secret
   MONGO_HOST: ${{ secrets.MONGO_HOST_STABLE }} # Organization secret
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STABLE }} # Repository secret
