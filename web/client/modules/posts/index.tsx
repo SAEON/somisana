@@ -1,10 +1,9 @@
 import Container from '@mui/material/Container'
-import content from './_content'
-import Markdown from 'react-markdown'
 import Div from '../../components/div'
-import Img from '../../components/img'
 import Paper from '@mui/material/Paper'
 import { alpha } from '@mui/material/styles'
+import { ORIGIN } from '../../modules/config/env'
+import Link from '@mui/material/Link'
 
 const About = () => (
   <Div sx={{ my: theme => theme.spacing(2), flex: 1 }}>
@@ -15,13 +14,7 @@ const About = () => (
           backgroundColor: theme => alpha(theme.palette.common.white, 1),
         }}
       >
-        <Markdown
-          components={{
-            img: props => <Img width="100%" {...props} />,
-          }}
-        >
-          {content}
-        </Markdown>
+        <Link href={`${ORIGIN}/posts/woes-model-seasonal-ssts`}>WOES model seasonal SSTs</Link>
       </Paper>
     </Container>
   </Div>

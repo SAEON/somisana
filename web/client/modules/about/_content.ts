@@ -11,7 +11,7 @@ The model offers a wide range of applications such as
 - Seasonal Means
 
 ## Seasonal Mean
-![WOES Model Seasonal SS](${ORIGIN}/content/WOES-Model-Seasonal-SSTs.png "WOES Model Seasonal SST")
+![WOES Model Seasonal SS](${ORIGIN}/posts/woes-model-seasonal-ssts/charts.png "WOES Model Seasonal SST")
 
 # Our vision
 Facilitate the local development and sustainability of an 

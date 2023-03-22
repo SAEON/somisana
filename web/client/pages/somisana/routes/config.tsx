@@ -3,13 +3,20 @@ import { Linear as LinearLoading, Circular as CircularLoading } from '../../../c
 import { Home, Contract, Map, About, Github, License, Link } from '../../../components/icons'
 import { gql, useQuery } from '@apollo/client'
 import HomePage from './home'
+import Div from '../../../components/div'
 
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
+const PostsPage = lazy(() => import('../../../modules/posts'))
 const AboutPage = lazy(() => import('../../../modules/about'))
 const ExplorePage = lazy(() => import('./explore'))
 const ExploreModelPage = lazy(() => import('./model'))
+const PostPage = lazy(() => import('./post'))
 
-const L = () => <LinearLoading sx={{ width: '100%' }} />
+const L = ({ sx = {}, ...props }) => (
+  <Div sx={{ flex: 1 }}>
+    <LinearLoading sx={{ width: '100%', ...sx }} {...props} />
+  </Div>
+)
 
 export default [
   {
@@ -20,6 +27,35 @@ export default [
     includeInNavMenu: true,
     includeInFooter: true,
     element: props => <HomePage {...props} />,
+  },
+  {
+    to: '/posts/:id',
+    path: '/posts/:id',
+    label: 'Post',
+    includeInNavMenu: false,
+    includeInFooter: false,
+    BreadcrumbsLabel: ({ pathname }) => {
+      return pathname
+    },
+    element: () => {
+      return (
+        <Suspense fallback={<L />}>
+          <PostPage />
+        </Suspense>
+      )
+    },
+  },
+  {
+    to: '/posts',
+    path: '/posts',
+    label: 'Content',
+    includeInNavMenu: false,
+    includeInFooter: false,
+    element: props => (
+      <Suspense fallback={<L />}>
+        <PostsPage {...props} />
+      </Suspense>
+    ),
   },
 
   {

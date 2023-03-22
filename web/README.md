@@ -45,6 +45,7 @@ chomp --watch
 ## [Start a local PostGIS server](https://github.com/SAEON/postgis#local-development)
 
 ## Start a local `pg_tileserv` server
+
 Assuming you have a PostGIS server running as a docker container with the name `postgis` on a network called `postgis`:
 
 ```sh
@@ -59,6 +60,7 @@ docker run \
 ```
 
 ## Start a local `pg_featureserv` server
+
 Assuming you have a PostGIS server running as a docker container with the name `postgis` on a network called `postgis`:
 
 ```sh
@@ -81,10 +83,12 @@ The build process will automatically configure routes from specific files in the
 1. Add a new file - `client/html/your-new-route.html` - in the same style as the other HTML files in `client/html`. Note that the `<script>` tag should have `src="index.your-new-route.js"`.
 2. Add a new folder `client/pages/your-new-route` with 2 files (`index.js` and `ssr.js`). This folder should be of the same format of other folders in `client/pages/*`
 3. Update `index.importmap.js` to include an import to `.client/ssr.<your-new-route>.js` so that the imports defined in the client are available at SSR time
+4. Update `ssr/_url-rewrite.ts` so that the regex expression also matches on the new new route (this may or may not be necessary)
 
 The `Rollup` build will look for the `index.js` and `ssr.js` files and process them so that the Node.js application can find them. Note that the `ssr.js` file should not run code except via invoking functions (otherwise browser-specific APIs cause the SSR process to fail) and there should be a default export that is the entry point to the React code.
 
 # CLI (Command Line Interface)
+
 From the root of the repository:
 
 ```sh
