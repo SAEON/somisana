@@ -7,6 +7,7 @@ env:
   BRANCH_REF: stable
   ESRI_API_KEY: ${{ secrets.ESRI_API_KEY }} # Repository secret
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_web_stable
   MONGO_DB: ${{ secrets.MONGO_DB_STABLE }} # Repository secret
   MONGO_HOST: ${{ secrets.MONGO_HOST_STABLE }} # Organization secret
@@ -17,7 +18,6 @@ env:
   PG_PASSWORD: ${{ secrets.PG_PASSWORD_STABLE }} # Repository secret
   PG_PORT: ${{ secrets.PG_PORT_STABLE }} # Organization secret
   PG_USERNAME: ${{ secrets.PG_USERNAME_STABLE }} # Repository secret
-  REGISTRY: ghcr.io
   SWARM_HOSTNAME: ${{ secrets.SWARM_HOSTNAME }} # Organization secret
   SWARM_PASSWORD: ${{ secrets.SWARM_PASSWORD }} # Organization secret
   SWARM_SSH_PORT: ${{ secrets.SWARM_SSH_PORT }} # Organization secret
@@ -38,7 +38,18 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ env.GITHUB_TOKEN }}
+      - name: Check if image with sha tag already exists
+        id: check-image
+        run: |
+          set -e
+          SHA_IMAGE=$(docker images -q ${DOCKER_REGISTRY}/${IMAGE_NAME}:${SHA} || true)
+          if [ -z "$SHA_IMAGE" ]; then
+            echo "::set-output name=image_exists::false"
+          else
+            echo "::set-output name=image_exists::true"
+          fi
       - name: Extract metadata (tags, labels) for Docker
+        if: steps.check-image.outputs.image_exists == 'false'
         id: meta
         uses: docker/metadata-action@master
         with:
@@ -50,6 +61,7 @@ jobs:
             maintainer=Somisana Project <info@somisana.ac.za>
             org.opencontainers.image.source=https://github.com/SAEON/somisana
       - name: Build and push
+        if: steps.check-image.outputs.image_exists == 'false'
         uses: docker/build-push-action@master
         with:
           context: web
@@ -93,7 +105,7 @@ jobs:
           password: ${{ env.SWARM_PASSWORD }}
           port: ${{ env.SWARM_SSH_PORT }}
           script: |
-            echo "DOCKER_IMAGE=${{ env.IMAGE_NAME }}:${{ env.SHA }}" > /home/runner/somisana/deploy/web/stable/stack.env
+            echo "DOCKER_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.SHA }}" > /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_HOST=${{ env.MONGO_HOST }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_DB=${{ env.MONGO_DB }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_USERNAME=${{ env.MONGO_USERNAME }}" >> /home/runner/somisana/deploy/web/stable/stack.env
