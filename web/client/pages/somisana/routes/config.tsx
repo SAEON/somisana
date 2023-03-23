@@ -8,9 +8,9 @@ import Div from '../../../components/div'
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
 const PostsPage = lazy(() => import('../../../modules/posts'))
 const AboutPage = lazy(() => import('../../../modules/about'))
+const PostPage = lazy(() => import('../../../modules/post'))
 const ExplorePage = lazy(() => import('./explore'))
 const ExploreModelPage = lazy(() => import('./model'))
-const PostPage = lazy(() => import('./post'))
 
 const L = ({ sx = {}, ...props }) => (
   <Div sx={{ flex: 1 }}>
@@ -35,12 +35,12 @@ export default [
     includeInNavMenu: false,
     includeInFooter: false,
     BreadcrumbsLabel: ({ pathname }) => {
-      return pathname
+      return <div>{pathname}</div>
     },
-    element: () => {
+    element: props => {
       return (
         <Suspense fallback={<L />}>
-          <PostPage />
+          <PostPage {...props} />
         </Suspense>
       )
     },

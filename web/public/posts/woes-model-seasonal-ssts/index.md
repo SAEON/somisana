@@ -1,4 +1,6 @@
-# WOES Model preview:
+# WOES Model preview
+
+Model data provided by Pierrick Penven, Laboratoire d'Oceanographie Physique et Spatiale (UMR 6523 CNRS, IFREMER, IRD, UBO), Brest, France.
 
 The model offers a wide range of applications such as
 
@@ -11,7 +13,7 @@ The model offers a wide range of applications such as
 
 ## Seasonal Mean
 
-![WOES Model Seasonal SS](${ORIGIN}/posts/woes-model-seasonal-ssts/WOES-Model-Seasonal-SSTs.png 'WOES Model Seasonal SST')
+![WOES Model Seasonal SS](/posts/woes-model-seasonal-ssts/charts.png 'WOES Model Seasonal SST')
 
 # Our vision
 
