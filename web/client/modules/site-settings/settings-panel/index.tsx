@@ -4,6 +4,7 @@ import LazyLoader from './_lazy-loader'
 export const SettingPanel = ({ forceLanguage, open, setOpen }) => {
   return (
     <Drawer
+      disableScrollLock
       sx={{
         display: 'flex',
       }}

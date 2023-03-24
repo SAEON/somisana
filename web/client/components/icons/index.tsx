@@ -37,6 +37,8 @@ import {
   mdiNoteMultiple,
 } from '@mdi/js'
 
+export { default as EgagasiniGraphic } from './egagasini-graphic'
+
 export const NoteMultiple = styled((props: any) => (
   <SvgIcon {...props}>
     <path d={mdiNoteMultiple} />

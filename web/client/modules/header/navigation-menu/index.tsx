@@ -19,6 +19,7 @@ export default ({ routes }) => {
       </IconButton>
 
       <Menu
+        disableScrollLock
         id="navigation-menu"
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
