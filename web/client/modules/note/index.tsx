@@ -17,6 +17,7 @@ const Render = memo(
         <Div sx={{ flex: 1 }}>
           <Container sx={{ margin: 'auto', my: 2 }}>
             <Paper
+              variant="outlined"
               sx={{
                 p: 4,
                 backgroundColor: theme => alpha(theme.palette.common.white, 1),
@@ -41,7 +42,7 @@ const Render = memo(
 export default () => {
   const { id } = useParams()
 
-  const { error, loading, data } = useFetch(`/posts/${id}/index.md`, {
+  const { error, loading, data } = useFetch(`/notes/${id}/index.md`, {
     headers: {
       Accept: 'text/plain',
     },

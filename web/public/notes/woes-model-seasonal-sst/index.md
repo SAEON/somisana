@@ -13,7 +13,7 @@ The model offers a wide range of applications such as
 
 ## Seasonal Mean
 
-![WOES Model Seasonal SS](/posts/woes-model-seasonal-ssts/charts.png 'WOES Model Seasonal SST')
+![WOES Model Seasonal SST](/notes/woes-model-seasonal-sst/charts.png 'WOES Model Seasonal SST')
 
 # Our vision
 

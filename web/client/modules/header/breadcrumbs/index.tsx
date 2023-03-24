@@ -9,23 +9,21 @@ export default ({ contentBase = '/', routes }) => {
   const { pathname } = useLocation() // Trigger re-render on location changes
   const normalizedPathname = pathname.replace(contentBase, '/')
 
-  const _pathname = normalizedPathname.match(/\/records\/./)
-    ? ['', 'records', ...new Set(normalizedPathname.split('/records/'))].filter(_ => _)
-    : [...new Set(normalizedPathname.split('/'))]
+  const _pathname = [...new Set(normalizedPathname.split('/'))]
 
   const tree = _pathname.map((p, i, array) => {
     return {
       p,
       ...(routes.find(({ to }) => {
-        if (!isNaN(parseInt(p))) {
-          if (to.replace(contentBase, '').replace(':id', p) === `${array[i - 1]}/${p}`) {
-            return true
-          }
+        if (
+          to.replace(contentBase, '').replace(':id', `${p || i}`) === `${array[i - 1]}/${p || i}`
+        ) {
+          return true
         }
 
         to = to.replace(contentBase, '').replace('/', '')
         return p === to
-      }) || { label: `${i}` }),
+      }) || { label: `${p || i}` }),
     }
   })
 

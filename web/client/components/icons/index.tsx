@@ -34,7 +34,14 @@ import {
   mdiSkipForward,
   mdiFileMultiple,
   mdiTableLarge,
+  mdiNoteMultiple,
 } from '@mdi/js'
+
+export const NoteMultiple = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiNoteMultiple} />
+  </SvgIcon>
+))({})
 
 export const TableLarge = styled((props: any) => (
   <SvgIcon {...props}>

@@ -1,14 +1,23 @@
 import { lazy, Suspense } from 'react'
 import { Linear as LinearLoading, Circular as CircularLoading } from '../../../components/loading'
-import { Home, Contract, Map, About, Github, License, Link } from '../../../components/icons'
+import {
+  Home,
+  Contract,
+  Map,
+  About,
+  Github,
+  License,
+  Link,
+  NoteMultiple,
+} from '../../../components/icons'
 import { gql, useQuery } from '@apollo/client'
 import HomePage from './home'
 import Div from '../../../components/div'
 
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
-const PostsPage = lazy(() => import('../../../modules/posts'))
+const NotesPage = lazy(() => import('../../../modules/notes'))
 const AboutPage = lazy(() => import('../../../modules/about'))
-const PostPage = lazy(() => import('../../../modules/post'))
+const NotePage = lazy(() => import('../../../modules/note'))
 const ExplorePage = lazy(() => import('./explore'))
 const ExploreModelPage = lazy(() => import('./model'))
 
@@ -17,6 +26,11 @@ const L = ({ sx = {}, ...props }) => (
     <LinearLoading sx={{ width: '100%', ...sx }} {...props} />
   </Div>
 )
+
+export const dictionary = {
+  woes: 'WOES',
+  sst: 'SST',
+}
 
 export default [
   {
@@ -29,31 +43,35 @@ export default [
     element: props => <HomePage {...props} />,
   },
   {
-    to: '/posts/:id',
-    path: '/posts/:id',
-    label: 'Post',
+    to: '/notes/:id',
+    path: '/notes/:id',
+    label: 'Note',
     includeInNavMenu: false,
     includeInFooter: false,
     BreadcrumbsLabel: ({ pathname }) => {
-      return <div>{pathname}</div>
+      return pathname
+        .split('-')
+        .map(word => dictionary[word] || word.capitalize())
+        .join(' ')
     },
     element: props => {
       return (
         <Suspense fallback={<L />}>
-          <PostPage {...props} />
+          <NotePage {...props} />
         </Suspense>
       )
     },
   },
   {
-    to: '/posts',
-    path: '/posts',
-    label: 'Content',
-    includeInNavMenu: false,
-    includeInFooter: false,
+    to: '/notes',
+    path: '/notes',
+    label: 'Notes',
+    Icon: NoteMultiple,
+    includeInNavMenu: true,
+    includeInFooter: true,
     element: props => (
       <Suspense fallback={<L />}>
-        <PostsPage {...props} />
+        <NotesPage {...props} />
       </Suspense>
     ),
   },
