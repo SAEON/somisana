@@ -11,7 +11,8 @@
     - [Marine Heat Waves](#marine-heat-waves)
 - [Local development](#local-development)
   - [Configure Python](#configure-python)
-    - [Install pyenv](#install-pyenv)
+    - [Install Python build dependencies](#install-python-build-dependencies)
+    - [Install Pyenv](#install-pyenv)
     - [Install pipenv](#install-pipenv)
   - [Install 3rd party dependencies](#install-3rd-party-dependencies)
   - [Start the CLI](#start-the-cli)
@@ -165,73 +166,44 @@ Pipenv is a wrapper over the regular pip package manager, but with a slightly be
 pip install --user pipenv
 ```
 
-And then update `~/.bashrc`
+## Install the Toolkit dependencies
+
+First installed 3rd party dependencies
+
+- `libpq` is a binary file required by the PostgreSQL driver
+- `postgis` is required for the `raster2pgsql` application
 
 ```sh
-export PATH="$HOME/.local/bin:$PATH"
-export PIPENV_VENV_IN_PROJECT="enabled"
-```
-
-Run `source ~/.bashrc` so that changes to your shell environment take effect.
-
-## Install 3rd party dependencies
-
-The python libraries included in this project require binaries that need to be installed explicitly. Run the following commands to install required dependencies in an Ubuntu environment.
-
-```sh
-# Install required binaries
-sudo apt-get update
-sudo apt-get upgrade -y
-sudo apt-get install -y \
-  sqlite3 \
-  libtiff-dev \
-  curl \
-  libssl-dev \
+sudo apt update
+sudo apt install -y \
   libpq-dev \
-  libcurl4-openssl-dev \
-  libgeos++-dev \
-  libgeos-3.8.0 \
-  libgeos-c1v5 \
-  libgeos-dev \
-  libgeos-doc
-
-# Build proj from source
-wget https://download.osgeo.org/proj/proj-9.0.0.tar.gz
-tar xzvf proj-9.0.0.tar.gz && cd proj-9.0.0
-mkdir build && cd build
-cmake ..
-cmake --build .
-sudo cmake --build . --target install
-
-# Then I had to copy the build libraries to /usr/lib so that Python can use them
-sudo cp -a proj-9.0.0/build/lib/. /usr/lib/
-
-# Install PostGIS (for the raster2pgsql CLI)
-sudo apt install postgis
+  postgis;
 ```
 
-## Start the CLI
-
-Finally, start the CLI by installing dependencies as configured in `Pipfile`, and register the `toolkit` keyword on your `$PATH`.
-
 ```sh
-# In the toolkit directory, create the ".venv" directory. This hints to pipenv that you want your virtual environment to be local
-mkdir .venv
+cd toolkit
+mkdir .venv # This is optional, and will force pipenv to create a venv directory locally
 pipenv install
-pipenv run script # This executes Python in the context of your virtual environment
+source env.sh # Run this on every new terminal session
+toolkit --version # Should print out 'development'
 ```
 
-Because starting the script via `pipenv run script` seems a little cumbersome, that command is used via the `bin/toolkit` file. This file is just a bash script, and needs to be configured to be executable and on the `$PATH` variable. The commands to register `bin/toolkit` as an executable script are in the `env.sh` file, which can be sourced:
+## Run the CLI from source
+
+Run the CLI via the command `pipenv run script`. In the `Pipfile` there is a script called `script` that is executed by this command. Running Python via the `pipenv` CLI will ensure that the correct virtual environment is used. As a shortcut to this cumbersome command, you can register the `toolkit` command on your `$PATH` environment variable that will handle the CLI entry point for you.
 
 ```sh
-# From the toolkit (or repo root) directory run:
-source env.sh
+cd toolkit
+pipenv run script --version # Should print out 'development'
 
-# And then try the CLI
-toolkit -h
+# or
+
+source env.sh
+toolkit --version # Should print out 'development'
+toolkit -h # This should list all the available commands
 ```
 
-## Setup script-environment variables
+### Setup script-environment variables
 
 The CLI is configured via flags and environment variables (in the case of passwords/etc.). Copy the example config into you directory as `.env` and adjust accordingly. The `.env` file is kept out of source control.
 
@@ -240,11 +212,3 @@ cp .env.example .env
 ```
 
 NOTE: There is also a `env.sh` script in the root of the repo that can be sourced so that you don't have to be in the toolkit directory to run the CLI. All path-argument inputs that are relative paths are treated as relative to `<repo root>/toolkit`
-
-## 3rd party services
-
-Run 3rd party services via Docker. These commands setup Docker containers that should work with default configuration.
-
-### PostGIS
-
-Please read the instructions at [https://github.com/SAEON/postgis](https://github.com/SAEON/postgis#local-development) for setting up a local PostGIS server (and PGAdmin4 interface) via Docker
