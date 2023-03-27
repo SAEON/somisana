@@ -141,36 +141,20 @@ TODO
 
 You need to be able to specify specific Python versions for the toolkit. I use the `pyenv` tool for this, though there are other options for achieving this.
 
-### Install pyenv
+### [Install Python build dependencies](https://github.com/pyenv/pyenv/wiki#suggested-build-environment)
+
+These are required in order for Pyenv to install and build Python (I'm not sure why it's necessary for Pyenv to build Python as opposed to downloading an executable)
+
+### [Install Pyenv](https://github.com/pyenv/pyenv#automatic-installer)
 
 The pyenv tool adds entries to the beginning of your $PATH variable. So that when you type in the "python" or "pip" commands, you actually run the "pyenv" tool instead of python or pip (since the first entries on $PATH are from pyenv). Pyenv then manages python versions, and you can easily switch between python versions in your terminal. The pyenv tool just redirects the python/pip commands to specific Python versions.
 
-To install, [follow the instructions](https://github.com/pyenv/pyenv#installation) (including first installing dependencies)
-
-The automatic installer concludes with instructions on adding something to `.bashrc`. However, I found that I had to add the location of the `pyenv` installation to $PATH (`pyenv` installs a binary to `$HOME/.pyenv/`). So, I ignored the output instructions of the installer and instead adjusted `~/.bashrc` to include the following lines:
+Follow [the instructions for configuring your shell environment](https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv). Then install the correct Python version (for example `3.10.6` at the time of writing)
 
 ```sh
-# Make the pyenv CLI available via $PATH, and set $PYENV_VERSION
-export PATH="$HOME/.pyenv/bin:$PATH"
-export PYENV_VERSION=3.10.6
-
-# Configure pyenv virtual environment on shell start
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
-
-# Alias the 'python' and 'pip' commands to use pyenv
-alias python="pyenv exec python"
-alias pip="pyenv exec pip"
-```
-
-Run `source ~/.bashrc` so that changes to your shell environment take effect.
-
-Install and set a Python version via `pyenv` to use
-
-```sh
-PYENV_VERSION=3.10.6
-pyenv install --list
-pyenv install $PYENV_VERSION
+PYTHON_VERSION=3.10.6
+pyenv install $PYTHON_VERSION
+pyenv global $PYTHON_VERSION
 ```
 
 ### Install pipenv
