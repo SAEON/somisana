@@ -14,11 +14,9 @@
     - [Install Python build dependencies](#install-python-build-dependencies)
     - [Install Pyenv](#install-pyenv)
     - [Install pipenv](#install-pipenv)
-  - [Install 3rd party dependencies](#install-3rd-party-dependencies)
-  - [Start the CLI](#start-the-cli)
-  - [Setup script-environment variables](#setup-script-environment-variables)
-  - [3rd party services](#3rd-party-services)
-    - [PostGIS](#postgis)
+  - [Install the Toolkit dependencies](#install-the-toolkit-dependencies)
+  - [Run the CLI from source](#run-the-cli-from-source)
+    - [Setup script-environment variables](#setup-script-environment-variables)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -150,7 +148,7 @@ These are required in order for Pyenv to install and build Python (I'm not sure 
 
 The pyenv tool adds entries to the beginning of your $PATH variable. So that when you type in the "python" or "pip" commands, you actually run the "pyenv" tool instead of python or pip (since the first entries on $PATH are from pyenv). Pyenv then manages python versions, and you can easily switch between python versions in your terminal. The pyenv tool just redirects the python/pip commands to specific Python versions.
 
-Follow [the instructions for configuring your shell environment](https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv). Then install the correct Python version (for example `3.10.6` at the time of writing)
+After installing Pyenv, follow [the instructions for configuring your shell environment](https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv). Then install the correct Python version (for example `3.10.6` at the time of writing)
 
 ```sh
 PYTHON_VERSION=3.10.6
@@ -168,17 +166,19 @@ pip install --user pipenv
 
 ## Install the Toolkit dependencies
 
-First installed 3rd party dependencies
-
-- `libpq` is a binary file required by the PostgreSQL driver
-- `postgis` is required for the `raster2pgsql` application
+First install 3rd party dependencies
 
 ```sh
 sudo apt update
 sudo apt install -y \
   libpq-dev \
-  postgis;
+  postgis
+
+# libpq is a binary file required by the PostgreSQL driver
+# postgis is required for the `raster2pgsql` application
 ```
+
+Then install the Python dependencies as defined in `Pipfile.lock`
 
 ```sh
 cd toolkit
