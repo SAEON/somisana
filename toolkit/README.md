@@ -15,6 +15,8 @@
     - [Pyenv](#pyenv)
   - [Install the Toolkit dependencies](#install-the-toolkit-dependencies)
     - [Install pipenv](#install-pipenv)
+    - [Install 3rd party dependencies](#install-3rd-party-dependencies)
+    - [Install the Python dependencies as defined in `Pipfile.lock`](#install-the-python-dependencies-as-defined-in-pipfilelock)
   - [Run the CLI from source](#run-the-cli-from-source)
     - [Setup script-environment variables](#setup-script-environment-variables)
 
@@ -161,6 +163,8 @@ pyenv global $PYTHON_VERSION
 
 ## Install the Toolkit dependencies
 
+Python dependencies are managed as part of the source code. Some of the libraries reuire 3rd party binaries to be installed separately
+
 ### Install pipenv
 
 Pipenv is a wrapper over the regular pip package manager, but with a slightly better mechanism for locking dependencies of referenced libraries (I believe). Dependencies are managed via the `Pipfile` and the `Pipfile.lock`
@@ -170,7 +174,9 @@ Pipenv is a wrapper over the regular pip package manager, but with a slightly be
 pip install --user pipenv
 ```
 
-First install 3rd party dependencies
+### Install 3rd party dependencies
+
+These are dependencies that should be installed using the OS package manager and don't get bundled with Python libraries
 
 ```sh
 sudo apt update
@@ -182,7 +188,9 @@ sudo apt install -y \
 # postgis is required for the `raster2pgsql` application
 ```
 
-Then install the Python dependencies as defined in `Pipfile.lock`
+### Install the Python dependencies as defined in `Pipfile.lock`
+
+Now install the application Python dependencies
 
 ```sh
 cd toolkit
