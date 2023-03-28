@@ -20,7 +20,7 @@ export default ({ modelid = undefined, children }) => {
   const [timeStep, setTimeStep] = useState(120)
   const [activeRun, setActiveRun] = useState(0)
   const [depth, setDepth] = useState(0)
-  const [selectedCoordinate, setSelectedCoordinate] = useState(null)
+  const [selectedCoordinates, setSelectedCoordinates] = useState([])
   const [thresholds, setThresholds] = useState(12)
   const [animateTimeStep, setAnimateTimeStep] = useState(false)
   const [scaleMin, setScaleMin] = useState(false)
@@ -103,8 +103,8 @@ export default ({ modelid = undefined, children }) => {
   return (
     <context.Provider
       value={{
-        selectedCoordinate,
-        setSelectedCoordinate,
+        selectedCoordinates,
+        setSelectedCoordinates,
         depth,
         setDepth,
         timeStep,

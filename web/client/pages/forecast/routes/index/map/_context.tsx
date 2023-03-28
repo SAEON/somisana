@@ -51,6 +51,9 @@ const P = memo(({ children, container, model }) => {
     return null
   }
 
+  // For debugging
+  window.map = map
+
   return <context.Provider value={{ map, model }}>{children}</context.Provider>
 })
 

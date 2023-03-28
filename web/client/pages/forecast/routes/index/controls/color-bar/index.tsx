@@ -64,7 +64,7 @@ const Render = memo(
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'auto',
+          overflow: 'hidden',
         }}
       >
         {new Array(steps)

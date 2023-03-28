@@ -8,6 +8,7 @@ import ToggleTemperature from './controls/toggle-temperature'
 import ToggleSalinity from './controls/toggle-salinity'
 import ToggleCurrents from './controls/toggle-currents'
 import TimeControl from './controls/time'
+import DataExplorer from './controls/data-explorer'
 import InfoControl from './controls/info'
 import { ToggleConfig } from './controls/color-bar'
 import ColorBar from './controls/color-bar'
@@ -46,7 +47,7 @@ export default ({ modelid = undefined }) => {
                 {/* COLOR BAR */}
                 <ColorBar />
 
-                {/* FLOATING MENU */}
+                {/* FLOATING RIGHT MENU */}
                 <Stack
                   sx={{
                     position: 'absolute',
@@ -81,6 +82,7 @@ export default ({ modelid = undefined }) => {
               variant="outlined"
             >
               <TimeControl />
+              <DataExplorer />
             </Paper>
           </Div>
         </BandDataProvider>
