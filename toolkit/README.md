@@ -138,15 +138,18 @@ TODO
 
 ## Configure Python
 
-You need to be able to specify specific Python versions for the toolkit. I use the `pyenv` tool for this, though there are other options for achieving this.
+You need to be able to specify specific Python versions for the toolkit. Here are instructions for achieving this with `pyenv` or `conda`
 
-### [Install Python build dependencies](https://github.com/pyenv/pyenv/wiki#suggested-build-environment)
+### Conda
 
-These are required in order for Pyenv to install and build Python (I'm not sure why it's necessary for Pyenv to build Python as opposed to downloading an executable)
+Install Conda and and create a virtual environment with the correct Python version. Note the `conda`-specific instructions below for running the app and managing deps with `pipenv`
 
-### [Install Pyenv](https://github.com/pyenv/pyenv#automatic-installer)
+### Pyenv
 
 The pyenv tool adds entries to the beginning of your $PATH variable. So that when you type in the "python" or "pip" commands, you actually run the "pyenv" tool instead of python or pip (since the first entries on $PATH are from pyenv). Pyenv then manages python versions, and you can easily switch between python versions in your terminal. The pyenv tool just redirects the python/pip commands to specific Python versions.
+
+- First [Install Python build dependencies](https://github.com/pyenv/pyenv/wiki#suggested-build-environment). These are required in order for Pyenv to install and build Python (I'm not sure why it's necessary for Pyenv to build Python as opposed to downloading an executable)
+- Then [Install Pyenv](https://github.com/pyenv/pyenv#automatic-installer)
 
 After installing Pyenv, follow [the instructions for configuring your shell environment](https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv). Then install the correct Python version (for example `3.10.6` at the time of writing)
 
@@ -156,15 +159,16 @@ pyenv install $PYTHON_VERSION
 pyenv global $PYTHON_VERSION
 ```
 
+## Install the Toolkit dependencies
+
 ### Install pipenv
 
 Pipenv is a wrapper over the regular pip package manager, but with a slightly better mechanism for locking dependencies of referenced libraries (I believe). Dependencies are managed via the `Pipfile` and the `Pipfile.lock`
 
 ```sh
+# This is the same for both Pyenv and Conda
 pip install --user pipenv
 ```
-
-## Install the Toolkit dependencies
 
 First install 3rd party dependencies
 
@@ -182,25 +186,38 @@ Then install the Python dependencies as defined in `Pipfile.lock`
 
 ```sh
 cd toolkit
+
+# If you are using Pyenv
 mkdir .venv # This is optional, and will force pipenv to create a venv directory locally
 pipenv install
 source env.sh # Run this on every new terminal session
 toolkit --version # Should print out 'development'
+
+# If you are using Conda
+pipenv install --system # Specify the pipenv dependency manager to use the system Python install (which is the conda environment in this case)
+python __main__.py # Should print out 'development'
 ```
 
 ## Run the CLI from source
 
 Run the CLI via the command `pipenv run script`. In the `Pipfile` there is a script called `script` that is executed by this command. Running Python via the `pipenv` CLI will ensure that the correct virtual environment is used. As a shortcut to this cumbersome command, you can register the `toolkit` command on your `$PATH` environment variable that will handle the CLI entry point for you.
 
+**_In a Pyenv environment_**
+
 ```sh
 cd toolkit
 pipenv run script --version # Should print out 'development'
-
-# or
-
 source env.sh
 toolkit --version # Should print out 'development'
 toolkit -h # This should list all the available commands
+```
+
+**_In a Conda environment_**
+
+```sh
+cd toolkit
+python __main__.py --version # Should print out 'development'
+python __main__.py -h # This should list all the available commands
 ```
 
 ### Setup script-environment variables
