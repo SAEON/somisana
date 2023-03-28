@@ -11,10 +11,10 @@
     - [Marine Heat Waves](#marine-heat-waves)
 - [Local development](#local-development)
   - [Configure Python](#configure-python)
-    - [Install Python build dependencies](#install-python-build-dependencies)
-    - [Install Pyenv](#install-pyenv)
-    - [Install pipenv](#install-pipenv)
+    - [Conda](#conda)
+    - [Pyenv](#pyenv)
   - [Install the Toolkit dependencies](#install-the-toolkit-dependencies)
+    - [Install pipenv](#install-pipenv)
   - [Run the CLI from source](#run-the-cli-from-source)
     - [Setup script-environment variables](#setup-script-environment-variables)
 
