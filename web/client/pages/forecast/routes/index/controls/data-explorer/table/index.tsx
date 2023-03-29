@@ -2,7 +2,11 @@ import { useContext } from 'react'
 import { context as bandContext } from '../../../band-data/_context'
 
 export default ({ selectedCoordinates }) => {
-  const data = useContext(bandContext)
-  console.log(data)
-  return JSON.stringify(selectedCoordinates)
+  const { grid, data } = useContext(bandContext)
+  const tableData = selectedCoordinates.map(id => {
+    const i = grid?.coordinates[id]
+    return data?.data.json[i] || []
+  })
+
+  return JSON.stringify(tableData)
 }

@@ -1,4 +1,4 @@
-import { createContext, useContext, memo } from 'react'
+import { createContext, useContext, memo, useMemo } from 'react'
 import { context as pageContext } from '../_context'
 import { gql, useQuery } from '@apollo/client'
 import Typography from '@mui/material/Typography'
@@ -26,7 +26,37 @@ const Render = memo(({ children, depth, timeStep, runId }) => {
     }
   )
 
-  return <context.Provider value={{ ...graphqlRequest }}>{children}</context.Provider>
+  const grid = useMemo(() => {
+    const points = graphqlRequest?.data?.data.json
+    if (!points) return null
+
+    return points.reduce(
+      (a, c, i) => {
+        const [coordinateid, lng, lat, temperature, salinity, u, v] = c
+        a.lng.push(lng)
+        a.lat.push(lat)
+        a.temperature.push(temperature)
+        a.salinity.push(salinity)
+        a.u.push(u)
+        a.v.push(v)
+
+        // Allow for quickly getting rows by the coordinateId
+        a.coordinates[coordinateid] = i
+        return a
+      },
+      {
+        lng: [],
+        lat: [],
+        temperature: [],
+        salinity: [],
+        u: [],
+        v: [],
+        coordinates: {},
+      }
+    )
+  }, [graphqlRequest])
+
+  return <context.Provider value={{ grid, ...graphqlRequest }}>{children}</context.Provider>
 })
 
 export default props => {
