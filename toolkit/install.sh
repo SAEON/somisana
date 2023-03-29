@@ -11,7 +11,7 @@ fi
 lines=(
   "## Added by SOMISANA Toolkit installer ##",  
   "export TOOLKIT_VERSION=$TOOLKIT_VERSION"
-  "alias somisana=\"docker run -e TOOLKIT_VERSION=$TOOLKIT_VERSION -e PY_ENV=production -v /home/\$USER:/home/\$USER -it --rm ghcr.io/saeon/somisana_toolkit_stable:\$TOOLKIT_VERSION\""
+  "alias somisana=\"docker run -e TOOLKIT_VERSION=$TOOLKIT_VERSION -e PY_ENV=production -v /home/$USER:/home/$USER -it --rm ghcr.io/saeon/somisana_toolkit_stable:\$TOOLKIT_VERSION\""
 )
 
 # Delete existing lines related to the SOMISANA toolkit
