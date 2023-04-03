@@ -11,6 +11,12 @@ import ErrorBoundary from '../client/components/error-boundary'
 import NativeExtensions from '../client/modules/native-extensions'
 import { SnackbarProvider } from 'notistack'
 
+const LANGS = ['en']
+
+const negotiator = language => {
+  return LANGS[0]
+}
+
 export const createEmotionCache = () => createCache({ key: 'css' })
 
 const App = ({
@@ -19,7 +25,7 @@ const App = ({
   children,
   emotionCache = createEmotionCache(),
   cookie = undefined,
-  acceptLanguage = window.navigator.language,
+  acceptLanguage = negotiator(window.navigator.language),
 }) => {
   return (
     <EmotionCacheProvider value={emotionCache}>

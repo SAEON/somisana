@@ -3,17 +3,22 @@ import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client'
 import fetch from 'make-fetch-happen'
 import App from '../common/app'
 import cookie from 'cookie'
+import Negotiator from 'negotiator'
 
 const gaProperty = 'G-6ZM4ST1XCC'
 const disableGaStr = 'ga-disable-' + gaProperty
 
+const LANGS = ['en']
+
 export default ({ children, ctx, emotionCache }) => {
   const cookieHeader = ctx.get('Cookie') || ''
-  const language = ctx.get('Accept-language').split(',')[0]
+
+  const negotiator = new Negotiator(ctx.request)
+  const language = negotiator.language(LANGS)
 
   /**
    * Google Analytics should be disabled
-   * unless specifially enabled
+   * unless specifically enabled
    */
   const cookies = cookie.parse(cookieHeader)
   if (!cookies[disableGaStr]) {
