@@ -46,6 +46,9 @@ deps = [
 
 [[task]]
 name = 'copy-static-files'
+deps = [
+  'public/**/*'
+]
 run = '''
 cp -r public/* .client/
 '''
