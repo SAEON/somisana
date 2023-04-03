@@ -125,5 +125,6 @@
     "xzvf",
     "Zarr"
   ],
-  "python.analysis.extraPaths": ["./toolkit"]
+  "python.analysis.extraPaths": ["./toolkit"],
+  "svg.preview.background": "white"
 }
