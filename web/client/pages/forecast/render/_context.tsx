@@ -20,7 +20,7 @@ export default ({ modelid = undefined, children }) => {
   const [timeStep, setTimeStep] = useState(120)
   const [activeRun, setActiveRun] = useState(0)
   const [depth, setDepth] = useState(0)
-  const [selectedCoordinates, setSelectedCoordinates] = useState([])
+  const [selectedCoordinates, setSelectedCoordinates] = useState({})
   const [thresholds, setThresholds] = useState(12)
   const [animateTimeStep, setAnimateTimeStep] = useState(false)
   const [scaleMin, setScaleMin] = useState(false)

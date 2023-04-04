@@ -2,7 +2,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import { headerRenderer } from 'react-data-grid'
 import Div from '../div'
 
-export default ({ onColumnsReorder, column, ...props }) => {
+export const DraggableHeaderRenderer = ({ onColumnsReorder, column, ...props }) => {
   const [{ isDragging }, drag] = useDrag({
     type: 'COLUMN_DRAG',
     item: { key: column.key },

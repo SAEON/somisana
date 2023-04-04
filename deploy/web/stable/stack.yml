@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 networks:
   somisana_stable:
@@ -40,7 +40,7 @@ services:
       - somisana_stable
 
   pg_tileserv:
-    image: pramsey/pg_tileserv:20221019
+    image: pramsey/pg_tileserv:20230210
     deploy:
       replicas: 1
       placement:
@@ -67,7 +67,7 @@ services:
       - somisana_stable
 
   pg_featureserv:
-    image: pramsey/pg_featureserv:20221019
+    image: pramsey/pg_featureserv:20230120
     deploy:
       replicas: 1
       placement:
@@ -92,4 +92,3 @@ services:
       - 7011:9000
     networks:
       - somisana_stable
-

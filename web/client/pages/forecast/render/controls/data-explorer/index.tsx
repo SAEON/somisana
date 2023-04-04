@@ -6,13 +6,19 @@ import Collapse from '@mui/material/Collapse'
 import Table from './table'
 
 export default () => {
-  const { selectedCoordinates } = useContext(dataContext)
+  const { selectedCoordinates, setSelectedCoordinates } = useContext(dataContext)
 
   return (
     <Div>
-      <Collapse in={Boolean(selectedCoordinates.length)} orientation="vertical">
+      <Collapse
+        in={Boolean(Object.values(selectedCoordinates).filter(v => Boolean(v)).length)}
+        orientation="vertical"
+      >
         <Paper variant="outlined" sx={{ borderRadius: 0, mb: 1 }}>
-          <Table selectedCoordinates={selectedCoordinates} />
+          <Table
+            selectedCoordinates={selectedCoordinates}
+            setSelectedCoordinates={setSelectedCoordinates}
+          />
         </Paper>
       </Collapse>
     </Div>

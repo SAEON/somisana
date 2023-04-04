@@ -40,7 +40,7 @@ services:
       - somisana_next
 
   pg_tileserv:
-    image: pramsey/pg_tileserv:20221019
+    image: pramsey/pg_tileserv:20230210
     deploy:
       replicas: 1
       placement:
@@ -67,7 +67,7 @@ services:
       - somisana_next
 
   pg_featureserv:
-    image: pramsey/pg_featureserv:20221019
+    image: pramsey/pg_featureserv:20230120
     deploy:
       replicas: 1
       placement:

@@ -38,6 +38,7 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
           ),
           grid as (
             select
+              c.id coordinateid,
               st_x (c.pixel) px,
               st_y (c.pixel) py,
               c.latitude y,
@@ -59,6 +60,7 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                 where
                   id = $1))
           select
+            g.coordinateid,
             x,
             y,
             g.interpolated_temperature,
@@ -153,6 +155,7 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
       res = await client.query({
         text: `
           select
+            v.coordinateid,
             v.long x,
             v.lat y,
             v.interpolated_temperature::float,
