@@ -1,6 +1,7 @@
 const isStaticAsset = path => {
   if (path.endsWith('.md')) return true
   if (path.endsWith('.png')) return true
+  if (path.endsWith('.pdf')) return true
   return false
 }
 

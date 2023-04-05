@@ -8,7 +8,10 @@ const Render = ({ map, modelid, TILESERV_BASE_URL }) => {
 
   // Map event handlers
   const mouseenter = useCallback(
-    ({ features }) => (map.getCanvas().style.cursor = 'pointer'),
+    ({ features }) => {
+      map.getCanvas().style.cursor = 'pointer'
+      // const id =
+    },
     [map]
   )
   const mouseleave = useCallback(({ features }) => (map.getCanvas().style.cursor = ''), [map])
