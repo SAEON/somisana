@@ -1,31 +1,71 @@
 import { useContext, useEffect, useCallback } from 'react'
 import { context as mapContext } from '../../_context'
+import { context as pageContext } from '../../../_context'
 import { context as configContext } from '../../../../../../modules/config'
 import { useTheme } from '@mui/material/styles'
 
-const Render = ({ map, modelid, TILESERV_BASE_URL }) => {
+var hoveredMPAId = null
+
+const Render = ({ map, selectedMPAs, setSelectedMPAs, showMPAs, TILESERV_BASE_URL }) => {
   const theme = useTheme()
 
-  // Map event handlers
-  const mouseenter = useCallback(
-    ({ features }) => {
-      map.getCanvas().style.cursor = 'pointer'
-      // const id =
+  const click = useCallback(
+    e => {
+      const { features } = e
+      setSelectedMPAs(obj => {
+        const featureId = features[0].id
+        return { ...obj, [featureId]: !obj[featureId] }
+      })
+    },
+    [map, setSelectedMPAs]
+  )
+
+  const mousemove = useCallback(
+    e => {
+      if (e.features.length > 0) {
+        map.getCanvas().style.cursor = 'pointer'
+        if (hoveredMPAId) {
+          map.setFeatureState(
+            { source: 'mpas', id: hoveredMPAId, sourceLayer: 'public.mpas' },
+            { hover: false }
+          )
+        }
+        hoveredMPAId = e.features[0].id
+        map.setFeatureState(
+          { source: 'mpas', id: hoveredMPAId, sourceLayer: 'public.mpas' },
+          { hover: true }
+        )
+      }
     },
     [map]
   )
-  const mouseleave = useCallback(({ features }) => (map.getCanvas().style.cursor = ''), [map])
+  const mouseleave = useCallback(() => {
+    map.getCanvas().style.cursor = ''
+    if (hoveredMPAId) {
+      map.setFeatureState(
+        { source: 'mpas', id: hoveredMPAId, sourceLayer: 'public.mpas' },
+        { hover: false }
+      )
+    }
+    hoveredMPAId = null
+
+    map.getCanvas().style.cursor = ''
+  }, [map])
 
   // Add source, layer, and event handlers
   useEffect(() => {
+    if (!showMPAs) {
+      if (map.getLayer('mpas')) map.removeLayer('mpas')
+      if (map.getSource('mpas')) map.removeSource('mpas')
+      setSelectedMPAs({})
+      return
+    }
     map.addSource('mpas', {
       type: 'vector',
       tiles: [`${TILESERV_BASE_URL}/public.mpas/{z}/{x}/{y}.pbf`],
       url: `${TILESERV_BASE_URL}/public.mpas.json`,
+      promoteId: 'ogc_fid',
     })
-
-    const MAX_ZOOM = 8
-    const MIN_ZOOM = 18
 
     map.addLayer({
       id: 'mpas',
@@ -34,26 +74,53 @@ const Render = ({ map, modelid, TILESERV_BASE_URL }) => {
       'source-layer': 'public.mpas',
       paint: {
         'fill-outline-color': theme.palette.primary.dark,
-        'fill-color': theme.palette.primary.main,
+        'fill-color': [
+          'case',
+          [
+            'any',
+            ['==', ['feature-state', 'hover'], true],
+            ['==', ['feature-state', 'clicked'], true],
+          ],
+          theme.palette.primary.main,
+          'transparent',
+        ],
         'fill-opacity': 0.5,
       },
     })
 
-    map.on('mouseenter', 'mpas', mouseenter)
+    map.on('mousemove', 'mpas', mousemove)
     map.on('mouseleave', 'mpas', mouseleave)
+    map.on('click', 'mpas', click)
 
     return () => {
-      map.off('mouseenter', 'mpas', mouseenter)
+      map.off('mousemove', 'mpas', mousemove)
       map.off('mouseleave', 'mpas', mouseleave)
+      map.off('click', 'mpas', click)
       map.removeLayer('mpas')
       map.removeSource('mpas')
     }
-  }, [map, mouseenter, mouseleave])
+  }, [map, mousemove, showMPAs, mouseleave, click])
+
+  // Update the map layers on data change
+  useEffect(() => {
+    Object.entries(selectedMPAs).forEach(([id, clicked]) => {
+      map.setFeatureState({ source: 'mpas', id, sourceLayer: 'public.mpas' }, { clicked })
+    })
+  }, [selectedMPAs])
 }
 
 export default () => {
   const { TILESERV_BASE_URL } = useContext(configContext)
   const { map } = useContext(mapContext)
+  const { selectedMPAs, setSelectedMPAs, showMPAs } = useContext(pageContext)
 
-  return <Render TILESERV_BASE_URL={TILESERV_BASE_URL} map={map} />
+  return (
+    <Render
+      TILESERV_BASE_URL={TILESERV_BASE_URL}
+      map={map}
+      showMPAs={showMPAs}
+      selectedMPAs={selectedMPAs}
+      setSelectedMPAs={setSelectedMPAs}
+    />
+  )
 }

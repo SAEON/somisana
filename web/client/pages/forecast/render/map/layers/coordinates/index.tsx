@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles'
 
 const Render = ({
   map,
+  showCoordinates,
   setSelectedCoordinates,
   selectedCoordinates,
   modelid,
@@ -17,16 +18,25 @@ const Render = ({
   const mouseenter = useCallback(() => (map.getCanvas().style.cursor = 'pointer'), [map])
   const mouseleave = useCallback(() => (map.getCanvas().style.cursor = ''), [map])
   const click = useCallback(
-    ({ features }) =>
+    e => {
+      const { features } = e
       setSelectedCoordinates(obj => {
         const featureId = features[0].id
         return { ...obj, [featureId]: !obj[featureId] }
-      }),
+      })
+    },
     [map, setSelectedCoordinates]
   )
 
   // Add source, layer, and event handlers
   useEffect(() => {
+    if (!showCoordinates) {
+      if (map.getLayer('coordinates')) map.removeLayer('coordinates')
+      if (map.getSource('coordinates')) map.removeSource('coordinates')
+      setSelectedCoordinates({})
+      return
+    }
+
     map.addSource('coordinates', {
       type: 'vector',
       tiles: [
@@ -83,7 +93,7 @@ const Render = ({
       map.removeLayer('coordinates')
       map.removeSource('coordinates')
     }
-  }, [map, click, mouseenter, mouseleave])
+  }, [map, click, mouseenter, mouseleave, showCoordinates])
 
   // Update the map layers on data change
   useEffect(() => {
@@ -102,6 +112,7 @@ export default () => {
   const {
     setSelectedCoordinates,
     selectedCoordinates,
+    showCoordinates,
     model: { _id: modelid = 0 } = {},
   } = useContext(pageContext)
 
@@ -109,6 +120,7 @@ export default () => {
     <Render
       TILESERV_BASE_URL={TILESERV_BASE_URL}
       map={map}
+      showCoordinates={showCoordinates}
       selectedCoordinates={selectedCoordinates}
       setSelectedCoordinates={setSelectedCoordinates}
       modelid={modelid}

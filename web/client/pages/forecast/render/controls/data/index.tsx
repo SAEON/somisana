@@ -17,6 +17,7 @@ export const ToggleData = () => {
       <IconButton
         color="primary"
         size="small"
+        sx={{ zIndex: 11 }}
         onClick={() => setActiveRightPane(a => (a === 'data' ? false : 'data'))}
       >
         <DatabaseIcon

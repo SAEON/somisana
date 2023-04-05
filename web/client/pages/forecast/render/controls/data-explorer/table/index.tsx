@@ -9,6 +9,7 @@ import { DraggableHeaderRenderer } from '../../../../../../components/table'
 import Div from '../../../../../../components/div'
 import IconButton from '@mui/material/IconButton'
 import { Close as CloseIcon } from '../../../../../../components/icons'
+import Grid from '@mui/material/Grid'
 
 const getComparator = sortColumn => {
   switch (sortColumn) {
@@ -23,7 +24,7 @@ const getComparator = sortColumn => {
   }
 }
 
-export default ({ selectedCoordinates, setSelectedCoordinates }) => {
+export default ({ selectedCoordinates, setSelectedCoordinates, selectedMPAs }) => {
   const { grid, data } = useContext(bandContext)
   const [sortColumns, setSortColumns] = useState([])
   const [rows, setRows] = useState([])
@@ -124,26 +125,34 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
   }, [rows, sortColumns])
 
   return (
-    <Div
-      sx={{
-        height: 35 + 35 * Object.values(selectedCoordinates).filter(v => Boolean(v)).length,
-        maxHeight: 10 * 35,
-      }}
-    >
-      <DndProvider backend={HTML5Backend}>
-        <ReactDataGrid
-          columns={draggableColumns}
-          defaultColumnOptions={{
-            sortable: true,
-            resizable: true,
+    <Grid container spacing={1}>
+      <Grid item sx={12} md={8}>
+        <Div
+          sx={{
+            height: 35 + 35 * Object.values(selectedCoordinates).filter(v => Boolean(v)).length,
+            maxHeight: 10 * 35,
           }}
-          enableVirtualization
-          onRowsChange={setRows}
-          onSortColumnsChange={setSortColumns}
-          sortColumns={sortColumns}
-          rows={sortedRows}
-        />
-      </DndProvider>
-    </Div>
+        >
+          <DndProvider backend={HTML5Backend}>
+            <ReactDataGrid
+              columns={draggableColumns}
+              defaultColumnOptions={{
+                sortable: true,
+                resizable: true,
+              }}
+              enableVirtualization
+              onRowsChange={setRows}
+              onSortColumnsChange={setSortColumns}
+              sortColumns={sortColumns}
+              rows={sortedRows}
+            />
+          </DndProvider>
+        </Div>
+      </Grid>
+
+      <Grid item sx={12} md={4}>
+        <Div>Show selected MPA information here: {JSON.stringify(selectedMPAs)}</Div>
+      </Grid>
+    </Grid>
   )
 }

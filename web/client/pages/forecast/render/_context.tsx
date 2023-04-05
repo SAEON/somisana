@@ -20,7 +20,10 @@ export default ({ modelid = undefined, children }) => {
   const [timeStep, setTimeStep] = useState(120)
   const [activeRun, setActiveRun] = useState(0)
   const [depth, setDepth] = useState(0)
+  const [showCoordinates, setShowCoordinates] = useState(true)
+  const [showMPAs, setShowMPAs] = useState(true)
   const [selectedCoordinates, setSelectedCoordinates] = useState({})
+  const [selectedMPAs, setSelectedMPAs] = useState({})
   const [thresholds, setThresholds] = useState(12)
   const [animateTimeStep, setAnimateTimeStep] = useState(false)
   const [scaleMin, setScaleMin] = useState(false)
@@ -105,6 +108,12 @@ export default ({ modelid = undefined, children }) => {
       value={{
         selectedCoordinates,
         setSelectedCoordinates,
+        selectedMPAs,
+        setSelectedMPAs,
+        showCoordinates,
+        setShowCoordinates,
+        showMPAs,
+        setShowMPAs,
         depth,
         setDepth,
         timeStep,

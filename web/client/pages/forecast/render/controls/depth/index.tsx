@@ -12,6 +12,7 @@ export const ToggleDepth = () => {
       <IconButton
         size="small"
         color="primary"
+        sx={{ zIndex: 11 }}
         onClick={() => setActiveRightPane(a => (a === 'depth' ? false : 'depth'))}
       >
         <SigmaLower
