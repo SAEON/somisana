@@ -1,4 +1,5 @@
 # Related Model Reports 
+## Abstract
 This report presents the setup and validation of a regional CROCO model configuration for the
 Algoa Bay region, located on the eastern extent of the Agulhas Bank, South Africa. The perfor-
 mance of the model solution is assessed over a 2.5 year period from May 2009 to December
@@ -19,3 +20,7 @@ the bay. The results of this report are intended to guide the design of an opera
 system for Algoa Bay with many potential uses, including the forecasting of oil spill trajectories
 which could occur from the ongoing fuel bunker transfer operations (vessel refuelling) in the
 port of Ngqura anchorage areas.
+
+## Document
+
+![Algoa_Bay_hindcast_validation](/notes/woes-model-seasonal-sst/Algoa_Bay_hindcast_validation.pdf 'Algoa_Bay_hindcast_validation')
