@@ -2,6 +2,7 @@ import '../../../../../node_modules/maplibre-gl/dist/maplibre-gl.css'
 import { useEffect, useState, useContext } from 'react'
 import MapProvider from './_context'
 import CoordinatesLayer from './layers/coordinates'
+import MPAsLayer from './layers/marine-protected-areas'
 import MetadataLayer from './layers/metadata'
 import VisualizationsLayer from './layers/visualizations'
 import { useSnackbar } from 'notistack'
@@ -41,6 +42,7 @@ export default ({ container }) => {
     container && (
       <MapProvider container={container}>
         <MetadataLayer />
+        <MPAsLayer />
         <CoordinatesLayer />
         <VisualizationsLayer />
       </MapProvider>

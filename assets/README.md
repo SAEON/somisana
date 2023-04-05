@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [List of assets](#list-of-assets)
+  - [SAMPAZ_OR_2022_Q3](#sampaz_or_2022_q3)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # List of assets
 
 These are required resources for the system to run as expected

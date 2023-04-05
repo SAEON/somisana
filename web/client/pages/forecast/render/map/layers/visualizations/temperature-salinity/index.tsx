@@ -116,6 +116,7 @@ const Render = memo(
       })
 
       map.moveLayer(id)
+      if (map.getLayer('mpas')) map.moveLayer('mpas')
       if (map.getLayer('coordinates')) map.moveLayer('coordinates')
     } else {
       map.getSource(id).setData({

@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Quick start](#quick-start)
+  - [Load assets](#load-assets)
   - [Start a local MongoDB server](#start-a-local-mongodb-server)
   - [Start a local PostGIS server](#start-a-local-postgis-server)
   - [Start a local `pg_tileserv` server](#start-a-local-pg_tileserv-server)
