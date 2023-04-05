@@ -1,6 +1,3 @@
-/**
- * This page doesn't support SSR
- */
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { Linear as Loading } from '../../../../components/loading'
 import Box from '@mui/material/Box'

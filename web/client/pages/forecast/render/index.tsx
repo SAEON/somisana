@@ -17,6 +17,7 @@ import Stack from '@mui/material/Stack'
 import RightMenu from './right-menu'
 import Timestamp from './controls/timestamp'
 import { ToggleData } from './controls/data'
+import LayerControl from './controls/layers'
 
 const ModelProvider = lazy(() => import('./_context'))
 
@@ -61,6 +62,7 @@ export default ({ modelid = undefined }) => {
                 >
                   <ToggleConfig />
                   <InfoControl />
+                  <LayerControl />
                   <ToggleData />
                   <ToggleDepth />
                   <ToggleTemperature />

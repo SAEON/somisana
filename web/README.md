@@ -40,6 +40,10 @@ chomp --watch
 2. Link the transpiled source code to the HTML entry points using `JSPM` (look at the `html` task in [chompfile.toml](chompfile.toml))
 3. Start the `Koa` app (Node.js)
 
+## Load assets
+
+Navigate to `<repo root>/assets/` and follow the instructions on the README to load 3rd party assets into the database
+
 ## [Start a local MongoDB server](https://github.com/SAEON/mongo#local-development)
 
 ## [Start a local PostGIS server](https://github.com/SAEON/postgis#local-development)

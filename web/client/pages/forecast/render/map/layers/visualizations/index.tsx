@@ -1,4 +1,4 @@
-import { useContext, memo, useMemo, lazy, Suspense } from 'react'
+import { useContext, lazy, Suspense } from 'react'
 import { context as mapContext } from '../../_context'
 import { createPortal } from 'react-dom'
 import { context as bandDataContext } from '../../../band-data/_context'

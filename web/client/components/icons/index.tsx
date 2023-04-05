@@ -35,9 +35,23 @@ import {
   mdiFileMultiple,
   mdiTableLarge,
   mdiNoteMultiple,
+  mdiLayersTriple,
+  mdiLayers,
 } from '@mdi/js'
 
 export { default as EgagasiniGraphic } from './egagasini-graphic'
+
+export const Layers = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiLayers} />
+  </SvgIcon>
+))({})
+
+export const LayersTriple = styled((props: any) => (
+  <SvgIcon {...props}>
+    <path d={mdiLayersTriple} />
+  </SvgIcon>
+))({})
 
 export const NoteMultiple = styled((props: any) => (
   <SvgIcon {...props}>

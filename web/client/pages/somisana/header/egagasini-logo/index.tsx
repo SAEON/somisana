@@ -9,7 +9,7 @@ export default () => {
   const [open, setOpen] = useState(false)
   return (
     <>
-      <IconButton onClick={() => setOpen(true)} size="medium" sx={{ ml: 0.5 }}>
+      <IconButton onClick={() => setOpen(true)} size="medium">
         <EgagasiniGraphic fontSize="medium" />
       </IconButton>
 

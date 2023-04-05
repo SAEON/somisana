@@ -11,8 +11,8 @@ export default () => {
     <Background>
       <Header routes={routes}>
         <Div sx={{ display: 'flex', alignItems: 'center' }}>
-          <EgagasiniLogo />
           <LanguageSelector />
+          <EgagasiniLogo />
         </Div>
       </Header>
       <RouteSwitcher routes={routes} />

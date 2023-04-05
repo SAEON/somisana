@@ -1,4 +1,5 @@
 import { useContext, useState, useMemo, useEffect, useCallback } from 'react'
+import '../../../../../../../node_modules/react-data-grid/lib/styles.css'
 import { context as bandContext } from '../../../band-data/_context'
 import ReactDataGrid from 'react-data-grid'
 import { HTML5Backend } from 'react-dnd-html5-backend'
@@ -72,7 +73,7 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
           const [coordinateid, lng, lat, temperature = NaN, salinity = NaN, u = NaN, v = NaN] =
             data?.data.json[index] || []
           return {
-            i,
+            i: i + 1,
             location: `${lat?.toFixed(5) || '-'}/${lng?.toFixed(5) || '-'}`,
             temperature,
             salinity,

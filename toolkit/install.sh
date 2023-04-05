@@ -1,6 +1,7 @@
 #!/bin/bash
 
 TOOLKIT_VERSION="latest"
+GDAL_TOOLKIT_VERSION="ubuntu-full-3.6.3"
 
 # check if an argument was passed and set the TOOLKIT_VERSION accordingly
 if [[ "$1" != "" ]]; then
@@ -11,7 +12,13 @@ fi
 lines=(
   "## Added by SOMISANA Toolkit installer ##",  
   "export TOOLKIT_VERSION=$TOOLKIT_VERSION"
-  "alias somisana=\"docker run -e TOOLKIT_VERSION=$TOOLKIT_VERSION -e PY_ENV=production -v /home/\$USER:/home/\$USER --mount type=bind,source=\$(pwd)/.env,target=/home/somisana/.env -it --rm ghcr.io/saeon/somisana_toolkit_stable:\$TOOLKIT_VERSION\""
+  "alias somisana=\"docker run -e TOOLKIT_VERSION=$TOOLKIT_VERSION -e PY_ENV=production -v /home/\$USER:/home/\$USER --mount type=bind,source=\$(pwd)/.env,target=/home/somisana/.env -it --rm ghcr.io/saeon/somisana_toolkit_stable:\$TOOLKIT_VERSION\"",
+  "alias ogr2ogr="docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION ogr2ogr",
+  "alias gdalinfo="docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION gdalinfo",
+  "alias gdalsrsinfo="docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION gdalsrsinfo",
+  "alias gdal_translate="docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION gdal_translate",
+  "alias gdallocationinfo="docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION gdallocationinfo",
+  "alias gdalmdiminfo="docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION gdalmdiminfo"
 )
 
 # Delete existing lines related to the SOMISANA toolkit

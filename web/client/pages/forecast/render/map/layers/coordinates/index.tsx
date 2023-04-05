@@ -38,6 +38,9 @@ const Render = ({
       url: `${TILESERV_BASE_URL}/public.coordinates.json`,
     })
 
+    const MAX_ZOOM = 8
+    const MIN_ZOOM = 18
+
     map.addLayer({
       id: 'coordinates',
       type: 'circle',
@@ -45,11 +48,27 @@ const Render = ({
       'source-layer': 'public.coordinates',
       paint: {
         'circle-radius': ['case', ['boolean', ['feature-state', 'clicked'], false], 7, 2],
-        'circle-stroke-width': ['interpolate', ['exponential', 1], ['zoom'], 7, 2, 18, 16],
+        'circle-stroke-width': [
+          'interpolate',
+          ['exponential', 1],
+          ['zoom'],
+          MAX_ZOOM,
+          ['case', ['boolean', ['feature-state', 'clicked'], false], 2, 2],
+          MIN_ZOOM,
+          ['case', ['boolean', ['feature-state', 'clicked'], false], 16, 1],
+        ],
         'circle-stroke-color': theme.palette.common.white,
-        'circle-stroke-opacity': ['case', ['boolean', ['feature-state', 'clicked'], false], 0.8, 0],
+        'circle-stroke-opacity': [
+          'interpolate',
+          ['exponential', 1],
+          ['zoom'],
+          MAX_ZOOM,
+          ['case', ['boolean', ['feature-state', 'clicked'], false], 0.8, 0],
+          MIN_ZOOM,
+          ['case', ['boolean', ['feature-state', 'clicked'], false], 0.8, 1],
+        ],
         'circle-color': theme.palette.common.black,
-        'circle-opacity': ['interpolate', ['exponential', 1], ['zoom'], 8, 0, 16, 1],
+        'circle-opacity': ['interpolate', ['exponential', 1], ['zoom'], MAX_ZOOM, 0, MIN_ZOOM, 1],
       },
     })
 
