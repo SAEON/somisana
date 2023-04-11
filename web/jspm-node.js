@@ -1,6 +1,6 @@
 import { Generator } from '@jspm/generator'
 import { writeFile } from 'fs/promises'
-import mkdirp from 'mkdirp'
+import { mkdirp } from 'mkdirp'
 import { dirname } from 'path'
 
 const NODE_ENV = process.env.NODE_ENV || 'development'

@@ -1,4 +1,4 @@
-import rimraf from 'rimraf'
+import * as rimraf from 'rimraf'
 import _swc from 'rollup-plugin-swc'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
