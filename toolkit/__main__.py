@@ -1,18 +1,25 @@
 import argparse
 import os
-from cli.commands import (
-    lacce as lacce_cmd,
-    mhw as mhw_cmd,
-    ops as ops_cmd,
-    kerchunk as kerchunk_cmd,
-    update as update_cmd,
+from cli.define import (
+    lacce as define_lacce,
+    mhw as define_mhw,
+    ops as define_ops,
+    kerchunk as define_kerchunk,
+    update as define_update,
 )
-from cli.exe import (
-    lacce as lacce_exe,
-    mhw as mhw_exe,
-    ops as ops_exe,
-    kerchunk as kerchunk_exe,
-    update as update_exe,
+from cli.parse import (
+    lacce as parse_lacce,
+    mhw as parse_mhw,
+    ops as parse_ops,
+    kerchunk as parse_kerchunk,
+    update as parse_update,
+)
+from cli.applications import (
+    lacce,
+    mhw,
+    ops,
+    kerchunk,
+    update,
 )
 
 prog = "somisana"
@@ -30,29 +37,37 @@ def main():
         metavar="Applications",
     )
 
-    # Build commands
-    mhw = mhw_cmd.build(module_parser)
-    ops = ops_cmd.build(module_parser)
-    lacce = lacce_cmd.build(module_parser)
-    kerchunk = kerchunk_cmd.build(module_parser)
-    update = update_cmd.build(module_parser)
+    # (1) Build commands
+    mhw_app = define_mhw.build(module_parser)
+    ops_app = define_ops.build(module_parser)
+    lacce_app = define_lacce.build(module_parser)
+    kerchunk_app = define_kerchunk.build(module_parser)
+    update_app = define_update.build(module_parser)
 
-    # Parse args
+    # (2) Parse command string
     args = parser.parse_args()
 
-    # Run the CLI
-    if args.command == "ops":
-        ops_exe.run(ops, args)
-    elif args.command == "mhw":
-        mhw_exe.run(mhw, args)
-    elif args.command == "lacce":
-        lacce_exe.run(lacce, args)
-    elif args.command == "kerchunk":
-        kerchunk_exe.run(kerchunk, args)
-    elif args.command == "update":
-        update_exe.run(update, args)
-    else:
+    # (3) Select the application by parsing flag options
+    exe = (
+        parse_ops.parse(ops_app, args, ops)
+        if args.command == "ops"
+        else parse_mhw.parse(mhw_app, args, mhw)
+        if args.command == "mhw"
+        else parse_lacce.parse(lacce_app, args, lacce)
+        if args.command == "lacce"
+        else parse_kerchunk.parse(kerchunk_app, args, kerchunk)
+        if args.command == "kerchunk"
+        else parse_update.run(update_app, args, update)
+        if args.command == "update"
+        else None
+    )
+
+    # (4) Execute the application
+    if not exe:
         parser.print_help()
+        return
+    else:
+        exe(args)
 
 
 if __name__ == "__main__":

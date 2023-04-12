@@ -1,3 +1,3 @@
-from cli import commands, modules, exe
+from cli import define, applications, parse
 
-__all__ = ["commands", "modules", "exe"]
+__all__ = ["define", "applications", "parse"]
