@@ -17,15 +17,15 @@ create extension if not exists address_standardizer_data_us;
 
 create extension if not exists postgis_tiger_geocoder;
 
-create table if not exists public.rasters (
+create table if not exists public.rasters(
   rid int primary key generated always as identity,
   rast public.raster null,
   filename text null
 );
 
-create index if not exists rasters_rast_st_convexhull_idx on public.rasters using gist (ST_ConvexHull (rast));
+create index if not exists rasters_rast_st_convexhull_idx on public.rasters using gist(ST_ConvexHull(rast));
 
-create table if not exists public.models (
+create table if not exists public.models(
   id smallint primary key generated always as identity,
   name varchar(255) not null unique,
   title varchar(255),
@@ -44,9 +44,9 @@ create table if not exists public.models (
   envelope geometry(polygon, 4326)
 );
 
-create table if not exists public.coordinates (
+create table if not exists public.coordinates(
   id int primary key generated always as identity,
-  modelid smallint not null references models (id),
+  modelid smallint not null references models(id),
   pixel geometry(point, 0) not null,
   coord geometry(point, 3857) not null,
   longitude float not null,
@@ -55,26 +55,26 @@ create table if not exists public.coordinates (
   has_value boolean default false
 );
 
-create unique index if not exists unique_coordinates on public.coordinates using btree (modelid, pixel);
+create unique index if not exists unique_coordinates on public.coordinates using btree(modelid, pixel);
 
-create index if not exists coordinates_has_value on public.coordinates using btree (has_value);
+create index if not exists coordinates_has_value on public.coordinates using btree(has_value);
 
-create index if not exists coordinates_modelid on public.coordinates using btree (modelid);
+create index if not exists coordinates_modelid on public.coordinates using btree(modelid);
 
-create index if not exists coordinates_coord on public.coordinates using gist (coord);
+create index if not exists coordinates_coord on public.coordinates using gist(coord);
 
-create index if not exists coordinates_pixel on public.coordinates using gist (pixel);
+create index if not exists coordinates_pixel on public.coordinates using gist(pixel);
 
-create table if not exists public.runs (
+create table if not exists public.runs(
   id smallint primary key generated always as identity,
   run_date date not null,
-  modelid smallint not null references public.models (id),
+  modelid smallint not null references public.models(id),
   step1_timestamp timestamp null,
   timestep_attrs json null,
   successful boolean default null
 );
 
-create unique index concurrently if not exists unique_runs_per_model on public.runs using btree (run_date desc, modelid);
+create unique index concurrently if not exists unique_runs_per_model on public.runs using btree(run_date desc, modelid);
 
 
 /**
@@ -101,10 +101,10 @@ when not matched then
 merge into public.models t
 using (
   select
-    t.id, st_convexhull (t.coords)::geometry(Polygon, 3857) convexhull, (st_makeenvelope (t.min_x, t.min_y, t.max_x, t.max_y, 4326))::geometry(Polygon, 4326) envelope
+    t.id, st_convexhull(t.coords)::geometry(Polygon, 3857) convexhull,(st_makeenvelope(t.min_x, t.min_y, t.max_x, t.max_y, 4326))::geometry(Polygon, 4326) envelope
           from (
             select
-              m.id, m.min_x, m.max_x, m.max_y, m.min_y, st_collect (c.coord) coords
+              m.id, m.min_x, m.max_x, m.max_y, m.min_y, st_collect(c.coord) coords
               from
                 public.coordinates c
                 join public.models m on m.id = c.modelid
@@ -115,20 +115,20 @@ when matched then
       set
         convexhull = s.convexhull, envelope = s.envelope;
 
-create table if not exists public.raster_xref_run (
+create table if not exists public.raster_xref_run(
   id int primary key generated always as identity,
-  rasterid int not null unique references public.rasters (rid) on delete cascade,
-  runid smallint not null references public.runs (id) on delete cascade
+  rasterid int not null unique references public.rasters(rid) on delete cascade,
+  runid smallint not null references public.runs(id) on delete cascade
 );
 
-create unique index if not exists unique_rasters_per_model on public.raster_xref_run using btree (rasterid, runid);
+create unique index if not exists unique_rasters_per_model on public.raster_xref_run using btree(rasterid, runid);
 
-create table if not exists public.values (
+create table if not exists public.values(
   id bigint primary key generated always as identity,
-  runid smallint not null references public.runs (id),
+  runid smallint not null,
   depth_level smallint not null,
   time_step smallint not null,
-  coordinateid int not null references public.coordinates (id),
+  coordinateid int not null references public.coordinates(id),
   depth decimal(7, 2),
   temperature decimal(4, 2),
   salinity decimal(6, 4),
@@ -136,9 +136,9 @@ create table if not exists public.values (
   v decimal(5, 4)
 );
 
-create unique index concurrently if not exists values_unique_cols on public.values using btree (runid desc, time_step asc, depth_level desc, coordinateid);
+create unique index concurrently if not exists values_unique_cols on public.values using btree(runid desc, time_step asc, depth_level desc, coordinateid);
 
-create index concurrently if not exists values_coordinateid on public.values using btree (coordinateid asc);
+create index concurrently if not exists values_coordinateid on public.values using btree(coordinateid asc);
 
 -- Optimise this table for many deleted rows
 alter table public.values set (autovacuum_vacuum_cost_delay = 0.5);
@@ -157,8 +157,8 @@ alter table public.values set (autovacuum_analyze_threshold = 25000000);
  */
 drop function if exists public.somisana_get_pixel_values cascade;
 
-create function public.somisana_get_pixel_values (runid int, depth_level int, time_step int, variable text, total_depth_levels int default 20)
-  returns table (
+create function public.somisana_get_pixel_values(runid int, depth_level int, time_step int, variable text, total_depth_levels int default 20)
+  returns table(
     pixel geometry,
     value numeric
   )
@@ -167,11 +167,11 @@ declare
   band_no int;
   rd int;
 begin
-  band_no := ((time_step - 1) * total_depth_levels) + depth_level;
+  band_no :=((time_step - 1) * total_depth_levels) + depth_level;
   rd := runid;
   return query with centroids as (
     select
-      (ST_PixelAsCentroids (r.rast, band_no)).*
+      (ST_PixelAsCentroids(r.rast, band_no)).*
     from
       rasters r
       join raster_xref_run x on x.rasterid = r.rid
@@ -190,8 +190,8 @@ stable parallel safe;
 
 drop function if exists public.somisana_join_values cascade;
 
-create function public.somisana_join_values (runid int, depth_level int, time_step int, total_depth_levels int default 20)
-  returns table (
+create function public.somisana_join_values(runid int, depth_level int, time_step int, total_depth_levels int default 20)
+  returns table(
     coordinateid int,
     depth decimal(7, 2),
     temperature decimal(4, 2),
@@ -201,14 +201,14 @@ create function public.somisana_join_values (runid int, depth_level int, time_st
   )
   as $$
 begin
-  return query with _coordinates as (
+  return query with _coordinates as(
     select
       id,
       pixel
     from
       public.coordinates c
     where
-      c.modelid = (
+      c.modelid =(
         select
           modelid
         from
@@ -216,40 +216,40 @@ begin
         where
           runs.id = runid)
 ),
-depths as (
+depths as(
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'm_rho', total_depth_levels => total_depth_levels)
+    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'm_rho', total_depth_levels => total_depth_levels)
 ),
-temperatures as (
+temperatures as(
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'temperature', total_depth_levels => total_depth_levels)
+    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'temperature', total_depth_levels => total_depth_levels)
 ),
-salinity as (
+salinity as(
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'salt', total_depth_levels => total_depth_levels)
+    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'salt', total_depth_levels => total_depth_levels)
 ),
-u as (
+u as(
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'u', total_depth_levels => total_depth_levels)
+    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'u', total_depth_levels => total_depth_levels)
 ),
-v as (
+v as(
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values (runid, depth_level, time_step, variable => 'v', total_depth_levels => total_depth_levels))
+    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'v', total_depth_levels => total_depth_levels))
 select
   c.id coordinateid,
   d.value depth,
@@ -271,22 +271,22 @@ stable parallel safe;
 
 drop function if exists public.somisana_upsert_values cascade;
 
-create function public.somisana_upsert_values (run_id int, depth_level int, time_step int, total_depth_levels int default 20)
+create function public.somisana_upsert_values(run_id int, depth_level int, time_step int, total_depth_levels int default 20)
   returns void
   as $$
 begin
   merge into public.values t
-  using (
+  using(
     select
       depth_level, time_step, run_id runid, coordinateid, depth, temperature, salinity, u, v
     from
-      somisana_join_values (runid => run_id, depth_level => depth_level, time_step => time_step, total_depth_levels => total_depth_levels)) s on s.runid = t.runid
+      somisana_join_values(runid => run_id, depth_level => depth_level, time_step => time_step, total_depth_levels => total_depth_levels)) s on s.runid = t.runid
     and s.time_step = t.time_step
     and s.depth_level = t.depth_level
     and s.coordinateid = t.coordinateid
   when not matched then
-    insert (depth_level, time_step, runid, coordinateid, depth, temperature, salinity, u, v)
-      values (s.depth_level, s.time_step, s.runid, s.coordinateid, s.depth, s.temperature, s.salinity, s.u, s.v)
+    insert(depth_level, time_step, runid, coordinateid, depth, temperature, salinity, u, v)
+      values(s.depth_level, s.time_step, s.runid, s.coordinateid, s.depth, s.temperature, s.salinity, s.u, s.v)
       when matched then
         update set
           depth = s.depth, temperature = s.temperature, salinity = s.salinity, u = s.u, v = s.v;
@@ -297,8 +297,8 @@ parallel safe;
 
 drop function if exists public.somisana_interpolate_values cascade;
 
-create function public.somisana_interpolate_values (target_depth integer default 0, runid integer default 1, time_step integer default 1)
-  returns table (
+create function public.somisana_interpolate_values(target_depth integer default 0, runid integer default 1, time_step integer default 1)
+  returns table(
     coordinateid int,
     long float,
     lat float,
@@ -370,7 +370,7 @@ bounded_values as (
   v_lower.v v_lower
 from _values v
   left join _values v_upper on v_upper.coordinateid = v.coordinateid
-    and v_upper.depth_level = (v.depth_level + 1)
+    and v_upper.depth_level =(v.depth_level + 1)
   left join _values v_lower on v_lower.coordinateid = v.coordinateid
     and v_lower.depth_level = case when v.depth_level < 2 then
       v.depth_level
@@ -432,18 +432,18 @@ interpolated_values as (
   select
     e.coordinateid,
     e.depth,
-    (("Δy_temp" / "Δx") * x) + c_temp interpolated_temperature,
-    (("Δy_salt" / "Δx") * x) + c_salt interpolated_salinity,
-    (("Δy_u" / "Δx") * x) + c_u interpolated_u,
-    (("Δy_v" / "Δx") * x) + c_u interpolated_v
+(("Δy_temp" / "Δx") * x) + c_temp interpolated_temperature,
+(("Δy_salt" / "Δx") * x) + c_salt interpolated_salinity,
+(("Δy_u" / "Δx") * x) + c_u interpolated_u,
+(("Δy_v" / "Δx") * x) + c_u interpolated_v
   from
     equation_vals e
 ),
 grid as (
   select
     c.id coordinateid,
-    st_x (c.pixel) px,
-    st_y (c.pixel) py,
+    st_x(c.pixel) px,
+    st_y(c.pixel) py,
   v.depth,
   c.latitude lat,
   c.longitude long,
@@ -455,7 +455,7 @@ from
   interpolated_values v
   right join coordinates c on c.id = v.coordinateid
   where
-    c.modelid = (
+    c.modelid =(
       select
         modelid
       from
