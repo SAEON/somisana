@@ -121,7 +121,7 @@ def load(args):
             (run_date, model),
         ).fetchall()[0][0]
 
-    with open("cli/modules/ops/load/models.yml") as file:
+    with open("cli/applications/ops/load/models.yml") as file:
         model_config = yaml.load(file, yaml.Loader)["models"]
 
     if upsert_rasters:
