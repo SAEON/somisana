@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG NP_ETA=2
+ARG NP_ETA=4
 ARG NP_XI=2
 
 ENV NP_ETA=$NP_ETA
@@ -23,6 +23,13 @@ COPY croco/1.1/ croco-1.1/
 # needed both during compilation and during model execution
 COPY croco/overwrites/ croco-1.1/
 COPY croco/overwrites/ .
+
+# Configure param.h
+# TODO - next, refactor this to be at container run time (along with compilication)
+RUN sed -e "s/\$NP_XI/${NP_XI:-2}/g" -e "s/\$NP_ETA/${NP_ETA:-4}/g" _param.h > croco-1.1/param.h
+RUN sed -e "s/\$NP_XI/${NP_XI:-2}/g" -e "s/\$NP_ETA/${NP_ETA:-4}/g" _param.h > param.h
+RUN rm _param.h
+RUN rm croco-1.1/_param.h
 
 # Create the entrypoint to run the compiled model
 COPY croco/run-model/ .

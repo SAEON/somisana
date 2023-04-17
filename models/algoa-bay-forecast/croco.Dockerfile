@@ -1,8 +1,8 @@
 FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG NP_ETA=2
-ARG NP_XI=2
+ARG NP_ETA=4
+ARG NP_XI=3
 
 ENV NP_ETA=$NP_ETA
 ENV NP_XI=$NP_XI
@@ -26,8 +26,8 @@ COPY croco/overwrites/ .
 
 # Configure param.h
 # TODO - next, refactor this to be at container run time (along with compilication)
-RUN sed -e "s/\$NP_XI/3/g" -e "s/\$NP_ETA/4/g" _param.h > croco-1.1/param.h
-RUN sed -e "s/\$NP_XI/3/g" -e "s/\$NP_ETA/4/g" _param.h > param.h
+RUN sed -e "s/\$NP_XI/${NP_XI:-3}/g" -e "s/\$NP_ETA/${NP_ETA:-4}/g" _param.h > croco-1.1/param.h
+RUN sed -e "s/\$NP_XI/${NP_XI:-3}/g" -e "s/\$NP_ETA/${NP_ETA:-4}/g" _param.h > param.h
 RUN rm _param.h
 RUN rm croco-1.1/_param.h
 
