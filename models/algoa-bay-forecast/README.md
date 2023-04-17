@@ -12,12 +12,19 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+# Local development
+
+TODO
+
 # Deployment
+
 ## Server requirements
+
 Setup a VM with at least 8GB of memory and 8 CPUS
 
 ## Server configuration
-Install Docker Engine and any number of self-hosted GitHub actions runners. Each runner should be installed as it's own limited permissions user, and each runner-user should be added to the `runners` group (note that the `runners` group ***MUST*** be created with an id of `1999` so that non-root users in a Docker container context can read/write directories on the host mounted at runtime). Users in containers need to map to existing users on the host - I think this is via the user/group id, but stand to be corrected.
+
+Install Docker Engine and any number of self-hosted GitHub actions runners. Each runner should be installed as it's own limited permissions user, and each runner-user should be added to the `runners` group (note that the `runners` group **_MUST_** be created with an id of `1999` so that non-root users in a Docker container context can read/write directories on the host mounted at runtime). Users in containers need to map to existing users on the host - I think this is via the user/group id, but stand to be corrected.
 
 ```sh
 # Create the runners group if it does not already exist
@@ -32,11 +39,12 @@ adduser runner1
 # Uncomment these line only when the runners need to use /home/runner1/svc.sh
 # runner1 ALL=NOPASSWD: /home/runner1/svc.sh
 
-# Add the runner users to the runners group 
+# Add the runner users to the runners group
 usermod -aG runners runner1
 ```
 
 ### Configure MatLab user
+
 Create a user called `matlab` with an id of `1998`, and with a group id of `1999` (the id of the runners group created above)
 
 ```sh
@@ -47,6 +55,7 @@ adduser \
 ```
 
 ### Create tmp directory
+
 Separate jobs that are part of the Algoa Bay Forecast model need to work to a shared directory (`/tmp/somisana/algoa-bay-forecast`)
 
 ```sh
@@ -57,7 +66,8 @@ chmod -R 774 /tmp/somisana/algoa-bay-forecast
 ```
 
 ## Server maintenance
-Model output is around 5GB per day and includes a variety of files that should be kept for a limited amount of time. The model output is archived on a daily basis, but the `/tmp/somisana/algoa-bay-forecast` needs to be pruned on a scheduled basis. The directory structure of model output is `/tmp/somisana/algoa-bay-forecast/<branch name>/<run date>`. 
+
+Model output is around 5GB per day and includes a variety of files that should be kept for a limited amount of time. The model output is archived on a daily basis, but the `/tmp/somisana/algoa-bay-forecast` needs to be pruned on a scheduled basis. The directory structure of model output is `/tmp/somisana/algoa-bay-forecast/<branch name>/<run date>`.
 
 Update the server root-crontab (`sudo su && crontab -e`) with the following:
 
