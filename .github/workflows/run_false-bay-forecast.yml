@@ -173,6 +173,15 @@ jobs:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
+      - name: Configure no. retries
+        id: retries
+        run: |
+          if [ "$BRANCH_REF" = "stable" ]
+          then
+            echo "RETRIES=10" >> $GITHUB_OUTPUT
+          else
+            echo "RETRIES=1" >> $GITHUB_OUTPUT
+          fi
       - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
         continue-on-error: true # Maybe Node.js exists anyway
         run: |
@@ -182,8 +191,8 @@ jobs:
         uses: nick-fields/retry@master
         with:
           timeout_minutes: 30 # Script is considered failed if this limit is reached
-          retry_wait_seconds: 600 # Wait 10 minutes and try again
-          max_attempts: 10
+          retry_wait_seconds: 300 # Wait 5 minutes and try again
+          max_attempts: ${{ steps.retries.outputs.RETRIES }}
           retry_on: any
           warning_on_retry: true
           shell: bash
@@ -207,8 +216,8 @@ jobs:
         uses: nick-fields/retry@master
         with:
           timeout_minutes: 30 # Script is considered failed if this limit is reached
-          retry_wait_seconds: 600 # Wait 10 minutes and try again
-          max_attempts: 10
+          retry_wait_seconds: 300 # Wait 5 minutes and try again
+          max_attempts: ${{ steps.retries.outputs.RETRIES }}
           retry_on: any
           warning_on_retry: true
           shell: bash

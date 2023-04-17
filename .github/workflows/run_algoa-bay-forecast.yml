@@ -200,11 +200,11 @@ jobs:
       - name: Configure no. retries
         id: retries
         run: |
-          if [$BRANCH_REF == 'next']
+          if [ "$BRANCH_REF" = "stable" ]
           then
-            echo "RETRIES=1" >> $GITHUB_OUTPUT
+            echo "RETRIES=10" >> $GITHUB_OUTPUT
           else
-            echo "RETRIES=5" >> $GITHUB_OUTPUT
+            echo "RETRIES=1" >> $GITHUB_OUTPUT
           fi
       - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
         continue-on-error: true # Maybe Node.js exists anyway
