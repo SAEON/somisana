@@ -299,7 +299,9 @@ jobs:
             -v $WORKDIR:/false-bay-forecast/current \
             -v $(pwd)/models/false-bay-forecast/lib/grd.nc:/false-bay-forecast/current/croco/forcing/grd.nc \
             -v $(pwd)/models/false-bay-forecast/lib/grd.nc.1:/false-bay-forecast/current/croco/forcing/grd.nc.1 \
-            --cpus 12 \
+            -e NP_XI=2 \
+            -e NP_ETA=4 \
+            --cpus 8 \
             ${{ needs.compile-croco.outputs.image }} \
               ./run_croco.bash \
                 /false-bay-forecast/current \
@@ -310,7 +312,7 @@ jobs:
           mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc
           mv ${{ env.WORKDIR }}/croco/scratch/avg.nc.1 ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1
 
-  # Updates CROCO output vars to be centered
+  # Updates CROCO output vars to be centred
   # and work out depth levels in meters
   normalize-output:
     needs: [branch-ref, croco, toolkit, envs, workdir]

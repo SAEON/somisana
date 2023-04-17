@@ -9,10 +9,10 @@ TIME_prev=$3 # i.e. 20220606  set as env variable called RESTART_FILE_DATE in .y
 HDAYS=5 # Fixed value in this context
 FDAYS=5
 NH_AVG=1 # The temporal average of the output file in hours edited to save every hour
-NH_AVGSURF=1  # The temporal average of the output file (only surface variables) in hours 
-NDAYS=$((HDAYS + FDAYS)) 
-INDIR=$(pwd)  # where the croco_frcst.in file is stored, in the current setup it is in the same directory
-MPI_NUM_PROCS=8 # TODO - can this be done dynamically? What about parallel computing?
+NH_AVGSURF=1 # The temporal average of the output file (only surface variables) in hours
+NDAYS=$((HDAYS + FDAYS))
+INDIR=$(pwd) # where the croco_frcst.in file is stored, in the current setup it is in the same directory
+MPI_NUM_PROCS=$(( ${NP_ETA:-2} * ${NP_XI:-2} ))
 EXEDIR=$(pwd)
 INPUTDIR=$RUNDIR/croco/forcing
 AGRIF_FILE=$INDIR/AGRIF_FixedGrids.in #The nested run needs the AGRIF.in file
@@ -55,7 +55,7 @@ chmod u+x croco
 rm -f $SCRATCHDIR/*.in
 rm -f $SCRATCHDIR/*.out
 
-#Added AGRIF_FILE to scratch directory Matt 
+#Added AGRIF_FILE to scratch directory Matt
 cp -f $AGRIF_FILE $SCRATCHDIR
 
 LEVEL=0
@@ -103,7 +103,7 @@ if [[ ${CLIMATOLOGY_FILES} == 1 ]]; then
   ln -sf ${INPUTDIR}/${CLMFILE}_${OGCM}_${TIME}.nc ${CLMFILE}.nc
 fi
 
-# False bay doesnot use bry 
+# False bay doesnot use bry
 if [[ ${BOUNDARY_FILES} == 1 ]]; then
   ln -sf ${INPUTDIR}/${BRYFILE}_${OGCM}_${TIME}.nc ${BRYFILE}.nc
 fi
@@ -158,7 +158,7 @@ done
 # Run the model
 mpirun -np $MPI_NUM_PROCS ./croco croco_${TIME}.in > croco_${TIME}.out
 
-# Check that the model run correctly 
+# Check that the model run correctly
 
 status=`tail -2 croco_${TIME}.out | grep DONE | wc -l`
 if [[ $status == 1 ]]; then

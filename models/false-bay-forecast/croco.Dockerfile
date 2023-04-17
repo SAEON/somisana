@@ -1,6 +1,11 @@
 FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG NP_ETA=2
+ARG NP_XI=2
+
+ENV NP_ETA=$NP_ETA
+ENV NP_XI=$NP_XI
 
 RUN apt-get update \
   && apt-get install -y \
