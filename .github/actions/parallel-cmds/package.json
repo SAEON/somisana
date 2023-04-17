@@ -1,8 +1,0 @@
-{
-  "name": "hello-world",
-  "version": "1.0.0",
-  "type": "module",
-  "dependencies": {
-    "@actions/core": "^1.10.0"
-  }
-}

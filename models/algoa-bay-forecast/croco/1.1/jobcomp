@@ -90,9 +90,6 @@ mkdir $SCRDIR
 #
 AGRIF_SRC=${ROOT_DIR}/AGRIF
 
-# Configure param.h
-sed -e "s/\$NP_XI/${NP_XI:-2}/g" -e "s/\$NP_ETA/${NP_ETA:-2}/g" "$SOURCE/_param.h" > "$SOURCE/param.h"
-
 #
 # copy SOURCE code
 #

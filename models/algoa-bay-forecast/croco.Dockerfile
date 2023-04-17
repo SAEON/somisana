@@ -24,6 +24,13 @@ COPY croco/1.1/ croco-1.1/
 COPY croco/overwrites/ croco-1.1/
 COPY croco/overwrites/ .
 
+# Configure param.h
+# TODO - next, refactor this to be at container run time (along with compilication)
+RUN sed -e "s/\$NP_XI/3/g" -e "s/\$NP_ETA/4/g" _param.h > croco-1.1/param.h
+RUN sed -e "s/\$NP_XI/3/g" -e "s/\$NP_ETA/4/g" _param.h > param.h
+RUN rm _param.h
+RUN rm croco-1.1/_param.h
+
 # Create the entrypoint to run the compiled model
 COPY croco/run-model/ .
 
