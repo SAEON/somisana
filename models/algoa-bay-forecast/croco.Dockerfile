@@ -7,9 +7,6 @@ ARG NP_XI=2
 ENV NP_ETA=$NP_ETA
 ENV NP_XI=$NP_XI
 
-RUN NNODES=$(( $NP_XI * $NP_ETA )) \
-  && export NNODES=$NNODES
-
 RUN apt-get update \
   && apt-get install -y \
     mpich \

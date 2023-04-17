@@ -195,6 +195,7 @@ jobs:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
       SHA: sha-${{ github.sha }}
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
         continue-on-error: true # Maybe Node.js exists anyway
@@ -205,8 +206,8 @@ jobs:
         uses: nick-fields/retry@master
         with:
           timeout_minutes: 30 # Script is considered failed if this limit is reached
-          retry_wait_seconds: 10 # Wait 10 minutes and try again
-          max_attempts: 10
+          retry_wait_seconds: 300 # Wait 5 minutes and try again
+          max_attempts: ${{ if eq(env.BRANCH_REF, 'next') }}1{{ else }}5{{ endif }}
           retry_on: any
           warning_on_retry: true
           shell: bash
@@ -230,8 +231,8 @@ jobs:
         uses: nick-fields/retry@master
         with:
           timeout_minutes: 30 # Script is considered failed if this limit is reached
-          retry_wait_seconds: 10 # Wait 10 minutes and try again
-          max_attempts: 10
+          retry_wait_seconds: 300 # Wait 5 minutes and try again
+          max_attempts: ${{ if eq(env.BRANCH_REF, 'next') }}1{{ else }}5{{ endif }}
           retry_on: any
           warning_on_retry: true
           shell: bash
