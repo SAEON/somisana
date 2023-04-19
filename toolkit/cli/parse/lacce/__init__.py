@@ -4,4 +4,10 @@ def parse(cmd, args, module):
     if input and output:
         print("LACCE", input, output)
         return lambda: print("Not implemented")
-    print(cmd.format_help())
+    else:
+
+        def e(*args):
+            print(cmd.format_help())
+            exit()
+
+        return e

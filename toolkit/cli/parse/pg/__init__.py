@@ -1,6 +1,6 @@
 def parse(cmd, args, module):
-    if args.kerchunk_command == "run":
-        return module.run
+    if args.pg_command == "raster2pgsql":
+        return module.raster2pgsql
     else:
 
         def e(*args):
