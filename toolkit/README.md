@@ -116,19 +116,30 @@ docker run \
     -batch "run('/crocotools/run.m')"
 ```
 
-**(5) _Run the compiled CROCO model_**
+**(5) _Compile and run the CROCO model_**
 
 For this step you do need the source code currently. From the root of the repository:
 
 ```sh
+export NP_ETA=4
+export NP_XI=3
 export TODAY=$(date +"%Y%m%d")
 export YESTERDAY=$(date -d "yesterday" +"%Y%m%d")
 
+# Build the docker image
+docker build \
+  -t abf_local \
+  --build-arg NP_ETA=$NP_ETA \
+  --build-arg NP_XI=$NP_XI \
+  .
+
+# Run the docker image
 docker run \
   --rm \
   -v $WORKDIR:/algoa-bay-forecast/current \
   -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
-  ghcr.io/saeon/somisana_algoa_bay_forecast_croco_stable:$TOOLKIT_VERSION \
+  --cpus $(expr $NP_ETA \* $NP_XI) \
+  abf_local \
     ./run_croco.bash \
       /algoa-bay-forecast/current \
       $TODAY \
@@ -147,7 +158,7 @@ You need to be able to specify specific Python versions for the toolkit. Here ar
 
 ### Conda
 
-Nothing to do here 
+Nothing to do here
 
 ### Pyenv
 
@@ -184,6 +195,7 @@ sudo apt install -y \
 ```
 
 ### Conda
+
 Create a new conda environment called 'somisana' with all the dependencies via the `Condafile.yml` file
 
 ```sh
@@ -230,7 +242,7 @@ python __main__.py -h # This should list all the available commands
 
 ### Pyenv
 
-In the case of a Pyenv environment, the `pipenv run script` command ensures the correct virtual environment is used (see the script called `script` in the `Pipfile`). 
+In the case of a Pyenv environment, the `pipenv run script` command ensures the correct virtual environment is used (see the script called `script` in the `Pipfile`).
 
 ```sh
 cd toolkit

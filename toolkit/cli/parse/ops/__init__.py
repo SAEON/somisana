@@ -6,4 +6,9 @@ def parse(cmd, args, module):
     elif args.ops_command == "load":
         return module.load
     else:
-        print(cmd.format_help())
+
+        def e(*args):
+            print(cmd.format_help())
+            exit()
+
+        return e
