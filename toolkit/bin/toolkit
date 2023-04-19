@@ -1,4 +1,9 @@
 #!/bin/bash
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-pipenv run script ${@:1}
+# check if python is running in a conda or a pyenv environment
+if [[ "$(which python)" == "$CONDA_PREFIX/bin/python" ]]; then
+    python __main__.py ${@:1}
+else
+    pipenv run script ${@:1}
+fi

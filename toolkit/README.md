@@ -144,7 +144,7 @@ You need to be able to specify specific Python versions for the toolkit. Here ar
 
 ### Conda
 
-Install Conda and and create a virtual environment with the correct Python version. Note the `conda`-specific instructions below for running the app and managing deps with `pipenv`
+Nothing to do here 
 
 ### Pyenv
 
@@ -165,20 +165,12 @@ pyenv global $PYTHON_VERSION
 
 Python dependencies are managed as part of the source code. Some of the libraries reuire 3rd party binaries to be installed separately
 
-### Install pipenv
-
-Pipenv is a wrapper over the regular pip package manager, but with a slightly better mechanism for locking dependencies of referenced libraries (I believe). Dependencies are managed via the `Pipfile` and the `Pipfile.lock`
-
-```sh
-# This is the same for both Pyenv and Conda
-pip install --user pipenv
-```
-
 ### Install 3rd party dependencies
 
 These are dependencies that should be installed using the OS package manager and don't get bundled with Python libraries
 
 ```sh
+# for both Pyenv and Conda
 sudo apt update
 sudo apt install -y \
   libpq-dev \
@@ -188,44 +180,72 @@ sudo apt install -y \
 # postgis is required for the `raster2pgsql` application
 ```
 
-### Install the Python dependencies as defined in `Pipfile.lock`
+### Conda
+Create a new conda environment called 'somisana' with all the dependencies via the `Condafile.yml` file
 
-Now install the application Python dependencies
+```sh
+cd toolkit
+conda env create -f Condafile.yml
+```
+
+Then activate the environment
+
+```sh
+conda activate somisana
+```
+
+### Pyenv
+
+Pipenv is a wrapper over the regular pip package manager, but with a slightly better mechanism for locking dependencies of referenced libraries (I believe). Dependencies are managed via the `Pipfile` and the `Pipfile.lock`
+
+```sh
+pip install --user pipenv
+```
+
+Now install the application Python dependencies as defined in `Pipfile.lock`
 
 ```sh
 cd toolkit
 
-# If you are using Pyenv
 mkdir .venv # This is optional, and will force pipenv to create a venv directory locally
 pipenv install
-source env.sh # Run this on every new terminal session
-toolkit --version # Should print out 'development'
-
-# If you are using Conda
-pipenv install --system # Specify the pipenv dependency manager to use the system Python install (which is the conda environment in this case)
-python __main__.py # Should print out 'development'
 ```
 
 ## Run the CLI from source
 
-Run the CLI via the command `pipenv run script`. In the `Pipfile` there is a script called `script` that is executed by this command. Running Python via the `pipenv` CLI will ensure that the correct virtual environment is used. As a shortcut to this cumbersome command, you can register the `toolkit` command on your `$PATH` environment variable that will handle the CLI entry point for you.
+### Conda
 
-**_In a Pyenv environment_**
+With the `somisana` environment activated
 
 ```sh
 cd toolkit
+python __main__.py <options>
+# for example
+python __main__.py --version # Should print out 'development'
+python __main__.py -h # This should list all the available commands
+```
+
+### Pyenv
+
+In the case of a Pyenv environment, the `pipenv run script` command ensures the correct virtual environment is used (see the script called `script` in the `Pipfile`). 
+
+```sh
+cd toolkit
+pipenv run script <options>
+# for example
 pipenv run script --version # Should print out 'development'
+pipenv run script -h # This should list all the available commands
+```
+
+### Shortcut for both Conda and Pyenv
+
+As a shortcut to these cumbersome commands, you can register the `toolkit` command on your `$PATH` environment variable that will handle the CLI entry point for you. This checks if you're in a Conda or Pyenv environment so that the same `toolkit` command can be used in either case. The `toolkit` command should then work the same as the `somisana` command used to run the CLI via the docker image.
+
+```sh
+cd toolkit
 source env.sh
 toolkit --version # Should print out 'development'
 toolkit -h # This should list all the available commands
-```
-
-**_In a Conda environment_**
-
-```sh
-cd toolkit
-python __main__.py --version # Should print out 'development'
-python __main__.py -h # This should list all the available commands
 ```
 
 ### Setup script-environment variables
