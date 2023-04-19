@@ -1,6 +1,6 @@
 def parse(cmd, args, module):
-    if args.kerchunk_command == "run":
-        return module.run
+    if args.croco_command == "process":
+        return module.process
     else:
 
         def e(*args):
