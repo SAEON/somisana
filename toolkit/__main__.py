@@ -5,15 +5,15 @@
 
 import argparse
 import os
-import cli.define as define
-import cli.parse as parse
+import cli.define as commands
+import cli.parse as parser
 import cli.applications as apps
 
 REGISTERED_APPS = apps.__all__
 
 # Validate that define, parse, applications are all exporting the same modules. This is required to
 # build the CLI correctly
-if not sorted(define.__all__) == sorted(parse.__all__) == sorted(apps.__all__):
+if not sorted(commands.__all__) == sorted(parser.__all__) == sorted(REGISTERED_APPS):
     raise Exception(
         "Please check the __all__ exports in the top level cli module exports. They should be equivalent"
     )
@@ -31,9 +31,9 @@ module_parser = parser.add_subparsers(
 )
 
 # (1) Build applications
-app_objects = {
+modules = {
     app: (
-        getattr(getattr(define, app), "build")(module_parser),
+        getattr(getattr(commands, app), "build")(module_parser),
         getattr(apps, app),
     )
     for app in REGISTERED_APPS
@@ -44,8 +44,8 @@ args = parser.parse_args()
 
 # (3) Retrieve the specific applications function to run from commands and flags
 try:
-    app, data = app_objects[args.command]
-    exe = getattr(getattr(parse, args.command), "parse")(app, args, data)
+    app, data = modules[args.command]
+    exe = getattr(getattr(parser, args.command), "parse")(app, args, data)
 except:
     exe = None
 
