@@ -14,10 +14,13 @@
     - [Conda](#conda)
     - [Pyenv](#pyenv)
   - [Install the Toolkit dependencies](#install-the-toolkit-dependencies)
-    - [Install pipenv](#install-pipenv)
     - [Install 3rd party dependencies](#install-3rd-party-dependencies)
-    - [Install the Python dependencies as defined in `Pipfile.lock`](#install-the-python-dependencies-as-defined-in-pipfilelock)
+    - [Conda](#conda-1)
+    - [Pyenv](#pyenv-1)
   - [Run the CLI from source](#run-the-cli-from-source)
+    - [Conda](#conda-2)
+    - [Pyenv](#pyenv-2)
+    - [Shortcut for both Conda and Pyenv](#shortcut-for-both-conda-and-pyenv)
     - [Setup script-environment variables](#setup-script-environment-variables)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
