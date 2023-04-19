@@ -1,4 +1,4 @@
-def run(cmd, args, module):
+def parse(cmd, args, module):
     version = args.version
     reset = args.reset
     if reset and version:

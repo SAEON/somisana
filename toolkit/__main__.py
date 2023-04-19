@@ -6,6 +6,7 @@ from cli.define import (
     ops as define_ops,
     kerchunk as define_kerchunk,
     update as define_update,
+    pg as define_pg,
 )
 from cli.parse import (
     lacce as parse_lacce,
@@ -13,14 +14,9 @@ from cli.parse import (
     ops as parse_ops,
     kerchunk as parse_kerchunk,
     update as parse_update,
+    pg as parse_pg,
 )
-from cli.applications import (
-    lacce,
-    mhw,
-    ops,
-    kerchunk,
-    update,
-)
+from cli.applications import lacce, mhw, ops, kerchunk, update, pg
 
 prog = "somisana"
 description = "SOMISANA Toolkit"
@@ -43,6 +39,7 @@ def main():
     lacce_app = define_lacce.build(module_parser)
     kerchunk_app = define_kerchunk.build(module_parser)
     update_app = define_update.build(module_parser)
+    pg_app = define_pg.build(module_parser)
 
     # (2) Parse command string
     args = parser.parse_args()
@@ -57,8 +54,10 @@ def main():
         if args.command == "lacce"
         else parse_kerchunk.parse(kerchunk_app, args, kerchunk)
         if args.command == "kerchunk"
-        else parse_update.run(update_app, args, update)
+        else parse_update.parse(update_app, args, update)
         if args.command == "update"
+        else parse_pg.parse(pg_app, args, pg)
+        if args.command == "pg"
         else None
     )
 
