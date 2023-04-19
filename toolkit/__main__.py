@@ -46,7 +46,8 @@ args = parser.parse_args()
 try:
     app, data = modules[args.command]
     exe = getattr(getattr(parser, args.command), "parse")(app, args, data)
-except:
+except Exception as e:
+    print(e)
     exe = None
 
 # (4) Execute the application
