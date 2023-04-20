@@ -505,6 +505,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 1,6 \
+                  --parallelization 4 \
                   --model false-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -564,6 +565,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 7,12 \
+                  --parallelization 4 \
                   --model false-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -623,6 +625,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 13,18 \
+                  --parallelization 4 \
                   --model false-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -682,6 +685,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 19,24 \
+                  --parallelization 4 \
                   --model false-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -741,6 +745,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 25,30 \
+                  --parallelization 4 \
                   --model false-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -800,6 +805,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 31,36 \
+                  --parallelization 4 \
                   --model false-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -859,6 +865,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 37,40 \
+                  --parallelization 4 \
                   --model false-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}

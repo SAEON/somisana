@@ -510,6 +510,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 1,3 \
+                  --parallelization 4 \
                   --model algoa-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -570,6 +571,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 4,6 \
+                  --parallelization 4 \
                   --model algoa-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -630,6 +632,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 7,9 \
+                  --parallelization 4 \
                   --model algoa-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -690,6 +693,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 10,12 \
+                  --parallelization 4 \
                   --model algoa-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -750,6 +754,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 13,15 \
+                  --parallelization 4 \
                   --model algoa-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -810,6 +815,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 16,18 \
+                  --parallelization 4 \
                   --model algoa-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}
@@ -870,6 +876,7 @@ jobs:
                 load \
                   --upsert-values \
                   --depths 19,20 \
+                  --parallelization 4 \
                   --model algoa-bay-forecast \
                   --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --run-date ${{ env.RUN_DATE }}

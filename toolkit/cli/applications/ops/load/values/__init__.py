@@ -6,6 +6,8 @@ import asyncpg
 
 cpus = cpu_count()
 
+total_timesteps = 240
+
 
 async def load_worker(queue, async_pool, runid, datetimes, total_depth_levels):
     while True:
@@ -17,7 +19,7 @@ async def load_worker(queue, async_pool, runid, datetimes, total_depth_levels):
         queue.task_done()
 
 
-async def upsert(runid, depths, datetimes, total_depth_levels):
+async def upsert(runid, depths, datetimes, total_depth_levels, parallelization):
     start_depth, end_depth = depths.split(",")
     depth_levels = [*range(int(start_depth), int(end_depth) + 1, 1)]
     async_pool = await asyncpg.create_pool(
@@ -34,11 +36,11 @@ async def upsert(runid, depths, datetimes, total_depth_levels):
         asyncio.create_task(
             load_worker(queue, async_pool, runid, datetimes, total_depth_levels)
         )
-        for _ in range(4)
+        for _ in range(parallelization)
     ]
 
     for depth_level in depth_levels:
-        for i in range(240):
+        for i in range(total_timesteps):
             await queue.put((depth_level, i))
 
     await queue.join()

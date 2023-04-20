@@ -23,6 +23,7 @@ def load(args):
     upsert_values = args.upsert_values
     depths = args.depths
     finalize_run = args.finalize_run
+    parallelization = args.parallelization
 
     if (
         not upsert_rasters
@@ -154,7 +155,11 @@ def load(args):
         with xr.open_dataset(model_data) as netcdf:
             datetimes = netcdf.time.values
             total_depth_levels = netcdf.sizes["depth"]
-        asyncio.run(refresh_values(runid, depths, datetimes, total_depth_levels))
+        asyncio.run(
+            refresh_values(
+                runid, depths, datetimes, total_depth_levels, parallelization
+            )
+        )
 
     if finalize_run:
         finalize(start_time, model, runid)
