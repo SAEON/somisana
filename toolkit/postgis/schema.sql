@@ -74,7 +74,7 @@ create table if not exists public.runs(
   successful boolean default null
 );
 
-create unique index concurrently if not exists unique_runs_per_model on public.runs using btree(run_date desc, modelid);
+create unique index if not exists unique_runs_per_model on public.runs using btree(run_date desc, modelid);
 
 
 /**
@@ -124,8 +124,8 @@ create table if not exists public.raster_xref_run(
 create unique index if not exists unique_rasters_per_model on public.raster_xref_run using btree(rasterid, runid);
 
 create table if not exists public.values(
-  id bigint primary key generated always as identity,
-  runid smallint not null,
+  id bigint generated always as identity,
+  runid smallint not null references public.runs(id),
   depth_level smallint not null,
   time_step smallint not null,
   coordinateid int not null references public.coordinates(id),
@@ -133,23 +133,10 @@ create table if not exists public.values(
   temperature decimal(4, 2),
   salinity decimal(6, 4),
   u decimal(5, 4),
-  v decimal(5, 4)
-);
-
-create unique index concurrently if not exists values_unique_cols on public.values using btree(runid desc, time_step asc, depth_level desc, coordinateid);
-
-create index concurrently if not exists values_coordinateid on public.values using btree(coordinateid asc);
-
--- Optimise this table for many deleted rows
-alter table public.values set (autovacuum_vacuum_cost_delay = 0.5);
-
-alter table public.values set (autovacuum_vacuum_cost_limit = 5000);
-
-alter table public.values set (autovacuum_vacuum_threshold = 25000000);
-
-alter table public.values set (autovacuum_vacuum_insert_threshold = 25000000);
-
-alter table public.values set (autovacuum_analyze_threshold = 25000000);
+  v decimal(5, 4),
+  primary key (id, runid)
+)
+partition by list (runid);
 
 
 /**

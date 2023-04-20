@@ -27,6 +27,7 @@ aiofiles = "*"
 kerchunk = "*"
 fsspec = "*"
 h5py = "*"
+asyncpg = "*"
 
 [dev-packages]
 

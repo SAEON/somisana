@@ -8,6 +8,7 @@
     "arange",
     "arcgis",
     "asgeojson",
+    "asyncpg",
     "AUTOTILING",
     "autovacuum",
     "backdata",
@@ -146,5 +147,6 @@
     "Zarr"
   ],
   "python.analysis.extraPaths": ["./toolkit"],
-  "svg.preview.background": "white"
+  "svg.preview.background": "white",
+  "python.analysis.typeCheckingMode": "off"
 }

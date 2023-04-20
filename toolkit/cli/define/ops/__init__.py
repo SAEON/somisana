@@ -79,18 +79,6 @@ def build(module_parser):
     ops_load.add_argument(
         "--model", help="The name of the model data is being loaded for"
     )
-    ops_load.add_argument(
-        "--drop-db",
-        action="store_true",
-        default=False,
-        help="Drop and recreate the DB. (PY_ENV == development only)",
-    )
-    ops_load.add_argument(
-        "--install-db",
-        action="store_true",
-        default=False,
-        help="Run the idempotent schema install script",
-    )
     ops_load.add_argument("--run-date", default=NOW, help="Run date (yyyymmdd)")
     ops_load.add_argument("--model-data", help="Path of NetCDF input file")
     ops_load.add_argument(
