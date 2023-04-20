@@ -75,6 +75,12 @@ def build(module_parser):
         default=False,
         help="Refresh the coordinates of the grid",
     )
+    ops_load.add_argument(
+        "--parallelization",
+        type=int,
+        default=4,
+        help="How many instances of the load query to run in parallel",
+    )
     ops_load.add_argument("--depths", help="Depth level range to refresh (i.e. '1,5')")
     ops_load.add_argument(
         "--model", help="The name of the model data is being loaded for"

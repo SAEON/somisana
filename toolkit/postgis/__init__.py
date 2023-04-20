@@ -1,6 +1,5 @@
 from psycopg_pool.pool import ConnectionPool
 from config import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USERNAME
-from multiprocessing import cpu_count
 from lib.log import log
 
 _pool_ = None
@@ -24,7 +23,7 @@ def pool():
             ),
             open=True,
             timeout=600,
-            num_workers=cpu_count(),
+            num_workers=1,
             min_size=1,
             max_size=8,
         )

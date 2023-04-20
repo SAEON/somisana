@@ -2,7 +2,6 @@ from time import sleep
 from config import PY_ENV
 from lib.log import log
 from pandas import Timestamp
-import asyncio
 
 MAX_RETRIES = 1 if PY_ENV == "development" else 5
 
@@ -14,21 +13,15 @@ async def load(i, depth_level, runid, datetimes, total_depth_levels, async_pool)
     successful = False
     while not successful and attempt <= MAX_RETRIES:
         try:
-            log(
-                "Refreshing values at depth level",
-                f"{depth_level:02}",
-                "timestep",
-                f"{time_step:03}",
-                "(" + str(timestamp) + ")",
-                "runid",
-                runid,
-            )
             async with async_pool.acquire() as conn:
                 stmt = await conn.prepare(
                     "SELECT somisana_upsert_values(run_id => $1, depth_level => $2, time_step => $3, total_depth_levels => $4)"
                 )
                 await stmt.fetch(runid, depth_level, time_step, total_depth_levels)
                 successful = True
+                log(
+                    f"Loaded band: depth={depth_level:02} timestep={(i+1):03} runid {runid}. timestep {timestamp}"
+                )
                 if attempt > 1:
                     log(
                         "--> Succeeded on attempt",

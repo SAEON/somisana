@@ -1,8 +1,20 @@
-from lib.log import log
 from cli.applications.ops.load.values.load_band import load
 from config import PG_DB, PG_PORT, PG_HOST, PG_PASSWORD, PG_USERNAME
+from multiprocessing import cpu_count
 import asyncio
 import asyncpg
+
+cpus = cpu_count()
+
+
+async def load_worker(queue, async_pool, runid, datetimes, total_depth_levels):
+    while True:
+        item = await queue.get()
+        if item is None:
+            break
+        depth_level, i = item
+        await load(i, depth_level, runid, datetimes, total_depth_levels, async_pool)
+        queue.task_done()
 
 
 async def upsert(runid, depths, datetimes, total_depth_levels):
@@ -14,24 +26,25 @@ async def upsert(runid, depths, datetimes, total_depth_levels):
         password=PG_PASSWORD,
         port=PG_PORT,
         user=PG_USERNAME,
-        min_size=1,
-        max_size=10,
+        min_size=cpus,
+        max_size=cpus * 4,
     )
-    tasks = []
+    queue = asyncio.Queue()
+    worker_tasks = [
+        asyncio.create_task(
+            load_worker(queue, async_pool, runid, datetimes, total_depth_levels)
+        )
+        for _ in range(4)
+    ]
+
     for depth_level in depth_levels:
         for i in range(240):
-            log(f"Loading band: depth={depth_level} timestep={i+1}")
-            tasks.append(
-                asyncio.create_task(
-                    load(
-                        i,
-                        depth_level,
-                        runid,
-                        datetimes,
-                        total_depth_levels,
-                        async_pool,
-                    )
-                )
-            )
-    await asyncio.gather(*tasks)
+            await queue.put((depth_level, i))
+
+    await queue.join()
+
+    for _ in worker_tasks:
+        await queue.put(None)
+
+    await asyncio.gather(*worker_tasks)
     await async_pool.close()
