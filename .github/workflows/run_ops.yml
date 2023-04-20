@@ -1,0 +1,19 @@
+name: Run SOMISANA forecast models
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
+  COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
+  MLM_LICENSE_FILE: ${{ secrets.MLM_LICENSE_FILE }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run shell test
+        run: |
+          echo hello
+          echo world

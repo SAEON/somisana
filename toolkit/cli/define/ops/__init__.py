@@ -33,6 +33,18 @@ def build(module_parser):
         required=True,
     )
     ops_download.add_argument(
+        "--hdays",
+        type=int,
+        default=5,
+        help="Hindcast download days",
+    )
+    ops_download.add_argument(
+        "--fdays",
+        type=int,
+        default=5,
+        help="Forecast download days",
+    )
+    ops_download.add_argument(
         "--domain",
         help="Bounding box in 4326 projection (i.e. min_long,max_long,min_lat,max_lat)",
         required=True,

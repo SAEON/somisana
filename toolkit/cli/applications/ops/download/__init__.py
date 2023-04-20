@@ -15,8 +15,8 @@ def download(args):
     run_date = datetime.strptime(args.download_date, "%Y%m%d")
     domain = list(map(lambda i: float(i), args.domain.split(",")))
 
-    hdays = 5
-    fdays = 5
+    hdays = args.hdays
+    fdays = args.fdays
     date_start = run_date + timedelta(days=-hdays)
     date_end = run_date + timedelta(days=fdays)
 
