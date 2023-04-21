@@ -15,7 +15,7 @@ with run as (
 ),
 lon as (
   select distinct
-    (ST_PixelAsCentroids (rast, 1)).*
+    (ST_PixelAsCentroids(rast, 1)).*
   from
     rasters r
     join raster_xref_run x on x.rasterid = r.rid
@@ -26,7 +26,7 @@ lon as (
 ),
 lat as (
   select distinct
-    (ST_PixelAsCentroids (rast, 1)).*
+    (ST_PixelAsCentroids(rast, 1)).*
   from
     rasters r
     join raster_xref_run x on x.rasterid = r.rid
@@ -37,29 +37,26 @@ lat as (
 ),
 h as (
   select distinct
-    (ST_PixelAsCentroids (rast, 1)).*
+    (ST_PixelAsCentroids(rast, 1)).*
   from
     rasters r
     join raster_xref_run x on x.rasterid = r.rid
     join run on run.id = x.runid
   where
     filename like '%%:h'
-    and run.id = x.runid)
-    
-merge into public.coordinates t
+    and run.id = x.runid) merge into public.coordinates t
   using (
     select
-      ( select modelid from run) modelid,
-      lat.geom pixel, 
-      st_transform (st_point (lon.val, lat.val, 4326), 3857) coord,
-      lon.val longitude,
-      lat.val latitude,
-      h.val bathymetry
-      from
-        lat
-        join lon on lon.geom = lat.geom
-        join h on h.geom = lat.geom
-    ) s on s.modelid = t.modelid and s.pixel = t.pixel
+      (
+        select
+          modelid
+        from
+          run) modelid, lat.geom pixel, st_transform(st_point(lon.val, lat.val, 4326), 3857) coord, lon.val longitude, lat.val latitude, h.val bathymetry
+          from
+            lat
+            join lon on lon.geom = lat.geom
+            join h on h.geom = lat.geom) s on s.modelid = t.modelid
+    and s.pixel = t.pixel
   when not matched then
       insert
         (modelid, pixel, coord, longitude, latitude, bathymetry)

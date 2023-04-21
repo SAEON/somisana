@@ -5,7 +5,6 @@ from postgis import pool
 from lib.log import log
 import asyncio
 from cli.applications.ops.load.raster2pgsql import register as refresh_rasters
-from cli.applications.ops.load.coordinates import upsert as refresh_coordinates
 from cli.applications.ops.load.values import upsert as refresh_values
 from cli.applications.ops.load.finalize import run as finalize
 
@@ -19,18 +18,12 @@ def load(args):
     run_date = args.run_date
     reload_data = args.reload_data
     upsert_rasters = args.upsert_rasters
-    upsert_coordinates = args.upsert_coordinates
     upsert_values = args.upsert_values
     depths = args.depths
     finalize_run = args.finalize_run
     parallelization = args.parallelization
 
-    if (
-        not upsert_rasters
-        and not upsert_coordinates
-        and not upsert_values
-        and not finalize_run
-    ):
+    if not upsert_rasters and not upsert_values and not finalize_run:
         log("No upsert options specified! Nothing to do (please read the help)")
         exit(0)
 
@@ -62,7 +55,6 @@ def load(args):
             raise Exception("Specified model does not exist exist - " + model)
         else:
             log("""\n== Loading PostGIS data ({0} model) ==""".format(model))
-            log("Installing PostGIS schema")
 
     # Register this run_date
     # TODO the merge code is run on the load at the moment,
@@ -145,9 +137,6 @@ def load(args):
                 reload_data,
                 runid,
             )
-
-    if upsert_coordinates:
-        refresh_coordinates(model, start_time)
 
     if upsert_values:
         datetimes = None

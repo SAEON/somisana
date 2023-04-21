@@ -76,12 +76,6 @@ def build(module_parser):
         help="Run the raster2pgsql script",
     )
     ops_load.add_argument(
-        "--upsert-coordinates",
-        action="store_true",
-        default=False,
-        help="Refresh the coordinates of the grid",
-    )
-    ops_load.add_argument(
         "--upsert-values",
         action="store_true",
         default=False,

@@ -453,7 +453,6 @@ jobs:
               ops \
                 load \
                   --upsert-rasters \
-                  --upsert-coordinates \
                   --model-data /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --model algoa-bay-forecast \
                   --reload-data \
