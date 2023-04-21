@@ -9,7 +9,7 @@ SOMISANA-related tooling
 - [Deployment](#deployment)
   - [Web application (visualizations)](#web-application-visualizations)
   - [Task server](#task-server)
-  - [Persisted storage](#persisted-storage)
+  - [Mounted storage](#mounted-storage)
 - [Documentation](#documentation)
   - [Operational models](#operational-models)
   - [Python toolkit](#python-toolkit)
