@@ -405,29 +405,34 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_HOST_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_HOST_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_PORT_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_PORT_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_DB_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_DB_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_USERNAME_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Load normalized NetCDF output to PostGIS
         env:
           PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
@@ -465,29 +470,34 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_HOST_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_HOST_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_PORT_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_PORT_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_DB_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_DB_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_USERNAME_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Load normalized NetCDF output to PostGIS
         env:
           PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
@@ -541,29 +551,34 @@ jobs:
     steps:
       - name: Get PG_HOST secret name
         id: _PG_HOST_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_HOST_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_HOST_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_PORT secret name
         id: _PG_PORT_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_PORT_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_PORT_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_DB secret name
         id: _PG_DB_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_DB_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_DB_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_USERNAME secret name
         id: _PG_USERNAME_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_USERNAME_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_USERNAME_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Get PG_PASSWORD secret name
         id: _PG_PASSWORD_
-        uses: ASzc/change-string-case-action@master
-        with:
-          string: PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
+        run: |
+          STRING=PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
+          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
       - name: Cleanup rasters that have been loaded into values table and mark run as complete
         env:
           PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
