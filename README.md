@@ -7,6 +7,9 @@ SOMISANA-related tooling
 
 - [Local development](#local-development)
 - [Deployment](#deployment)
+  - [Web application (visualizations)](#web-application-visualizations)
+  - [Task server](#task-server)
+  - [Persisted storage](#persisted-storage)
 - [Documentation](#documentation)
   - [Operational models](#operational-models)
   - [Python toolkit](#python-toolkit)
