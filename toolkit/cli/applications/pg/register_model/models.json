@@ -1,0 +1,56 @@
+[
+  {
+    "id": "algoa-bay-forecast",
+    "title": "Algoa Bay",
+    "description": "The Algoa Bay Oceanographic Forecast, utilizing the high-resolution Coastal and Regional Ocean COmmunity (CROCO) numerical model, offers comprehensive insights into the past, present, and future conditions of the coastal and regional marine environment. Updated daily, this model generates hourly predictions for a span of five days, allowing for a detailed understanding of the ocean's evolving state.<br/>The forecast focuses on key ocean variables, including temperature, sea surface height, salinity, and surface currents, providing valuable data for various applications. The model's boundary conditions are derived from the Mercator Global Ocean Analysis and Forecast product, featuring a resolution of approximately 9km. Surface forcing data is sourced from the Global Forecast System (GFS) with an approximate resolution of 25km.<br/>Our advanced configuration represents a significant downscaling of the Mercator global ocean product, with a high-resolution range from roughly 3km at the domain's edge to about 500m within the bay. This enhancement enables the accurate simulation of local bay-scale processes, ensuring more precise and reliable forecasts of key ocean variables for the Algoa Bay region using the CROCO model.",
+    "creator": "Giles Fearon",
+    "creator_contact_email": "gfearon11@gmail.com",
+    "type": "forecast",
+    "grid_width": 152,
+    "grid_height": 106,
+    "sigma_levels": 20,
+    "min_x": 24.820085525512695,
+    "max_x": 27.76671028137207,
+    "min_y": -34.85134506225586,
+    "max_y": -33.07335662841797,
+    "postgis_config": {
+      "temperature": { "xy": "152x106", "tile_size": "8x53" },
+      "salt": { "xy": "152x106", "tile_size": "8x53" },
+      "u": { "xy": "152x106", "tile_size": "8x53" },
+      "v": { "xy": "152x106", "tile_size": "8x53" },
+      "m_rho": { "xy": "152x106", "tile_size": "8x53" },
+      "lon_rho": { "xy": "152x106", "tile_size": "8x53" },
+      "lat_rho": { "xy": "152x106", "tile_size": "8x53" },
+      "time": { "xy": "NUL", "tile_size": "240x1" },
+      "depth": { "xy": "NUL", "tile_size": "20x1" },
+      "h": { "xy": "152x106", "tile_size": "8x53" }
+    }
+  },
+  {
+    "id": "false-bay-forecast",
+    "title": "South West Cape",
+    "description": "The SW Cape Oceanographic Forecast offers reliable predictions of key ocean variables, including temperature, sea surface height, salinity, and surface currents, for False Bay and its surrounding areas. This forecast leverages the advanced Coastal and Regional Ocean COmmunity (CROCO) numerical model to ensure accuracy and precision.<br/>The model employs a two-way nested approach, consisting of a large parent domain with a resolution of approximately 9km and a smaller child domain at around 3km, covering False Bay and its vicinity. Only the output from the 3km domain is showcased, providing a detailed view of the local conditions. Updated daily, the model generates hourly predictions for a span of five days, allowing for a comprehensive understanding of the ocean's evolving state.<br/>The model's boundary conditions are derived from the Mercator Global Ocean Analysis and Forecast product, featuring a resolution of approximately 9km. Meanwhile, surface forcing data is sourced from the Global Forecast System (GFS) with an approximate resolution of ~25km.",
+    "creator": "Matthew Carr",
+    "creator_contact_email": "matthewcarr03@gmail.com",
+    "type": "forecast",
+    "grid_width": 89,
+    "grid_height": 77,
+    "sigma_levels": 40,
+    "min_x": 17.517778396606445,
+    "max_x": 19.962223052978516,
+    "min_y": -35.12773513793945,
+    "max_y": -33.38367462158203,
+    "postgis_config": {
+      "temperature": { "xy": "77x89", "tile_size": "11x89" },
+      "salt": { "xy": "77x89", "tile_size": "11x89" },
+      "u": { "xy": "77x89", "tile_size": "11x89" },
+      "v": { "xy": "77x89", "tile_size": "11x89" },
+      "m_rho": { "xy": "77x89", "tile_size": "11x89" },
+      "lon_rho": { "xy": "77x89", "tile_size": "11x89" },
+      "lat_rho": { "xy": "77x89", "tile_size": "11x89" },
+      "time": { "xy": "NUL", "tile_size": "240x1" },
+      "depth": { "xy": "NUL", "tile_size": "40x1" },
+      "h": { "xy": "77x89", "tile_size": "11x89" }
+    }
+  }
+]

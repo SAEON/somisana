@@ -1,12 +1,12 @@
 def parse(cmd, args, module):
-    if args.pg_command == "raster2pgsql":
-        return module.raster2pgsql
-    elif args.pg_command == "schema":
-        return module.schema
-    else:
+    command_mapping = {
+        "raster2pgsql": module.raster2pgsql,
+        "schema": module.schema,
+        "register-model": module.register_model,
+    }
 
-        def e(*args):
-            print(cmd.format_help())
-            exit()
+    def e(*args):
+        print(cmd.format_help())
+        exit()
 
-        return e
+    return command_mapping.get(args.pg_command, e)

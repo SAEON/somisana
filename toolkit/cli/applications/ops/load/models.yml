@@ -6,7 +6,7 @@ models:
       Each band is a flat XY grid
       Band number % 240 = time step
       And (band number % 240) % 20 = depth level at a particular time step
-    temperature: 
+    temperature:
       xy: 152x106
       tile_size: 8x53
     salt:
@@ -24,7 +24,7 @@ models:
     lon_rho:
       xy: 152x106
       tile_size: 8x53
-    lat_rho: 
+    lat_rho:
       xy: 152x106
       tile_size: 8x53
     time:
@@ -45,7 +45,7 @@ models:
       Each band is a flat XY grid
       Band number % 240 = time step
       And (band number % 240) % 40 = depth level at a particular time step
-    temperature: 
+    temperature:
       xy: 77x89
       tile_size: 11x89
     salt:
@@ -63,7 +63,7 @@ models:
     lon_rho:
       xy: 77x89
       tile_size: 11x89
-    lat_rho: 
+    lat_rho:
       xy: 77x89
       tile_size: 11x89
     time:
@@ -74,5 +74,5 @@ models:
       tile_size: 40x1
       levels: 40
     h:
-      xy: 152x106
-      tile_size: 8x53
+      xy: 77x89
+      tile_size: 11x89
