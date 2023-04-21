@@ -40,25 +40,25 @@ The web application components (databases, and apps) are all deployed to a conta
 
 - 4GB memory
 - 2CPUs
-- 20GB storage (does not have to be backed up)
+- Minimum configurable (see below for mount requirements)
 
 **_MongoDB database server_**
 
 - 4GB memory
 - 2CPUs
-- 20GB storage (does not have to be backed up)
+- Minimum configurable (see below for mount requirements)
 
 **_PostgreSQL database server_**
 
 - 12GB memory
 - 16 CPUs
-- 500GB storage (does not have to be backed up)
+- Minimum configurable (see below for mount requirements)
 
 **_Total_**
 
 - 20GB memory
 - 20 CPUs
-- 540GB storage
+- Minimum configurable (maybe 100GB to be safe, allow for SWAP, etc)
 
 ## Task server
 
@@ -68,11 +68,13 @@ This server runs GitHub Actions pipelines on a self-hosted actions runner - it e
 - 13 CPUs
 - 1TB storage (does not have to be backed up)
 
-## Persisted storage
+## Mounted storage
 
-Persisted storage should all be in the form of SAMBA mounts that can be mounted to multiple locations. This is for archiving purposes, and the amount required is (TODO - @giles to calculate).
+Most storage requirements are in the form of SAMBA mounts that can be mounted to multiple locations
 
-- 5TB? (must be backed up)
+- Data archive: 5TB? (must be backed up. TODO - @giles to calculate)
+- PostgreSQL: 500GB (does not have to be backed up, but should be mounted if possible)
+- MongoDB: 100GB
 
 # Documentation
 
