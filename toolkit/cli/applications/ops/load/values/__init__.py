@@ -1,10 +1,7 @@
 from cli.applications.ops.load.values.load_band import load
 from config import PG_DB, PG_PORT, PG_HOST, PG_PASSWORD, PG_USERNAME
-from multiprocessing import cpu_count
 import asyncio
 import asyncpg
-
-cpus = cpu_count()
 
 total_timesteps = 240
 
@@ -28,8 +25,8 @@ async def upsert(runid, depths, datetimes, total_depth_levels, parallelization):
         password=PG_PASSWORD,
         port=PG_PORT,
         user=PG_USERNAME,
-        min_size=cpus,
-        max_size=cpus * 4,
+        min_size=4,
+        max_size=100,
     )
     queue = asyncio.Queue()
     worker_tasks = [
