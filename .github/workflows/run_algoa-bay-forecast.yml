@@ -525,7 +525,7 @@ jobs:
                   --run-date ${{ env.RUN_DATE }}
 
   # Cleanup old runs temp files
-  cleanup-temp-files:
+  cleanup-old-run-temp-files:
     needs: [branch-ref]
     runs-on: somisana
     env:
