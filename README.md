@@ -29,32 +29,47 @@ Look in the `chompfile.toml` file to see available scripts, and feel free to add
 
 The following infrastructure is required:
 
+## Web application (visualizations)
+
+The web application components (databases, and apps) are all deployed to a containerization platform. Currently this is Docker Swarm, but in the future will be some managed K8s installation (for example, maybe [Rancher](https://www.rancher.com/)). The goal is to support multiple container formats - for example Docker, and Singularly.
+
 **_An application server_**
 
 - 4GB memory
 - 2CPUs
+- 20GB storage (does not have to be backed up)
 
 **_MongoDB database server_**
 
 - 4GB memory
 - 2CPUs
+- 20GB storage (does not have to be backed up)
 
 **_PostgreSQL database server_**
 
 - 12GB memory
 - 16 CPUs
+- 500GB storage (does not have to be backed up)
 
-**_Dedicated task server_**
-This server runs GitHub Actions pipelines on a self-hosted actions runner.
+**_Total_**
+
+- 20GB memory
+- 20 CPUs
+- 540GB storage
+
+## Task server
+
+This server runs GitHub Actions pipelines on a self-hosted actions runner - it executes models. This configuration currently supports executing 2 models in serial. To execute 2 models in parallel, increase the number of CPUs to tha required for the 2 largest models, plus 1. Storage on this server is allocated for temporary storage (currently 7 days) of all model/product files/data. This allows for any archiving steps to fail up to 7 days in a row before data is lost
 
 - 12GB memory
-- 16 CPUs
+- 13 CPUs
+- 1TB storage (does not have to be backed up)
 
-**_Volumes_** should be mounted to the GitHub runner server for temporary files, to the application server for archiving products, and to the PostgreSQL server for a working dataset
+## Persisted storage
 
-- 1TB for GitHub Runner
-- Several TB for the application server
-- 1TB for PostgreSQL
+Persisted storage should all be in the form of SAMBA mounts that can be mounted to multiple locations. This is for archiving purposes, and the amount required is (TODO - @giles to calculate).
+
+- 5TB? (must be backed up)
 
 # Documentation
 
