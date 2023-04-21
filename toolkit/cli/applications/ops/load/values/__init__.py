@@ -26,7 +26,7 @@ async def upsert(runid, depths, datetimes, total_depth_levels, parallelization):
         port=PG_PORT,
         user=PG_USERNAME,
         min_size=4,
-        max_size=100,
+        max_size=32,
     )
     queue = asyncio.Queue()
     worker_tasks = [
