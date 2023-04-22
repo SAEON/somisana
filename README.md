@@ -38,8 +38,8 @@ The web application components (databases, and apps) are all deployed to a conta
 
 **_An application server_**
 
-- 4GB memory
-- 2CPUs
+- 8GB memory
+- 4CPUs
 - Minimum configurable (see below for mount requirements)
 
 **_MongoDB database server_**
@@ -56,9 +56,11 @@ The web application components (databases, and apps) are all deployed to a conta
 
 **_Total_**
 
-- 20GB memory
-- 20 CPUs
+- 24GB memory
+- 22 CPUs
 - Minimum configurable (maybe 100GB to be safe, allow for SWAP, etc)
+
+**NOTE:** There is still some uncertainty here depending on where various components are hosted. For example, if THREDDS or the somisana.ac.za website is hosted on SAEON infrastructure rather than on MIMS infrastructure, that effects these requirements. Also, on the SAEON infrastructure, similar resources are spread between 5 web applications (and the same resources can support a lot more web applications). These requirements for simply hosting somisana.ac.za are costly, but this is cost effective when the same infrastructure is shared.
 
 ## Task server
 
