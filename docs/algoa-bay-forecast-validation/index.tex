@@ -1,1 +1,72 @@
-% TODO
+\documentclass[a4paper,11pt]{article}
+\usepackage[
+  left=1.5cm,
+  right=1.5cm,
+  top=1.5cm,
+  bottom=1.5cm,
+]{geometry}
+
+
+\usepackage[utf8]{inputenc}
+
+% A Few Useful Packages
+\usepackage{marvosym}
+\usepackage{url,parskip}   %other packages for formatting
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{titlesec}  %custom \section
+\usepackage{multicol}
+
+\usepackage{relsize}
+
+% Setup hyperref package, and colours for links
+\usepackage{hyperref}
+\definecolor{linkcolour}{rgb}{0,0.2,0.6}
+\hypersetup{colorlinks,breaklinks,urlcolor=linkcolour, linkcolor=linkcolour}
+
+% Section Title formatting
+\titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{15pt}{5pt}
+
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{threeparttable}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\newcolumntype{Z}{>{\raggedleft\arraybackslash}X}
+\newcommand*{\mC}[2]{\multicolumn{1}{#1}{#2}}
+
+\usepackage{setspace}
+\setstretch{1}
+
+\usepackage{tcolorbox}
+\definecolor{mycolor}{rgb}{0.122, 0.435, 0.698}
+\newtcbox{\mybox}{
+  nobeforeafter,
+  height=11pt,
+  colframe=mycolor,
+  colback=mycolor!10!white,
+  boxrule=0.5pt,
+  arc=2pt,
+  boxsep=-4pt,
+  left=6pt,
+  right=6pt,
+  enlarge top by=3.7pt,
+  enlarge bottom by=0pt,
+}
+
+\usepackage[bottom]{footmisc}
+
+\begin{document}
+\pagestyle{empty}
+
+% TITLE
+\par{
+	\centering{\Huge Title}
+	\bigskip\par
+}
+
+% ABSTRACT
+\input{inputs/abstract}
+
+\end{document}
