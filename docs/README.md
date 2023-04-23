@@ -26,4 +26,4 @@
 
 # Usage
 
-Saving a `.tex` file will result in the LaTeX builder running. Keep
+Saving a `.tex` file will result in the LaTeX builder running
