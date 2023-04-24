@@ -1,5 +1,5 @@
 def parse(cmd, args, module):
-    command_mapping = {
+    commands = {
         "raster2pgsql": module.raster2pgsql,
         "schema": module.schema,
         "register-model": module.register_model,
@@ -9,4 +9,4 @@ def parse(cmd, args, module):
         print(cmd.format_help())
         exit()
 
-    return command_mapping.get(args.pg_command, e)
+    return commands.get(args.pg_command, e)

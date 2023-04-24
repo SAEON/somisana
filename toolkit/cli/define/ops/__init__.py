@@ -50,23 +50,6 @@ def build(module_parser):
         required=True,
     )
 
-    # TRANSFORM (process CROCO output)
-    ops_transform = ops_parser.add_parser(
-        "transform", help="Normalize model output grids"
-    )
-    ops_transform.add_argument(
-        "--nc-input-path", help="Path of NetCDF input file", required=True
-    )
-    ops_transform.add_argument(
-        "--nc-output-path", default=".output.nc", help="Path of NetCDF output path"
-    )
-    ops_transform.add_argument(
-        "--zarr-output-path", default=".output.zarr", help="Path of Zarr output path"
-    )
-    ops_transform.add_argument(
-        "--grid-input-path", help="Path of NetCDF grid input path", required=True
-    )
-
     # LOAD (to Zarr server and/or PostgeSQL)
     ops_load = ops_parser.add_parser("load", help="Download forcing input files")
     ops_load.add_argument(

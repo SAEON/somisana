@@ -1,10 +1,12 @@
 def parse(cmd, args, module):
-    if args.croco_command == "process":
-        return module.process
-    else:
+    commands = {
+        "post-process-v1": module.post_process_v1,
+        "post-process-v2": module.post_process_v2,
+        "load-pp-v1-output-to-pg": module.load_pp_v1_output_to_pg,
+    }
 
-        def e(*args):
-            print(cmd.format_help())
-            exit()
+    def e(*args):
+        print(cmd.format_help())
+        exit()
 
-        return e
+    return commands.get(args.pg_command, e)

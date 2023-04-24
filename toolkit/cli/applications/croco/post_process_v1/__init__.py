@@ -2,8 +2,12 @@ import xarray as xr
 import numpy as np
 import os
 from datetime import timedelta, datetime
-from cli.applications.ops.transform.depth_functions import z_levels
-from cli.applications.ops.transform.functions import hour_rounder, u2rho_4d, v2rho_4d
+from cli.applications.croco.post_process_v1.depth_functions import z_levels
+from cli.applications.croco.post_process_v1.functions import (
+    hour_rounder,
+    u2rho_4d,
+    v2rho_4d,
+)
 import subprocess
 
 # All dates in the CROCO output are represented
@@ -16,19 +20,17 @@ REFERENCE_DATE = datetime(2000, 1, 1, 0, 0, 0)
 # from grid points to real lat and lon data.
 
 
-def transform(args):
+def post_process_v1(args):
     now = datetime.now()
 
     grid_input_path = os.path.abspath(args.grid_input_path)
     nc_input_path = os.path.abspath(args.nc_input_path)
     nc_output_path = os.path.abspath(args.nc_output_path)
-    zarr_output_path = os.path.abspath(args.zarr_output_path)
 
     print("\n== Running Algoa Bay Forecast post-processing ==")
     print("nc-input-path", nc_input_path)
     print("grid-input-path", grid_input_path)
     print("nc-output-path", nc_output_path)
-    print("zarr-output-path", zarr_output_path)
 
     data = xr.open_dataset(nc_input_path)
     data_grid = xr.open_dataset(grid_input_path)
@@ -204,14 +206,5 @@ def transform(args):
     data_out.to_netcdf(nc_output_path, encoding=encoding, mode="w")
 
     subprocess.call(["chmod", "-R", "775", nc_output_path])
-
-    print("-> Writing Zarr directory", str(datetime.now() - now))
-    data_out.to_zarr(
-        zarr_output_path,
-        mode="w",
-        encoding=encoding,
-    )
-
-    subprocess.call(["chmod", "-R", "775", zarr_output_path])
 
     print("\nComplete! If you don't see this message there was a problem")
