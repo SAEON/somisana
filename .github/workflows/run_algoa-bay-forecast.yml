@@ -346,7 +346,7 @@ jobs:
 
   # Updates CROCO output vars to be centred
   # and work out depth levels in meters
-  normalize-output:
+  post-processing:
     needs: [branch-ref, croco, toolkit, envs, workdir]
     runs-on: somisana
     env:
@@ -374,7 +374,7 @@ jobs:
 
   # Archive CROCO output
   archive-data:
-    needs: [normalize-output, workdir, envs]
+    needs: [post-processing, workdir, envs]
     runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
@@ -414,7 +414,7 @@ jobs:
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:
-    needs: [normalize-output, branch-ref, toolkit, envs, workdir]
+    needs: [post-processing, branch-ref, toolkit, envs, workdir]
     runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
