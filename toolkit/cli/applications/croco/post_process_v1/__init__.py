@@ -1,9 +1,14 @@
 import xarray as xr
 import numpy as np
+from lib.log import log
 import os
 from datetime import timedelta, datetime
-from cli.applications.ops.transform.depth_functions import z_levels
-from cli.applications.ops.transform.functions import hour_rounder, u2rho_4d, v2rho_4d
+from cli.applications.croco.post_process_v1.depth_functions import z_levels
+from cli.applications.croco.post_process_v1.functions import (
+    hour_rounder,
+    u2rho_4d,
+    v2rho_4d,
+)
 import subprocess
 
 # All dates in the CROCO output are represented
@@ -16,22 +21,25 @@ REFERENCE_DATE = datetime(2000, 1, 1, 0, 0, 0)
 # from grid points to real lat and lon data.
 
 
-def transform(args):
-    now = datetime.now()
+def post_process_v1(args):
+    id = args.id
+    grid = os.path.abspath(args.grid)
+    input = os.path.abspath(args.input)
+    output = os.path.abspath(args.output)
+    run_date = args.run_date
 
-    grid_input_path = os.path.abspath(args.grid_input_path)
-    nc_input_path = os.path.abspath(args.nc_input_path)
-    nc_output_path = os.path.abspath(args.nc_output_path)
-    zarr_output_path = os.path.abspath(args.zarr_output_path)
+    log("Running CROCO output post-processing (v1)")
+    log("CONFIG::id", id)
+    log("CONFIG::input", input)
+    log("CONFIG::grid", grid)
+    log("CONFIG::output", output)
+    log("CONFIG::run_date", run_date)
 
-    print("\n== Running Algoa Bay Forecast post-processing ==")
-    print("nc-input-path", nc_input_path)
-    print("grid-input-path", grid_input_path)
-    print("nc-output-path", nc_output_path)
-    print("zarr-output-path", zarr_output_path)
+    # Ensure the directory for the specified output exists
+    os.makedirs(os.path.dirname(output), exist_ok=True)
 
-    data = xr.open_dataset(nc_input_path)
-    data_grid = xr.open_dataset(grid_input_path)
+    data = xr.open_dataset(input)
+    data_grid = xr.open_dataset(grid)
 
     # Dimensions that need to be transformed
     time = data.time.values  # Time steps
@@ -44,7 +52,7 @@ def transform(args):
         date_now = REFERENCE_DATE + timedelta(seconds=np.float64(t))
         date_round = hour_rounder(date_now)
         time_steps.append(date_round)
-    print("\n-> Generated time steps", str(datetime.now() - now))
+    log("Generated time steps")
 
     # Variables used in the visualisations
     temperature = data.temp.values
@@ -65,11 +73,11 @@ def transform(args):
 
     # Convert u and v current components to the rho grid (otherwise these values are on cell edges and not the center of the cells)
     # use the function u2rho_4d and v2rho_4d
-    print("-> Normalizing u/v model output variables", str(datetime.now() - now))
+    log("Normalizing u/v model output variables")
     u_rho = u2rho_4d(u)
     v_rho = v2rho_4d(v)
 
-    print("-> Masking 0 values (land) from variables", str(datetime.now() - now))
+    log("Masking 0 values (land) from variables")
     temperature[np.where(temperature == 0)] = np.nan
     salt[np.where(salt == 0)] = np.nan
     u[np.where(u == 0)] = np.nan
@@ -89,7 +97,7 @@ def transform(args):
         raise Exception("Unexpected value for vtransform (" + vtransform + ")")
 
     # m_rho refers to the depth level in meters
-    print("-> Converting depth levels to depth in meters", str(datetime.now() - now))
+    log("Converting depth levels to depth in meters")
     m_rho = np.zeros(np.shape(temperature))
     for x in np.arange(np.size(temperature, 0)):
         depth_temp = z_levels(
@@ -98,10 +106,12 @@ def transform(args):
         m_rho[x, ::] = depth_temp
 
     # Create new xarray dataset with selected variables
-    print("-> Generating dataset", str(datetime.now() - now))
+    log("Generating dataset")
     data_out = xr.Dataset(
         attrs={
-            "description": "CROCO output from algoa Bay model transformed lon/lat/depth/time"
+            "description": "CROCO output from algoa Bay model transformed lon/lat/depth/time",
+            "model_name": id,
+            "run_date": run_date,
         },
         data_vars={
             "temperature": xr.Variable(
@@ -200,18 +210,9 @@ def transform(args):
         "h": {"dtype": "float32"},
     }
 
-    print("-> Writing NetCDF file", str(datetime.now() - now))
-    data_out.to_netcdf(nc_output_path, encoding=encoding, mode="w")
+    log("Writing NetCDF file")
+    data_out.to_netcdf(output, encoding=encoding, mode="w")
 
-    subprocess.call(["chmod", "-R", "775", nc_output_path])
+    subprocess.call(["chmod", "-R", "775", output])
 
-    print("-> Writing Zarr directory", str(datetime.now() - now))
-    data_out.to_zarr(
-        zarr_output_path,
-        mode="w",
-        encoding=encoding,
-    )
-
-    subprocess.call(["chmod", "-R", "775", zarr_output_path])
-
-    print("\nComplete! If you don't see this message there was a problem")
+    log("Done!")

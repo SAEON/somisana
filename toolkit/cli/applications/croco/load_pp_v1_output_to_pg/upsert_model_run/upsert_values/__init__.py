@@ -1,4 +1,6 @@
-from cli.applications.ops.load.values.load_band import load
+from cli.applications.croco.load_pp_v1_output_to_pg.upsert_model_run.upsert_values.load_band import (
+    load,
+)
 from config import PG_DB, PG_PORT, PG_HOST, PG_PASSWORD, PG_USERNAME
 import asyncio
 import asyncpg
@@ -16,9 +18,8 @@ async def load_worker(queue, async_pool, runid, datetimes, total_depth_levels):
         queue.task_done()
 
 
-async def upsert(runid, depths, datetimes, total_depth_levels, parallelization):
-    start_depth, end_depth = depths.split(",")
-    depth_levels = [*range(int(start_depth), int(end_depth) + 1, 1)]
+async def upsert_values(runid, datetimes, total_depth_levels, parallelization):
+    depth_levels = [*range(int(1), int(total_depth_levels) + 1, 1)]
     async_pool = await asyncpg.create_pool(
         database=PG_DB,
         host=PG_HOST,

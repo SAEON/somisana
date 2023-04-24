@@ -7,6 +7,9 @@ SOMISANA-related tooling
 
 - [Local development](#local-development)
 - [Deployment](#deployment)
+  - [Web application (visualizations)](#web-application-visualizations)
+  - [Task server](#task-server)
+  - [Mounted storage](#mounted-storage)
 - [Documentation](#documentation)
   - [Operational models](#operational-models)
   - [Python toolkit](#python-toolkit)
@@ -29,32 +32,51 @@ Look in the `chompfile.toml` file to see available scripts, and feel free to add
 
 The following infrastructure is required:
 
+## Web application (visualizations)
+
+The web application components (databases, and apps) are all deployed to a containerization platform. Currently this is Docker Swarm, but in the future will be some managed K8s installation (for example, maybe [Rancher](https://www.rancher.com/)). The goal is to support multiple container formats - for example Docker, and Singularly.
+
 **_An application server_**
 
-- 4GB memory
-- 2CPUs
+- 8GB memory
+- 4CPUs
+- Minimum configurable (see below for mount requirements)
 
 **_MongoDB database server_**
 
 - 4GB memory
 - 2CPUs
+- Minimum configurable (see below for mount requirements)
 
 **_PostgreSQL database server_**
 
 - 12GB memory
 - 16 CPUs
+- Minimum configurable (see below for mount requirements)
 
-**_Dedicated task server_**
-This server runs GitHub Actions pipelines on a self-hosted actions runner.
+**_Total_**
+
+- 24GB memory
+- 22 CPUs
+- Minimum configurable (maybe 100GB to be safe, allow for SWAP, etc)
+
+**NOTE:** There is still some uncertainty here depending on where various components are hosted. For example, if THREDDS or the somisana.ac.za website is hosted on SAEON infrastructure rather than on MIMS infrastructure, that effects these requirements. Also, on the SAEON infrastructure, similar resources are spread between 5 web applications (and the same resources can support a lot more web applications). These requirements for simply hosting somisana.ac.za are costly, but this is cost effective when the same infrastructure is shared.
+
+## Task server
+
+This server runs GitHub Actions pipelines on a self-hosted actions runner - it executes models. This configuration currently supports executing 2 models in serial. To execute 2 models in parallel, increase the number of CPUs to tha required for the 2 largest models, plus 1. Storage on this server is allocated for temporary storage (currently 7 days) of all model/product files/data. This allows for any archiving steps to fail up to 7 days in a row before data is lost
 
 - 12GB memory
-- 16 CPUs
+- 13 CPUs
+- 1TB storage (does not have to be backed up)
 
-**_Volumes_** should be mounted to the GitHub runner server for temporary files, to the application server for archiving products, and to the PostgreSQL server for a working dataset
+## Mounted storage
 
-- 1TB for GitHub Runner
-- Several TB for the application server
-- 1TB for PostgreSQL
+Most storage requirements are in the form of SAMBA mounts that can be mounted to multiple locations
+
+- Data archive: 5TB? (must be backed up. TODO - @giles to calculate)
+- PostgreSQL: 500GB (does not have to be backed up, but should be mounted if possible)
+- MongoDB: 100GB
 
 # Documentation
 
