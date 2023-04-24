@@ -352,7 +352,7 @@ jobs:
         run: |
           source ~/.bashrc
       - name: Upload raw CROCO NetCDF file to mnemosyne HTTP-range server
-        continue-on-error: true
+        continue-on-error: false
         run: |
           cat \
             ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
@@ -377,7 +377,7 @@ jobs:
                 - \
                 https://mnemosyne.somisana.ac.za/somisana/false-bay-forecast/${{ env.RUN_DATE }}-hourly-avg.nc.1;
       - name: Upload processed CROCO NetCDF file to mnemosyne HTTP-range server
-        continue-on-error: true
+        continue-on-error: false
         run: |
           cat \
             ${{ env.WORKDIR }}/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
