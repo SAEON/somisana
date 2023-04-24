@@ -49,43 +49,4 @@ def build(module_parser):
         help="Bounding box in 4326 projection (i.e. min_long,max_long,min_lat,max_lat)",
         required=True,
     )
-
-    # LOAD (to Zarr server and/or PostgeSQL)
-    ops_load = ops_parser.add_parser("load", help="Download forcing input files")
-    ops_load.add_argument(
-        "--upsert-rasters",
-        action="store_true",
-        default=False,
-        help="Run the raster2pgsql script",
-    )
-    ops_load.add_argument(
-        "--upsert-values",
-        action="store_true",
-        default=False,
-        help="Refresh the coordinates of the grid",
-    )
-    ops_load.add_argument(
-        "--parallelization",
-        type=int,
-        default=4,
-        help="How many instances of the load query to run in parallel",
-    )
-    ops_load.add_argument("--depths", help="Depth level range to refresh (i.e. '1,5')")
-    ops_load.add_argument(
-        "--model", help="The name of the model data is being loaded for"
-    )
-    ops_load.add_argument("--run-date", default=NOW, help="Run date (yyyymmdd)")
-    ops_load.add_argument("--model-data", help="Path of NetCDF input file")
-    ops_load.add_argument(
-        "--reload-data",
-        action="store_true",
-        default=False,
-        help="Path of NetCDF input file",
-    )
-    ops_load.add_argument(
-        "--finalize-run",
-        action="store_true",
-        default=False,
-        help="Remove temp rasters, re-analyze tables, and mark run as finished",
-    )
     return ops

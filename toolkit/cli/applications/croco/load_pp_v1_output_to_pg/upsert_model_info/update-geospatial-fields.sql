@@ -9,7 +9,7 @@ using (
                 public.coordinates c
                 join public.models m on m.id = c.modelid
               where
-                m.name = %s
+                m.name = $1
               group by
                 m.id, m.min_x, m.max_x, m.min_y, m.max_y) t) s on s.id = t.id
 when matched then

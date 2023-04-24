@@ -8,7 +8,7 @@ with run as (
     public.models m
     join public.runs r on r.modelid = m.id
   where
-    m.name = %s
+    m.name = $1
   order by
     r.id asc
   limit 1
@@ -21,7 +21,7 @@ lon as (
     join raster_xref_run x on x.rasterid = r.rid
     join run on run.id = x.runid
   where
-    filename like '%%:lon_rho'
+    filename like '%:lon_rho'
     and run.id = x.runid
 ),
 lat as (
@@ -32,7 +32,7 @@ lat as (
     join raster_xref_run x on x.rasterid = r.rid
     join run on run.id = x.runid
   where
-    filename like '%%:lat_rho'
+    filename like '%:lat_rho'
     and run.id = x.runid
 ),
 h as (
@@ -43,7 +43,7 @@ h as (
     join raster_xref_run x on x.rasterid = r.rid
     join run on run.id = x.runid
   where
-    filename like '%%:h'
+    filename like '%:h'
     and run.id = x.runid) merge into public.coordinates t
   using (
     select

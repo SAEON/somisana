@@ -1,3 +1,8 @@
+from datetime import datetime
+
+NOW = datetime.now().strftime("%Y%m%d")
+
+
 def build(module_parser):
     croco = module_parser.add_parser("croco", help="CROCO module")
     croco_parser = croco.add_subparsers(
@@ -28,15 +33,25 @@ def build(module_parser):
         "post-process-v1", help="Post processing functions"
     )
     croco_post_process_v1.add_argument(
-        "--grid", help="Path of NetCDF grid input path", required=True
+        "--id",
+        type=str,
+        help="Name / ID of the model being post-processed. This gets included as a global attribute in the output",
+        required=True,
     )
     croco_post_process_v1.add_argument(
-        "--input", help="Path of CROCO output file", required=True
+        "--grid", type=str, help="Path of NetCDF grid input path", required=True
+    )
+    croco_post_process_v1.add_argument(
+        "--input", type=str, help="Path of CROCO output file", required=True
     )
     croco_post_process_v1.add_argument(
         "--output",
+        type=str,
         help="Path of processed output path",
-        default=".output/toolkit/post-process-v1-output.nc",
+        default=".output/croco/post-process-v1-output.nc",
+    )
+    croco_post_process_v1.add_argument(
+        "--run-date", default=NOW, help="Run date (yyyymmdd)"
     )
 
     """
@@ -48,15 +63,16 @@ def build(module_parser):
         "post-process-v2", help="Post processing functions"
     )
     croco_post_process_v2.add_argument(
-        "--grid", help="Path of NetCDF grid input path", required=True
+        "--grid", type=str, help="Path of NetCDF grid input path", required=True
     )
     croco_post_process_v2.add_argument(
-        "--input", help="Path of CROCO output file", required=True
+        "--input", type=str, help="Path of CROCO output file", required=True
     )
     croco_post_process_v2.add_argument(
         "--output",
+        type=str,
         help="Path of processed output path",
-        default=".output/toolkit/post-process-v2-output.nc",
+        default=".output/croco/post-process-v2-output.nc",
     )
 
     # Load post processing V1 to PostgreSQL
@@ -64,9 +80,15 @@ def build(module_parser):
         "load-pp-v1-output-to-pg", help="Load post processing output (v1) to PostgreSQL"
     )
     croco_load_pp_v1_output_to_pg.add_argument(
-        "--processed-netcdf-file",
+        "--input",
         type=str,
-        default=".ppv1-output.netcdf",
         help="Path to post-processed (v1) NetCDF file",
+        default=".output/croco/post-process-v2-output.nc",
+    )
+    croco_load_pp_v1_output_to_pg.add_argument(
+        "--parallelization",
+        type=int,
+        default=4,
+        help="How many instances of the load query to run in parallel",
     )
     return croco
