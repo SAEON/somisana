@@ -347,12 +347,11 @@ jobs:
             -v $WORKDIR:/tmp/somisana/current \
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/tmp/somisana/current/croco/forcing/grd.nc \
             ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-              ops \
-                transform \
-                  --grid-input-path /tmp/somisana/current/croco/forcing/grd.nc \
-                  --nc-input-path /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
-                  --nc-output-path /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
-                  --zarr-output-path /tmp/somisana/current/croco/forecast/${{ env.RUN_DATE }}-hourly-avg-processed.zarr
+              croco \
+                post-process-v1 \
+                  --grid /tmp/somisana/current/croco/forcing/grd.nc \
+                  --input /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
+                  --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc
 
   # Archive CROCO output
   archive-data:

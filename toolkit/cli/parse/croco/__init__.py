@@ -9,4 +9,4 @@ def parse(cmd, args, module):
         print(cmd.format_help())
         exit()
 
-    return commands.get(args.pg_command, e)
+    return commands.get(args.croco_command, e)

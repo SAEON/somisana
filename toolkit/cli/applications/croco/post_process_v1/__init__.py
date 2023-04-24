@@ -23,17 +23,17 @@ REFERENCE_DATE = datetime(2000, 1, 1, 0, 0, 0)
 def post_process_v1(args):
     now = datetime.now()
 
-    grid_input_path = os.path.abspath(args.grid_input_path)
-    nc_input_path = os.path.abspath(args.nc_input_path)
-    nc_output_path = os.path.abspath(args.nc_output_path)
+    grid = os.path.abspath(args.grid)
+    input = os.path.abspath(args.input)
+    output = os.path.abspath(args.input)
 
     print("\n== Running Algoa Bay Forecast post-processing ==")
-    print("nc-input-path", nc_input_path)
-    print("grid-input-path", grid_input_path)
-    print("nc-output-path", nc_output_path)
+    print("nc-input-path", input)
+    print("grid-input-path", grid)
+    print("nc-output-path", output)
 
-    data = xr.open_dataset(nc_input_path)
-    data_grid = xr.open_dataset(grid_input_path)
+    data = xr.open_dataset(input)
+    data_grid = xr.open_dataset(grid)
 
     # Dimensions that need to be transformed
     time = data.time.values  # Time steps
@@ -203,8 +203,8 @@ def post_process_v1(args):
     }
 
     print("-> Writing NetCDF file", str(datetime.now() - now))
-    data_out.to_netcdf(nc_output_path, encoding=encoding, mode="w")
+    data_out.to_netcdf(output, encoding=encoding, mode="w")
 
-    subprocess.call(["chmod", "-R", "775", nc_output_path])
+    subprocess.call(["chmod", "-R", "775", output])
 
     print("\nComplete! If you don't see this message there was a problem")

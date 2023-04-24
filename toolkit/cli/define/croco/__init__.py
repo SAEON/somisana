@@ -7,28 +7,56 @@ def build(module_parser):
         metavar="Available commands",
     )
 
-    # Post processing V1
+    """
+    Post-processing V1:
+      -> Aligns u/v grid with density (rho) grid
+      -> Adds z-levels to data
+      -> NOT CF compliant (I don't think)
+      -> Outputs:
+        -> temperature
+        -> salt
+        -> u (re-aligned)
+        -> v (re-aligned)
+        -> m_rho
+        -> h
+        -> lon_rho
+        -> lat_rho
+        -> depth
+        -> time (steps in hours)
+    """
     croco_post_process_v1 = croco_parser.add_parser(
         "post-process-v1", help="Post processing functions"
     )
     croco_post_process_v1.add_argument(
-        "--nc-input-path", help="Path of CROCO output file", required=True
+        "--grid", help="Path of NetCDF grid input path", required=True
     )
     croco_post_process_v1.add_argument(
-        "--nc-output-path", default=".output.nc", help="Path of processed output path"
+        "--input", help="Path of CROCO output file", required=True
     )
     croco_post_process_v1.add_argument(
-        "--grid-input-path", help="Path of NetCDF grid input path", required=True
+        "--output",
+        help="Path of processed output path",
+        default=".output/toolkit/post-process-v1-output.nc",
     )
 
-    # Post processing V2
+    """
+    Post-processing V2:
+      -> Aligns u/v grid with density (rho) grid
+      -> ... ? TODO
+    """
     croco_post_process_v2 = croco_parser.add_parser(
         "post-process-v2", help="Post processing functions"
     )
     croco_post_process_v2.add_argument(
-        "--input",
-        default=".input",
-        help="Some input path",
+        "--grid", help="Path of NetCDF grid input path", required=True
+    )
+    croco_post_process_v2.add_argument(
+        "--input", help="Path of CROCO output file", required=True
+    )
+    croco_post_process_v2.add_argument(
+        "--output",
+        help="Path of processed output path",
+        default=".output/toolkit/post-process-v2-output.nc",
     )
 
     # Load post processing V1 to PostgreSQL

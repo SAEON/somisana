@@ -333,12 +333,11 @@ jobs:
             -v $(pwd)/models/false-bay-forecast/lib/grd.nc:/tmp/somisana/current/croco/forcing/grd.nc \
             -v $(pwd)/models/false-bay-forecast/lib/grd.nc.1:/tmp/somisana/current/croco/forcing/grd.nc.1 \
             ${{ needs.toolkit.outputs.image }} \
-              ops \
-                transform \
-                  --grid-input-path /tmp/somisana/current/croco/forcing/grd.nc.1 \
-                  --nc-input-path /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1 \
-                  --nc-output-path /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
-                  --zarr-output-path /tmp/somisana/current/croco/forecast/${{ env.RUN_DATE }}-hourly-avg-processed.zarr
+              croco \
+                post-process-v1 \
+                  --grid /tmp/somisana/current/croco/forcing/grd.nc.1 \
+                  --input /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1 \
+                  --output /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc
 
   # Archive CROCO output
   archive-data:
