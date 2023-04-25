@@ -26,14 +26,12 @@ def post_process_v1(args):
     grid = os.path.abspath(args.grid)
     input = os.path.abspath(args.input)
     output = os.path.abspath(args.output)
-    run_date = args.run_date
 
     log("Running CROCO output post-processing (v1)")
     log("CONFIG::id", id)
     log("CONFIG::input", input)
     log("CONFIG::grid", grid)
     log("CONFIG::output", output)
-    log("CONFIG::run_date", run_date)
 
     # Ensure the directory for the specified output exists
     os.makedirs(os.path.dirname(output), exist_ok=True)
@@ -52,7 +50,10 @@ def post_process_v1(args):
         date_now = REFERENCE_DATE + timedelta(seconds=np.float64(t))
         date_round = hour_rounder(date_now)
         time_steps.append(date_round)
-    log("Generated time steps")
+
+    # Get the run_date from the CROCO output NetCDF file
+    run_date = time_steps[119].strftime("%Y%m%d")
+    log("CONFIG::run_date", run_date)
 
     # Variables used in the visualisations
     temperature = data.temp.values

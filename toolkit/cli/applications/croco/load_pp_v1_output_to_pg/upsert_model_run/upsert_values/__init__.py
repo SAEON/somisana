@@ -5,8 +5,6 @@ from config import PG_DB, PG_PORT, PG_HOST, PG_PASSWORD, PG_USERNAME
 import asyncio
 import asyncpg
 
-total_timesteps = 240
-
 
 async def load_worker(queue, async_pool, runid, datetimes, total_depth_levels):
     while True:
@@ -18,7 +16,9 @@ async def load_worker(queue, async_pool, runid, datetimes, total_depth_levels):
         queue.task_done()
 
 
-async def upsert_values(runid, datetimes, total_depth_levels, parallelization):
+async def upsert_values(
+    runid, datetimes, total_depth_levels, parallelization, total_timesteps
+):
     depth_levels = [*range(int(1), int(total_depth_levels) + 1, 1)]
     async_pool = await asyncpg.create_pool(
         database=PG_DB,

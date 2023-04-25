@@ -78,7 +78,12 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
     # Upsert values
     datetimes = ds.time.values
     total_depth_levels = ds.sizes["depth"]
-    await upsert_values(runid, datetimes, total_depth_levels, parallelization)
+    total_timesteps = ds.sizes["time"]
+    log("Total depth levels", total_depth_levels)
+    log("Total timesteps", total_timesteps)
+    await upsert_values(
+        runid, datetimes, total_depth_levels, parallelization, total_timesteps
+    )
 
     # Finalize the run
     async with pool.acquire() as conn:

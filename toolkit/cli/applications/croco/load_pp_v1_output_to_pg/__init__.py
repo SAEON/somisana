@@ -14,9 +14,9 @@ from cli.applications.croco.load_pp_v1_output_to_pg.upsert_model_run import (
     upsert_model_run,
 )
 
+models_file = os.path.abspath("models.json")
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-models_file = os.path.join(current_dir, "models.json")
 merge_details_file = os.path.join(current_dir, "upsert_model_info/upsert-details.sql")
 merge_coordinates_file = os.path.join(
     current_dir, "upsert_model_info/upsert-coordinates.sql"

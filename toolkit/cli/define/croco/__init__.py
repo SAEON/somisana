@@ -1,8 +1,3 @@
-from datetime import datetime
-
-NOW = datetime.now().strftime("%Y%m%d")
-
-
 def build(module_parser):
     croco = module_parser.add_parser("croco", help="CROCO module")
     croco_parser = croco.add_subparsers(
@@ -49,9 +44,6 @@ def build(module_parser):
         type=str,
         help="Path of processed output path",
         default=".output/croco/post-process-v1-output.nc",
-    )
-    croco_post_process_v1.add_argument(
-        "--run-date", default=NOW, help="Run date (yyyymmdd)"
     )
 
     """
