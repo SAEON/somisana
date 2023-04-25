@@ -16,7 +16,6 @@ import ssr from '../.ssr/index.js'
 import graphql from './graphql/index.js'
 import createRequestCtx from './middleware/ctx.js'
 import testVectorTileRoute from './http/vector-tiles/test/index.js'
-import { updateCoordinatesMask } from './postgres/index.js'
 
 const __dirname = dirname(import.meta)
 
@@ -69,13 +68,3 @@ export const apolloServer = await graphql({ httpServer, api })
 httpServer.on('request', api.callback()).listen(PORT, () => {
   console.info('=== SOMISANA READY ===')
 })
-
-try {
-  await updateCoordinatesMask()
-} catch (error) {
-  console.error('Error updating coordinates mask on startup', error)
-
-  if (NODE_ENV === 'production') {
-    process.exit(1)
-  }
-}
