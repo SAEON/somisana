@@ -5,6 +5,6 @@ def parse(cmd, args, module):
 
     try:
         return module.download
-    except Exception as e:
-        print(e)
+    except Exception as err:
+        print(err)
         return e

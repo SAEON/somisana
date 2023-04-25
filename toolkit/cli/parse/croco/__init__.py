@@ -23,6 +23,6 @@ def parse(cmd, args, module):
         # Return the command
         return commands.get(args.croco_command, e)
 
-    except Exception as e:
-        print(e)
+    except Exception as err:
+        print(err)
         return e

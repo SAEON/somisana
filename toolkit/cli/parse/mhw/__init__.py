@@ -1,10 +1,11 @@
 def parse(cmd, args, module):
-    if args.mhw_command == "start":
-        return module.start
-    else:
+    def e(*args):
+        print(cmd.format_help())
+        exit()
 
-        def e(*args):
-            print(cmd.format_help())
-            exit()
-
+    try:
+        cmds = {"start": module.start}
+        return cmds.get(args.mhw_command, e)
+    except Exception as err:
+        print(err)
         return e
