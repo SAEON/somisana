@@ -1,3 +1,3 @@
-from cli.define import lacce, mhw, ops, kerchunk, update, pg, croco
+from cli.define import lacce, mhw, download, kerchunk, update, pg, croco
 
-__all__ = ["lacce", "mhw", "ops", "kerchunk", "update", "pg", "croco"]
+__all__ = ["lacce", "mhw", "download", "kerchunk", "update", "pg", "croco"]

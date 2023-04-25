@@ -1,0 +1,6 @@
+
+		begin
+      f = addfile("/home/zach/code/saeon/repositories/somisana/toolkit/.output/mercator_20230425.nc","r")
+      print(f)
+		end
+    

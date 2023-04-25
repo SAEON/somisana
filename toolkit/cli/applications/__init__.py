@@ -1,3 +1,3 @@
-from cli.applications import lacce, mhw, ops, kerchunk, update, pg, croco
+from cli.applications import lacce, mhw, kerchunk, update, pg, croco, download
 
-__all__ = ["lacce", "mhw", "ops", "kerchunk", "update", "pg", "croco"]
+__all__ = ["lacce", "mhw", "kerchunk", "update", "pg", "croco", "download"]

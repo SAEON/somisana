@@ -81,24 +81,22 @@ cd $SOMISANA_DIR
 
 ```sh
 somisana \
-  ops \
-    download \
-    --workdir $WORKDIR/forcing-inputs \
-    --matlab-env $WORKDIR/.env \
-    --provider gfs \
-    --domain 22,31,-37,-31
+  download \
+  --workdir $WORKDIR/forcing-inputs \
+  --matlab-env $WORKDIR/.env \
+  --provider gfs \
+  --domain 22,31,-37,-31
 ```
 
 **_(3) Download Mercator boundary data_**
 
 ```sh
 somisana \
-  ops \
-    download \
-    --workdir $WORKDIR/forcing-inputs \
-    --matlab-env $WORKDIR/.env \
-    --provider mercator \
-    --domain 22,31,-37,-31
+  download \
+  --workdir $WORKDIR/forcing-inputs \
+  --matlab-env $WORKDIR/.env \
+  --provider mercator \
+  --domain 22,31,-37,-31
 ```
 
 **_(4) Create forcing files_**

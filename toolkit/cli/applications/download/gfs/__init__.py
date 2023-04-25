@@ -1,6 +1,6 @@
 import asyncio
 from datetime import datetime, timedelta, time
-from cli.applications.ops.download.gfs.functions import (
+from cli.applications.download.gfs.functions import (
     download_file,
     get_latest_available_dt,
     set_params,

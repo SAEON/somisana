@@ -21,7 +21,10 @@ def main():
 
     # (1) Build applications
     app_objects = {
-        "ops": (getattr(getattr(define, "ops"), "build")(module_parser), apps.ops),
+        "download": (
+            getattr(getattr(define, "download"), "build")(module_parser),
+            apps.download,
+        ),
         "mhw": (getattr(getattr(define, "mhw"), "build")(module_parser), apps.mhw),
         "lacce": (
             getattr(getattr(define, "lacce"), "build")(module_parser),
