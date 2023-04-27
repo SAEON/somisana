@@ -250,7 +250,6 @@ jobs:
                 download \
                   --provider mercator \
                   --workdir /tmp/somisana/current/forcing-inputs \
-                  --matlab-env /tmp/somisana/current/.env \
                   --download-date ${{ env.MODEL_RUN_DATE }} \
                   --domain 15,24.5,-37,-31
 
