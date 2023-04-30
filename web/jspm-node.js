@@ -26,6 +26,7 @@ const generator = new Generator({
     'mongodb',
     'pg-query-stream',
     'pg',
+    'make-fetch-happen',
   ],
 })
 
