@@ -297,7 +297,7 @@ jobs:
   # As such the CROCO model run must be in the context of a container instantiated from that Docker image
   croco:
     needs: [compile-croco, crocotools, envs, workdir]
-    runs-on: somisana
+    runs-on: croco
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
