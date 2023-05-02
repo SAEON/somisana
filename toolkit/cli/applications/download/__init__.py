@@ -1,13 +1,12 @@
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
+from lib.log import log
 from cli.applications.download.mercator import download as mercator_download
 from cli.applications.download.gfs import download as gfs_download
 
 
 def download(args):
-    print("Downloading forecast model boundary data...")
-
     workdir = args.workdir
     matlab_env = args.matlab_env
     gfs = args.provider == "gfs"
@@ -20,16 +19,16 @@ def download(args):
     date_start = run_date + timedelta(days=-hdays)
     date_end = run_date + timedelta(days=fdays)
 
-    print("date", str(run_date))
-    print("hindcast days", str(hdays))
-    print("forecast days", str(fdays))
-    print("simulation temporal coverage", str(date_start), "-", str(date_end))
-    print(
-        "spatial extent for download of global forcing data (west, east, south, north)",
+    log("CONFIG::date", str(run_date))
+    log("CONFIG::hdays", str(hdays))
+    log("CONFIG::fdays", str(fdays))
+    log("CONFIG::simulation temporal coverage", str(date_start), "-", str(date_end))
+    log(
+        "CONFIG::domain (west, east, south, north)",
         str(domain),
     )
 
-    print("Downloads path", os.path.abspath(workdir))
+    log("CONFIG::workdir", os.path.abspath(workdir))
     Path(workdir).mkdir(parents=True, exist_ok=True)
 
     if mercator:
@@ -37,7 +36,7 @@ def download(args):
 
     if gfs:
         delta_days_gfs = gfs_download(run_date, hdays, fdays, domain, workdir)
-        print("Configuring MatLab...")
+        log("Configuring MatLab...")
         with open(matlab_env, "w+") as env:
             env.writelines(
                 [
@@ -48,9 +47,9 @@ def download(args):
         try:
             os.chmod(matlab_env, 0o777)
         except:
-            print(
+            log(
                 "Unable to run os.chmod on the .env file - you may have to do this manually"
             )
 
     # Script complete
-    print("Complete!")
+    log("Completed download(s)!")
