@@ -1,7 +1,10 @@
 from datetime import datetime, timedelta
 import os
-from config import COPERNICUS_PASSWORD, COPERNICUS_USERNAME
+from lib.log import log
+from config import COPERNICUS_PASSWORD as PWD, COPERNICUS_USERNAME as USER
 import xarray as xr
+import asyncio
+import time
 
 
 def is_valid_netcdf_file(file_path):
@@ -12,80 +15,114 @@ def is_valid_netcdf_file(file_path):
         return False
 
 
-"""
-Download latest daily ocean forecasts from CMEMS GLOBAL-ANALYSIS-FORECAST-PHY-001-024
-Dependencies: (see https://marine.copernicus.eu/faq/what-are-the-motu-and-python-requirements/)
-python -m pip install motuclient
-Adapted script from Mostafa Bakhoday-Paskyabi <Mostafa.Bakhoday@nersc.no>
-"""
+VARIABLES = [
+    {
+        "name": "so",
+        "#": "Salinity in psu",
+        "id": "cmems_mod_glo_phy-so_anfc_0.083deg_P1D-m",
+        "vars": ["so"],
+    },
+    {
+        "name": "thetao",
+        "#": "Temperature in degrees C",
+        "id": "cmems_mod_glo_phy-thetao_anfc_0.083deg_P1D-m",
+        "vars": ["thetao"],
+    },
+    {
+        "name": "zos",
+        "#": "SSH in m",
+        "id": "cmems_mod_glo_phy_anfc_0.083deg_P1D-m",
+        "vars": ["zos"],
+    },
+    {
+        "name": "uo_vo",
+        "#": "uo:Eastward velocity in m/s | vo:Northward velocity in m/s",
+        "id": "cmems_mod_glo_phy-cur_anfc_0.083deg_P1D-m",
+        "vars": ["uo", "vo"],
+    },
+]
 
-# so = Salinity in psu
-# thetao = Temperature in degrees C
-# zos = SSH in m,
-# uo = Eastward velocity in m/s
-# vo = Northward velocity in m/s
-VARIABLES = ["so", "thetao", "zos", "uo", "vo"]
 DEPTH_RANGE = [0.493, 5727.918]
 
+MAX_RETRIES = 3
+RETRY_WAIT = 10
 
-def download(run_date, hdays, fdays, domain, workdir):
-    hdays = hdays + 1
-    fdays = fdays + 1
-    startDate = run_date + timedelta(days=-hdays)
-    endDate = run_date + timedelta(days=fdays)
 
-    var_str = ""
-    for var in VARIABLES:
-        var_str = var_str + " --variable " + var
+async def run_cmd(c, run_date, start_date, end_date, domain, workdir):
+    dataset = c["id"]
+    name = c["name"]
+    vars = c["vars"]
+    variables = f"--variable {' --variable '.join(vars)} "
 
-    fname = "mercator_" + str(run_date.strftime("%Y%m%d")) + ".nc"
+    fname = f"mercator_{name}_{run_date.strftime('%Y%m%d')}.nc"
+    c["fname"] = fname
 
-    runcommand = (
-        "motuclient --quiet"
-        + " --user "
-        + COPERNICUS_USERNAME
-        + " --pwd "
-        + COPERNICUS_PASSWORD
-        + " --motu http://nrt.cmems-du.eu/motu-web/Motu"
-        + " --service-id GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS"
-        + " --product-id global-analysis-forecast-phy-001-024"
-        + " --longitude-min "
-        + str(domain[0])
-        + " --longitude-max "
-        + str(domain[1])
-        + " --latitude-min "
-        + str(domain[2])
-        + " --latitude-max "
-        + str(domain[3])
-        + ' --date-min "'
-        + str(startDate.strftime("%Y-%m-%d"))
-        + '" --date-max "'
-        + str(endDate.strftime("%Y-%m-%d"))
-        + '"'
-        + " --depth-min "
-        + str(DEPTH_RANGE[0])
-        + " --depth-max "
-        + str(DEPTH_RANGE[1])
-        + var_str
-        + " --out-dir "
-        + os.path.normpath(workdir)
-        + " --out-name "
-        + fname
-    )
+    runcommand = f"""
+        motuclient \
+            --user {USER} \
+            --pwd {PWD} \
+            --motu http://nrt.cmems-du.eu/motu-web/Motu \
+            --service-id GLOBAL_ANALYSISFORECAST_PHY_001_024-TDS \
+            --product-id {dataset} \
+            --longitude-min {domain[0]} \
+            --longitude-max {domain[1]} \
+            --latitude-min {domain[2]} \
+            --latitude-max {domain[3]} \
+            --date-min "{start_date.strftime("%Y-%m-%d")}" \
+            --date-max "{end_date.strftime("%Y-%m-%d")}" \
+            --depth-min {DEPTH_RANGE[0]} \
+            --depth-max {DEPTH_RANGE[1]} \
+            {variables} \
+            --out-dir {os.path.normpath(workdir)} \
+            --out-name {fname}"""
 
+    log(" ".join(runcommand.split()))
     f = os.path.normpath(os.path.join(workdir, fname))
     if os.path.exists(f) == False:
-        print("downloading latest mercator ocean forecast from CMEMS...")
-        startTime = datetime.now()
-        if os.system(runcommand) != 0:
-            raise Exception("Mercator download failed from cmd: " + runcommand)
-        else:
-            if is_valid_netcdf_file(f):
-                print("mercator download completed", str(datetime.now() - startTime))
-            else:
-                raise Exception("Mercator download failed (bad NetCDF output)")
+        for i in range(MAX_RETRIES):
+            log(
+                f"downloading latest mercator ocean forecast from CMEMS. Attempt {i + 1} of {MAX_RETRIES}"
+            )
+            try:
+                subprocess = await asyncio.create_subprocess_shell(runcommand)
+                await subprocess.communicate()
+                if subprocess.returncode != 0:
+                    raise Exception(
+                        f"Mercator download failed from cmd: {name}. Exit code: {subprocess.returncode}"
+                    )
+                else:
+                    if is_valid_netcdf_file(f):
+                        log("Completed", name)
+                        return
+                    else:
+                        os.unlink(f)
+                        raise Exception(
+                            f"Mercator download failed (bad NetCDF output) for variable {name}"
+                        )
+            except Exception as e:
+                log(f"Error: {e}, retrying in {RETRY_WAIT} seconds...")
+                time.sleep(RETRY_WAIT)
+        log(f"Failed to download after 3 attempts: {name}")
     else:
-        print(
+        log(
             os.path.normpath(os.path.join(workdir, fname)),
             "already exists - not downloading mercator data",
         )
+
+
+async def batch_cmds(run_date, start_date, end_date, domain, workdir):
+    await asyncio.gather(
+        *(
+            run_cmd(c, run_date, start_date, end_date, domain, workdir)
+            for c in VARIABLES
+        )
+    )
+
+
+def download(run_date, hdays, fdays, domain, workdir):
+    log(" => Copernicus Marine Environment Monitoring Service (CMEMS) download")
+    hdays = hdays + 1
+    fdays = fdays + 1
+    start_date = run_date + timedelta(days=-hdays)
+    end_date = run_date + timedelta(days=fdays)
+    asyncio.run(batch_cmds(run_date, start_date, end_date, domain, workdir))
