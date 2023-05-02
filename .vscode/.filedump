@@ -1,6 +1,6 @@
 
 		begin
-      f = addfile("/home/zach/code/saeon/repositories/somisana/toolkit/.output/mercator_20230425.nc","r")
+      f = addfile("/home/zach/code/saeon/repositories/somisana/toolkit/.output/mercator_current'='velocities_20230502.nc","r")
       print(f)
 		end
     

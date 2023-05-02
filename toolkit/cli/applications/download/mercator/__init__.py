@@ -1,10 +1,12 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import os
 from lib.log import log
 from config import COPERNICUS_PASSWORD as PWD, COPERNICUS_USERNAME as USER
 import xarray as xr
 import asyncio
+import subprocess
 import time
+from lib.open_datasets import open_datasets
 
 
 def is_valid_netcdf_file(file_path):
@@ -53,7 +55,6 @@ async def run_cmd(c, run_date, start_date, end_date, domain, workdir):
     name = c["name"]
     vars = c["vars"]
     variables = f"--variable {' --variable '.join(vars)} "
-
     fname = f"mercator_{name}_{run_date.strftime('%Y%m%d')}.nc"
     c["fname"] = fname
 
@@ -119,10 +120,31 @@ async def batch_cmds(run_date, start_date, end_date, domain, workdir):
     )
 
 
+def get_path(f, workdir):
+    return os.path.abspath(os.path.join(workdir, f))
+
+
 def download(run_date, hdays, fdays, domain, workdir):
     log(" => Copernicus Marine Environment Monitoring Service (CMEMS) download")
     hdays = hdays + 1
     fdays = fdays + 1
     start_date = run_date + timedelta(days=-hdays)
     end_date = run_date + timedelta(days=fdays)
+
+    # Download the separate NetCDF files
     asyncio.run(batch_cmds(run_date, start_date, end_date, domain, workdir))
+
+    # Concatenate the separate NetCDF files into the expected single file structure
+    with open_datasets(
+        *[get_path(el["fname"], workdir) for el in VARIABLES]
+    ) as datasets:
+        ds = xr.concat(
+            datasets, dim=["time", "depth", "latitude", "longitude"], coords="minimal"
+        )
+
+        output = os.path.abspath(
+            os.path.join(workdir, f"mercator_{run_date.strftime('%Y%m%d')}.nc")
+        )
+
+        ds.to_netcdf(output, mode="w")
+        subprocess.call(["chmod", "-R", "775", output])
