@@ -138,13 +138,14 @@ def download(run_date, hdays, fdays, domain, workdir):
     with open_datasets(
         *[get_path(el["fname"], workdir) for el in VARIABLES]
     ) as datasets:
-        ds = xr.concat(
+        with xr.concat(
             datasets, dim=["time", "depth", "latitude", "longitude"], coords="minimal"
-        )
+        ) as ds:
+            with ds.drop_dims("concat_dim") as ds2:
+                output = os.path.abspath(
+                    os.path.join(workdir, f"mercator_{run_date.strftime('%Y%m%d')}.nc")
+                )
+                ds2.to_netcdf(output, mode="w")
 
-        output = os.path.abspath(
-            os.path.join(workdir, f"mercator_{run_date.strftime('%Y%m%d')}.nc")
-        )
-
-        ds.to_netcdf(output, mode="w")
-        subprocess.call(["chmod", "-R", "775", output])
+    # Make sure the created file is readable
+    subprocess.call(["chmod", "-R", "775", output])
