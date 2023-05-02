@@ -134,18 +134,69 @@ def download(run_date, hdays, fdays, domain, workdir):
     # Download the separate NetCDF files
     asyncio.run(batch_cmds(run_date, start_date, end_date, domain, workdir))
 
-    # Concatenate the separate NetCDF files into the expected single file structure
     with open_datasets(
-        *[get_path(el["fname"], workdir) for el in VARIABLES]
+        get_path([el for el in VARIABLES if el["name"] == "so"][0]["fname"], workdir),
+        get_path(
+            [el for el in VARIABLES if el["name"] == "thetao"][0]["fname"], workdir
+        ),
+        get_path([el for el in VARIABLES if el["name"] == "zos"][0]["fname"], workdir),
+        get_path(
+            [el for el in VARIABLES if el["name"] == "uo_vo"][0]["fname"], workdir
+        ),
     ) as datasets:
-        with xr.concat(
-            datasets, dim=["time", "depth", "latitude", "longitude"], coords="minimal"
-        ) as ds:
-            with ds.drop_dims("concat_dim") as ds2:
-                output = os.path.abspath(
-                    os.path.join(workdir, f"mercator_{run_date.strftime('%Y%m%d')}.nc")
-                )
-                ds2.to_netcdf(output, mode="w")
+        so, thetao, zos, uo_vo = datasets
 
-    # Make sure the created file is readable
-    subprocess.call(["chmod", "-R", "775", output])
+        time = so.time
+        depth = so.depth
+        latitude = so.latitude
+        longitude = so.longitude
+
+        # Stitch them together
+        ds = xr.Dataset(
+            attrs={
+                "description": "CMEMS boundary currents (new format, transposed to old format for this project)"
+            },
+            coords={
+                "time": xr.Variable(["time"], time, time.attrs),
+                "depth": xr.Variable(["depth"], depth, depth.attrs),
+                "latitude": xr.Variable(["latitude"], latitude, latitude.attrs),
+                "longitude": xr.Variable(["longitude"], longitude, longitude.attrs),
+            },
+            data_vars={
+                "thetao": xr.Variable(
+                    ["time", "depth", "latitude", "longitude"],
+                    thetao.thetao,
+                    thetao.thetao.attrs,
+                ),
+                "uo": xr.Variable(
+                    ["time", "depth", "latitude", "longitude"], uo_vo.uo, uo_vo.uo.attrs
+                ),
+                "vo": xr.Variable(
+                    ["time", "depth", "latitude", "longitude"], uo_vo.vo, uo_vo.vo.attrs
+                ),
+                "so": xr.Variable(
+                    ["time", "depth", "latitude", "longitude"], so.so, so.so.attrs
+                ),
+                "zos": xr.Variable(
+                    ["time", "latitude", "longitude"], zos.zos, zos.zos.attrs
+                ),
+            },
+        )
+
+        encoding = {
+            "time": {"dtype": "float32"},
+            "depth": {"dtype": "float32"},
+            "latitude": {"dtype": "float32"},
+            "longitude": {"dtype": "float32"},
+            "thetao": {"dtype": "int16"},
+            "uo": {"dtype": "int16"},
+            "vo": {"dtype": "int16"},
+            "so": {"dtype": "int16"},
+            "zos": {"dtype": "int16"},
+        }
+
+        output = os.path.abspath(
+            os.path.join(workdir, f"mercator_{run_date.strftime('%Y%m%d')}.nc")
+        )
+        ds.to_netcdf(output, encoding=encoding, mode="w")
+        subprocess.call(["chmod", "-R", "775", output])
