@@ -61,7 +61,7 @@ jobs:
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}
       RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}
-    if: ${{ env.BRANCH_REF }} == 'stable'
+    if: ${{ needs.branch-ref.outputs.value }} == 'stable'
     steps:
       - name: Configure run date
         id: run_date
