@@ -61,8 +61,10 @@ jobs:
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}
       RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}
-    if: ${{ needs.branch-ref.outputs.value }} == 'stable'
     steps:
+      - name: test
+        if: $BRANCH_REF != 'stable'
+        run: exit 1
       - name: Configure run date
         id: run_date
         run: |
@@ -367,7 +369,6 @@ jobs:
     steps:
       - name: Load $PATH
         run: |
-          echo $BRANCH_REF
           source ~/.bashrc
       - name: Upload raw CROCO NetCDF file to mnemosyne HTTP-range server
         continue-on-error: false
