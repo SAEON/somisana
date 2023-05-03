@@ -142,8 +142,31 @@ def download(run_date, hdays, fdays, domain, workdir):
     with open_datasets(
         *[get_path(el["fname"], workdir) for el in VARIABLES]
     ) as datasets:
-        # dim=["time", "depth", "latitude", "longitude"], coords="minimal"
+        encoding = {
+            "zos": {
+                "scale_factor": 0.000305185094475746,
+                "add_offset": 0.0,
+            },
+            "so": {
+                "add_offset": -0.00152592547237873,
+                "scale_factor": 0.00152592547237873,
+            },
+            "uo": {
+                "scale_factor": 0.000610370188951492,
+                "add_offset": 0.0,
+            },
+            "vo": {
+                "scale_factor": 0.000610370188951492,
+                "add_offset": 0.0,
+            },
+            "thetao": {
+                "scale_factor": 0.000732444226741791,
+                "add_offset": 21.0,
+            },
+        }
         with xr.merge(datasets) as ds:
-            ds.to_netcdf(output_path, mode="w")
+            ds.to_netcdf(
+                output_path, mode="w", encoding=encoding, format="NETCDF3_CLASSIC"
+            )
 
     subprocess.call(["chmod", "-R", "775", output_path])
