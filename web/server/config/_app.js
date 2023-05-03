@@ -6,3 +6,4 @@ export const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS || [
   'http://localhost:5776',
 ]
 export const KEY = process.env.KEY || '7cwANClfrqqNFmpOmcP0OzWDzdcras0EdIqD3RAUUCU='
+export const NODE_VERSION = process.version
