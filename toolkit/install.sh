@@ -19,7 +19,7 @@ lines=(
   "alias gdal_translate='docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION gdal_translate'"
   "alias gdallocationinfo='docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION gdallocationinfo'"
   "alias gdalmdiminfo='docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION gdalmdiminfo'"
-  "alias matlab='docker run -it --rm -v /home/\$USER:/home/\$USER -p 8888:8888 -e MLM_LICENSE_FILE=27000@matlab-license-manager.saeon.int --shm-size=512M mathworks/matlab:r2023a -browser'"
+  "alias matlab='docker run -it --rm -v /home/\$USER:/home/\$USER -p 8888:8888 -e MLM_LICENSE_FILE=27000@matlab-license-manager.saeon.int --shm-size=512M mathworks/matlab:r2022b -browser'"
 )
 
 # Delete existing lines related to the SOMISANA toolkit
