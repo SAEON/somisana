@@ -62,9 +62,6 @@ jobs:
       MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}
       RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}
     steps:
-      - name: test
-        if: ${{ env.BRANCH_REF }} != 'stable'
-        run: exit 1
       - name: Configure run date
         id: run_date
         run: |
@@ -92,6 +89,9 @@ jobs:
     outputs:
       image: ${{ steps.meta.outputs.tags }}
     steps:
+      - name: test
+        if: ${{ env.BRANCH_REF }} != 'stable'
+        run: exit 0
       - name: Checkout source code
         uses: actions/checkout@master
         with:
