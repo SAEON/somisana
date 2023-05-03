@@ -91,7 +91,7 @@ jobs:
     steps:
       - name: test
         if: ${{ env.BRANCH_REF }} != 'stable'
-        run: exit 0
+        run: exit 1
       - name: Checkout source code
         uses: actions/checkout@master
         with:
