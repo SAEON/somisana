@@ -63,7 +63,7 @@ jobs:
       RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}
     steps:
       - name: test
-        if: $BRANCH_REF != 'stable'
+        if: ${{ env.BRANCH_REF }} != 'stable'
         run: exit 1
       - name: Configure run date
         id: run_date
