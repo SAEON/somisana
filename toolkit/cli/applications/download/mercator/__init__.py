@@ -142,9 +142,8 @@ def download(run_date, hdays, fdays, domain, workdir):
     with open_datasets(
         *[get_path(el["fname"], workdir) for el in VARIABLES]
     ) as datasets:
-        with xr.concat(
-            datasets, dim=["time", "depth", "latitude", "longitude"], coords="minimal"
-        ) as ds:
+        # dim=["time", "depth", "latitude", "longitude"], coords="minimal"
+        with xr.merge(datasets) as ds:
             ds.to_netcdf(output_path, mode="w")
 
     subprocess.call(["chmod", "-R", "775", output_path])
