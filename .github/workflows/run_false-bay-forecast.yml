@@ -367,6 +367,7 @@ jobs:
     steps:
       - name: Load $PATH
         run: |
+          echo $BRANCH_REF
           source ~/.bashrc
       - name: Upload raw CROCO NetCDF file to mnemosyne HTTP-range server
         continue-on-error: false
