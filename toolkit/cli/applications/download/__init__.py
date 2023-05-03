@@ -52,4 +52,4 @@ def download(args):
             )
 
     # Script complete
-    log("Completed download(s)!")
+    log("Completed! If you don't see this there was an error")
