@@ -378,9 +378,6 @@ jobs:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
-      - name: Testing for production environment
-        if: ${{ env.BRANCH_REF }} != 'stable'
-        run: exit 1
       - name: Load $PATH
         run: |
           source ~/.bashrc
