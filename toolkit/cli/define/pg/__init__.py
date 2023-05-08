@@ -21,4 +21,10 @@ def build(module_parser):
         default=True,
         help="Create the schema (non-destructive and idempotent). Defaults to True",
     )
+
+    # prune-values (no flags)
+    pg_parser.add_parser(
+        "prune-values", help="Prune partitions of model data older than 10 days"
+    )
+
     return pg

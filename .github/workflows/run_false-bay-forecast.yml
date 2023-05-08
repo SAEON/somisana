@@ -484,3 +484,21 @@ jobs:
                 load-pp-v1-output-to-pg \
                   --input /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --parallelization 32
+      - name: Delete old PostgreSQL data
+        env:
+          PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
+          PG_PORT: ${{ secrets[steps._PG_PORT_.outputs.uppercase] }}
+          PG_DB: ${{ secrets[steps._PG_DB_.outputs.uppercase] }}
+          PG_USERNAME: ${{ secrets[steps._PG_USERNAME_.outputs.uppercase] }}
+          PG_PASSWORD: ${{ secrets[steps._PG_PASSWORD_.outputs.uppercase] }}
+        run: >-
+          docker run \
+            --rm \
+            -e PG_HOST=$PG_HOST \
+            -e PG_PORT=$PG_PORT \
+            -e PG_USERNAME=$PG_USERNAME \
+            -e PG_PASSWORD=$PG_PASSWORD \
+            -e PG_DB=$PG_DB \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+              pg \
+                prune-values

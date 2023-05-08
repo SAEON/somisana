@@ -1,7 +1,5 @@
 def parse(cmd, args, module):
-    commands = {
-        "schema": module.schema,
-    }
+    commands = {"schema": module.schema, "prune-values": module.prune_values}
 
     def e(*args):
         print(cmd.format_help())
