@@ -62,9 +62,6 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
             await conn.fetch(
                 f"create index if not exists values_coordinateid_{runid} on public.values_runid_{runid} using btree(coordinateid asc);"
             )
-            await conn.fetch(
-                f"create index if not exists values_runs_{runid} on public.values_runid_{runid} using btree(runid desc);"
-            )
 
     # Upsert rasters
     variables = list(ds.keys())
