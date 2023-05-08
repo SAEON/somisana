@@ -1,11 +1,12 @@
-import { useEffect, memo, useContext } from 'react'
+import { useEffect, memo, useContext, useMemo } from 'react'
 import * as d3 from 'd3'
 import { context as mapContext } from '../../../_context'
 import { context as pageContext } from '../../../../_context'
-import { contours } from 'd3-contour'
+import * as tricontour_ from 'd3-tricontour'
 import { useTheme } from '@mui/material/styles'
-import project from '../lib/project-coordinates'
 import debounce from '../../../../../../../lib/debounce'
+
+const tric = tricontour_.tricontour
 
 const drawIsolines = color => [
   'step',
@@ -45,20 +46,9 @@ const Render = memo(
     const theme = useTheme()
     const id = 'contour-layer'
 
-    const polygons = contours()
-      .thresholds(thresholds)
-      .size([gridWidth, gridHeight])(grid[selectedVariable])
-      .map(z => {
-        return {
-          ...z,
-          value: z.value < scaleMin ? scaleMin : z.value > scaleMax ? scaleMax : z.value,
-          coordinates: z.coordinates.map(polygon => {
-            return polygon.map(ring =>
-              ring.map(p => project(grid, gridHeight, gridWidth, p)).reverse()
-            )
-          }),
-        }
-      })
+    const polygons = tric()
+      .value(d => d[2][selectedVariable])
+      .thresholds(thresholds)(grid.values.filter(([, , v]) => v))
 
     const features = polygons.map(({ type, coordinates, value }) => {
       return {
@@ -73,7 +63,7 @@ const Render = memo(
 
     useEffect(() => {
       if (!scaleMin || !scaleMax) {
-        const [min, max] = d3.extent(grid[selectedVariable]).map(v => parseFloat(v))
+        const [min, max] = d3.extent(grid.values.map(([, , v]) => parseFloat(v[selectedVariable])))
         setScaleMin(min)
         setScaleMax(max)
       }
@@ -146,7 +136,6 @@ const Render = memo(
 export default ({ data, grid }) => {
   const { map } = useContext(mapContext)
   const {
-    model: { gridWidth, gridHeight },
     scaleMin,
     setScaleMin,
     setScaleMax,
@@ -163,8 +152,6 @@ export default ({ data, grid }) => {
     <Render
       map={map}
       thresholds={thresholds}
-      gridWidth={gridWidth}
-      gridHeight={gridHeight}
       scaleMin={scaleMin}
       setScaleMin={setScaleMin}
       setScaleMax={setScaleMax}

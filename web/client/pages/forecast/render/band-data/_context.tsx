@@ -33,24 +33,12 @@ const Render = memo(({ children, depth, timeStep, runId }) => {
     return points.reduce(
       (a, c, i) => {
         const [coordinateid, lng, lat, temperature, salinity, u, v] = c
-        a.lng.push(lng)
-        a.lat.push(lat)
-        a.temperature.push(temperature)
-        a.salinity.push(salinity)
-        a.u.push(u)
-        a.v.push(v)
-
-        // Allow for quickly getting rows by the coordinateId
+        a.values.push([lng, lat, { temperature, salinity, u, v }])
         a.coordinates[coordinateid] = i
         return a
       },
       {
-        lng: [],
-        lat: [],
-        temperature: [],
-        salinity: [],
-        u: [],
-        v: [],
+        values: [],
         coordinates: {},
       }
     )
