@@ -57,7 +57,7 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
                 f"create table if not exists public.values_runid_{runid} partition of public.values for values in ({runid});"
             )
             await conn.fetch(
-                f"create unique index if not exists values_unique_cols_{runid} on public.values_runid_{runid} using btree(time_step asc, depth_level desc, coordinateid);"
+                f"create index if not exists values_cols_{runid} on public.values_runid_{runid} using btree(time_step asc, depth_level desc);"
             )
             await conn.fetch(
                 f"create index if not exists values_coordinateid_{runid} on public.values_runid_{runid} using btree(coordinateid asc);"
