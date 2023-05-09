@@ -28,7 +28,7 @@ export const ToggleDepth = () => {
 
 const marks = [
   {
-    value: -550,
+    value: -550, // This value should actually be -9999, but using -550 looks better on the slider
     label: 'B',
   },
   {
@@ -36,8 +36,8 @@ const marks = [
     label: '500',
   },
   {
-    value: -200,
-    label: '200',
+    value: -250,
+    label: '250',
   },
 
   {
