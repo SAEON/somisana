@@ -47,4 +47,4 @@ async def load(i, depth_level, runid, datetimes, total_depth_levels, async_pool)
             sleep(1)
 
     if attempt > MAX_RETRIES:
-        raise Exception("upsert_values function failed to many times")
+        raise Exception("upsert_values function failed too many times")

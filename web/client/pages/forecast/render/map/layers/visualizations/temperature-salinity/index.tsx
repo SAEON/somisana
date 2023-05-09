@@ -1,4 +1,4 @@
-import { useEffect, memo, useContext, useMemo } from 'react'
+import { useEffect, memo, useContext } from 'react'
 import * as d3 from 'd3'
 import { context as mapContext } from '../../../_context'
 import { context as pageContext } from '../../../../_context'
@@ -29,8 +29,6 @@ const drawIsolines = color => [
 const Render = memo(
   ({
     map,
-    gridWidth,
-    gridHeight,
     scaleMin,
     setScaleMin,
     scaleMax,
@@ -48,7 +46,7 @@ const Render = memo(
 
     const polygons = tric()
       .value(d => d[2][selectedVariable])
-      .thresholds(thresholds)(grid.values.filter(([, , v]) => v))
+      .thresholds(thresholds)(grid.values)
 
     const features = polygons.map(({ type, coordinates, value }) => {
       return {

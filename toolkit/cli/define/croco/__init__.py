@@ -75,7 +75,7 @@ def build(module_parser):
         "--input",
         type=str,
         help="Path to post-processed (v1) NetCDF file",
-        default=".output/croco/post-process-v2-output.nc",
+        default=".output/croco/post-process-v1-output.nc",
     )
     croco_load_pp_v1_output_to_pg.add_argument(
         "--parallelization",

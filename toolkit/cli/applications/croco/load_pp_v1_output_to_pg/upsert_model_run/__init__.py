@@ -6,6 +6,9 @@ from cli.applications.croco.load_pp_v1_output_to_pg.upsert_model_run.upsert_rast
 from cli.applications.croco.load_pp_v1_output_to_pg.upsert_model_run.upsert_values import (
     upsert_values,
 )
+from cli.applications.croco.load_pp_v1_output_to_pg.upsert_model_run.upsert_interpolated_values import (
+    upsert_interpolated_values,
+)
 
 
 async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization):
@@ -53,6 +56,7 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
 
         # Register new partition and indexes
         async with conn.transaction():
+            # values partition
             await conn.fetch(
                 f"create table if not exists public.values_runid_{runid} partition of public.values for values in ({runid});"
             )
@@ -61,6 +65,16 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
             )
             await conn.fetch(
                 f"create index if not exists values_coordinateid_{runid} on public.values_runid_{runid} using btree(coordinateid asc);"
+            )
+            # interpolated_values partition
+            await conn.fetch(
+                f"create table if not exists public.interpolated_values_runid_{runid} partition of public.interpolated_values for values in ({runid});"
+            )
+            await conn.fetch(
+                f"create index if not exists interpolated_values_cols_{runid} on public.interpolated_values_runid_{runid} using btree(time_step asc, depth desc);"
+            )
+            await conn.fetch(
+                f"create index if not exists interpolated_values_coordinateid_{runid} on public.interpolated_values_runid_{runid} using btree(coordinateid asc);"
             )
 
     # Upsert rasters
@@ -72,14 +86,21 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
         for raster in rasters:
             await upsert_rasters(conn, runid, raster, input, model, ds)
 
-    # Upsert values
     datetimes = ds.time.values
     total_depth_levels = ds.sizes["depth"]
     total_timesteps = ds.sizes["time"]
     log("Total depth levels", total_depth_levels)
     log("Total timesteps", total_timesteps)
+
+    # Upsert values
     await upsert_values(
         runid, datetimes, total_depth_levels, parallelization, total_timesteps
+    )
+
+    # Upsert interpolated values
+    interpolated_depths = [0, -25, -50, -100, -250, -500, -9999]
+    await upsert_interpolated_values(
+        runid, interpolated_depths, parallelization, total_timesteps
     )
 
     # Finalize the run
