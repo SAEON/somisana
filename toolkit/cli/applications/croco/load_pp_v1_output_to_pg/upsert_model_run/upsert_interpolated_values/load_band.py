@@ -49,7 +49,7 @@ async def load(i, depth, runid, async_pool):
 
                 successful = True
                 log(
-                    f"Loaded interpolated band: depth={depth:02} timestep={(i+1):03} runid {runid}. timestep {time_step}"
+                    f"Loaded interpolated band: depth={depth:02} timestep={time_step:03} runid {runid}"
                 )
                 if attempt > 1:
                     log(
