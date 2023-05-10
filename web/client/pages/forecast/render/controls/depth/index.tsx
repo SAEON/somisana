@@ -12,7 +12,7 @@ const marks = [
     label: '500',
   },
   {
-    value: -200,
+    value: -250,
     label: '250',
   },
 
