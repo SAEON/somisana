@@ -3,7 +3,7 @@ import { Linear as Loading } from '../../../components/loading'
 import Div from '../../../components/div'
 import Paper from '@mui/material/Paper'
 import BandDataProvider from './band-data'
-import { ToggleDepth } from './controls/depth'
+import DepthControl from './controls/depth'
 import ToggleTemperature from './controls/toggle-temperature'
 import ToggleSalinity from './controls/toggle-salinity'
 import ToggleCurrents from './controls/toggle-currents'
@@ -14,7 +14,6 @@ import { ToggleConfig } from './controls/color-bar'
 import ColorBar from './controls/color-bar'
 import Map from './map'
 import Stack from '@mui/material/Stack'
-import RightMenu from './right-menu'
 import Timestamp from './controls/timestamp'
 import { ToggleData } from './controls/data'
 import LayerControl from './controls/layers'
@@ -64,7 +63,6 @@ export default ({ modelid = undefined }) => {
                   <InfoControl />
                   <LayerControl />
                   <ToggleData />
-                  <ToggleDepth />
                   <ToggleTemperature />
                   <ToggleSalinity />
                   <ToggleCurrents />
@@ -72,7 +70,16 @@ export default ({ modelid = undefined }) => {
               </Div>
 
               {/* RIGHT MENU */}
-              <RightMenu />
+              <Paper
+                variant="outlined"
+                sx={{
+                  py: 3,
+                  borderRadius: 0,
+                  borderBottom: 'none',
+                }}
+              >
+                <DepthControl />
+              </Paper>
             </Div>
 
             {/* BOTTOM MENU */}
