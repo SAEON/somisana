@@ -471,6 +471,7 @@ jobs:
                   --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --parallelization 32
       - name: Delete old PostgreSQL data
+        continue-on-error: true
         env:
           PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
           PG_PORT: ${{ secrets[steps._PG_PORT_.outputs.uppercase] }}
