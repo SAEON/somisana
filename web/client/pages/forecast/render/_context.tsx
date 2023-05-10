@@ -81,26 +81,8 @@ export default ({ modelid = undefined, children }) => {
     throw error
   }
 
-  /**
-   * Updates to the system often involve
-   * more recent runs having additional run
-   * metadata. Assume that new information in
-   * the most recent run applies to the older
-   * runs
-   */
   const model = data.models.find(({ _id }) => _id == id)
-  const runs = [...(model?.runs || [])].map((r, i) => {
-    r = Object.fromEntries(
-      Object.entries(r).filter(([, value]) => {
-        return Boolean(value)
-      })
-    )
-    const mostRecentRun = model?.runs[0] || {}
-    if (!r.step1_timestamp) {
-      r.step1_timestamp = fixStep1_timestamp(i, mostRecentRun.step1_timestamp)
-    }
-    return { ...mostRecentRun, ...r }
-  })
+  const runs = [...(model?.runs || [])]
   const run = runs[activeRun]
 
   return (
