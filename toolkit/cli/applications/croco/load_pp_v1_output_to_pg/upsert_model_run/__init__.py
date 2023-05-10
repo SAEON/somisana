@@ -22,18 +22,16 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
                 """
                 merge into public.runs t
                 using (
-                select
-                    $1::date run_date, (
                     select
-                        id
-                    from
-                        models
-                    where
-                        name = $2) modelid) s on s.run_date = t.run_date
+                        $1::date run_date,
+                        ( select id from models where name = $2 ) modelid
+                ) s on
+                    s.run_date = t.run_date
                     and s.modelid = t.modelid
-                when not matched then
-                    insert (run_date, modelid)
-                    values (s.run_date, s.modelid);
+                when
+                    not matched then
+                        insert (run_date, modelid)
+                        values (s.run_date, s.modelid);
                 """
             )
             await q1.fetch(run_date, id)
@@ -109,30 +107,30 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
         await conn.fetch(
             f"""
             with _coordinates as (
-            select distinct
-                c.id
-            from
-                public.coordinates c
-            where
-                c.has_value = false
-                and exists (
-                select
-                    1
+                select distinct
+                    c.id
                 from
-                public.values_runid_{runid}
+                    public.coordinates c
                 where
-                    coordinateid = c.id)
+                    c.has_value = false
+                    and exists (
+                        select
+                            1
+                        from
+                        public.values_runid_{runid}
+                        where
+                            coordinateid = c.id
+                    )
             )
-            update
-            public.coordinates c
+            update public.coordinates c
             set
-            has_value = true
+                has_value = true
             where
-            c.id in (
-                select
-                    id
-                from
-                    _coordinates);
+                c.id in (
+                    select
+                        id
+                    from
+                        _coordinates);
             """
         )
         log("Updated coordinate mask")

@@ -30,6 +30,7 @@ asyncpg = "*"
 pydap = "*"
 lxml = "*"
 motuclient = "*"
+pytest = "*"
 
 [dev-packages]
 
