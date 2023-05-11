@@ -26,7 +26,8 @@ jobs:
     steps:
       - name: Set the BRANCH_REF
         id: BRANCH_REF
-        run: echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+        run: |
+          echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
   # Cleanup old runs temp files
   cleanup-old-run-temp-files:

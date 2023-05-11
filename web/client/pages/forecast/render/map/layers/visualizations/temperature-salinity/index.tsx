@@ -47,7 +47,7 @@ const Render = memo(
     const { features } = useMemo(() => {
       const polygons = tric()
         .value(d => d[2][selectedVariable])
-        .thresholds(thresholds)(grid.values)
+        .thresholds(thresholds)(grid.values.filter(([, , v]) => v[selectedVariable]))
 
       const features = polygons.map(({ type, coordinates, value }) => {
         return {
