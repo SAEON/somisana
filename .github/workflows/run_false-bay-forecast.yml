@@ -151,7 +151,6 @@ jobs:
             echo "image_exists=true" >> $GITHUB_OUTPUT
           fi
       - name: Extract metadata (tags, labels) for Docker
-        if: steps.check-image.outputs.image_exists == 'false'
         id: meta
         uses: docker/metadata-action@master
         with:
@@ -159,7 +158,6 @@ jobs:
           tags: |
             type=sha
       - name: Build and push
-        if: steps.check-image.outputs.image_exists == 'false'
         uses: docker/build-push-action@master
         with:
           context: toolkit
