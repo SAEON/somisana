@@ -62,9 +62,14 @@ async def run():
                         modelid = row["modelid"]
                         runid = row["runid"]
                         log(f"Deleting run {runid} (model ID {modelid})")
-                        await conn.execute(f"drop table public.values_runid_{runid};")
                         await conn.execute(
-                            f"delete from public.runs where id = {runid}"
+                            f"drop table if exists public.values_runid_{runid};"
+                        )
+                        await conn.execute(
+                            f"drop table if exists public.interpolated_values_runid_{runid};"
+                        )
+                        await conn.execute(
+                            f"delete from public.runs where id = {runid};"
                         )
 
 
