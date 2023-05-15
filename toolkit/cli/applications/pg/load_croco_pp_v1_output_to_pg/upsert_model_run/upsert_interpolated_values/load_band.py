@@ -26,13 +26,19 @@ async def load(i, depth, runid, async_pool):
                             v.interpolated_temperature::float temperature,
                             v.interpolated_salinity::float salinity,
                             v.interpolated_u::float u,
-                            v.interpolated_v::float v
+                            v.interpolated_v::float v,
+                            st_x (c.pixel) px,
+                            st_y (c.pixel) py
                         from
-                        somisana_interpolate_values(
-                            target_depth => {depth},
-                            runid => {runid},
-                            time_step => {time_step}
-                        ) v
+                            somisana_interpolate_values(
+                                target_depth => {depth},
+                                runid => {runid},
+                                time_step => {time_step}
+                            ) v
+                        inner join public.coordinates c on c.id = v.coordinateid
+                        order by
+                          py desc,
+                          px asc
                     ) s on 
                         s.coordinateid = t.coordinateid
                         and s.time_step = t.time_step
@@ -41,9 +47,9 @@ async def load(i, depth, runid, async_pool):
                     when
                         not matched then
                             insert
-                                (coordinateid, time_step, depth, runid, x, y, temperature, salinity, u, v)
+                                (coordinateid, time_step, depth, runid, x, y, temperature, salinity, u, v, px, py)
                             values
-                                (s.coordinateid, s.time_step, s.depth, s.runid, s.x, s.y, s.temperature, s.salinity, s.u, s.v);
+                                (s.coordinateid, s.time_step, s.depth, s.runid, s.x, s.y, s.temperature, s.salinity, s.u, s.v, s.px, s.py);
                     """
                 )
 

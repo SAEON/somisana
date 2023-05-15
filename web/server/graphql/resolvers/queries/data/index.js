@@ -13,19 +13,16 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
           v.salinity,
           v.u,
           v.v,
-          v.depth,
-          st_x (c.pixel) px,
-          st_y (c.pixel) py
+          v.depth
         from
           public.interpolated_values v
-          right join coordinates c on c.id = v.coordinateid
         where
           runid = $1
           and time_step = $2
           and depth = $3
         order by
-          py desc,
-          px asc;`,
+          v.py desc,
+          v.px asc;`,
       values: [runId, timeStep, depth],
       rowMode: 'array',
     })

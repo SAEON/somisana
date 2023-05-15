@@ -100,7 +100,7 @@ create table if not exists public.values(
 partition by list (runid);
 
 create table if not exists public.interpolated_values(
-  coordinateid int references public.coordinates(id),
+  coordinateid int not null references public.coordinates(id),
   time_step smallint not null,
   depth decimal(7, 2),
   runid smallint not null references public.runs(id),
@@ -110,6 +110,8 @@ create table if not exists public.interpolated_values(
   salinity decimal(6, 4),
   u decimal(5, 4),
   v decimal(5, 4),
+  px float8,
+  py float8,
   primary key (coordinateid, time_step, depth, runid)
 )
 partition by list (runid);
