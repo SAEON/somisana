@@ -482,8 +482,8 @@ jobs:
             -e PG_PASSWORD=$PG_PASSWORD \
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-              croco \
-                load-pp-v1-output-to-pg \
+              pg \
+                load-croco-pp-v1-output-to-pg \
                   --input /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
                   --parallelization 32
       - name: Delete old PostgreSQL data
