@@ -2,11 +2,70 @@ import { useEffect, memo, useContext, useMemo } from 'react'
 import * as d3 from 'd3'
 import { context as mapContext } from '../../../_context'
 import { context as pageContext } from '../../../../_context'
-import * as tricontour_ from 'd3-tricontour'
+import * as tric from 'd3-tricontour'
+import { contours } from 'd3-contour'
 import { useTheme } from '@mui/material/styles'
 import debounce from '../../../../../../../lib/debounce'
+import { bilinearInterpolation } from '../lib/geospatial-fns'
 
-const tric = tricontour_.tricontour
+function marginSquaresContours({
+  thresholds,
+  gridHeight,
+  gridWidth,
+  grid,
+  selectedVariable,
+  scaleMin,
+  scaleMax,
+  color,
+}) {
+  const polygons = contours()
+    .thresholds(thresholds)
+    .size([gridWidth, gridHeight])(grid[selectedVariable])
+    .map(z => {
+      return {
+        ...z,
+        value: z.value < scaleMin ? scaleMin : z.value > scaleMax ? scaleMax : z.value,
+        coordinates: z.coordinates.map(polygon => {
+          return polygon.map(ring =>
+            ring.map(p => bilinearInterpolation(grid, gridHeight, gridWidth, p)).reverse()
+          )
+        }),
+      }
+    })
+
+  const features = polygons.map(({ type, coordinates, value }) => {
+    return {
+      type: 'Feature',
+      properties: { value, color: color(value) },
+      geometry: {
+        type,
+        coordinates,
+      },
+    }
+  })
+
+  return { polygons, features }
+}
+
+function meanderingTrianglesContours({ selectedVariable, thresholds, grid, color }) {
+  const polygons = tric
+    .tricontour()
+    .value(d => d[2][selectedVariable])
+    .thresholds(thresholds)(grid.values.filter(([, , v]) => v[selectedVariable]))
+
+  const features = polygons.map(({ type, coordinates, value }) => {
+    return {
+      type: 'Feature',
+      properties: { value, color: color(value) },
+      geometry: {
+        type,
+        coordinates,
+      },
+    }
+  })
+
+  return { polygons, features }
+}
 
 const drawIsolines = color => [
   'step',
@@ -39,29 +98,38 @@ const Render = memo(
     selectedVariable,
     thresholds,
     grid,
+    gridHeight,
+    gridWidth,
     showIsolines,
   }) => {
     const theme = useTheme()
     const id = 'contour-layer'
 
-    const { features } = useMemo(() => {
-      const polygons = tric()
-        .value(d => d[2][selectedVariable])
-        .thresholds(thresholds)(grid.values.filter(([, , v]) => v[selectedVariable]))
+    /**
+     * Meandering triangles
+     */
+    // const { features } = useMemo(
+    //   () => meanderingTrianglesContours({ selectedVariable, thresholds, grid, color }),
+    //   [selectedVariable, thresholds, grid, color]
+    // )
 
-      const features = polygons.map(({ type, coordinates, value }) => {
-        return {
-          type: 'Feature',
-          properties: { value, color: color(value) },
-          geometry: {
-            type,
-            coordinates,
-          },
-        }
-      })
-
-      return { polygons, features }
-    }, [selectedVariable, thresholds, grid, color])
+    /**
+     * Marching squares
+     */
+    const { features } = useMemo(
+      () =>
+        marginSquaresContours({
+          thresholds,
+          gridHeight,
+          gridWidth,
+          grid,
+          selectedVariable,
+          scaleMin,
+          scaleMax,
+          color,
+        }),
+      [thresholds, gridHeight, gridWidth, grid, selectedVariable, scaleMin, scaleMax, color]
+    )
 
     useEffect(() => {
       if (!scaleMin || !scaleMax) {
@@ -148,6 +216,7 @@ export default ({ data, grid }) => {
     selectedVariable,
     thresholds,
     showIsolines,
+    model: { gridHeight, gridWidth },
   } = useContext(pageContext)
 
   return (
@@ -162,6 +231,8 @@ export default ({ data, grid }) => {
       setTimeStep={setTimeStep}
       animateTimeStep={animateTimeStep}
       selectedVariable={selectedVariable}
+      gridHeight={gridHeight}
+      gridWidth={gridWidth}
       data={data}
       grid={grid}
       showIsolines={showIsolines}

@@ -33,11 +33,27 @@ const Render = memo(({ children, depth, timeStep, runId }) => {
     return points.reduce(
       (a, c, i) => {
         const [coordinateid, lng, lat, temperature, salinity, u, v] = c
-        a.values.push([lng, lat, { temperature, salinity, u, v }])
         a.coordinates[coordinateid] = i
+
+        // For d3-contour
+        a.lng.push(lng)
+        a.lat.push(lat)
+        a.temperature.push(temperature)
+        a.salinity.push(salinity)
+        a.u.push(u)
+        a.v.push(v)
+
+        // For d3-tricontour
+        a.values.push([lng, lat, { temperature, salinity, u, v }])
         return a
       },
       {
+        lng: [],
+        lat: [],
+        temperature: [],
+        salinity: [],
+        u: [],
+        v: [],
         values: [],
         coordinates: {},
       }
