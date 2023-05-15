@@ -36,9 +36,6 @@ async def load(i, depth, runid, async_pool):
                                 time_step => {time_step}
                             ) v
                         inner join public.coordinates c on c.id = v.coordinateid
-                        order by
-                          py desc,
-                          px asc
                     ) s on 
                         s.coordinateid = t.coordinateid
                         and s.time_step = t.time_step
@@ -49,7 +46,18 @@ async def load(i, depth, runid, async_pool):
                             insert
                                 (coordinateid, time_step, depth, runid, x, y, temperature, salinity, u, v, px, py)
                             values
-                                (s.coordinateid, s.time_step, s.depth, s.runid, s.x, s.y, s.temperature, s.salinity, s.u, s.v, s.px, s.py);
+                                (s.coordinateid, s.time_step, s.depth, s.runid, s.x, s.y, s.temperature, s.salinity, s.u, s.v, s.px, s.py)
+                        when matched then
+                            update
+                                set
+                                    x = s.x,
+                                    y = s.y,
+                                    temperature = s.temperature,
+                                    salinity = s.salinity,
+                                    u = s.u,
+                                    v = s.v,
+                                    px = s.px,
+                                    py = s.py;
                     """
                 )
 
