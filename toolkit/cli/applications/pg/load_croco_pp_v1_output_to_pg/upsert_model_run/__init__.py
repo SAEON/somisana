@@ -1,12 +1,12 @@
 from lib.log import log
 from datetime import datetime
-from cli.applications.croco.load_pp_v1_output_to_pg.upsert_model_run.upsert_rasters import (
+from cli.applications.pg.load_croco_pp_v1_output_to_pg.upsert_model_run.upsert_rasters import (
     upsert_rasters,
 )
-from cli.applications.croco.load_pp_v1_output_to_pg.upsert_model_run.upsert_values import (
+from cli.applications.pg.load_croco_pp_v1_output_to_pg.upsert_model_run.upsert_values import (
     upsert_values,
 )
-from cli.applications.croco.load_pp_v1_output_to_pg.upsert_model_run.upsert_interpolated_values import (
+from cli.applications.pg.load_croco_pp_v1_output_to_pg.upsert_model_run.upsert_interpolated_values import (
     upsert_interpolated_values,
 )
 

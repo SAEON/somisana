@@ -1,4 +1,4 @@
-from cli.applications.croco.load_pp_v1_output_to_pg.upsert_model_run.upsert_interpolated_values.load_band import (
+from cli.applications.pg.load_croco_pp_v1_output_to_pg.upsert_model_run.upsert_values.load_band import (
     load,
 )
 from config import PG_DB, PG_PORT, PG_HOST, PG_PASSWORD, PG_USERNAME
@@ -6,19 +6,20 @@ import asyncio
 import asyncpg
 
 
-async def load_worker(queue, async_pool, runid):
+async def load_worker(queue, async_pool, runid, datetimes, total_depth_levels):
     while True:
         item = await queue.get()
         if item is None:
             break
-        depth, i = item
-        await load(i, depth, runid, async_pool)
+        depth_level, i = item
+        await load(i, depth_level, runid, datetimes, total_depth_levels, async_pool)
         queue.task_done()
 
 
-async def upsert_interpolated_values(
-    runid, interpolated_depths, parallelization, total_timesteps
+async def upsert_values(
+    runid, datetimes, total_depth_levels, parallelization, total_timesteps
 ):
+    depth_levels = [*range(int(1), int(total_depth_levels) + 1, 1)]
     async_pool = await asyncpg.create_pool(
         database=PG_DB,
         host=PG_HOST,
@@ -30,13 +31,15 @@ async def upsert_interpolated_values(
     )
     queue = asyncio.Queue()
     worker_tasks = [
-        asyncio.create_task(load_worker(queue, async_pool, runid))
+        asyncio.create_task(
+            load_worker(queue, async_pool, runid, datetimes, total_depth_levels)
+        )
         for _ in range(parallelization)
     ]
 
-    for depth in interpolated_depths:
+    for depth_level in depth_levels:
         for i in range(total_timesteps):
-            await queue.put((depth, i))
+            await queue.put((depth_level, i))
 
     await queue.join()
 

@@ -7,10 +7,10 @@ from config import PG_DB, PG_PORT, PG_HOST, PG_PASSWORD, PG_USERNAME
 from lib.log import log
 from lib.open_files import open_files
 from datetime import datetime
-from cli.applications.croco.load_pp_v1_output_to_pg.upsert_model_info import (
+from cli.applications.pg.load_croco_pp_v1_output_to_pg.upsert_model_info import (
     upsert_model_info,
 )
-from cli.applications.croco.load_pp_v1_output_to_pg.upsert_model_run import (
+from cli.applications.pg.load_croco_pp_v1_output_to_pg.upsert_model_run import (
     upsert_model_run,
 )
 
@@ -94,5 +94,5 @@ async def run(args):
             )
 
 
-def load_pp_v1_output_to_pg(args):
+def load_croco_pp_v1_output_to_pg(args):
     asyncio.run(run(args))

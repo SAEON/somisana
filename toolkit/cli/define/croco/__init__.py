@@ -67,20 +67,4 @@ def build(module_parser):
         default=".output/croco/post-process-v2-output.nc",
     )
 
-    # Load post processing V1 to PostgreSQL
-    croco_load_pp_v1_output_to_pg = croco_parser.add_parser(
-        "load-pp-v1-output-to-pg", help="Load post processing output (v1) to PostgreSQL"
-    )
-    croco_load_pp_v1_output_to_pg.add_argument(
-        "--input",
-        type=str,
-        help="Path to post-processed (v1) NetCDF file",
-        default=".output/croco/post-process-v1-output.nc",
-    )
-    croco_load_pp_v1_output_to_pg.add_argument(
-        "--parallelization",
-        type=int,
-        default=4,
-        help="How many instances of the load query to run in parallel",
-    )
     return croco
