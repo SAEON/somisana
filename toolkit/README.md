@@ -182,11 +182,14 @@ Python dependencies are managed as part of the source code. Some of the librarie
 These are dependencies that should be installed using the OS package manager and don't get bundled with Python libraries
 
 ```sh
-# for both Pyenv and Conda (postgis is required for the `raster2pgsql` application)
+# for both Pyenv and Conda
 sudo apt update
-sudo apt install -y postgis
+sudo apt install -y \
+  asyncpg \
+  postgis
 
-# NOTE - if there are errors try "sudo apt update && sudo apt install -y libpq-dev
+# libpq is a binary file required by the PostgreSQL driver (asyncpg)
+# postgis is required for the `raster2pgsql` application
 ```
 
 ### Conda
