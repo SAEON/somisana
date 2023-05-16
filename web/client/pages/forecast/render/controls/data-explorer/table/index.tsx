@@ -24,7 +24,7 @@ const getComparator = sortColumn => {
   }
 }
 
-export default ({ selectedCoordinates, setSelectedCoordinates, selectedMPAs }) => {
+export default ({ selectedCoordinates, setSelectedCoordinates }) => {
   const { grid, data } = useContext(bandContext)
   const [sortColumns, setSortColumns] = useState([])
   const [rows, setRows] = useState([])
@@ -47,22 +47,6 @@ export default ({ selectedCoordinates, setSelectedCoordinates, selectedMPAs }) =
     { key: 'salinity', name: 'Salinity (‰)' },
     { key: 'u', name: 'U (m/s)' },
     { key: 'v', name: 'V (m/s)' },
-    {
-      key: 'coordinateid',
-      name: ` `,
-      width: 40,
-      formatter: ({ row: { coordinateid } }) => (
-        <Div
-          sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-        >
-          <Div sx={{ display: 'flex', justifyContent: 'center' }}>
-            <IconButton size="small" onClick={() => closeCoordinate(coordinateid)}>
-              <CloseIcon sx={{ fontSize: 12 }} />
-            </IconButton>
-          </Div>
-        </Div>
-      ),
-    },
   ])
 
   useEffect(() => {
@@ -125,34 +109,26 @@ export default ({ selectedCoordinates, setSelectedCoordinates, selectedMPAs }) =
   }, [rows, sortColumns])
 
   return (
-    <Grid container spacing={1}>
-      <Grid item xs={12} md={8}>
-        <Div
-          sx={{
-            height: 35 + 35 * Object.values(selectedCoordinates).filter(v => Boolean(v)).length,
-            maxHeight: 10 * 35,
+    <Div
+      sx={{
+        height: 35 + 35 * Object.values(selectedCoordinates).filter(v => Boolean(v)).length,
+        maxHeight: 10 * 35,
+      }}
+    >
+      <DndProvider backend={HTML5Backend}>
+        <ReactDataGrid
+          columns={draggableColumns}
+          defaultColumnOptions={{
+            sortable: true,
+            resizable: true,
           }}
-        >
-          <DndProvider backend={HTML5Backend}>
-            <ReactDataGrid
-              columns={draggableColumns}
-              defaultColumnOptions={{
-                sortable: true,
-                resizable: true,
-              }}
-              enableVirtualization
-              onRowsChange={setRows}
-              onSortColumnsChange={setSortColumns}
-              sortColumns={sortColumns}
-              rows={sortedRows}
-            />
-          </DndProvider>
-        </Div>
-      </Grid>
-
-      <Grid item xs={12} md={4}>
-        <Div>Show selected MPA information here: {JSON.stringify(selectedMPAs)}</Div>
-      </Grid>
-    </Grid>
+          enableVirtualization
+          onRowsChange={setRows}
+          onSortColumnsChange={setSortColumns}
+          sortColumns={sortColumns}
+          rows={sortedRows}
+        />
+      </DndProvider>
+    </Div>
   )
 }
