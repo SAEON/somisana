@@ -39,6 +39,8 @@ export default () => {
     setThresholds,
     showIsolines,
     setShowIsolines,
+    reverseColors,
+    setReverseColors,
   } = useContext(modelContext)
   const [open, setOpen] = useState(false)
 
@@ -83,7 +85,29 @@ export default () => {
           </FormControl>
           <FormGroup
             sx={{
-              py: 2,
+              pt: 1,
+            }}
+          >
+            <FormControlLabel
+              sx={{
+                display: 'flex',
+                flexDirection: 'row-reverse',
+                justifyContent: 'flex-start',
+                m: 0,
+              }}
+              control={
+                <Switch
+                  sx={{ my: 0, ml: 2 }}
+                  checked={reverseColors}
+                  onChange={() => setReverseColors(b => !b)}
+                />
+              }
+              label="Reverse"
+            />
+          </FormGroup>
+          <FormGroup
+            sx={{
+              pt: 1,
             }}
           >
             <FormControlLabel

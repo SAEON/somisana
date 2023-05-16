@@ -7,10 +7,12 @@ import Canvas from '../../../../../../components/canvas'
 import Tooltip from '@mui/material/Tooltip'
 import { ExpandMore as ChevronDownIcon } from '../../../../../../components/icons'
 
-// https://observablehq.com/@d3/color-schemes
-
-const color = (name, min, max) =>
-  d3.scaleSequential(d3[`interpolate${name}`]).domain(d3.extent([min || 10, max || 25], v => v))
+const color = ({ name, min = 0, max = 0, reverseColors }) => {
+  const interpolator = reverseColors
+    ? t => d3[`interpolate${name}`](1 - t)
+    : d3[`interpolate${name}`]
+  return d3.scaleSequential(interpolator).domain([min, max], v => v)
+}
 
 export const presets = {
   'Sequential (Single-Hue)': ['Blues', 'Greens', 'Greys', 'Oranges', 'Purples', 'Reds'],
@@ -41,11 +43,16 @@ export const presets = {
   Cyclical: ['Rainbow', 'Sinebow'],
 }
 
-const Swatch = ({ colorScheme: name, min, max }) => {
+const Swatch = ({ colorScheme: name, min, max, reverseColors }) => {
   const N = 20
   const step = (max - min) / N
   const ref = useRef(null)
-  const colorFn = useCallback(color(name, min, max), [])
+  const colorFn = useCallback(color({ name, min, max, reverseColors }), [
+    name,
+    min,
+    max,
+    reverseColors,
+  ])
 
   useEffect(() => {
     const canvas = ref.current
@@ -65,7 +72,7 @@ const Swatch = ({ colorScheme: name, min, max }) => {
   )
 }
 
-export const SelectControl = ({ colorScheme, setColorScheme, min, max }) => {
+export const SelectControl = ({ colorScheme, setColorScheme, min, max, reverseColors }) => {
   return (
     <Select
       size="small"
@@ -85,7 +92,7 @@ export const SelectControl = ({ colorScheme, setColorScheme, min, max }) => {
             value={colorScheme}
             sx={{ backgroundColor: 'transparent', height: theme => theme.spacing(4) }}
           >
-            <Swatch colorScheme={colorScheme} min={min} max={max} />
+            <Swatch colorScheme={colorScheme} min={min} max={max} reverseColors={reverseColors} />
           </MenuItem>
         )
       })}
@@ -96,7 +103,7 @@ export const SelectControl = ({ colorScheme, setColorScheme, min, max }) => {
           value={colorScheme}
           sx={{ backgroundColor: 'transparent', height: theme => theme.spacing(4) }}
         >
-          <Swatch colorScheme={colorScheme} min={min} max={max} />
+          <Swatch colorScheme={colorScheme} min={min} max={max} reverseColors={reverseColors} />
         </MenuItem>
       ))}
       <ListSubheader>Diverging</ListSubheader>
@@ -106,7 +113,7 @@ export const SelectControl = ({ colorScheme, setColorScheme, min, max }) => {
           value={colorScheme}
           sx={{ backgroundColor: 'transparent', height: theme => theme.spacing(4) }}
         >
-          <Swatch colorScheme={colorScheme} min={min} max={max} />
+          <Swatch colorScheme={colorScheme} min={min} max={max} reverseColors={reverseColors} />
         </MenuItem>
       ))}
       <ListSubheader>Cyclical</ListSubheader>
@@ -116,7 +123,7 @@ export const SelectControl = ({ colorScheme, setColorScheme, min, max }) => {
           value={colorScheme}
           sx={{ backgroundColor: 'transparent', height: theme => theme.spacing(4) }}
         >
-          <Swatch colorScheme={colorScheme} min={min} max={max} />
+          <Swatch colorScheme={colorScheme} min={min} max={max} reverseColors={reverseColors} />
         </MenuItem>
       ))}
     </Select>

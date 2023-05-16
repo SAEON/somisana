@@ -2,48 +2,38 @@ import { createContext, useState, useCallback, useEffect } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Linear as Loading } from '../../../components/loading'
 import { color as colorFn } from './controls/color-bar/config'
-import format from 'date-fns/format'
-import add from 'date-fns/add'
-
-const fixStep1_timestamp = (i, step1_timestamp) => {
-  const step1Timestamp = new Date(step1_timestamp)
-  const dt = add(step1Timestamp, {
-    days: -i,
-  })
-  return `${format(dt, 'yyyy-MM-dd')}T${format(dt, 'HH:mm:ss')}`
-}
 
 export const context = createContext({})
 
 export default ({ modelid = undefined, children }) => {
   const id = modelid || new URL(window.location.href).searchParams.get('id')
-  const [timeStep, setTimeStep] = useState(120)
+  const [activeRightPane, setActiveRightPane] = useState(false)
   const [activeRun, setActiveRun] = useState(0)
+  const [animateTimeStep, setAnimateTimeStep] = useState(false)
+  const [colorScheme, setColorScheme] = useState('Magma')
   const [depth, setDepth] = useState(0)
-  const [showCoordinates, setShowCoordinates] = useState(true)
-  const [showMPAs, setShowMPAs] = useState(true)
+  const [reverseColors, setReverseColors] = useState(false)
+  const [scaleMax, setScaleMax] = useState(0)
+  const [scaleMin, setScaleMin] = useState(0)
   const [selectedCoordinates, setSelectedCoordinates] = useState({})
   const [selectedMPAs, setSelectedMPAs] = useState({})
-  const [thresholds, setThresholds] = useState(12)
-  const [animateTimeStep, setAnimateTimeStep] = useState(false)
-  const [scaleMin, setScaleMin] = useState(false)
-  const [scaleMax, setScaleMax] = useState(false)
-  const [activeRightPane, setActiveRightPane] = useState(false)
   const [selectedVariable, setSelectedVariable] = useState('temperature')
+  const [showCoordinates, setShowCoordinates] = useState(true)
   const [showCurrents, setShowCurrents] = useState(false)
-  const [colorScheme, setColorScheme] = useState('Magma')
-  const [showIsolines, setShowIsolines] = useState(true)
   const [showData, setShowData] = useState(false)
+  const [showIsolines, setShowIsolines] = useState(true)
+  const [showMPAs, setShowMPAs] = useState(true)
+  const [thresholds, setThresholds] = useState(12)
+  const [timeStep, setTimeStep] = useState(120)
 
-  const color = useCallback(colorFn(colorScheme, scaleMin, scaleMax), [
-    scaleMin,
-    scaleMax,
-    colorScheme,
-  ])
+  const color = useCallback(
+    colorFn({ name: colorScheme, min: scaleMin, max: scaleMax, reverseColors }),
+    [scaleMin, scaleMax, colorScheme, reverseColors]
+  )
 
   useEffect(() => {
-    setScaleMin(false)
-    setScaleMax(false)
+    setScaleMin(0)
+    setScaleMax(0)
   }, [selectedVariable])
 
   const { loading, error, data } = useQuery(
@@ -88,44 +78,46 @@ export default ({ modelid = undefined, children }) => {
   return (
     <context.Provider
       value={{
-        selectedCoordinates,
-        setSelectedCoordinates,
-        selectedMPAs,
-        setSelectedMPAs,
-        showCoordinates,
-        setShowCoordinates,
-        showMPAs,
-        setShowMPAs,
-        depth,
-        setDepth,
-        timeStep,
-        setTimeStep,
-        animateTimeStep,
-        setAnimateTimeStep,
-        runs,
-        run,
-        activeRun,
-        setActiveRun,
-        thresholds,
-        setThresholds,
-        model,
-        scaleMin,
-        scaleMax,
-        color,
-        setScaleMin,
         activeRightPane,
-        setActiveRightPane,
-        setScaleMax,
-        selectedVariable,
-        setSelectedVariable,
-        showCurrents,
-        setShowCurrents,
+        activeRun,
+        animateTimeStep,
+        color,
         colorScheme,
+        depth,
+        model,
+        reverseColors,
+        run,
+        runs,
+        scaleMax,
+        scaleMin,
+        selectedCoordinates,
+        selectedMPAs,
+        selectedVariable,
+        setActiveRightPane,
+        setActiveRun,
+        setAnimateTimeStep,
         setColorScheme,
-        showIsolines,
-        setShowIsolines,
-        showData,
+        setDepth,
+        setReverseColors,
+        setScaleMax,
+        setScaleMin,
+        setSelectedCoordinates,
+        setSelectedMPAs,
+        setSelectedVariable,
+        setShowCoordinates,
+        setShowCurrents,
         setShowData,
+        setShowIsolines,
+        setShowMPAs,
+        setThresholds,
+        setTimeStep,
+        showCoordinates,
+        showCurrents,
+        showData,
+        showIsolines,
+        showMPAs,
+        thresholds,
+        timeStep,
       }}
     >
       {children}
