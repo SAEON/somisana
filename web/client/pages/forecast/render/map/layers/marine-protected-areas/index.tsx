@@ -82,7 +82,7 @@ const Render = ({ map, selectedMPAs, setSelectedMPAs, showMPAs, TILESERV_BASE_UR
             ['==', ['feature-state', 'clicked'], true],
           ],
           theme.palette.primary.main,
-          'transparent',
+          theme.palette.common.white,
         ],
         'fill-opacity': 0.5,
       },

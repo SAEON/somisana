@@ -69,7 +69,10 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
                 f"create table if not exists public.interpolated_values_runid_{runid} partition of public.interpolated_values for values in ({runid});"
             )
             await conn.fetch(
-                f"create index if not exists interpolated_values_cols_{runid} on public.interpolated_values_runid_{runid} using btree(time_step asc, depth desc);"
+                f"create index if not exists interpolated_values_cols_band_{runid} on public.interpolated_values_runid_{runid} using btree(time_step asc, depth desc);"
+            )
+            await conn.fetch(
+                f"create index if not exists interpolated_values_cols_pixels_{runid} on public.interpolated_values_runid_{runid} using btree(py desc, px asc);"
             )
             await conn.fetch(
                 f"create index if not exists interpolated_values_coordinateid_{runid} on public.interpolated_values_runid_{runid} using btree(coordinateid asc);"
