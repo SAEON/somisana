@@ -2,8 +2,10 @@ import Paper from '@mui/material/Paper'
 import { useContext } from 'react'
 import Div from '../../../../../components/div'
 import { context as dataContext } from '../../_context'
-import Collapse from '@mui/material/Collapse'
+import Draggable from 'react-draggable'
+import Fade from '@mui/material/Fade'
 import Table from './table'
+import Span from '../../../../../components/span'
 
 export default () => {
   const { selectedCoordinates, setSelectedCoordinates } = useContext(dataContext)
