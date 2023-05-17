@@ -24,7 +24,7 @@ const getComparator = sortColumn => {
   }
 }
 
-export default ({ selectedCoordinates, setSelectedCoordinates, selectedMPAs }) => {
+export default ({ selectedCoordinates, setSelectedCoordinates }) => {
   const { grid, data } = useContext(bandContext)
   const [sortColumns, setSortColumns] = useState([])
   const [rows, setRows] = useState([])
@@ -126,7 +126,7 @@ export default ({ selectedCoordinates, setSelectedCoordinates, selectedMPAs }) =
 
   return (
     <Grid container spacing={1}>
-      <Grid item xs={12} md={8}>
+      <Grid item xs={12} md={12}>
         <Div
           sx={{
             height: 35 + 35 * Object.values(selectedCoordinates).filter(v => Boolean(v)).length,
@@ -148,10 +148,6 @@ export default ({ selectedCoordinates, setSelectedCoordinates, selectedMPAs }) =
             />
           </DndProvider>
         </Div>
-      </Grid>
-
-      <Grid item xs={12} md={4}>
-        <Div>Show selected MPA information here: {JSON.stringify(selectedMPAs)}</Div>
       </Grid>
     </Grid>
   )
