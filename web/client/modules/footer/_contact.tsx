@@ -2,6 +2,11 @@ import { useContext } from 'react'
 import { context as configContext } from '../../modules/config'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
+import { styled } from '@mui/material/styles'
+
+const T = styled(Typography)(({ theme }) => ({
+  color: theme.palette.common.white,
+}))
 
 export default () => {
   const { TECHNICAL_CONTACT } = useContext(configContext)
@@ -12,12 +17,12 @@ export default () => {
         <Typography variant="h5">Contact us</Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="body1">Model enquiries</Typography>
-        <Typography variant="body2">{TECHNICAL_CONTACT.replace('@', ' [ at ] ')}</Typography>
+        <T variant="body1">Model enquiries</T>
+        <T variant="body2">{TECHNICAL_CONTACT.replace('@', ' [ at ] ')}</T>
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="body1">Bugs / technical support</Typography>
-        <Typography variant="body2">https://github.com/SAEON/somisana/issues</Typography>
+        <T variant="body1">Bugs / technical support</T>
+        <T variant="body2">https://github.com/SAEON/somisana/issues</T>
       </Grid>
     </Grid>
   )

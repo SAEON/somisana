@@ -36,9 +36,7 @@ export default ({ routes }) => {
             alignItems: 'flex-start',
           }}
         >
-          <Container
-            sx={{ paddingTop: theme => theme.spacing(4), paddingBottom: theme => theme.spacing(4) }}
-          >
+          <Container sx={{ padding: theme => `${theme.spacing(4)} 0` }}>
             <Grid container spacing={4}>
               <Grid container item xs={12} sm={3}>
                 <PageRoutes routes={_routes} />
@@ -82,8 +80,12 @@ export default ({ routes }) => {
           variant="dense"
           sx={theme => ({ backgroundColor: theme.palette.grey[900], minHeight: theme.spacing(1) })}
         >
-          <Container style={{ display: 'flex', justifyContent: 'center' }}>
-            <Typography variant="overline" variantMapping={{ overline: 'p' }}>
+          <Container sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Typography
+              sx={{ color: theme => theme.palette.common.white }}
+              variant="overline"
+              variantMapping={{ overline: 'p' }}
+            >
               © SAEON 2020 - {new Date().getFullYear()}
             </Typography>
           </Container>

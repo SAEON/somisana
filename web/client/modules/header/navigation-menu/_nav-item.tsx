@@ -20,14 +20,14 @@ export default ({ onClick, label, to, Icon, href }) => {
     >
       <ListItemIcon
         sx={{
-          color: theme => (match ? theme.palette.primary.main : theme.palette.common.black),
+          color: theme => (match ? theme.palette.primary.main : 'inherit'),
         }}
       >
         {<Icon />}
       </ListItemIcon>
       <ListItemText
         sx={{
-          color: theme => (match ? theme.palette.primary.main : theme.palette.common.black),
+          color: theme => (match ? theme.palette.primary.main : 'inherit'),
         }}
         primary={label}
       />

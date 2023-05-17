@@ -46,8 +46,9 @@ const Render = ({ showMPAs, setShowMPAs, showCoordinates, setShowCoordinates }) 
           ref={ref}
           sx={{
             right: 0,
-            paddingRight: 6,
+            paddingRight: theme => theme.spacing(6),
             position: 'absolute',
+            zIndex: 2,
           }}
         >
           <Paper
@@ -66,7 +67,7 @@ const Render = ({ showMPAs, setShowMPAs, showCoordinates, setShowCoordinates }) 
                 title={`${showMPAs ? 'Hide' : 'Show'} MPAs`}
                 control={
                   <Switch
-                    sx={{ marginLeft: 2 }}
+                    sx={{ marginLeft: theme => theme.spacing(2) }}
                     size="small"
                     color={showMPAs ? 'primary' : 'default'}
                     onChange={() => setShowMPAs(b => !b)}
