@@ -23,7 +23,11 @@ export default () => {
         <Button
           onClick={() => setOpen(!open)}
           variant="text"
-          sx={{ display: 'flex', flexWrap: 'wrap', '& > img': { marginRight: 1, flexShrink: 0 } }}
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            '& > img': { marginRight: theme => theme.spacing(1), flexShrink: 0 },
+          }}
         >
           <img
             loading="lazy"

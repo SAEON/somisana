@@ -4,14 +4,16 @@ import { ThemeProvider } from '@mui/material/styles'
 
 export default function Theme({ themes, ...props }) {
   const { colorScheme, updateSetting } = useContext(siteSettingsContext)
+
+  // Client-side only
   useEffect(() => {
-    const defaultSystemTheme =
-      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light'
-    console.log(defaultSystemTheme, colorScheme)
     if (!colorScheme) {
-      updateSetting({ colorScheme: defaultSystemTheme })
+      updateSetting({
+        colorScheme:
+          window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light',
+      })
     }
   }, [])
 
