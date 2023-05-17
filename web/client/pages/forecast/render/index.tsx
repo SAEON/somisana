@@ -44,9 +44,6 @@ export default ({ modelid = undefined }) => {
                 {/* FLOATING TIMESTAMP */}
                 <Timestamp />
 
-                {/* FLOATING Data Table */}
-                <DataExplorer />
-
                 {/* COLOR BAR */}
                 <ColorBar />
 
@@ -94,6 +91,7 @@ export default ({ modelid = undefined }) => {
               variant="outlined"
             >
               <TimeControl />
+              <DataExplorer />
             </Paper>
           </Div>
         </BandDataProvider>
