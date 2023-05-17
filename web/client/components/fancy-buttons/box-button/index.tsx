@@ -98,9 +98,9 @@ const FancyButton = ({
             color="inherit"
             sx={{
               position: 'relative',
-              p: 4,
+              padding: 4,
               pt: 2,
-              pb: theme => `calc(${theme.spacing(1)} + 6px)`,
+              paddingBottom: theme => `calc(${theme.spacing(1)} + 6px)`,
             }}
           >
             {title}

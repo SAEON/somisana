@@ -53,8 +53,8 @@ export default ({ modelid = undefined }) => {
                     position: 'absolute',
                     zIndex: 1,
                     right: 0,
-                    mt: theme => theme.spacing(2),
-                    mr: theme => theme.spacing(2),
+                    marginTop: theme => theme.spacing(2),
+                    marginRight: theme => theme.spacing(2),
                   }}
                   direction="column"
                   spacing={1}
@@ -73,7 +73,7 @@ export default ({ modelid = undefined }) => {
               <Paper
                 variant="outlined"
                 sx={{
-                  py: 3,
+                  padding: theme => `${theme.spacing(3)} 0`,
                   borderRadius: 0,
                   borderBottom: 'none',
                 }}
@@ -86,7 +86,7 @@ export default ({ modelid = undefined }) => {
             <Paper
               sx={{
                 borderRadius: 0,
-                px: theme => theme.spacing(1),
+                padding: theme => `0 ${theme.spacing(1)}`,
               }}
               variant="outlined"
             >

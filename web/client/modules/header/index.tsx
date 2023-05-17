@@ -21,12 +21,21 @@ const Header = ({ children, routes = [], ...props }) => {
           position="fixed"
           color="inherit"
         >
-          <Toolbar disableGutters sx={{ px: theme => theme.spacing(1) }} variant="dense" {...props}>
+          <Toolbar
+            disableGutters
+            sx={{ padding: theme => `0 ${theme.spacing(1)}` }}
+            variant="dense"
+            {...props}
+          >
             <NavigationMenu routes={routes} />
-            <Divider sx={{ mx: theme => theme.spacing(1) }} flexItem orientation="vertical" />
+            <Divider
+              sx={{ margin: theme => `0 ${theme.spacing(1)}` }}
+              flexItem
+              orientation="vertical"
+            />
             <Breadcrumbs routes={routes} />
 
-            <Div sx={{ ml: 'auto' }}>{children}</Div>
+            <Div sx={{ marginLeft: 'auto' }}>{children}</Div>
           </Toolbar>
         </AppBar>
       </ElevationOnScroll>

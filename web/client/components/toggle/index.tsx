@@ -8,7 +8,7 @@ const Toggle = forwardRef(({ labelProps, switchProps, ...props }, ref) => (
   <FormControl fullWidth margin="dense" ref={ref} {...props}>
     <FormControlLabel
       sx={{
-        mr: 0,
+        marginRight: 0,
         justifyContent: 'space-between',
       }}
       control={<Switch {...switchProps} />}

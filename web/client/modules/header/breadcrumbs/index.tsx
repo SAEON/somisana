@@ -50,15 +50,15 @@ export default ({ contentBase = '/', routes }) => {
                 display: 'flex',
                 alignItems: 'center',
                 '& .MuiSvgIcon-root': {
-                  mt: '0 !important',
-                  ml: '0 !important',
-                  mb: '0 !important',
+                  marginTop: '0 !important',
+                  marginLeft: '0 !important',
+                  marginBottom: '0 !important',
                 },
               }}
             >
               {Icon && (
                 <MuiIcon
-                  sx={{ mr: theme => theme.spacing(0.5), width: '0.8em' }}
+                  sx={{ marginRight: theme => theme.spacing(0.5), width: '0.8em' }}
                   component={Icon}
                 />
               )}
@@ -97,7 +97,7 @@ export default ({ contentBase = '/', routes }) => {
             >
               {Icon && (
                 <MuiIcon
-                  sx={{ mr: theme => theme.spacing(0.5), width: '0.8em' }}
+                  sx={{ marginRight: theme => theme.spacing(0.5), width: '0.8em' }}
                   component={Icon}
                 />
               )}

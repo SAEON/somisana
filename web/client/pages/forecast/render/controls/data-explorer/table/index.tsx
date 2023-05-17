@@ -9,7 +9,6 @@ import { DraggableHeaderRenderer } from '../../../../../../components/table'
 import Div from '../../../../../../components/div'
 import IconButton from '@mui/material/IconButton'
 import { Close as CloseIcon } from '../../../../../../components/icons'
-import Grid from '@mui/material/Grid'
 
 const getComparator = sortColumn => {
   switch (sortColumn) {
@@ -125,30 +124,26 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
   }, [rows, sortColumns])
 
   return (
-    <Grid container spacing={1}>
-      <Grid item xs={12} md={12}>
-        <Div
-          sx={{
-            height: 35 + 35 * Object.values(selectedCoordinates).filter(v => Boolean(v)).length,
-            maxHeight: 10 * 35,
+    <Div
+      sx={{
+        height: 35 + 35 * Object.values(selectedCoordinates).filter(v => Boolean(v)).length,
+        maxHeight: 10 * 35,
+      }}
+    >
+      <DndProvider backend={HTML5Backend}>
+        <ReactDataGrid
+          columns={draggableColumns}
+          defaultColumnOptions={{
+            sortable: true,
+            resizable: true,
           }}
-        >
-          <DndProvider backend={HTML5Backend}>
-            <ReactDataGrid
-              columns={draggableColumns}
-              defaultColumnOptions={{
-                sortable: true,
-                resizable: true,
-              }}
-              enableVirtualization
-              onRowsChange={setRows}
-              onSortColumnsChange={setSortColumns}
-              sortColumns={sortColumns}
-              rows={sortedRows}
-            />
-          </DndProvider>
-        </Div>
-      </Grid>
-    </Grid>
+          enableVirtualization
+          onRowsChange={setRows}
+          onSortColumnsChange={setSortColumns}
+          sortColumns={sortColumns}
+          rows={sortedRows}
+        />
+      </DndProvider>
+    </Div>
   )
 }

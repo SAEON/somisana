@@ -39,8 +39,7 @@ export default () => {
             top: theme => theme.spacing(11),
             cursor: 'move',
             boxShadow: theme => theme.shadows[3],
-            px: 2,
-            py: 1,
+            padding: theme => `${theme.spacing(1)} ${theme.spacing(2)}`,
             textAlign: 'center',
             display: 'flex',
             alignItems: 'center',
@@ -54,7 +53,11 @@ export default () => {
           <Typography variant="overline">
             <B>Run: {format(runDate, 'dd MMM yyyy')}</B>
           </Typography>
-          <Divider sx={{ mx: 1 }} flexItem orientation="vertical" />
+          <Divider
+            sx={{ margin: theme => `0 ${theme.spacing(1)}` }}
+            flexItem
+            orientation="vertical"
+          />
           <Typography variant="overline">
             <I>
               Forecast: {run?.step1_timestamp ? format(ts, 'MMM dd HH:mm') : 'Missing timestamp'}

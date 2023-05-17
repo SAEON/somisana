@@ -93,11 +93,11 @@ export default () => {
                 display: 'flex',
                 flexDirection: 'row-reverse',
                 justifyContent: 'flex-start',
-                m: 0,
+                margin: 0,
               }}
               control={
                 <Switch
-                  sx={{ my: 0, ml: 2 }}
+                  sx={{ margin: theme => `0 0 0 ${theme.spacing(2)}` }}
                   checked={reverseColors}
                   onChange={() => setReverseColors(b => !b)}
                 />
@@ -115,11 +115,11 @@ export default () => {
                 display: 'flex',
                 flexDirection: 'row-reverse',
                 justifyContent: 'flex-start',
-                m: 0,
+                margin: 0,
               }}
               control={
                 <Switch
-                  sx={{ ml: 2 }}
+                  sx={{ marginLeft: 2 }}
                   checked={showIsolines}
                   onChange={() => setShowIsolines(b => !b)}
                 />

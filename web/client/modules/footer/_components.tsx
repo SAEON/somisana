@@ -17,7 +17,7 @@ export const Link = ({ label, Icon, href, to }) => {
     >
       <MuiIcon
         sx={{
-          mr: theme => theme.spacing(1),
+          marginRight: theme => theme.spacing(1),
         }}
         component={Icon}
         fontSize="small"

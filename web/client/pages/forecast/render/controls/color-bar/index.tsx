@@ -51,9 +51,8 @@ const Render = memo(
     return (
       <Stack
         sx={{
-          p: theme => theme.spacing(1.5),
-          my: theme => theme.spacing(2),
-          ml: theme => theme.spacing(2),
+          padding: theme => theme.spacing(1.5),
+          margin: theme => `${theme.spacing(2)} 0 0 ${theme.spacing(2)}`,
           backgroundColor: theme => alpha(theme.palette.common.black, 0.3),
           borderRadius: theme => `${theme.shape.borderRadius}px`,
           boxShadow: theme => theme.shadows[1],

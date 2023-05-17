@@ -11,13 +11,13 @@ import About from './about'
 import HomeProvider from './_context'
 
 const Container = props => (
-  <Container_ sx={{ py: theme => theme.spacing(8), position: 'relative' }} {...props} />
+  <Container_ sx={{ padding: theme => `${theme.spacing(8)} 0`, position: 'relative' }} {...props} />
 )
 
 const Bg = ({ sx = {}, ...props }) => (
   <Div
     sx={{
-      pb: theme => theme.spacing(6),
+      paddingBottom: theme => theme.spacing(6),
       ...sx,
     }}
     {...props}
@@ -29,8 +29,8 @@ const Heading = ({ color, ...props }) => (
     variant="h2"
     sx={{
       textAlign: 'center',
-      mt: theme => theme.spacing(3),
-      mb: theme => theme.spacing(6),
+      marginTop: theme => theme.spacing(3),
+      marginBottom: theme => theme.spacing(6),
       color: theme => alpha(theme.palette.common[color || 'white'], 0.9),
     }}
     {...props}

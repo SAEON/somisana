@@ -21,7 +21,7 @@ const SiteSettingsPanel = () => {
       {/* TOGGLE DRAWER */}
       <MuiIcon
         sx={{
-          mr: theme => theme.spacing(1),
+          marginRight: theme => theme.spacing(1),
         }}
         component={Cog}
         fontSize="small"

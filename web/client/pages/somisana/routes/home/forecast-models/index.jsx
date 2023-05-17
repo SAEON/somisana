@@ -23,7 +23,12 @@ export default () => {
   const models = data?.models || []
 
   return (
-    <Grid justifyContent="center" container spacing={6} sx={{ mt: theme => theme.spacing(1) }}>
+    <Grid
+      justifyContent="center"
+      container
+      spacing={6}
+      sx={{ marginTop: theme => theme.spacing(1) }}
+    >
       {models.map(({ _id, title, description, creator, creatorContactEmail }) => {
         return (
           <GridItem md={6} key={_id}>

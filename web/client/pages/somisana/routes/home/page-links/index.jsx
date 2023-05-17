@@ -35,7 +35,12 @@ const Content = props => (
 
 export default () => {
   return (
-    <Grid justifyContent="center" container spacing={6} sx={{ mt: theme => theme.spacing(1) }}>
+    <Grid
+      justifyContent="center"
+      container
+      spacing={6}
+      sx={{ marginTop: theme => theme.spacing(1) }}
+    >
       <GridItem>
         <Title>Digital Earth</Title>
         <Icon

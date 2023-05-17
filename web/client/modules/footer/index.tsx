@@ -63,8 +63,7 @@ export default ({ routes }) => {
             sx={{
               placeSelf: 'end',
               fontSize: '0.75rem',
-              mr: 1,
-              mb: 1,
+              margin: theme => `0 ${theme.spacing(1)} ${theme.spacing(1)} 0`,
               color: theme => theme.palette.common.white,
             }}
             variantMapping={{ overline: 'p' }}

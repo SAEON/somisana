@@ -16,9 +16,9 @@ const F = styled(({ control, title, ...props }) => (
   <FormGroup {...props}>
     <FormControlLabel
       labelPlacement="start"
-      sx={{ m: 0 }}
+      sx={{ margin: 0 }}
       control={control}
-      label={<Typography sx={{ whiteSpace: 'nowrap', mr: 'auto' }}>{title}</Typography>}
+      label={<Typography sx={{ whiteSpace: 'nowrap', marginRight: 'auto' }}>{title}</Typography>}
     />
   </FormGroup>
 ))({})
@@ -46,7 +46,7 @@ const Render = ({ showMPAs, setShowMPAs, showCoordinates, setShowCoordinates }) 
           ref={ref}
           sx={{
             right: 0,
-            pr: 6,
+            paddingRight: 6,
             position: 'absolute',
           }}
         >
@@ -54,8 +54,7 @@ const Render = ({ showMPAs, setShowMPAs, showCoordinates, setShowCoordinates }) 
             sx={{
               position: 'relative',
               boxShadow: theme => theme.shadows[3],
-              px: 1,
-              py: 1,
+              padding: theme => theme.spacing(1),
               textAlign: 'center',
               display: 'flex',
               alignItems: 'center',
@@ -67,7 +66,7 @@ const Render = ({ showMPAs, setShowMPAs, showCoordinates, setShowCoordinates }) 
                 title={`${showMPAs ? 'Hide' : 'Show'} MPAs`}
                 control={
                   <Switch
-                    sx={{ ml: 2 }}
+                    sx={{ marginLeft: 2 }}
                     size="small"
                     color={showMPAs ? 'primary' : 'default'}
                     onChange={() => setShowMPAs(b => !b)}
@@ -80,7 +79,7 @@ const Render = ({ showMPAs, setShowMPAs, showCoordinates, setShowCoordinates }) 
                 title={`${showCoordinates ? 'Hide' : 'Show'} co-ordinates`}
                 control={
                   <Switch
-                    sx={{ ml: 2 }}
+                    sx={{ marginLeft: 2 }}
                     size="small"
                     color={showCoordinates ? 'primary' : 'default'}
                     onChange={() => setShowCoordinates(b => !b)}

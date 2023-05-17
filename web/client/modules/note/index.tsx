@@ -7,7 +7,6 @@ import useFetch from '../../hooks/use-fetch'
 import Paper from '@mui/material/Paper'
 import Container from '@mui/material/Container'
 import Markdown from 'react-markdown'
-import { alpha } from '@mui/material/styles'
 import Fade from '@mui/material/Fade'
 
 const Render = memo(
@@ -15,12 +14,12 @@ const Render = memo(
     return (
       <Fade in>
         <Div sx={{ flex: 1 }}>
-          <Container sx={{ margin: 'auto', my: 2 }}>
+          <Container sx={{ margin: theme => `${theme.spacing(2)} auto` }}>
             <Paper
               variant="outlined"
               sx={{
-                p: 4,
-                backgroundColor: theme => alpha(theme.palette.common.white, 1),
+                padding: 4,
+                backgroundColor: theme => theme.palette.common.white,
               }}
             >
               <Markdown

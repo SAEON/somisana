@@ -129,7 +129,7 @@ export default () => {
                 setTimeStep(nextTimeStep)
               }
             }}
-            sx={{ mr: theme => theme.spacing(2) }}
+            sx={{ marginRight: theme => theme.spacing(2) }}
             size="small"
           >
             <SkipForward />

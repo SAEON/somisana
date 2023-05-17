@@ -14,7 +14,14 @@ export default () => {
         in={Boolean(Object.values({ ...selectedCoordinates }).filter(v => Boolean(v)).length)}
         orientation="vertical"
       >
-        <Paper variant="outlined" sx={{ borderRadius: 0, mb: 1, overflowY: 'scroll' }}>
+        <Paper
+          variant="outlined"
+          sx={{
+            borderRadius: 0,
+            margin: theme => `${theme.spacing(1)} 0`,
+            overflowY: 'scroll',
+          }}
+        >
           <Table
             selectedCoordinates={selectedCoordinates}
             setSelectedCoordinates={setSelectedCoordinates}

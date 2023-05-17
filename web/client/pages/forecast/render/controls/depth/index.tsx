@@ -43,8 +43,8 @@ export default () => {
   return (
     <Slider
       sx={{
-        ml: 0.5,
-        mr: 4,
+        marginLeft: 0.5,
+        marginRight: 4,
         '& .MuiSlider-track': {
           height: '9% !important',
           color: theme => theme.palette.common.black,

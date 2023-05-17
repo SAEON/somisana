@@ -32,7 +32,7 @@ const SelectLocale = ({ updateSetting, language, LANGUAGES }) => {
       <Loading
         sx={theme => ({
           width: '100%',
-          mt: theme.spacing(2),
+          marginTop: theme.spacing(2),
           [theme.breakpoints.up('sm')]: {
             display: 'block',
             width: 400,
@@ -56,7 +56,7 @@ const SelectLocale = ({ updateSetting, language, LANGUAGES }) => {
         onChange={(e, option) => updateSetting({ language: option.language })}
         options={data.locales}
         renderOption={(props, option) => (
-          <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+          <Box component="li" sx={{ '& > img': { marginRight: 2, flexShrink: 0 } }} {...props}>
             <img
               loading="lazy"
               width="20"
@@ -96,7 +96,7 @@ const Locales = memo(
         <Loading
           sx={{
             width: '100%',
-            mt: theme => theme.spacing(2),
+            marginTop: theme => theme.spacing(2),
           }}
         />
       )
