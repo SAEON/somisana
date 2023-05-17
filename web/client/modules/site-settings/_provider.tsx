@@ -20,7 +20,7 @@ interface SiteSettings {
 const DEFAULT_SITE_SETTINGS: SiteSettings = {
   accepted: false,
   disableGoogleAnalytics: true,
-  colorScheme: 'light',
+  colorScheme: undefined,
 }
 
 export const context = createContext(DEFAULT_SITE_SETTINGS)
@@ -30,7 +30,7 @@ export const Provider = ({ sessionSettings, acceptLanguage, cookieKey, ...props 
     accepted = false,
     disableGoogleAnalytics = true,
     language = acceptLanguage,
-    colorScheme = 'light',
+    colorScheme = undefined,
   } = sessionSettings
 
   /**

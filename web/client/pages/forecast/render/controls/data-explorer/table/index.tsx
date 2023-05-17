@@ -1,6 +1,7 @@
 import { useContext, useState, useMemo, useEffect, useCallback } from 'react'
 import '../../../../../../../node_modules/react-data-grid/lib/styles.css'
 import { context as bandContext } from '../../../band-data/_context'
+import { context as siteSettingsContext } from '../../../../../../modules/site-settings'
 import ReactDataGrid from 'react-data-grid'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { DndProvider } from 'react-dnd'
@@ -25,6 +26,7 @@ const getComparator = sortColumn => {
 
 export default ({ selectedCoordinates, setSelectedCoordinates }) => {
   const { grid, data } = useContext(bandContext)
+  const { colorScheme } = useContext(siteSettingsContext)
   const [sortColumns, setSortColumns] = useState([])
   const [rows, setRows] = useState([])
 
@@ -112,16 +114,28 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
       sx={{
         height: 35 + 35 * Object.values(selectedCoordinates).filter(v => Boolean(v)).length,
         maxHeight: 10 * 35,
+        '& .rdg': {
+          backgroundColor: 'inherit',
+          '& .rdg-header-row': {
+            backgroundColor: 'inherit',
+          },
+          '& .rdg-row': {
+            backgroundColor: 'inherit',
+            '& .rdg-cell': {
+              backgroundColor: 'inherit',
+            },
+          },
+        },
       }}
     >
       <DndProvider backend={HTML5Backend}>
         <ReactDataGrid
+          className={colorScheme === 'light' ? 'rdg-light' : 'rdg-dark'}
           columns={draggableColumns}
           defaultColumnOptions={{
             sortable: true,
             resizable: true,
           }}
-          enableVirtualization
           onRowsChange={setRows}
           onSortColumnsChange={setSortColumns}
           sortColumns={sortColumns}

@@ -18,8 +18,7 @@ const Render = memo(
             <Paper
               variant="outlined"
               sx={{
-                padding: 4,
-                backgroundColor: theme => theme.palette.common.white,
+                padding: theme => theme.spacing(4),
               }}
             >
               <Markdown
