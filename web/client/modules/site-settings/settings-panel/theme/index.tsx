@@ -9,11 +9,9 @@ import { SectionDescription } from '../components'
 import Toggle from '../../../../components/toggle'
 import FormGroup from '@mui/material/FormGroup'
 import Tooltip from '@mui/material/Tooltip'
-// import { useColorScheme } from '@mui/material/styles'
 
 const ThemeSettings = memo(
-  ({ accepted }) => {
-    // const { mode, setMode } = useColorScheme()
+  ({ accepted, colorScheme, updateSetting }) => {
     return (
       <>
         <Accordion defaultExpanded={accepted === false ? true : undefined}>
@@ -40,11 +38,10 @@ const ThemeSettings = memo(
                     inputProps: {
                       'aria-label': 'Toggle dark theme',
                     },
-                    defaultChecked: false,
-                    disabled: true,
                     size: 'small',
-                    // checked: mode === 'dark',
-                    // onChange: ({ target: { checked } }) => setMode(checked ? 'dark' : 'light'),
+                    checked: colorScheme === 'dark',
+                    onChange: ({ target: { checked } }) =>
+                      updateSetting({ colorScheme: checked ? 'dark' : 'light' }),
                   }}
                 />
               </Tooltip>
@@ -54,10 +51,15 @@ const ThemeSettings = memo(
       </>
     )
   },
-  () => true
+  ({ colorScheme: a }, { colorScheme: b }) => {
+    if (a !== b) return false
+    return true
+  }
 )
 
 export default () => {
-  const { accepted } = useContext(siteSettingsContext)
-  return <ThemeSettings accepted={accepted} />
+  const { accepted, colorScheme, updateSetting } = useContext(siteSettingsContext)
+  return (
+    <ThemeSettings accepted={accepted} colorScheme={colorScheme} updateSetting={updateSetting} />
+  )
 }

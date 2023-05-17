@@ -75,7 +75,7 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
             data?.data.json[index] || []
           return {
             i: i + 1,
-            location: `${lat?.toFixed(5) || '-'}/${lng?.toFixed(5) || '-'}`,
+            location: `${lat?.toFixed(5) || '-'} / ${lng?.toFixed(5) || '-'}`,
             temperature,
             salinity,
             u,

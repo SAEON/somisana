@@ -1,8 +1,6 @@
 import { createContext, useEffect, useState, useMemo } from 'react'
 import c from 'cookie'
 
-const COOKIE_KEY = 'SOMISANA_SITE_SETTINGS'
-
 Date.prototype.addDays = function (days) {
   var date = new Date(this.valueOf())
   date.setDate(date.getDate() + days)
@@ -16,30 +14,24 @@ interface SiteSettings {
   disableGoogleAnalytics?: Boolean
   language?: String
   updateSetting?: Function
+  colorScheme: String
 }
 
 const DEFAULT_SITE_SETTINGS: SiteSettings = {
   accepted: false,
   disableGoogleAnalytics: true,
+  colorScheme: 'light',
 }
 
 export const context = createContext(DEFAULT_SITE_SETTINGS)
 
-export const Provider = ({ cookie, acceptLanguage, ...props }) => {
-  /**
-   * Load the cookie
-   */
-  const existingCookie = useMemo(
-    () =>
-      c.parse(cookie || typeof document === 'undefined' ? '' : document.cookie || '')?.[COOKIE_KEY],
-    []
-  )
-
+export const Provider = ({ sessionSettings, acceptLanguage, cookieKey, ...props }) => {
   const {
     accepted = false,
     disableGoogleAnalytics = true,
     language = acceptLanguage,
-  } = JSON.parse(existingCookie || '{}')
+    colorScheme = 'light',
+  } = sessionSettings
 
   /**
    * Set the initial settings state using stored cookie values
@@ -48,6 +40,7 @@ export const Provider = ({ cookie, acceptLanguage, ...props }) => {
     accepted,
     disableGoogleAnalytics,
     language: acceptLanguage,
+    colorScheme,
   })
 
   /**
@@ -55,7 +48,7 @@ export const Provider = ({ cookie, acceptLanguage, ...props }) => {
    * sync the state to a cookie
    */
   useEffect(() => {
-    document.cookie = c.serialize(COOKIE_KEY, JSON.stringify(siteSettings), ENCODE)
+    document.cookie = c.serialize(cookieKey, JSON.stringify(siteSettings), ENCODE)
   }, [siteSettings])
 
   const updateSetting = (obj: SiteSettings) => {
