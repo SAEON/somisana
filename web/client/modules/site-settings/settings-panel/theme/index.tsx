@@ -23,7 +23,7 @@ const ThemeSettings = memo(
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <SectionDescription sx={{ marginBottom: 0 }}>
+          <SectionDescription>
             Theming options. This menu can be toggled via the site settings button the in the footer
           </SectionDescription>
           <FormGroup aria-label="Theming options" row>
