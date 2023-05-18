@@ -1,8 +1,10 @@
+import { Suspense, lazy } from 'react'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid'
 import { Link } from './_components'
 import Div from '../../components/div'
-import SiteSettings from './site-settings'
+
+const SiteSettings = lazy(() => import('./site-settings'))
 
 export default ({ routes }) => {
   return (
@@ -28,7 +30,9 @@ export default ({ routes }) => {
             alignItems: 'center',
           }}
         >
-          <SiteSettings />
+          <Suspense fallback={null}>
+            <SiteSettings />
+          </Suspense>
         </Div>
       </Grid>
     </Grid>

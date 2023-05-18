@@ -8,47 +8,44 @@ import { ExpandMore } from '../../../../components/icons'
 import { SectionDescription } from '../components'
 import Toggle from '../../../../components/toggle'
 import FormGroup from '@mui/material/FormGroup'
-import Tooltip from '@mui/material/Tooltip'
 
 const ThemeSettings = memo(
   ({ accepted, colorScheme, updateSetting }) => {
     return (
-      <>
-        <Accordion defaultExpanded={accepted === false ? true : undefined}>
-          <AccordionSummary
-            expandIcon={<ExpandMore />}
-            aria-controls="theme-settings-content"
-            id="theme-settings-header"
-          >
-            <Typography variant="overline" variantMapping={{ overline: 'h3' }}>
-              Theme
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <SectionDescription sx={{ marginBottom: 0 }}>Theming options</SectionDescription>
-            <FormGroup aria-label="Theming options" row>
-              <Tooltip placement="left-start" title="Toggle between light and dark theme">
-                <Toggle
-                  labelProps={{
-                    value: 'Dark theme',
-                    label: 'Dark theme',
-                    labelPlacement: 'start',
-                  }}
-                  switchProps={{
-                    inputProps: {
-                      'aria-label': 'Toggle dark theme',
-                    },
-                    size: 'small',
-                    checked: colorScheme === 'dark',
-                    onChange: ({ target: { checked } }) =>
-                      updateSetting({ colorScheme: checked ? 'dark' : 'light' }),
-                  }}
-                />
-              </Tooltip>
-            </FormGroup>
-          </AccordionDetails>
-        </Accordion>
-      </>
+      <Accordion defaultExpanded={accepted === false ? true : undefined}>
+        <AccordionSummary
+          expandIcon={<ExpandMore />}
+          aria-controls="theme-settings-content"
+          id="theme-settings-header"
+        >
+          <Typography variant="overline" variantMapping={{ overline: 'h3' }}>
+            Theme
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <SectionDescription sx={{ marginBottom: 0 }}>
+            Theming options. This menu can be toggled via the site settings button the in the footer
+          </SectionDescription>
+          <FormGroup aria-label="Theming options" row>
+            <Toggle
+              labelProps={{
+                value: 'Dark theme',
+                label: 'Dark theme',
+                labelPlacement: 'start',
+              }}
+              switchProps={{
+                inputProps: {
+                  'aria-label': 'Toggle dark theme',
+                },
+                size: 'small',
+                checked: colorScheme === 'dark',
+                onChange: ({ target: { checked } }) =>
+                  updateSetting({ colorScheme: checked ? 'dark' : 'light' }),
+              }}
+            />
+          </FormGroup>
+        </AccordionDetails>
+      </Accordion>
     )
   },
   ({ colorScheme: a }, { colorScheme: b }) => {

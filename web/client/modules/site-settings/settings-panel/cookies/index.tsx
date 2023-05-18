@@ -65,7 +65,7 @@ const CookieSettings = memo(
                     inputProps: {
                       'aria-label': 'Toggle necessary cookies',
                     },
-                    defaultChecked: false,
+                    defaultChecked: true,
                     disabled: true,
                     size: 'small',
                   }}
@@ -78,14 +78,14 @@ const CookieSettings = memo(
                 <Toggle
                   labelProps={{
                     value: 'Client session',
-                    label: 'Client session',
+                    label: 'Session',
                     labelPlacement: 'start',
                   }}
                   switchProps={{
                     inputProps: {
                       'aria-label': 'Toggle necessary cookies',
                     },
-                    defaultChecked: false,
+                    defaultChecked: true,
                     disabled: true,
                     size: 'small',
                   }}

@@ -16,7 +16,6 @@ import Div from '../../../components/div'
 
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
 const NotesPage = lazy(() => import('../../../modules/notes'))
-const AboutPage = lazy(() => import('../../../modules/about'))
 const NotePage = lazy(() => import('../../../modules/note'))
 const ExplorePage = lazy(() => import('./explore'))
 const ExploreModelPage = lazy(() => import('./model'))
@@ -129,20 +128,6 @@ export default [
     element: props => (
       <Suspense fallback={<L />}>
         <ExplorePage {...props} />
-      </Suspense>
-    ),
-  },
-
-  {
-    to: '/about',
-    path: '/about',
-    label: 'About',
-    Icon: About,
-    includeInNavMenu: true,
-    includeInFooter: true,
-    element: props => (
-      <Suspense fallback={<L />}>
-        <AboutPage {...props} />
       </Suspense>
     ),
   },

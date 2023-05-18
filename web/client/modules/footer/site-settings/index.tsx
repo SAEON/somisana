@@ -1,10 +1,11 @@
-import { useState, useContext, useEffect } from 'react'
+import { useState, useContext, useEffect, lazy, Suspense } from 'react'
 import { context as siteSettingsContext } from '../../site-settings'
-import SettingsPanel from '../../site-settings/settings-panel'
 import { Cog } from '../../../components/icons'
 import MuiIcon from '@mui/material/Icon'
 import Typography from '@mui/material/Typography'
 import MuiLink from '@mui/material/Link'
+
+const SettingsPanel = lazy(() => import('../../site-settings/settings-panel'))
 
 const SiteSettingsPanel = () => {
   const { updateSetting, ...settings } = useContext(siteSettingsContext)
@@ -12,7 +13,8 @@ const SiteSettingsPanel = () => {
 
   useEffect(() => {
     if (!settings.accepted) {
-      setOpen(true)
+      // TODO - this should just be a cookie banner, which gives option for opening settings
+      // setOpen(true)
     }
   }, [settings.accepted])
 
@@ -48,7 +50,9 @@ const SiteSettingsPanel = () => {
       </Typography>
 
       {/* DRAWER */}
-      <SettingsPanel forceLanguage={false} open={open} setOpen={setOpen} />
+      <Suspense fallback={null}>
+        <SettingsPanel forceLanguage={false} open={open} setOpen={setOpen} />
+      </Suspense>
     </>
   )
 }
