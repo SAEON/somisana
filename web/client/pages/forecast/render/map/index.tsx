@@ -7,6 +7,7 @@ import MetadataLayer from './layers/metadata'
 import VisualizationsLayer from './layers/visualizations'
 import { useSnackbar } from 'notistack'
 import { context as configContext } from '../../../../modules/config'
+import Div from '../../../../components/div'
 
 export default ({ container }) => {
   const { NODE_ENV } = useContext(configContext)
@@ -40,12 +41,14 @@ export default ({ container }) => {
 
   return (
     container && (
-      <MapProvider container={container}>
-        <MetadataLayer />
-        <MPAsLayer />
-        <CoordinatesLayer />
-        <VisualizationsLayer />
-      </MapProvider>
+      <Div>
+        <MapProvider container={container}>
+          <MetadataLayer />
+          <MPAsLayer />
+          <CoordinatesLayer />
+          <VisualizationsLayer />
+        </MapProvider>
+      </Div>
     )
   )
 }

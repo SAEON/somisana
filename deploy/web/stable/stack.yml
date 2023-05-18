@@ -25,6 +25,8 @@ services:
         delay: 15s
     environment:
       ALLOWED_ORIGINS: https://somisana.ac.za,https://somisana.saeon.ac.za
+      ODP_SSO_CLIENT_SECRET: $ODP_SSO_CLIENT_SECRET
+      HOSTNAME: $HOSTNAME
       MONGO_HOST: $MONGO_HOST
       MONGO_DB: $MONGO_DB
       MONGO_USERNAME: $MONGO_USERNAME

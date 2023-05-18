@@ -78,7 +78,77 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
         })
         break
       case 0:
-      // The old query: https://github.com/SAEON/somisana/blob/b6c348e0cf146e36feb81e6c9e8ea819c4986fbe/web/server/graphql/resolvers/queries/data/index.js#LL81C7-L150C9
+        res = await client.query({
+          text: `
+            with _values as (
+              select
+                v.id,
+                v.coordinateid,
+                v.depth_level,
+                v.temperature temp,
+                v.salinity salt,
+                v.u,
+                v.v,
+                v.depth
+              from
+                public.values v
+              where
+                v.runid = $1
+                and v.time_step = $2
+                and v.depth_level = ( select sigma_levels from models where id = ( select modelid from runs where id = $1 ) )
+            ),
+            interpolated_values as (
+              select
+                v.coordinateid,
+                v.temp interpolated_temperature,
+                v.salt interpolated_salinity,
+                v.u interpolated_u,
+                v.v interpolated_v,
+                v.depth
+              from
+                _values v
+            ),
+            grid as (
+              select
+                c.id coordinateid,
+                st_x (c.pixel) px,
+                st_y (c.pixel) py,
+                c.latitude y,
+                c.longitude x,
+                v.interpolated_temperature,
+                v.interpolated_salinity,
+                v.interpolated_u,
+                v.interpolated_v,
+                v.depth
+            from
+              interpolated_values v
+              right join coordinates c on c.id = v.coordinateid
+              where
+                c.modelid = (
+                  select
+                    modelid
+                  from
+                    runs
+                  where
+                    id = $1))
+            select
+              g.coordinateid,
+              x,
+              y,
+              g.interpolated_temperature,
+              g.interpolated_salinity,
+              g.interpolated_u,
+              g.interpolated_v,
+              g.depth
+            from
+              grid g
+            order by
+              py desc,
+              px asc;`,
+          values: [runId, timeStep],
+          rowMode: 'array',
+        })
+        break
       default:
         res = await client.query({
           text: `

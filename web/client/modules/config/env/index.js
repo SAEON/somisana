@@ -1,5 +1,5 @@
 export const NODE_ENV = process.env.NODE_ENV
-export const HOSTNAME = process.env.API
+export const HOSTNAME = process.env.HOSTNAME
 export const TILESERV_BASE_URL = process.env.TILESERV_BASE_URL
 export const FEATURESERV_BASE_URL = process.env.FEATURESERV_BASE_URL
 export const ESRI_API_KEY = process.env.ESRI_API_KEY

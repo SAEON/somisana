@@ -48,6 +48,22 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
     { key: 'salinity', name: 'Salinity (‰)' },
     { key: 'u', name: 'U (m/s)' },
     { key: 'v', name: 'V (m/s)' },
+    {
+      key: 'coordinateid',
+      name: ` `,
+      width: 40,
+      formatter: ({ row: { coordinateid } }) => (
+        <Div
+          sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Div sx={{ display: 'flex', justifyContent: 'center' }}>
+            <IconButton size="small" onClick={() => closeCoordinate(coordinateid)}>
+              <CloseIcon sx={{ fontSize: 12 }} />
+            </IconButton>
+          </Div>
+        </Div>
+      ),
+    },
   ])
 
   useEffect(() => {

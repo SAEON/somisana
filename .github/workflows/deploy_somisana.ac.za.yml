@@ -23,6 +23,7 @@ env:
   SWARM_SSH_PORT: ${{ secrets.SWARM_SSH_PORT }} # Organization secret
   SWARM_USERNAME: ${{ secrets.SWARM_USERNAME }} # Organization secret
   SOMISANA_CONTACT_EMAIL: ${{ vars.SOMISANA_CONTACT_EMAIL}}
+  HOSTNAME: https://somisana.ac.za
 
 jobs:
   build:
@@ -70,7 +71,7 @@ jobs:
         with:
           context: web
           build-args: |
-            HOSTNAME=https://somisana.ac.za
+            HOSTNAME=${{ env.HOSTNAME }}
             NODE_ENV=production
             DEPLOYMENT_ENV=production
             TZ=utc
@@ -123,6 +124,7 @@ jobs:
             echo "MONGO_USERNAME=${{ env.MONGO_USERNAME }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "ODP_SSO_CLIENT_SECRET=${{ secrets.ODP_SSO_CLIENT_SECRET }}" >> /home/runner/somisana/deploy/web/stable/stack.env
+            echo "HOSTNAME=${{ env.HOSTNAME }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "PG_HOST=${{ env.PG_HOST }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "PG_PORT=${{ env.PG_PORT }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "PG_DB=${{ env.PG_DB }}" >> /home/runner/somisana/deploy/web/stable/stack.env
