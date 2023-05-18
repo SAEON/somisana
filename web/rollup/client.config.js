@@ -17,7 +17,7 @@ rimraf.sync(join(__dirname, '../.client/*.js'))
 
 const PACKAGE_JSON = readFileSync(normalize(join(__dirname, '../package.json'))).toString('utf8')
 const NODE_ENV = process.env.NODE_ENV || 'development'
-const API = process.env.API || 'http://localhost:3000'
+const HOSTNAME = process.env.HOSTNAME || 'http://localhost:3000'
 const TILESERV_BASE_URL = process.env.TILESERV_BASE_URL || 'http://localhost:7800'
 const FEATURESERV_BASE_URL = process.env.FEATURESERV_BASE_URL || 'http://localhost:9000'
 const ESRI_API_KEY = process.env.ESRI_API_KEY || 'missing'
@@ -63,7 +63,7 @@ export default {
     replace({
       preventAssignment: true,
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
-      'process.env.API': JSON.stringify(API),
+      'process.env.HOSTNAME': JSON.stringify(HOSTNAME),
       'process.env.TECHNICAL_CONTACT': JSON.stringify(TECHNICAL_CONTACT),
       'process.env.TILESERV_BASE_URL': JSON.stringify(TILESERV_BASE_URL),
       'process.env.FEATURESERV_BASE_URL': JSON.stringify(FEATURESERV_BASE_URL),

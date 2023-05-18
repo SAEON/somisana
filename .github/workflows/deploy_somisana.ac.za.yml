@@ -70,7 +70,7 @@ jobs:
         with:
           context: web
           build-args: |
-            API=https://somisana.ac.za
+            HOSTNAME=https://somisana.ac.za
             NODE_ENV=production
             DEPLOYMENT_ENV=production
             TZ=utc
@@ -122,6 +122,7 @@ jobs:
             echo "MONGO_DB=${{ env.MONGO_DB }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_USERNAME=${{ env.MONGO_USERNAME }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}" >> /home/runner/somisana/deploy/web/stable/stack.env
+            echo "ODP_SSO_CLIENT_SECRET=${{ secrets.ODP_SSO_CLIENT_SECRET }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "PG_HOST=${{ env.PG_HOST }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "PG_PORT=${{ env.PG_PORT }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "PG_DB=${{ env.PG_DB }}" >> /home/runner/somisana/deploy/web/stable/stack.env
