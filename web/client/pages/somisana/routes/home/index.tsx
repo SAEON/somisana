@@ -52,7 +52,7 @@ const Home = () => {
         <Div
           sx={{
             background: theme =>
-              `linear-gradient(45deg, ${alpha(theme.palette.common.black, 0.5)} 25%, ${alpha(
+              `linear-gradient(45deg, ${alpha(theme.palette.common.black, 0.3)} 25%, ${alpha(
                 theme.palette.common.black,
                 0.7
               )} 85%)`,

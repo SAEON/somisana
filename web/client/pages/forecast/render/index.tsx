@@ -53,6 +53,9 @@ export default ({ modelid = undefined }) => {
                     position: 'absolute',
                     zIndex: 1,
                     right: 0,
+                    padding: theme => theme.spacing(1),
+                    borderRadius: theme => `${theme.shape.borderRadius}px`,
+                    backgroundColor: theme => theme.palette.background.paper,
                     marginTop: theme => theme.spacing(2),
                     marginRight: theme => theme.spacing(2),
                   }}

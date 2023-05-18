@@ -15,7 +15,6 @@ export default ({ routes }) => {
           .filter(({ group }) => {
             if (group === 'legal') return false
             if (group === 'source code') return false
-
             return true
           })
           .map(props => (

@@ -11,6 +11,7 @@ import Contact from './_contact'
 import SourceCode from './_source-code'
 import Link from '@mui/material/Link'
 import Div from '../../components/div'
+import EgagasiniLogo from './egagasini-logo'
 
 export default ({ routes }) => {
   const _routes = useMemo(() => routes.filter(({ includeInFooter }) => includeInFooter), [routes])
@@ -52,16 +53,24 @@ export default ({ routes }) => {
               </Grid>
             </Grid>
           </Container>
+        </Toolbar>
 
+        <Div
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            marginLeft: 'auto',
+            padding: theme => theme.spacing(1),
+          }}
+        >
           {/* BG IMAGE ATTRIBUTION */}
           <Link
             target="_blank"
             rel="noopener noreferrer"
             href={`https://unsplash.com/photos/${unsplashId}`}
             sx={{
-              placeSelf: 'end',
               fontSize: '0.75rem',
-              margin: theme => `0 ${theme.spacing(1)} ${theme.spacing(1)} 0`,
+              marginRight: theme => theme.spacing(1),
               color: theme => theme.palette.common.white,
             }}
             variantMapping={{ overline: 'p' }}
@@ -73,7 +82,10 @@ export default ({ routes }) => {
               .join(' ')}{' '}
             - unsplash.com
           </Link>
-        </Toolbar>
+
+          {/* Not really sure where to put this, but I want to keep the Egagasini logo on the page for now */}
+          <EgagasiniLogo />
+        </Div>
 
         {/* COPYRIGHT */}
         <Toolbar

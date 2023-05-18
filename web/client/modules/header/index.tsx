@@ -5,6 +5,7 @@ import NavigationMenu from './navigation-menu'
 import Breadcrumbs from './breadcrumbs'
 import Divider from '@mui/material/Divider'
 import Div from '../../components/div'
+import Auth from './auth'
 
 const Header = ({ children, routes = [], ...props }) => {
   return (
@@ -35,7 +36,10 @@ const Header = ({ children, routes = [], ...props }) => {
             />
             <Breadcrumbs routes={routes} />
 
-            <Div sx={{ marginLeft: 'auto' }}>{children}</Div>
+            <Div sx={{ marginLeft: 'auto' }}>
+              {children}
+              <Auth />
+            </Div>
           </Toolbar>
         </AppBar>
       </ElevationOnScroll>
