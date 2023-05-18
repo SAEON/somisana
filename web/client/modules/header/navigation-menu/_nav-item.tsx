@@ -2,7 +2,6 @@ import { Link, useMatch } from 'react-router-dom'
 import MenuItem from '@mui/material/MenuItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import Typography from '@mui/material/Typography'
 
 export default ({ onClick, label, to, Icon, href }) => {
   const match = useMatch(to)
@@ -23,7 +22,7 @@ export default ({ onClick, label, to, Icon, href }) => {
           color: theme => (match ? theme.palette.primary.main : 'inherit'),
         }}
       >
-        {<Icon />}
+        <Icon fontSize="small" />
       </ListItemIcon>
       <ListItemText
         sx={{

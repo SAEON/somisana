@@ -9,6 +9,8 @@ import {
 import makeDataFinders from './data-finders/index.js'
 import _collections from './collections/index.js'
 import insertLocales from './locales/index.js'
+import _Logger from './_logger.js'
+export { makeLog } from './_logger.js'
 
 export const db = new MongoClient(MONGO_HOST, {
   auth: {
@@ -108,3 +110,10 @@ export const getDataFinders = makeDataFinders(db)
   console.error('Error seeding MongoDB', error.message)
   process.exit(1)
 })
+
+/**
+ * Application-level batching for inserting UI logs
+ * to MongoDB.
+ */
+const Logger = _Logger(collections)
+export const logToMongo = new Logger()

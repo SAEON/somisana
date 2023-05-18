@@ -1,258 +1,273 @@
 import SvgIcon from '@mui/material/SvgIcon'
 import { styled } from '@mui/material/styles'
+import Path from '../path'
 import {
-  mdiCog,
-  mdiClose,
-  mdiChevronDown,
-  mdiMap,
-  mdiContentSaveAll,
-  mdiCheckAll,
-  mdiMenu,
-  mdiHome,
-  mdiLicense,
-  mdiFileSign,
-  mdiInformationVariant,
-  mdiInformation,
+  mdiAccount,
   mdiApi,
-  mdiGithub,
-  mdiLink,
-  mdiTranslate,
   mdiChartTimelineVariantShimmer,
+  mdiCheckAll,
+  mdiChevronDown,
+  mdiClose,
+  mdiCog,
+  mdiContentSaveAll,
   mdiDatabase,
-  mdiEarth,
   mdiDataMatrix,
-  mdiPlay,
-  mdiSkipNext,
-  mdiSkipPrevious,
-  mdiPause,
-  mdiTemperatureCelsius,
-  mdiSigmaLower,
-  mdiScatterPlot,
-  mdiTailwind,
   mdiDragVertical,
+  mdiEarth,
+  mdiFileMultiple,
+  mdiFileSign,
+  mdiGithub,
+  mdiHome,
+  mdiInformation,
+  mdiInformationVariant,
+  mdiLayers,
+  mdiLayersTriple,
+  mdiLicense,
+  mdiLink,
+  mdiLogout,
+  mdiMap,
+  mdiMenu,
+  mdiNoteMultiple,
+  mdiPause,
+  mdiPlay,
+  mdiScatterPlot,
+  mdiSigmaLower,
   mdiSkipBackward,
   mdiSkipForward,
-  mdiFileMultiple,
+  mdiSkipNext,
+  mdiSkipPrevious,
   mdiTableLarge,
-  mdiNoteMultiple,
-  mdiLayersTriple,
-  mdiLayers,
+  mdiTailwind,
+  mdiTemperatureCelsius,
+  mdiTranslate,
 } from '@mdi/js'
 
 export { default as EgagasiniGraphic } from './egagasini-graphic'
 
+export const Account = styled(props => (
+  <SvgIcon {...props}>
+    <Path d={mdiAccount} />
+  </SvgIcon>
+))({})
+
+export const Logout = styled(props => (
+  <SvgIcon {...props}>
+    <Path d={mdiLogout} />
+  </SvgIcon>
+))({})
+
 export const Layers = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiLayers} />
+    <Path d={mdiLayers} />
   </SvgIcon>
 ))({})
 
 export const LayersTriple = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiLayersTriple} />
+    <Path d={mdiLayersTriple} />
   </SvgIcon>
 ))({})
 
 export const NoteMultiple = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiNoteMultiple} />
+    <Path d={mdiNoteMultiple} />
   </SvgIcon>
 ))({})
 
 export const TableLarge = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiTableLarge} />
+    <Path d={mdiTableLarge} />
   </SvgIcon>
 ))({})
 
 export const FileMultiple = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiFileMultiple} />
+    <Path d={mdiFileMultiple} />
   </SvgIcon>
 ))({})
 
 export const SkipBackward = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiSkipBackward} />
+    <Path d={mdiSkipBackward} />
   </SvgIcon>
 ))({})
 
 export const SkipForward = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiSkipForward} />
+    <Path d={mdiSkipForward} />
   </SvgIcon>
 ))({})
 
 export const DragVertical = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiDragVertical} />
+    <Path d={mdiDragVertical} />
   </SvgIcon>
 ))({})
 
 export const SigmaLower = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiSigmaLower} />
+    <Path d={mdiSigmaLower} />
   </SvgIcon>
 ))({})
 
 export const TailWind = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiTailwind} />
+    <Path d={mdiTailwind} />
   </SvgIcon>
 ))({})
 
 export const ScatterPlot = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiScatterPlot} />
+    <Path d={mdiScatterPlot} />
   </SvgIcon>
 ))({})
 
 export const Play = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiPlay} />
+    <Path d={mdiPlay} />
   </SvgIcon>
 ))({})
 
 export const DegCelsius = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiTemperatureCelsius} />
+    <Path d={mdiTemperatureCelsius} />
   </SvgIcon>
 ))({})
 
 export const SkipNext = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiSkipNext} />
+    <Path d={mdiSkipNext} />
   </SvgIcon>
 ))({})
 
 export const SkipBack = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiSkipPrevious} />
+    <Path d={mdiSkipPrevious} />
   </SvgIcon>
 ))({})
 
 export const Pause = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiPause} />
+    <Path d={mdiPause} />
   </SvgIcon>
 ))({})
 
 export const Api = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiApi} />
+    <Path d={mdiApi} />
   </SvgIcon>
 ))({})
 
 export const DataMatrix = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiDataMatrix} />
+    <Path d={mdiDataMatrix} />
   </SvgIcon>
 ))({})
 
 export const Earth = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiEarth} />
+    <Path d={mdiEarth} />
   </SvgIcon>
 ))({})
 
 export const Database = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiDatabase} />
+    <Path d={mdiDatabase} />
   </SvgIcon>
 ))({})
 
 export const ChartTimelineVariantShimmer = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiChartTimelineVariantShimmer} />
+    <Path d={mdiChartTimelineVariantShimmer} />
   </SvgIcon>
 ))({})
 
 export const Translate = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiTranslate} />
+    <Path d={mdiTranslate} />
   </SvgIcon>
 ))({})
 
 export const Link = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiLink} />
+    <Path d={mdiLink} />
   </SvgIcon>
 ))({})
 
 export const Github = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiGithub} />
+    <Path d={mdiGithub} />
   </SvgIcon>
 ))({})
 
 export const About = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiInformationVariant} />
+    <Path d={mdiInformationVariant} />
   </SvgIcon>
 ))({})
 
 export const AboutCircle = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiInformation} />
+    <Path d={mdiInformation} />
   </SvgIcon>
 ))({})
 
 export const Cog = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiCog} />
+    <Path d={mdiCog} />
   </SvgIcon>
 ))({})
 
 export const Home = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiHome} />
+    <Path d={mdiHome} />
   </SvgIcon>
 ))({})
 
 export const Map = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiMap} />
+    <Path d={mdiMap} />
   </SvgIcon>
 ))({})
 
 export const Contract = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiFileSign} />
+    <Path d={mdiFileSign} />
   </SvgIcon>
 ))({})
 
 export const License = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiLicense} />
+    <Path d={mdiLicense} />
   </SvgIcon>
 ))({})
 
 export const Menu = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiMenu} />
+    <Path d={mdiMenu} />
   </SvgIcon>
 ))({})
 
 export const Close = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiClose} />
+    <Path d={mdiClose} />
   </SvgIcon>
 ))({})
 
 export const ExpandMore = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiChevronDown} />
+    <Path d={mdiChevronDown} />
   </SvgIcon>
 ))({})
 
 export const SaveAll = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiContentSaveAll} />
+    <Path d={mdiContentSaveAll} />
   </SvgIcon>
 ))({})
 
 export const CheckAll = styled((props: any) => (
   <SvgIcon {...props}>
-    <path d={mdiCheckAll} />
+    <Path d={mdiCheckAll} />
   </SvgIcon>
 ))({})

@@ -56,12 +56,7 @@ export default ({ contentBase = '/', routes }) => {
                 },
               }}
             >
-              {Icon && (
-                <MuiIcon
-                  sx={{ marginRight: theme => theme.spacing(0.5), width: '0.8em' }}
-                  component={Icon}
-                />
-              )}
+              {Icon && <Icon fontSize="small" sx={{ marginRight: theme => theme.spacing(1) }} />}
               <Span
                 sx={theme => ({
                   display: 'none',
@@ -95,12 +90,7 @@ export default ({ contentBase = '/', routes }) => {
                 alignItems: 'center',
               }}
             >
-              {Icon && (
-                <MuiIcon
-                  sx={{ marginRight: theme => theme.spacing(0.5), width: '0.8em' }}
-                  component={Icon}
-                />
-              )}
+              {Icon && <Icon sx={{ marginRight: theme => theme.spacing(1) }} fontSize="small" />}
               {BreadcrumbsLabel && <BreadcrumbsLabel pathname={p} />}
               {!BreadcrumbsLabel && label}
             </Typography>

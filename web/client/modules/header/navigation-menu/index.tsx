@@ -13,9 +13,9 @@ export default ({ routes }) => {
         aria-label="Show navigation menu"
         onClick={e => setAnchorEl(e.currentTarget)}
         color="inherit"
-        size="medium"
+        size="small"
       >
-        <MenuIcon />
+        <MenuIcon fontSize="small" />
       </IconButton>
 
       <Menu

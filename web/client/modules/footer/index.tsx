@@ -59,10 +59,11 @@ export default ({ routes }) => {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            marginLeft: 'auto',
+            marginRight: 'auto',
             padding: theme => theme.spacing(1),
           }}
         >
+          <EgagasiniLogo />
           {/* BG IMAGE ATTRIBUTION */}
           <Link
             target="_blank"
@@ -70,7 +71,6 @@ export default ({ routes }) => {
             href={`https://unsplash.com/photos/${unsplashId}`}
             sx={{
               fontSize: '0.75rem',
-              marginRight: theme => theme.spacing(1),
               color: theme => theme.palette.common.white,
             }}
             variantMapping={{ overline: 'p' }}
@@ -82,9 +82,6 @@ export default ({ routes }) => {
               .join(' ')}{' '}
             - unsplash.com
           </Link>
-
-          {/* Not really sure where to put this, but I want to keep the Egagasini logo on the page for now */}
-          <EgagasiniLogo />
         </Div>
 
         {/* COPYRIGHT */}

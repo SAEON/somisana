@@ -5,7 +5,15 @@
  */
 
 import Locales from './_locales.js'
+import Logs from './_logs.js'
+import Roles from './_roles.js'
+import Permissions from './_permissions.js'
+import Users from './_users.js'
 
 export default {
   Locales,
+  Logs,
+  Roles,
+  Permissions,
+  Users,
 }

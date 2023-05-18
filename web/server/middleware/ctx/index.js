@@ -1,4 +1,4 @@
-import { db as mongoDb, collections, getDataFinders } from '../mongo/index.js'
+import { db as mongoDb, collections, getDataFinders } from '../../mongo/index.js'
 
 export default app => async (ctx, next) => {
   app.context.mongo = {

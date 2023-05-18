@@ -1,16 +1,17 @@
-import { CacheProvider as EmotionCacheProvider } from '@emotion/react'
-import CssBaseline from '@mui/material/CssBaseline'
-import { light as lightTheme, dark as darkTheme } from './theme/mui'
-import ConfigProvider from '../client/modules/config'
-import SiteSettingsProvider from '../client/modules/site-settings'
-import I18nProvider from '../client/modules/i18n'
-import createCache from '@emotion/cache'
 import { ApolloProvider } from '@apollo/client'
-import ErrorBoundary from '../client/components/error-boundary'
-import NativeExtensions from '../client/modules/native-extensions'
+import { CacheProvider as EmotionCacheProvider } from '@emotion/react'
+import { light as lightTheme, dark as darkTheme } from './theme/mui'
 import { SnackbarProvider } from 'notistack'
-import Theme from './theme'
+import AuthenticationProvider from '../client/modules/authentication'
 import c from 'cookie'
+import ConfigProvider from '../client/modules/config'
+import createCache from '@emotion/cache'
+import CssBaseline from '@mui/material/CssBaseline'
+import ErrorBoundary from '../client/components/error-boundary'
+import I18nProvider from '../client/modules/i18n'
+import NativeExtensions from '../client/modules/native-extensions'
+import SiteSettingsProvider from '../client/modules/site-settings'
+import Theme from './theme'
 
 const SETTINGS_COOKIE_KEY = 'SOMISANA_SITE_SETTINGS'
 
@@ -47,21 +48,23 @@ const App = ({
           cookieKey={SETTINGS_COOKIE_KEY}
           sessionSettings={sessionSettings}
         >
-          <Theme themes={{ light: lightTheme, dark: darkTheme }}>
-            <CssBaseline>
-              <I18nProvider>
-                <ApolloProvider client={apolloClient}>
+          <ApolloProvider client={apolloClient}>
+            <Theme themes={{ light: lightTheme, dark: darkTheme }}>
+              <CssBaseline>
+                <I18nProvider>
                   <ErrorBoundary>
                     <NativeExtensions>
                       <SnackbarProvider>
-                        <Router>{children}</Router>
+                        <AuthenticationProvider>
+                          <Router>{children}</Router>
+                        </AuthenticationProvider>
                       </SnackbarProvider>
                     </NativeExtensions>
                   </ErrorBoundary>
-                </ApolloProvider>
-              </I18nProvider>
-            </CssBaseline>
-          </Theme>
+                </I18nProvider>
+              </CssBaseline>
+            </Theme>
+          </ApolloProvider>
         </SiteSettingsProvider>
       </ConfigProvider>
     </EmotionCacheProvider>

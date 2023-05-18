@@ -76,7 +76,7 @@ const Render = ({ map, selectedMPAs, setSelectedMPAs, showMPAs, TILESERV_BASE_UR
       source: 'mpas',
       'source-layer': 'public.mpas',
       paint: {
-        'fill-outline-color': theme.palette.primary.dark,
+        'fill-outline-color': theme.palette.common.white,
         'fill-color': [
           'case',
           [
@@ -87,18 +87,18 @@ const Render = ({ map, selectedMPAs, setSelectedMPAs, showMPAs, TILESERV_BASE_UR
           theme.palette.primary.main,
           theme.palette.common.white,
         ],
-        'fill-opacity': 0.5,
+        'fill-opacity': 0.3,
       },
     })
 
-    map.on('mousemove', 'mpas', mousemove)
-    map.on('mouseleave', 'mpas', mouseleave)
-    map.on('click', 'mpas', click)
+    // map.on('mousemove', 'mpas', mousemove)
+    // map.on('mouseleave', 'mpas', mouseleave)
+    // map.on('click', 'mpas', click)
 
     return () => {
-      map.off('mousemove', 'mpas', mousemove)
-      map.off('mouseleave', 'mpas', mouseleave)
-      map.off('click', 'mpas', click)
+      // map.off('mousemove', 'mpas', mousemove)
+      // map.off('mouseleave', 'mpas', mouseleave)
+      // map.off('click', 'mpas', click)
       map.removeLayer('mpas')
       map.removeSource('mpas')
     }

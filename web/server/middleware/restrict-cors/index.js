@@ -1,4 +1,4 @@
-import { ALLOWED_ORIGINS } from '../config/index.js'
+import { ALLOWED_ORIGINS } from '../../config/index.js'
 
 export default async (ctx, next) => {
   const { method, headers } = ctx.req
