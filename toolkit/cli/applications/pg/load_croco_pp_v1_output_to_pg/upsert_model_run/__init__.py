@@ -99,7 +99,7 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
     )
 
     # Upsert interpolated values
-    interpolated_depths = [0, -25, -50, -100, -250, -500]
+    interpolated_depths = [-25, -50, -100, -250, -500]
     await upsert_interpolated_values(
         runid, interpolated_depths, parallelization, total_timesteps
     )
