@@ -11,7 +11,10 @@ const Render = ({ map, selectedMPAs, setSelectedMPAs, showMPAs, TILESERV_BASE_UR
 
   const click = useCallback(
     e => {
-      const { features } = e
+      const features = map.queryRenderedFeatures(e.point)
+      if (features[0].layer.id !== 'mpas') {
+        return
+      }
       setSelectedMPAs(obj => {
         const featureId = features[0].id
         return { ...obj, [featureId]: !obj[featureId] }

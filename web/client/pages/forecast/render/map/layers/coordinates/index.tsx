@@ -19,6 +19,7 @@ const Render = ({
   const mouseleave = useCallback(() => (map.getCanvas().style.cursor = ''), [map])
   const click = useCallback(
     e => {
+      e['bubble'] = 'no'
       const { features } = e
       setSelectedCoordinates(obj => {
         const featureId = features[0].id
@@ -104,6 +105,11 @@ const Render = ({
       )
     })
   }, [selectedCoordinates])
+
+  // Make sure coordinates layer is always top
+  useEffect(() => {
+    if (map.getLayer('coordinates')) map.moveLayer('coordinates')
+  })
 }
 
 export default () => {
