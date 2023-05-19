@@ -20,26 +20,35 @@ export default () => {
         position: 'absolute',
         left: 0,
         bottom: 0,
+        maxWidth: '100%',
         height: '150px',
         display: 'flex',
-        margin: theme => `0 0 ${theme.spacing(2)} ${theme.spacing(2)}`,
+        padding: theme => `0 ${theme.spacing(2)}`,
         '& .image-button': {
           marginRight: theme => theme.spacing(2),
           boxShadow: theme => theme.shadows[3],
-          border: theme => `1px solid ${theme.palette.primary.main}`,
+          border: theme => `1px solid ${theme.palette.common.white}`,
         },
       }}
     >
       {loading && (
         <Fade in={Boolean(loading)} key="loading" unmountOnExit>
-          <Div sx={{ display: 'flex', alignItems: 'flex-end' }}>
+          <Div
+            sx={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              paddingBottom: theme => theme.spacing(2),
+            }}
+          >
             <Loading size={60} color="primary" />
           </Div>
         </Fade>
       )}
       {data && (
         <Fade in={Boolean(data)} key="models" unmountOnExit>
-          <Div sx={{ display: 'flex' }}>
+          <Div
+            sx={{ display: 'flex', overflowX: 'auto', paddingBottom: theme => theme.spacing(2) }}
+          >
             {models.map(({ _id, title }) => {
               return (
                 <ImageButton
