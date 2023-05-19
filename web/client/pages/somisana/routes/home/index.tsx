@@ -1,41 +1,12 @@
-import { useRef } from 'react'
+import { useRef, memo } from 'react'
 import Title from './title'
 import Div from '../../../../components/div'
 import ScrollButton from './_scroll-button'
-import Container_ from '@mui/material/Container'
 import { alpha } from '@mui/system/colorManipulator'
-import Typography from '@mui/material/Typography'
 import ForecastModels from './forecast-models'
 import ModelsProvider from './_context'
 
-const Container = props => (
-  <Container_ sx={{ padding: theme => `${theme.spacing(8)} 0`, position: 'relative' }} {...props} />
-)
-
-const Bg = ({ sx = {}, ...props }) => (
-  <Div
-    sx={{
-      paddingBottom: theme => theme.spacing(6),
-      ...sx,
-    }}
-    {...props}
-  />
-)
-
-const Heading = ({ color, ...props }) => (
-  <Typography
-    variant="h2"
-    sx={{
-      textAlign: 'center',
-      marginTop: theme => theme.spacing(3),
-      marginBottom: theme => theme.spacing(6),
-      color: theme => alpha(theme.palette.common[color || 'white'], 0.9),
-    }}
-    {...props}
-  />
-)
-
-const Home = () => {
+const Home = memo(() => {
   const ref = useRef(null)
 
   return (
@@ -61,30 +32,27 @@ const Home = () => {
         }}
       >
         <Title />
+        <ForecastModels />
 
-        <Div>
+        <Div sx={{ position: 'absolute', right: 0, bottom: 0, width: 68 }}>
           <ScrollButton contentRef={ref} />
         </Div>
       </Div>
 
       {/* CONTENT */}
       <Div ref={ref}>
-        {/* FORECAST MODELS */}
-        <Bg
-          sx={{
-            backgroundColor: theme => alpha(theme.palette.common.white, 0.7),
-          }}
-        >
-          <Container>
-            <Heading color="black">Operational Ocean forecasts</Heading>
-            <ModelsProvider>
-              <ForecastModels />
-            </ModelsProvider>
-          </Container>
-        </Bg>
+        {/* 
+          TODO - general content goes here 
+          */}
       </Div>
     </Div>
   )
-}
+})
 
-export default Home
+export default () => {
+  return (
+    <ModelsProvider>
+      <Home />
+    </ModelsProvider>
+  )
+}

@@ -1,73 +1,62 @@
 import { useContext } from 'react'
 import { context as homeContext } from '../_context'
-import BoxButton from '../../../../../components/fancy-buttons/box-button'
+import ImageButton from '../../../../../components/fancy-buttons/image-button'
 import Div from '../../../../../components/div'
-import { alpha } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
-import GridItem from '../components/grid-item'
-import Grid from '@mui/material/Grid'
-import { Linear as Loading } from '../../../../../components/loading'
-import Link from '@mui/material/Link'
-import Img from '../../../../../components/img'
+import { Circular as Loading } from '../../../../../components/loading'
+import Fade from '@mui/material/Fade'
+
+const imageUrls = {
+  1: '/algoa-bay-forecast-splash.jpg',
+  2: '/sw-cape-forecast-splash.jpg',
+}
 
 export default () => {
   const { loading, data } = useContext(homeContext)
-
-  if (loading) {
-    return (
-      <Div sx={{ position: 'relative' }}>
-        <Loading />
-      </Div>
-    )
-  }
-
   const models = data?.models || []
 
-  const imageUrls = {
-    1: '/algoa-bay-forecast-splash.jpg',
-    2: '/sw-cape-forecast-splash.jpg',
-  }
-
   return (
-    <Grid
-      justifyContent="center"
-      container
-      spacing={6}
-      sx={{ marginTop: theme => theme.spacing(1) }}
+    <Div
+      sx={{
+        position: 'absolute',
+        left: 0,
+        bottom: 0,
+        height: '150px',
+        display: 'flex',
+        margin: theme => `0 0 ${theme.spacing(2)} ${theme.spacing(2)}`,
+        '& .image-button': {
+          marginRight: theme => theme.spacing(2),
+          boxShadow: theme => theme.shadows[3],
+          border: theme => `1px solid ${theme.palette.primary.main}`,
+        },
+      }}
     >
-      {models.map(({ _id, title, description }) => {
-        return (
-          <GridItem md={6} key={_id}>
-            <Typography
-              textAlign="center"
-              marginBottom={theme => theme.spacing(3)}
-              color={theme => alpha(theme.palette.common.black, 0.9)}
-              variant={'h3'}
-              textTransform="uppercase"
-            >
-              {title}
-            </Typography>
-
-            <Img
-              sx={{ width: '100%', boxShadow: theme => theme.shadows[3] }}
-              src={imageUrls[_id]}
-            />
-
-            <Typography
-              flexGrow={1}
-              marginTop={theme => theme.spacing(3)}
-              marginBottom={theme => theme.spacing(3)}
-              color={theme => alpha(theme.palette.common.black, 0.9)}
-              textAlign="left"
-              variant="body2"
-            >
-              {description}
-            </Typography>
-
-            <BoxButton sx={{ height: 100 }} to={`/explore/${_id}`} title={'Go'} />
-          </GridItem>
-        )
-      })}
-    </Grid>
+      {loading && (
+        <Fade in={Boolean(loading)} key="loading" unmountOnExit>
+          <Div sx={{ display: 'flex', alignItems: 'flex-end' }}>
+            <Loading size={60} color="primary" />
+          </Div>
+        </Fade>
+      )}
+      {data && (
+        <Fade in={Boolean(data)} key="models" unmountOnExit>
+          <Div sx={{ display: 'flex' }}>
+            {models.map(({ _id, title }) => {
+              return (
+                <ImageButton
+                  className="image-button"
+                  key={_id}
+                  image={{
+                    url: imageUrls[_id],
+                    title,
+                    width: '100%',
+                  }}
+                  to={`/explore/${_id}`}
+                />
+              )
+            })}
+          </Div>
+        </Fade>
+      )}
+    </Div>
   )
 }
