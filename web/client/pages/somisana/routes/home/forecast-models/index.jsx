@@ -28,6 +28,7 @@ export default () => {
           marginRight: theme => theme.spacing(2),
           boxShadow: theme => theme.shadows[3],
           border: theme => `1px solid ${theme.palette.common.white}`,
+          borderRadius: theme => `${theme.shape.borderRadius}px`,
         },
       }}
     >
@@ -47,12 +48,20 @@ export default () => {
       {data && (
         <Fade in={Boolean(data)} key="models" unmountOnExit>
           <Div
-            sx={{ display: 'flex', overflowX: 'auto', paddingBottom: theme => theme.spacing(2) }}
+            sx={{
+              display: 'flex',
+              overflowX: 'auto',
+              paddingBottom: theme => theme.spacing(1),
+              marginBottom: theme => theme.spacing(1),
+            }}
           >
             {models.map(({ _id, title }) => {
               return (
                 <ImageButton
                   className="image-button"
+                  sx={{
+                    borderRadius: theme => `${theme.shape.borderRadius}px`,
+                  }}
                   key={_id}
                   image={{
                     url: imageUrls[_id],

@@ -9,6 +9,7 @@ const ImageButton = styled(props => <ButtonBase LinkComponent={Link} {...props} 
   ({ theme }) => ({
     position: 'relative',
     height: '100%',
+    borderRadius: `${theme.shape.borderRadius}px`,
     [theme.breakpoints.down('sm')]: {
       width: '100% !important', // Overrides inline-style
     },
@@ -21,13 +22,14 @@ const ImageButton = styled(props => <ButtonBase LinkComponent={Link} {...props} 
         opacity: 0,
       },
       '& .MuiTypography-root': {
-        border: '4px solid currentColor',
+        borderTop: `4px solid transparent`,
+        borderBottom: '4px solid currentColor',
       },
     },
   })
 )
 
-const ImageSrc = styled('span')({
+const ImageSrc = styled('span')(({ theme }) => ({
   position: 'absolute',
   left: 0,
   right: 0,
@@ -35,7 +37,8 @@ const ImageSrc = styled('span')({
   bottom: 0,
   backgroundSize: 'cover',
   backgroundPosition: 'center 40%',
-})
+  borderRadius: `${theme.shape.borderRadius}px`,
+}))
 
 const Image = styled('span')(({ theme }) => ({
   position: 'absolute',
@@ -47,6 +50,7 @@ const Image = styled('span')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   color: theme.palette.common.white,
+  borderRadius: `${theme.shape.borderRadius}px`,
 }))
 
 const ImageBackdrop = styled('span')(({ theme }) => ({
@@ -56,6 +60,7 @@ const ImageBackdrop = styled('span')(({ theme }) => ({
   top: 0,
   bottom: 0,
   backgroundColor: theme.palette.common.black,
+  borderRadius: `${theme.shape.borderRadius}px`,
   opacity: 0.4,
   transition: theme.transitions.create('opacity'),
 }))
@@ -73,7 +78,16 @@ const ImageMarked = styled('span')(({ theme }) => ({
 export default styled(({ image, to, ...props }) => {
   return (
     <Div {...props}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 250, width: '100%', height: '100%' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          minWidth: 250,
+          width: '100%',
+          height: '100%',
+          borderRadius: theme => `${theme.shape.borderRadius}px`,
+        }}
+      >
         <ImageButton
           to={to}
           focusRipple

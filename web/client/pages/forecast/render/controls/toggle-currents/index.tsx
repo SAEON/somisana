@@ -11,7 +11,7 @@ export default () => {
   return (
     <Tooltip placement="left-start" title="Toggle currents">
       <Span>
-        <IconButton onClick={() => setShowCurrents(b => !b)} color="primary" size="small">
+        <IconButton disabled onClick={() => setShowCurrents(b => !b)} color="primary" size="small">
           <TailWind
             sx={{
               color: theme => (showCurrents ? theme.palette.success.dark : 'primary'),
