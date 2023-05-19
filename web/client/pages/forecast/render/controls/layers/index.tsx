@@ -23,7 +23,14 @@ const F = styled(({ control, title, ...props }) => (
   </FormGroup>
 ))({})
 
-const Render = ({ showMPAs, setShowMPAs, showCoordinates, setShowCoordinates }) => {
+const Render = ({
+  showMPAs,
+  setShowMPAs,
+  showCoordinates,
+  setShowCoordinates,
+  showDomain,
+  setShowDomain,
+}) => {
   const [open, setOpen] = useState(false)
   const ref = useRef(null) // Might be useful in placing the hovered menu
 
@@ -64,6 +71,18 @@ const Render = ({ showMPAs, setShowMPAs, showCoordinates, setShowCoordinates }) 
           >
             <Div>
               <F
+                title={`${showDomain ? 'Hide' : 'Show'} domain`}
+                control={
+                  <Switch
+                    sx={{ marginLeft: theme => theme.spacing(2) }}
+                    size="small"
+                    color={showDomain ? 'primary' : 'default'}
+                    onChange={() => setShowDomain(b => !b)}
+                    checked={showDomain}
+                  />
+                }
+              />
+              <F
                 title={`${showMPAs ? 'Hide' : 'Show'} MPAs`}
                 control={
                   <Switch
@@ -77,10 +96,10 @@ const Render = ({ showMPAs, setShowMPAs, showCoordinates, setShowCoordinates }) 
               />
 
               <F
-                title={`${showCoordinates ? 'Hide' : 'Show'} co-ordinates`}
+                title={`${showCoordinates ? 'Hide' : 'Show'} coordinates`}
                 control={
                   <Switch
-                    sx={{ marginLeft: 2 }}
+                    sx={{ marginLeft: theme => theme.spacing(2) }}
                     size="small"
                     color={showCoordinates ? 'primary' : 'default'}
                     onChange={() => setShowCoordinates(b => !b)}
@@ -97,13 +116,16 @@ const Render = ({ showMPAs, setShowMPAs, showCoordinates, setShowCoordinates }) 
 }
 
 export default () => {
-  const { showMPAs, setShowMPAs, showCoordinates, setShowCoordinates } = useContext(pageContext)
+  const { showMPAs, setShowMPAs, showCoordinates, setShowCoordinates, showDomain, setShowDomain } =
+    useContext(pageContext)
   return (
     <Render
       showMPAs={showMPAs}
       setShowMPAs={setShowMPAs}
       showCoordinates={showCoordinates}
       setShowCoordinates={setShowCoordinates}
+      showDomain={showDomain}
+      setShowDomain={setShowDomain}
     />
   )
 }

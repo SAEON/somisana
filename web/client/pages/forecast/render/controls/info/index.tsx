@@ -16,13 +16,29 @@ const PaperComponent = (props: PaperProps) => (
   </Draggable>
 )
 
-const showFields = ['max_x', 'max_y', 'min_x', 'min_y', 'gridWidth', 'gridHeight'].sort()
+const showFields = Object.fromEntries(
+  Object.entries({
+    max_x: undefined,
+    max_y: undefined,
+    min_x: undefined,
+    min_y: undefined,
+    gridWidth: undefined,
+    gridHeight: undefined,
+    contact: model =>
+      `${model.creator}: ${model.creatorContactEmail.replace(/\./g, '[dot]').replace(/@/, '[at]')}`,
+  }).sort(([a], [b]) => {
+    if (a > b) return 1
+    if (a < b) return -1
+    return 0
+  })
+)
 
 export default () => {
   const [open, setOpen] = useState(false)
   const {
     model: { title, description, ...model },
   } = useContext(modelContext)
+  console.log(model)
 
   return (
     <>
@@ -43,7 +59,13 @@ export default () => {
         </DialogTitle>
         <DialogContent dividers>
           <Typography gutterBottom>{description}</Typography>
-          <pre>{showFields.map(f => `${f}: ${model[f]}`).join('\n')}</pre>
+          <pre>
+            {Object.entries(showFields)
+              .map(([field, render]) => {
+                return `${field}: ${render?.(model, field) || model[field]}`
+              })
+              .join('\n')}
+          </pre>
         </DialogContent>
       </Dialog>
     </>

@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react'
 import MapProvider from './_context'
 import CoordinatesLayer from './layers/coordinates'
 import MPAsLayer from './layers/marine-protected-areas'
-import MetadataLayer from './layers/metadata'
+import DomainLayer from './layers/domain'
 import VisualizationsLayer from './layers/visualizations'
 import { useSnackbar } from 'notistack'
 import { context as configContext } from '../../../../modules/config'
@@ -43,7 +43,7 @@ export default ({ container }) => {
     container && (
       <Div>
         <MapProvider container={container}>
-          <MetadataLayer />
+          <DomainLayer />
           <MPAsLayer />
           <CoordinatesLayer />
           <VisualizationsLayer />

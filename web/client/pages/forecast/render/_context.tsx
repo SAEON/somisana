@@ -19,6 +19,7 @@ export default ({ modelid = undefined, children }) => {
   const [selectedMPAs, setSelectedMPAs] = useState({})
   const [selectedVariable, setSelectedVariable] = useState('temperature')
   const [showCoordinates, setShowCoordinates] = useState(true)
+  const [showDomain, setShowDomain] = useState(true)
   const [showCurrents, setShowCurrents] = useState(false)
   const [showData, setShowData] = useState(false)
   const [showIsolines, setShowIsolines] = useState(true)
@@ -52,6 +53,8 @@ export default ({ modelid = undefined, children }) => {
             gridWidth
             gridHeight
             runs
+            creator
+            creatorContactEmail
           }
         }
       }
@@ -107,6 +110,7 @@ export default ({ modelid = undefined, children }) => {
         setShowCoordinates,
         setShowCurrents,
         setShowData,
+        setShowDomain,
         setShowIsolines,
         setShowMPAs,
         setThresholds,
@@ -114,6 +118,7 @@ export default ({ modelid = undefined, children }) => {
         showCoordinates,
         showCurrents,
         showData,
+        showDomain,
         showIsolines,
         showMPAs,
         thresholds,

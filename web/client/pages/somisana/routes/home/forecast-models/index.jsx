@@ -8,6 +8,7 @@ import GridItem from '../components/grid-item'
 import Grid from '@mui/material/Grid'
 import { Linear as Loading } from '../../../../../components/loading'
 import Link from '@mui/material/Link'
+import Img from '../../../../../components/img'
 
 export default () => {
   const { loading, data } = useContext(homeContext)
@@ -22,6 +23,11 @@ export default () => {
 
   const models = data?.models || []
 
+  const imageUrls = {
+    1: '/algoa-bay-forecast-splash.jpg',
+    2: '/sw-cape-forecast-splash.jpg',
+  }
+
   return (
     <Grid
       justifyContent="center"
@@ -29,7 +35,7 @@ export default () => {
       spacing={6}
       sx={{ marginTop: theme => theme.spacing(1) }}
     >
-      {models.map(({ _id, title, description, creator, creatorContactEmail }) => {
+      {models.map(({ _id, title, description }) => {
         return (
           <GridItem md={6} key={_id}>
             <Typography
@@ -42,8 +48,14 @@ export default () => {
               {title}
             </Typography>
 
+            <Img
+              sx={{ width: '100%', boxShadow: theme => theme.shadows[3] }}
+              src={imageUrls[_id]}
+            />
+
             <Typography
               flexGrow={1}
+              marginTop={theme => theme.spacing(3)}
               marginBottom={theme => theme.spacing(3)}
               color={theme => alpha(theme.palette.common.black, 0.9)}
               textAlign="left"
@@ -52,13 +64,6 @@ export default () => {
               {description}
             </Typography>
 
-            <Typography
-              variant="overline"
-              marginBottom={theme => theme.spacing(3)}
-              sx={{ placeSelf: 'flex-start' }}
-            >
-              <Link href={`mailto:${creatorContactEmail}`}>{creator}</Link>
-            </Typography>
             <BoxButton sx={{ height: 100 }} to={`/explore/${_id}`} title={'Go'} />
           </GridItem>
         )

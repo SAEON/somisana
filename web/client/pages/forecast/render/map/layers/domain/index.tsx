@@ -4,10 +4,15 @@ import { context as pageContext } from '../../../_context'
 import { context as configContext } from '../../../../../../modules/config'
 import { useTheme } from '@mui/material/styles'
 
-const Render = memo(({ TILESERV_BASE_URL, map, modelid }) => {
+const Render = memo(({ TILESERV_BASE_URL, map, modelid, showDomain }) => {
   const theme = useTheme()
 
   useEffect(() => {
+    if (!showDomain) {
+      if (map.getLayer('metadata')) map.removeLayer('metadata')
+      if (map.getSource('metadata')) map.removeSource('metadata')
+      return
+    }
     map.addSource('metadata', {
       type: 'vector',
       tiles: [
@@ -30,13 +35,25 @@ const Render = memo(({ TILESERV_BASE_URL, map, modelid }) => {
         'line-dasharray': [1, 1],
       },
     })
-  }, [map])
+
+    return () => {
+      map.removeLayer('metadata')
+      map.removeSource('metadata')
+    }
+  }, [map, showDomain])
 })
 
 export default () => {
   const { TILESERV_BASE_URL } = useContext(configContext)
   const { map } = useContext(mapContext)
-  const { model: { _id: modelid = 0 } = {} } = useContext(pageContext)
+  const { model: { _id: modelid = 0 } = {}, showDomain } = useContext(pageContext)
 
-  return <Render map={map} modelid={modelid} TILESERV_BASE_URL={TILESERV_BASE_URL} />
+  return (
+    <Render
+      map={map}
+      modelid={modelid}
+      TILESERV_BASE_URL={TILESERV_BASE_URL}
+      showDomain={showDomain}
+    />
+  )
 }
