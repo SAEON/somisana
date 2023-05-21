@@ -5,6 +5,7 @@ import ScrollButton from './_scroll-button'
 import { alpha } from '@mui/system/colorManipulator'
 import ForecastModels from './forecast-models'
 import ModelsProvider from './_context'
+import Content from './content'
 
 const Home = memo(() => {
   const ref = useRef(null)
@@ -41,9 +42,7 @@ const Home = memo(() => {
 
       {/* CONTENT */}
       <Div ref={ref}>
-        {/* 
-          TODO - general content goes here 
-          */}
+        <Content />
       </Div>
     </Div>
   )
