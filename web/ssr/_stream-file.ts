@@ -21,7 +21,14 @@ export default async (ctx: any, contentType: string, filePath: string) => {
     return
   }
 
-  ctx.set('Cache-Control', 'public, max-age=86400') // cache for 1 day
+  if (contentType === 'application/javascript' || contentType === 'text/javascript') {
+    ctx.set('Cache-Control', 'no-cache, no-store, must-revalidate') // no caching for javascript
+    ctx.set('Pragma', 'no-cache') // for HTTP/1.0 compatibility
+    ctx.set('Expires', '0') // for Proxies
+  } else {
+    ctx.set('Cache-Control', 'public, max-age=86400') // cache for 1 day for other types
+  }
+
   ctx.set('ETag', etag)
   ctx.set('Content-type', contentType)
   ctx.body = fd.createReadStream()

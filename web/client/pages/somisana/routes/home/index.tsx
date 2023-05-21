@@ -34,16 +34,11 @@ const Home = memo(() => {
       >
         <Title />
         <ForecastModels />
-
-        <Div sx={{ position: 'absolute', right: 0, bottom: 0, width: 68 }}>
-          <ScrollButton contentRef={ref} />
-        </Div>
+        <ScrollButton contentRef={ref} />
       </Div>
 
       {/* CONTENT */}
-      <Div ref={ref}>
-        <Content />
-      </Div>
+      <Content ref={ref} />
     </Div>
   )
 })

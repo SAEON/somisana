@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
@@ -38,16 +39,16 @@ Somisana, the Sustainable Ocean Modeling Initiative, represents South Africa's c
 
 */
 
-export default () => {
+export default forwardRef((props, ref) => {
   return (
-    <Paper sx={{ borderRadius: 0, padding: theme => `${theme.spacing(8)} 0` }}>
+    <Paper ref={ref} sx={{ borderRadius: 0, padding: theme => `${theme.spacing(8)} 0` }}>
       <Container>
         <Paragraph>
           Welcome to the SOMISANA Initiative, your gateway to understanding the present and future
-          conditions of our oceans. This project, led by South Africa's National Research Foundation
-          - South African Environmental Observation Network (NRF-SAEON), stands for the Sustainable
-          Ocean Modelling Initiative, which embodies our dedication to understanding, protecting,
-          and managing the vast waters surrounding the African continent.
+          conditions of our oceans. This project, led by the National Research Foundation / South
+          African Environmental Observation Network (NRF-SAEON), stands for the Sustainable Ocean
+          Modelling Initiative, which embodies our dedication to understanding, protecting, and
+          managing the vast waters surrounding the African continent.
         </Paragraph>
         <Paragraph>
           Our website serves as a user-friendly interface to an advanced ocean forecast system. It
@@ -59,15 +60,15 @@ export default () => {
         </Paragraph>
         <Paragraph>
           Working in collaboration with global partners such as the Copernicus Marine Environment
-          Monitoring Service (CMEMS), SOMISANA is committed to creating high-quality,
+          Monitoring Service (CMEMS), and Deltares, SOMISANA is committed to creating high-quality,
           regionally-focused models. These models are crucial in driving informed decisions and
           sustainable practices to maintain the health of our oceans.
         </Paragraph>
         <Paragraph>
-          But we don't stop there. SOMISANA is also about fostering the future. We aim to inspire
-          and train the next generation of South African marine scientists, arming them with the
-          tools and knowledge they need to continue this vital work. Through education and hands-on
-          training, we are nurturing these future stewards of our oceans.
+          SOMISANA is also about fostering the future. We aim to inspire and train the next
+          generation of South African marine scientists, arming them with the tools and knowledge
+          they need to continue this vital work. Through education and hands-on training, we are
+          nurturing these future stewards of our oceans.
         </Paragraph>
         <Paragraph>
           In a world where environmental challenges loom large, SOMISANA stands as a beacon of hope.
@@ -79,4 +80,4 @@ export default () => {
       </Container>
     </Paper>
   )
-}
+})

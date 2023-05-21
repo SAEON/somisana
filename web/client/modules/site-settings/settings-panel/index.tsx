@@ -3,7 +3,7 @@ import Dialog from '@mui/material/Dialog'
 import Draggable from 'react-draggable'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import { Close, CheckAll } from '../../../components/icons'
+import { Close } from '../../../components/icons'
 import { Linear as Loading } from '../../../components/loading'
 import Button from '@mui/material/Button'
 import Fade from '@mui/material/Fade'
@@ -67,9 +67,8 @@ export const SettingPanel = ({ forceLanguage, open, setOpen }) => {
           }}
           variant="text"
           size="medium"
-          startIcon={<CheckAll />}
         >
-          Save
+          Close
         </Button>
       </DialogActions>
     </Dialog>
