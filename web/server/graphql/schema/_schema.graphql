@@ -77,5 +77,16 @@ type Query {
 }
 
 type Mutation {
-  test: Void
+  logBrowserEvents(input: [BrowserEventInput]!): Void
+}
+
+input BrowserEventInput {
+  type: String!
+  """
+  If the createdAt field is not included in the browser request it is created at insertion time (to )
+  """
+  createdAt: DateTime
+  info: JSON!
+  clientVersion: String!
+  referrer: String
 }

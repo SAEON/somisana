@@ -1,5 +1,5 @@
 {
-  "name": "somisana-web",
+  "name": "somisana.ac.za",
   "version": "1.0.0",
   "type": "module",
   "description": "SOMISANA web stack",
@@ -21,6 +21,7 @@
     "@node-loader/import-maps": "^1.1.0",
     "@rollup/plugin-replace": "^5.0.2",
     "@saeon/cli-tools": "^0.2.0",
+    "@saeon/logger": "^6.2.24",
     "@swc/cli": "^0.1.62",
     "@types/react": "^18.2.6",
     "apollo-server-core": "^3.12.0",

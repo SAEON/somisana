@@ -1,3 +1,5 @@
+import logBrowserEvents from '../../mutations/log-browser-events/index.js'
+
 export default {
-  test: async () => null,
+  logBrowserEvents,
 }
