@@ -1,5 +1,5 @@
-import makeLog from './_make-log'
-import RegisterEventLog from './_register-event-log'
+import makeLog from './make-log'
+import RegisterEventLog from './register-event-log'
 
 export default ({ children }) => {
   return (

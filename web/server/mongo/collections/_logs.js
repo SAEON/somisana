@@ -12,7 +12,7 @@ export default {
           description: 'Browser session cookie',
         },
         type: {
-          enum: ['appRender'],
+          enum: ['appRender', 'interaction'],
           description: 'The type of event being logged',
         },
         info: {

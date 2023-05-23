@@ -16,10 +16,7 @@ import debounce from '../../../../../../lib/debounce'
 import Switch from '@mui/material/Switch'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
-
-import { default as _color, SelectControl } from './_color'
-
-export const color = _color
+import { SelectControl } from './color'
 
 const PaperComponent = (props: PaperProps) => (
   <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
@@ -99,7 +96,16 @@ export default () => {
                 <Switch
                   sx={{ margin: theme => `0 0 0 ${theme.spacing(2)}` }}
                   checked={reverseColors}
-                  onChange={() => setReverseColors(b => !b)}
+                  onChange={() =>
+                    setReverseColors(b => {
+                      globalThis.dispatchEvent(
+                        new CustomEvent('interaction', {
+                          detail: { value: !b, type: 'reverse-contour-color-scheme' },
+                        })
+                      )
+                      return !b
+                    })
+                  }
                 />
               }
               label="Reverse"
@@ -121,10 +127,19 @@ export default () => {
                 <Switch
                   sx={{ marginLeft: 2 }}
                   checked={showIsolines}
-                  onChange={() => setShowIsolines(b => !b)}
+                  onChange={() =>
+                    setShowIsolines(b => {
+                      globalThis.dispatchEvent(
+                        new CustomEvent('interaction', {
+                          detail: { value: !b, type: 'toggle-contour-isolines' },
+                        })
+                      )
+                      return !b
+                    })
+                  }
                 />
               }
-              label="Show isolines"
+              label={`${showIsolines ? 'Hide' : 'Show'} isolines`}
             />
           </FormGroup>
           <Q
@@ -145,6 +160,11 @@ export default () => {
 
               if (!isNaN(ts) && ts !== thresholds) {
                 setThresholds(ts)
+                globalThis.dispatchEvent(
+                  new CustomEvent('interaction', {
+                    detail: { value: ts, type: 'contour-thresholds-change' },
+                  })
+                )
               }
             }, 500)}
             _scaleMin={scaleMin}

@@ -32,7 +32,16 @@ export default () => {
         top: theme => theme.spacing(-8),
       }}
     >
-      <Draggable handle="#draggable-time-info">
+      <Draggable
+        onStop={e => {
+          globalThis.dispatchEvent(
+            new CustomEvent('interaction', {
+              detail: { type: 'drag-timestamp' },
+            })
+          )
+        }}
+        handle="#draggable-time-info"
+      >
         <Paper
           sx={{
             position: 'relative',

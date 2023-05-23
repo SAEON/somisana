@@ -1,7 +1,7 @@
 import { createContext, useState, useCallback, useEffect } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Linear as Loading } from '../../../components/loading'
-import { color as colorFn } from './controls/color-bar/config'
+import colorFn from './controls/color-bar/config/color'
 
 export const context = createContext({})
 

@@ -13,6 +13,11 @@ export default () => {
         onClick={() => {
           if (selectedVariable === 'salinity') {
           } else {
+            globalThis.dispatchEvent(
+              new CustomEvent('interaction', {
+                detail: { type: 'toggle-salinity' },
+              })
+            )
             setSelectedVariable('salinity')
           }
         }}

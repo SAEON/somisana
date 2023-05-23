@@ -38,12 +38,22 @@ export default () => {
   const {
     model: { title, description, ...model },
   } = useContext(modelContext)
-  console.log(model)
 
   return (
     <>
       <Tooltip placement="left-start" title="About this forecast">
-        <IconButton size="small" color="primary" onClick={() => setOpen(!open)}>
+        <IconButton
+          size="small"
+          color="primary"
+          onClick={() => {
+            globalThis.dispatchEvent(
+              new CustomEvent('interaction', {
+                detail: { value: !open, type: 'info-toggle' },
+              })
+            )
+            setOpen(!open)
+          }}
+        >
           <AboutIcon fontSize="small" />
         </IconButton>
       </Tooltip>

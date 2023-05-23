@@ -12,7 +12,9 @@ import I18nProvider from '../client/modules/i18n'
 import NativeExtensions from '../client/modules/native-extensions'
 import SiteSettingsProvider from '../client/modules/site-settings'
 import Theme from './theme'
-import ApplicationLogger, { LogAppRender } from '../client/modules/application-logger'
+import ApplicationLogger from '../client/modules/application-logger'
+import LogAppRender from '../client/modules/application-logger/app-render'
+import InteractionLogger from '../client/modules/application-logger/interaction-logger'
 
 const SETTINGS_COOKIE_KEY = 'SOMISANA_SITE_SETTINGS'
 
@@ -59,7 +61,9 @@ const App = ({
                         <AuthenticationProvider>
                           <ApplicationLogger>
                             <LogAppRender>
-                              <Router>{children}</Router>
+                              <InteractionLogger>
+                                <Router>{children}</Router>
+                              </InteractionLogger>
                             </LogAppRender>
                           </ApplicationLogger>
                         </AuthenticationProvider>

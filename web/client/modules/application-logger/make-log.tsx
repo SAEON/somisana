@@ -1,5 +1,5 @@
 import getUriState from '../../lib/get-uri-state'
-import { PACKAGE_JSON } from '../../modules/config/env'
+import { PACKAGE_JSON } from '../config/env'
 
 const { r } = getUriState()
 

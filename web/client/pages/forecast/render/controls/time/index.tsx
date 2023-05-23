@@ -67,6 +67,15 @@ export default () => {
                   }
                 )
               } else {
+                globalThis.dispatchEvent(
+                  new CustomEvent('interaction', {
+                    detail: {
+                      timeStep: nextTimeStep,
+                      activeRun: activeRun + 1,
+                      type: 'previous-run',
+                    },
+                  })
+                )
                 setActiveRun(i => i + 1)
                 setTimeStep(nextTimeStep)
               }
@@ -81,7 +90,20 @@ export default () => {
       {/* PREV TIMESTEP */}
       <Tooltip title="Go to previous time frame" placement="top-start">
         <Span>
-          <IconButton onClick={() => setTimeStep(t => t - 1)} disabled={timeStep <= 1} size="small">
+          <IconButton
+            onClick={() =>
+              setTimeStep(t => {
+                const to = t - 1
+                globalThis.dispatchEvent(
+                  new CustomEvent('interaction', {
+                    detail: { value: to, type: 'previous-timestep' },
+                  })
+                )
+              })
+            }
+            disabled={timeStep <= 1}
+            size="small"
+          >
             <SkipBack />
           </IconButton>
         </Span>
@@ -90,7 +112,19 @@ export default () => {
       {/* PLAY */}
       <Tooltip title="Auto-increment time frames" placement="top-start">
         <Span>
-          <IconButton onClick={() => setAnimateTimeStep(v => !v)} size="small">
+          <IconButton
+            onClick={() =>
+              setAnimateTimeStep(b => {
+                globalThis.dispatchEvent(
+                  new CustomEvent('interaction', {
+                    detail: { value: !b, type: 'toggle-animate' },
+                  })
+                )
+                return !b
+              })
+            }
+            size="small"
+          >
             {animateTimeStep && <Pause />}
             {!animateTimeStep && <Play />}
           </IconButton>
@@ -101,7 +135,17 @@ export default () => {
       <Tooltip title="Go to next time frame" placement="top-start">
         <Span>
           <IconButton
-            onClick={() => setTimeStep(t => t + 1)}
+            onClick={() => {
+              setTimeStep(t => {
+                const to = t + 1
+                globalThis.dispatchEvent(
+                  new CustomEvent('interaction', {
+                    detail: { value: to, type: 'next-timestep' },
+                  })
+                )
+                return to
+              })
+            }}
             disabled={timeStep >= 240}
             size="small"
           >
@@ -125,6 +169,11 @@ export default () => {
                   }
                 )
               } else {
+                globalThis.dispatchEvent(
+                  new CustomEvent('interaction', {
+                    detail: { timeStep: nextTimeStep, activeRun: activeRun - 1, type: 'next-run' },
+                  })
+                )
                 setActiveRun(i => i - 1)
                 setTimeStep(nextTimeStep)
               }

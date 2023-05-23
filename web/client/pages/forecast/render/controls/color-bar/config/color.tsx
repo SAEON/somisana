@@ -82,7 +82,14 @@ export const SelectControl = ({ colorScheme, setColorScheme, min, max, reverseCo
       value={colorScheme}
       label="Colors"
       renderValue={value => value}
-      onChange={({ target: { value } }) => setColorScheme(value)}
+      onChange={({ target: { value } }) => {
+        globalThis.dispatchEvent(
+          new CustomEvent('interaction', {
+            detail: { value, type: 'change-contour-color-scheme' },
+          })
+        )
+        setColorScheme(value)
+      }}
     >
       <ListSubheader>Sequential (Single-Hue)</ListSubheader>
       {presets['Sequential (Single-Hue)'].map(colorScheme => {

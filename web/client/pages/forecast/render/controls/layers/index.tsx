@@ -77,7 +77,16 @@ const Render = ({
                     sx={{ marginLeft: theme => theme.spacing(2) }}
                     size="small"
                     color={showDomain ? 'primary' : 'default'}
-                    onChange={() => setShowDomain(b => !b)}
+                    onChange={() =>
+                      setShowDomain(b => {
+                        globalThis.dispatchEvent(
+                          new CustomEvent('interaction', {
+                            detail: { value: !b, type: 'toggle-domain-later' },
+                          })
+                        )
+                        return !b
+                      })
+                    }
                     checked={showDomain}
                   />
                 }
@@ -89,7 +98,16 @@ const Render = ({
                     sx={{ marginLeft: theme => theme.spacing(2) }}
                     size="small"
                     color={showMPAs ? 'primary' : 'default'}
-                    onChange={() => setShowMPAs(b => !b)}
+                    onChange={() =>
+                      setShowMPAs(b => {
+                        globalThis.dispatchEvent(
+                          new CustomEvent('interaction', {
+                            detail: { value: !b, type: 'toggle-mpa-layer' },
+                          })
+                        )
+                        return !b
+                      })
+                    }
                     checked={showMPAs}
                   />
                 }
@@ -102,7 +120,16 @@ const Render = ({
                     sx={{ marginLeft: theme => theme.spacing(2) }}
                     size="small"
                     color={showCoordinates ? 'primary' : 'default'}
-                    onChange={() => setShowCoordinates(b => !b)}
+                    onChange={() =>
+                      setShowCoordinates(b => {
+                        globalThis.dispatchEvent(
+                          new CustomEvent('interaction', {
+                            detail: { value: !b, type: 'toggle-coordinates-layer' },
+                          })
+                        )
+                        return !b
+                      })
+                    }
                     checked={showCoordinates}
                   />
                 }

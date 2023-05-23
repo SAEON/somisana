@@ -31,7 +31,14 @@ export default ({ timeStep, setTimeStep, t0 }) => {
       track={false}
       value={step}
       onChange={(_, val) => setStep(val)}
-      onChangeCommitted={(_, val) => setTimeStep(val)}
+      onChangeCommitted={(_, val) => {
+        globalThis.dispatchEvent(
+          new CustomEvent('interaction', {
+            detail: { timeStep: val, type: 'change-timestep' },
+          })
+        )
+        setTimeStep(val)
+      }}
       valueLabelFormat={val =>
         t0.constructor === Date
           ? format(

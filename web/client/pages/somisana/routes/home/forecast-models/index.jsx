@@ -32,8 +32,8 @@ export default () => {
         },
       }}
     >
-      {loading && (
-        <Fade in={Boolean(loading)} key="loading" unmountOnExit>
+      {!data && (
+        <Fade in={Boolean(!data)} key="loading" unmountOnExit>
           <Div
             sx={{
               display: 'flex',

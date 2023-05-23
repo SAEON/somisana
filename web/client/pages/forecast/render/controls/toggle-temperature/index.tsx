@@ -13,6 +13,11 @@ export default () => {
         onClick={() => {
           if (selectedVariable === 'temperature') {
           } else {
+            globalThis.dispatchEvent(
+              new CustomEvent('interaction', {
+                detail: { type: 'toggle-temperature' },
+              })
+            )
             setSelectedVariable('temperature')
           }
         }}
