@@ -133,7 +133,7 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
         '& .rdg': {
           backgroundColor: 'inherit',
           '& .rdg-header-row': {
-            backgroundColor: 'inherit',
+            backgroundColor: theme => theme.palette.background.paper,
           },
           '& .rdg-row': {
             backgroundColor: 'inherit',
@@ -150,7 +150,7 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
           columns={draggableColumns}
           defaultColumnOptions={{
             sortable: true,
-            resizable: true,
+            resizable: false,
           }}
           onRowsChange={setRows}
           onSortColumnsChange={setSortColumns}

@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import Paper from '@mui/material/Paper'
+import Div from '../../../../../components/div'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { styled } from '@mui/material/styles'
@@ -41,7 +41,13 @@ Somisana, the Sustainable Ocean Modeling Initiative, represents South Africa's c
 
 export default forwardRef((props, ref) => {
   return (
-    <Paper ref={ref} sx={{ borderRadius: 0, padding: theme => `${theme.spacing(8)} 0` }}>
+    <Div
+      ref={ref}
+      sx={{
+        padding: theme => `${theme.spacing(8)} 0`,
+        backgroundColor: theme => theme.palette.background.paper,
+      }}
+    >
       <Container>
         <Paragraph>
           Welcome to the SOMISANA Initiative, your gateway to understanding the present and future
@@ -78,6 +84,6 @@ export default forwardRef((props, ref) => {
           healthier and more sustainable future for our oceans.
         </Paragraph>
       </Container>
-    </Paper>
+    </Div>
   )
 })

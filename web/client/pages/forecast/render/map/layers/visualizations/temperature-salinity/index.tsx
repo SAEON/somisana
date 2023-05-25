@@ -2,7 +2,7 @@ import { useEffect, memo, useContext, useMemo } from 'react'
 import * as d3 from 'd3'
 import { context as mapContext } from '../../../_context'
 import { context as pageContext } from '../../../../_context'
-import * as tric from 'd3-tricontour'
+// import * as tric from 'd3-tricontour'
 import { contours } from 'd3-contour'
 import { useTheme } from '@mui/material/styles'
 import debounce from '../../../../../../../lib/debounce'
@@ -47,25 +47,25 @@ function marginSquaresContours({
   return { polygons, features }
 }
 
-function meanderingTrianglesContours({ selectedVariable, thresholds, grid, color }) {
-  const polygons = tric
-    .tricontour()
-    .value(d => d[2][selectedVariable])
-    .thresholds(thresholds)(grid.values.filter(([, , v]) => v[selectedVariable]))
+// function meanderingTrianglesContours({ selectedVariable, thresholds, grid, color }) {
+//   const polygons = tric
+//     .tricontour()
+//     .value(d => d[2][selectedVariable])
+//     .thresholds(thresholds)(grid.values.filter(([, , v]) => v[selectedVariable]))
 
-  const features = polygons.map(({ type, coordinates, value }) => {
-    return {
-      type: 'Feature',
-      properties: { value, color: color(value) },
-      geometry: {
-        type,
-        coordinates,
-      },
-    }
-  })
+//   const features = polygons.map(({ type, coordinates, value }) => {
+//     return {
+//       type: 'Feature',
+//       properties: { value, color: color(value) },
+//       geometry: {
+//         type,
+//         coordinates,
+//       },
+//     }
+//   })
 
-  return { polygons, features }
-}
+//   return { polygons, features }
+// }
 
 const drawIsolines = color => [
   'step',
@@ -139,51 +139,53 @@ const Render = memo(
       }
     })
 
-    if (!map.getSource(id)) {
-      map.addSource(id, {
-        type: 'geojson',
-        data: {
+    useEffect(() => {
+      if (!map.getSource(id)) {
+        map.addSource(id, {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features,
+          },
+        })
+
+        map.addLayer({
+          id,
+          type: 'fill',
+          source: id,
+          layout: {},
+          paint: {
+            'fill-color': ['get', 'color'],
+            'fill-outline-color': [
+              'step',
+              ['zoom'],
+              ['rgba', 255, 255, 255, 0],
+              6,
+              ['rgba', 255, 255, 255, 0.1],
+              8,
+              ['rgba', 255, 255, 255, 0.2],
+              10,
+              ['rgba', 255, 255, 255, 0.3],
+              12,
+              ['rgba', 255, 255, 255, 0.5],
+              14,
+              ['rgba', 255, 255, 255, 0.75],
+              16,
+              theme.palette.common.white,
+            ],
+          },
+        })
+
+        map.moveLayer(id)
+        if (map.getLayer('mpas')) map.moveLayer('mpas')
+        if (map.getLayer('coordinates')) map.moveLayer('coordinates')
+      } else {
+        map.getSource(id).setData({
           type: 'FeatureCollection',
           features,
-        },
-      })
-
-      map.addLayer({
-        id,
-        type: 'fill',
-        source: id,
-        layout: {},
-        paint: {
-          'fill-color': ['get', 'color'],
-          'fill-outline-color': [
-            'step',
-            ['zoom'],
-            ['rgba', 255, 255, 255, 0],
-            6,
-            ['rgba', 255, 255, 255, 0.1],
-            8,
-            ['rgba', 255, 255, 255, 0.2],
-            10,
-            ['rgba', 255, 255, 255, 0.3],
-            12,
-            ['rgba', 255, 255, 255, 0.5],
-            14,
-            ['rgba', 255, 255, 255, 0.75],
-            16,
-            theme.palette.common.white,
-          ],
-        },
-      })
-
-      map.moveLayer(id)
-      if (map.getLayer('mpas')) map.moveLayer('mpas')
-      if (map.getLayer('coordinates')) map.moveLayer('coordinates')
-    } else {
-      map.getSource(id).setData({
-        type: 'FeatureCollection',
-        features,
-      })
-    }
+        })
+      }
+    })
 
     useEffect(() => {
       map.setPaintProperty(
