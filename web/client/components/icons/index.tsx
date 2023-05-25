@@ -12,6 +12,7 @@ import {
   mdiContentSaveAll,
   mdiDatabase,
   mdiDataMatrix,
+  mdiDragHorizontal,
   mdiDragVertical,
   mdiEarth,
   mdiFileMultiple,
@@ -101,6 +102,12 @@ export const SkipForward = styled((props: any) => (
 export const DragVertical = styled((props: any) => (
   <SvgIcon {...props}>
     <Path d={mdiDragVertical} />
+  </SvgIcon>
+))({})
+
+export const DragHorizontal = styled((props: any) => (
+  <SvgIcon {...props}>
+    <Path d={mdiDragHorizontal} />
   </SvgIcon>
 ))({})
 

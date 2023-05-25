@@ -40,6 +40,7 @@ export default () => {
         >
           <Paper
             sx={{
+              opacity: 0.8,
               position: 'relative',
               top: theme => theme.spacing(124),
               boxShadow: theme => theme.shadows[3],
@@ -53,6 +54,7 @@ export default () => {
               id="draggable-data-explorer"
               sx={{
                 cursor: 'move',
+                borderBottom: theme => theme.palette.divider,
               }}
               variant="dense"
             >

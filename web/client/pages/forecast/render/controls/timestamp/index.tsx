@@ -44,6 +44,7 @@ export default () => {
       >
         <Paper
           sx={{
+            opacity: 0.8,
             position: 'relative',
             top: theme => theme.spacing(11),
             cursor: 'move',

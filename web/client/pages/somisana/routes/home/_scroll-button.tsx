@@ -22,7 +22,15 @@ export default ({ contentRef }) => {
   })
 
   return (
-    <Div sx={{ position: 'absolute', right: 0, bottom: 0, width: 68 }}>
+    <Div
+      sx={{
+        position: 'absolute',
+        right: 0,
+        bottom: 0,
+        width: 68,
+        backgroundColor: theme => theme.palette.common.white,
+      }}
+    >
       <Fade timeout={500} key="scroll-button" in={!pageScrolled}>
         <ScrollButton
           onClick={() =>

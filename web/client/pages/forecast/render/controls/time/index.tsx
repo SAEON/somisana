@@ -94,11 +94,14 @@ export default () => {
             onClick={() =>
               setTimeStep(t => {
                 const to = t - 1
+                console.log(to)
                 globalThis.dispatchEvent(
                   new CustomEvent('interaction', {
                     detail: { value: to, type: 'previous-timestep' },
                   })
                 )
+
+                return to
               })
             }
             disabled={timeStep <= 1}

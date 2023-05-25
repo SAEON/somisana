@@ -40,6 +40,7 @@ Somisana, the Sustainable Ocean Modeling Initiative, represents South Africa's c
 */
 
 export default forwardRef((props, ref) => {
+  return null
   return (
     <Div
       ref={ref}

@@ -43,7 +43,8 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
       width: 50,
       formatter: ({ row: { i } }) => <I sx={{ textAlign: 'center', display: 'block' }}>{i}</I>,
     },
-    { key: 'location', name: 'Lat / Long (°)' },
+    { key: 'lat', name: 'Lat (°)' },
+    { key: 'lng', name: 'Lng (°)' },
     { key: 'temperature', name: 'Temperature (°C)' },
     { key: 'salinity', name: 'Salinity (‰)' },
     { key: 'u', name: 'U (m/s)' },
@@ -76,7 +77,8 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
             data?.data.json[index] || []
           return {
             i: i + 1,
-            location: `${lat?.toFixed(5) || '-'} / ${lng?.toFixed(5) || '-'}`,
+            lat: `${lat?.toFixed(5) || '-'}`,
+            lng: `${lng?.toFixed(5) || '-'}`,
             temperature,
             salinity,
             u,
