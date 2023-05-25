@@ -46,7 +46,6 @@ export default forwardRef((props, ref) => {
       ref={ref}
       sx={{
         padding: theme => `${theme.spacing(8)} 0`,
-        backgroundColor: theme => theme.palette.background.paper,
       }}
     >
       <Container>
