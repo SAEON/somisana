@@ -54,7 +54,7 @@ export default ({ modelid = undefined }) => {
                   onStop={e => {
                     globalThis.dispatchEvent(
                       new CustomEvent('interaction', {
-                        detail: { type: 'drag-timestamp' },
+                        detail: { type: 'drag-right-menu' },
                       })
                     )
                   }}

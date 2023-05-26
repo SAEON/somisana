@@ -3,38 +3,22 @@ import { context as modelContext } from '../../_context'
 import Slider from '@mui/material/Slider'
 
 const marks = [
-  {
-    value: -550, // This value should actually be -9999, but using -550 looks better on the slider
-    label: 'B',
-  },
-  {
-    value: -500,
-    label: '500',
-  },
-  {
-    value: -250,
-    label: '250',
-  },
-
-  {
-    value: -100,
-    label: '100',
-  },
-
-  {
-    value: -50,
-    label: '50',
-  },
-
-  {
-    value: -25,
-    label: '25',
-  },
-
-  {
-    value: 0,
-    label: 'S',
-  },
+  { depth: -99999, value: -30, label: 'Btm' },
+  { depth: -2000, value: -26, label: '2000' },
+  { depth: -1000, value: -22.5, label: '1000' },
+  { depth: -500, value: -19, label: '500' },
+  { depth: -200, value: -16, label: '200' },
+  { depth: -100, value: -13.5, label: '100' },
+  { depth: -70, value: -11.5, label: '70' },
+  { depth: -60, value: -10, label: '60' },
+  { depth: -50, value: -8.5, label: '50' },
+  { depth: -40, value: -7, label: '40' },
+  { depth: -30, value: -5.5, label: '30' },
+  { depth: -20, value: -4, label: '20' },
+  { depth: -15, value: -3, label: '15' },
+  { depth: -10, value: -2, label: '10' },
+  { depth: -5, value: -1, label: '5' },
+  { depth: 0, value: 0, label: '0' },
 ]
 
 export default () => {
@@ -43,12 +27,7 @@ export default () => {
   return (
     <Slider
       sx={{
-        margin: theme => `${theme.spacing(1)} ${theme.spacing(1)} 0 0`,
-        padding: theme => `0 ${theme.spacing(3)}`,
-        '& .MuiSlider-track': {
-          height: '9% !important',
-          color: theme => theme.palette.common.black,
-        },
+        marginLeft: theme => `${theme.spacing(1)}`,
         '& .MuiSlider-mark': {
           height: '1px',
           width: '12px',
@@ -59,14 +38,17 @@ export default () => {
         },
       }}
       aria-label="Depth level"
-      value={depth}
+      value={marks.find(({ depth: d }) => depth === d).value}
       size="small"
       scale={x => x}
       min={marks[0].value}
       max={marks[marks.length - 1].value}
       orientation="vertical"
       step={null}
-      onChangeCommitted={(_, val) => setDepth(val)}
+      onChangeCommitted={(_, val) => {
+        const depth = marks.find(({ value }) => value == val).depth
+        setDepth(depth)
+      }}
       valueLabelDisplay="off"
       marks={marks}
       track="normal"

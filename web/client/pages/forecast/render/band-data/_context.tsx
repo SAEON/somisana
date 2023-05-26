@@ -5,8 +5,6 @@ import Typography from '@mui/material/Typography'
 
 export const context = createContext({})
 
-const BOTTOM_DEPTH_PLACEHOLDER = -550
-
 const Render = memo(({ children, depth, timeStep, runId }) => {
   const graphqlRequest = useQuery(
     gql`
@@ -20,7 +18,7 @@ const Render = memo(({ children, depth, timeStep, runId }) => {
     {
       variables: {
         runId,
-        depth: depth === BOTTOM_DEPTH_PLACEHOLDER ? -99999 : depth,
+        depth,
         timeStep,
       },
     }
