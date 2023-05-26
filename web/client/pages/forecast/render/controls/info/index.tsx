@@ -24,8 +24,7 @@ const showFields = Object.fromEntries(
     min_y: undefined,
     gridWidth: undefined,
     gridHeight: undefined,
-    contact: model =>
-      `${model.creator}: ${model.creatorContactEmail.replace(/\./g, '[dot]').replace(/@/, '[at]')}`,
+    contact: model => `${model.creator}: ${model.creatorContactEmail.replace(/@/, ' [ at ] ')}`,
   }).sort(([a], [b]) => {
     if (a > b) return 1
     if (a < b) return -1

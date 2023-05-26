@@ -41,7 +41,14 @@ export default ({ modelid = undefined }) => {
           <Map container={ref} />
 
           {/* MAP UI */}
-          <Div sx={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+          <Div
+            sx={{
+              display: 'flex',
+              flex: 1,
+              flexDirection: 'column',
+              backgroundColor: theme => theme.palette.background.paper,
+            }}
+          >
             <Div sx={{ display: 'flex', flex: 1, flexDirection: 'row' }}>
               <Div sx={{ flex: 1 }} ref={el => setRef(el)}>
                 {/* FLOATING TIMESTAMP */}
@@ -100,8 +107,11 @@ export default ({ modelid = undefined }) => {
               <Paper
                 variant="outlined"
                 sx={{
-                  padding: theme => `${theme.spacing(3)} 0`,
+                  padding: theme => `${theme.spacing(1)} 0`,
+                  alignItems: 'center',
+                  display: 'flex',
                   borderRadius: 0,
+                  flexDirection: 'column',
                   borderBottom: 'none',
                 }}
               >

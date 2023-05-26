@@ -20,8 +20,10 @@ import {
 } from '../../../../../components/icons'
 
 export default () => {
-  const { showBandData, setShowBandData, depth, timeStep } = useContext(dataContext)
+  const { showBandData, setShowBandData, depth, timeStep, model } = useContext(dataContext)
   const { data } = useContext(bandContext)
+
+  console.log(model)
 
   return (
     <>
@@ -113,7 +115,10 @@ export default () => {
                         const encodedUri = encodeURI(csvContent)
                         const link = document.createElement('a')
                         link.setAttribute('href', encodedUri)
-                        link.setAttribute('download', `somisana-t${timeStep}-${depth}m.csv`)
+                        link.setAttribute(
+                          'download',
+                          `${model.title} t${timeStep} ${depth}m r${model.runs[0].run_date}.csv`
+                        )
                         document.body.appendChild(link) // Required for FF
                         link.click()
                       }}

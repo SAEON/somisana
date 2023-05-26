@@ -1,6 +1,8 @@
 import { useContext } from 'react'
 import { context as modelContext } from '../../_context'
 import Slider from '@mui/material/Slider'
+import Typography from '@mui/material/Typography'
+import Div from '../../../../../components/div'
 
 const marks = [
   { depth: -99999, value: -30, label: 'Btm' },
@@ -25,33 +27,46 @@ export default () => {
   const { depth, setDepth } = useContext(modelContext)
 
   return (
-    <Slider
-      sx={{
-        marginLeft: theme => `${theme.spacing(1)}`,
-        '& .MuiSlider-mark': {
-          height: '1px',
-          width: '12px',
-          backgroundColor: theme => theme.palette.primary.main,
-        },
-        '& .MuiSlider-markLabel': {
-          fontSize: '0.6rem',
-        },
-      }}
-      aria-label="Depth level"
-      value={marks.find(({ depth: d }) => depth === d).value}
-      size="small"
-      scale={x => x}
-      min={marks[0].value}
-      max={marks[marks.length - 1].value}
-      orientation="vertical"
-      step={null}
-      onChangeCommitted={(_, val) => {
-        const depth = marks.find(({ value }) => value == val).depth
-        setDepth(depth)
-      }}
-      valueLabelDisplay="off"
-      marks={marks}
-      track="normal"
-    />
+    <Div sx={{ display: 'flex', flexDirection: 'column', flex: 1, alignItems: 'center' }}>
+      <Typography variant="overline" sx={{ marginBottom: theme => theme.spacing(1) }}>
+        Depth
+      </Typography>
+      <Slider
+        sx={{
+          marginTop: theme => theme.spacing(1),
+          marginLeft: theme => `${theme.spacing(1)}`,
+          borderRadius: 0,
+          width: '8px',
+          '& .MuiSlider-track': {
+            height: '13.3% !important',
+            width: '4px',
+            color: 'transparent',
+          },
+          '& .MuiSlider-mark': {
+            height: '1px',
+            width: '8px',
+            backgroundColor: theme => theme.palette.primary.main,
+          },
+          '& .MuiSlider-markLabel': {
+            fontSize: '0.6rem',
+          },
+        }}
+        aria-label="Depth level"
+        value={marks.find(({ depth: d }) => depth === d).value}
+        size="small"
+        scale={x => x}
+        min={marks[0].value}
+        max={marks[marks.length - 1].value}
+        orientation="vertical"
+        step={null}
+        onChangeCommitted={(_, val) => {
+          const depth = marks.find(({ value }) => value == val).depth
+          setDepth(depth)
+        }}
+        valueLabelDisplay="off"
+        marks={marks}
+        track="normal"
+      />
+    </Div>
   )
 }
