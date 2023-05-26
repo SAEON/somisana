@@ -63,7 +63,7 @@
     "pg-query-stream": "^4.5.0",
     "prettier": "^2.8.8",
     "react": "^18.2.0",
-    "react-data-grid": "7.0.0-beta.30",
+    "react-data-grid": "7.0.0-beta.31",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",

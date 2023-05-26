@@ -88,5 +88,5 @@ input BrowserEventInput {
   createdAt: DateTime
   info: JSON!
   clientVersion: String!
-  referrer: String
+  r: String
 }

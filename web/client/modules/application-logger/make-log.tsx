@@ -1,12 +1,12 @@
 import getUriState from '../../lib/get-uri-state'
 import { PACKAGE_JSON } from '../config/env'
 
-const { r } = getUriState()
-
 export default (type, info = {}) => {
   if (!type) {
     throw new Error('No log type specified makeLog(...)')
   }
+
+  const { r, ...params } = getUriState()
 
   return {
     clientVersion: PACKAGE_JSON?.version,
@@ -14,6 +14,7 @@ export default (type, info = {}) => {
     r,
     info: {
       pathname: window.location.pathname,
+      params,
       ...info,
     },
   }

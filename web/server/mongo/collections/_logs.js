@@ -7,6 +7,7 @@ export default {
       required: ['clientSession', 'type', 'info', 'clientInfo', 'createdAt'],
       additionalProperties: true,
       properties: {
+        // Required
         clientSession: {
           bsonType: 'string',
           description: 'Browser session cookie',
@@ -41,6 +42,10 @@ export default {
         },
 
         // Not required
+        r: {
+          bsonType: 'string',
+          description: 'Link referrer, passed as a URL parameter (?r=...)',
+        },
         clientVersion: { description: 'Version of the client defined in package.json' },
         userId: {
           description: 'ID of logged in user',
@@ -54,6 +59,14 @@ export default {
       options: {
         name: 'logType',
         unique: false,
+      },
+    },
+    {
+      index: 'r',
+      options: {
+        name: 'referrer',
+        unique: false,
+        sparse: true,
       },
     },
   ],

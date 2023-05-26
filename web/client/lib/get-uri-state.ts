@@ -1,4 +1,4 @@
-export default ({ splitString = false } = {}): { referrer?: String } => {
+export default ({ splitString = false } = {}): { r?: String } => {
   if (typeof window === 'undefined') {
     return {}
   }
