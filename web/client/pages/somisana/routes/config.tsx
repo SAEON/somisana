@@ -15,8 +15,8 @@ import HomePage from './home'
 import Div from '../../../components/div'
 
 const PrivacyPolicyPage = lazy(() => import('../../../modules/privacy-policy'))
-const NotesPage = lazy(() => import('../../../modules/notes'))
-const NotePage = lazy(() => import('../../../modules/note'))
+// const NotesPage = lazy(() => import('../../../modules/notes'))
+// const NotePage = lazy(() => import('../../../modules/note'))
 const ExplorePage = lazy(() => import('./explore'))
 const ExploreModelPage = lazy(() => import('./model'))
 
@@ -41,39 +41,39 @@ export default [
     includeInFooter: true,
     element: props => <HomePage {...props} />,
   },
-  {
-    to: '/notes/:id',
-    path: '/notes/:id',
-    label: 'Note',
-    includeInNavMenu: false,
-    includeInFooter: false,
-    BreadcrumbsLabel: ({ pathname }) => {
-      return pathname
-        .split('-')
-        .map(word => dictionary[word] || word.capitalize())
-        .join(' ')
-    },
-    element: props => {
-      return (
-        <Suspense fallback={<L />}>
-          <NotePage {...props} />
-        </Suspense>
-      )
-    },
-  },
-  {
-    to: '/notes',
-    path: '/notes',
-    label: 'Notes',
-    Icon: NoteMultiple,
-    includeInNavMenu: true,
-    includeInFooter: true,
-    element: props => (
-      <Suspense fallback={<L />}>
-        <NotesPage {...props} />
-      </Suspense>
-    ),
-  },
+  // {
+  //   to: '/notes/:id',
+  //   path: '/notes/:id',
+  //   label: 'Note',
+  //   includeInNavMenu: false,
+  //   includeInFooter: false,
+  //   BreadcrumbsLabel: ({ pathname }) => {
+  //     return pathname
+  //       .split('-')
+  //       .map(word => dictionary[word] || word.capitalize())
+  //       .join(' ')
+  //   },
+  //   element: props => {
+  //     return (
+  //       <Suspense fallback={<L />}>
+  //         <NotePage {...props} />
+  //       </Suspense>
+  //     )
+  //   },
+  // },
+  // {
+  //   to: '/notes',
+  //   path: '/notes',
+  //   label: 'Notes',
+  //   Icon: NoteMultiple,
+  //   includeInNavMenu: true,
+  //   includeInFooter: true,
+  //   element: props => (
+  //     <Suspense fallback={<L />}>
+  //       <NotesPage {...props} />
+  //     </Suspense>
+  //   ),
+  // },
 
   {
     to: '/explore/:id',
