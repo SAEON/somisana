@@ -18,6 +18,7 @@ export default ({ modelid = undefined, children }) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState({})
   const [selectedMPAs, setSelectedMPAs] = useState({})
   const [selectedVariable, setSelectedVariable] = useState('temperature')
+  const [showBandData, setShowBandData] = useState(false)
   const [showCoordinates, setShowCoordinates] = useState(true)
   const [showDomain, setShowDomain] = useState(true)
   const [showCurrents, setShowCurrents] = useState(false)
@@ -107,6 +108,7 @@ export default ({ modelid = undefined, children }) => {
         setSelectedCoordinates,
         setSelectedMPAs,
         setSelectedVariable,
+        setShowBandData,
         setShowCoordinates,
         setShowCurrents,
         setShowData,
@@ -115,6 +117,7 @@ export default ({ modelid = undefined, children }) => {
         setShowMPAs,
         setThresholds,
         setTimeStep,
+        showBandData,
         showCoordinates,
         showCurrents,
         showData,

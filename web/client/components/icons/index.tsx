@@ -14,6 +14,7 @@ import {
   mdiDataMatrix,
   mdiDragHorizontal,
   mdiDragVertical,
+  mdiDownload,
   mdiEarth,
   mdiFileMultiple,
   mdiFileSign,
@@ -44,6 +45,12 @@ import {
 } from '@mdi/js'
 
 export { default as EgagasiniGraphic } from './egagasini-graphic'
+
+export const Download = styled(props => (
+  <SvgIcon {...props}>
+    <Path d={mdiDownload} />
+  </SvgIcon>
+))({})
 
 export const Account = styled(props => (
   <SvgIcon {...props}>

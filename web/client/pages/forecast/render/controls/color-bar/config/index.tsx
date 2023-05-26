@@ -57,6 +57,9 @@ export default () => {
       </Tooltip>
 
       <Dialog
+        sx={{
+          opacity: 0.8,
+        }}
         maxWidth="xs"
         open={open}
         onClose={() => setOpen(false)}

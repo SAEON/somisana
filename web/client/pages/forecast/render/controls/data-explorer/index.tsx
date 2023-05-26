@@ -17,6 +17,7 @@ export default () => {
     <Fade
       key="data-explorer"
       in={Boolean(Object.values({ ...selectedCoordinates }).filter(v => Boolean(v)).length)}
+      unmountOnExit
     >
       <Span
         sx={{

@@ -1,7 +1,7 @@
 import IconButton from '@mui/material/IconButton'
 import { useContext } from 'react'
 import { context as modelContext } from '../../_context'
-import { Database as DatabaseIcon } from '../../../../../components/icons'
+import { FileMultiple as FilesIcon } from '../../../../../components/icons'
 import Tooltip from '@mui/material/Tooltip'
 
 const mnemosyne = {
@@ -23,7 +23,7 @@ export const ToggleData = () => {
         sx={{ zIndex: 11 }}
         href={mnemosyne[id]}
       >
-        <DatabaseIcon
+        <FilesIcon
           sx={{
             color: 'primary',
           }}

@@ -54,11 +54,17 @@ export default () => {
             setOpen(!open)
           }}
         >
-          <AboutIcon fontSize="small" />
+          <AboutIcon
+            sx={{
+              color: theme => (open ? theme.palette.success.dark : 'primary'),
+            }}
+            fontSize="small"
+          />
         </IconButton>
       </Tooltip>
 
       <Dialog
+        sx={{ opacity: 0.8 }}
         open={open}
         onClose={() => setOpen(false)}
         PaperComponent={PaperComponent}

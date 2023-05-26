@@ -19,6 +19,7 @@ import Timestamp from './controls/timestamp'
 import { ToggleData } from './controls/data'
 import LayerControl from './controls/layers'
 import Draggable from 'react-draggable'
+import BandDataTable from './controls/band-data'
 
 const ModelProvider = lazy(() => import('./_context'))
 
@@ -87,6 +88,7 @@ export default ({ modelid = undefined }) => {
                     <InfoControl />
                     <LayerControl />
                     <ToggleData />
+                    <BandDataTable />
                     <ToggleTemperature />
                     <ToggleSalinity />
                     <ToggleCurrents />
