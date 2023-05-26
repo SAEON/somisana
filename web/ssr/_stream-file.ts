@@ -1,5 +1,8 @@
 import { open, stat } from 'fs/promises'
 import { createHash } from 'crypto'
+import mime from 'mime'
+
+const noCache = ['css', 'js']
 
 export default async (ctx: any, contentType: string, filePath: string) => {
   let fd: any
@@ -21,8 +24,10 @@ export default async (ctx: any, contentType: string, filePath: string) => {
     return
   }
 
-  if (contentType === 'application/javascript' || contentType === 'text/javascript') {
-    ctx.set('Cache-Control', 'no-cache, no-store, must-revalidate') // no caching for javascript
+  const fileExtension = mime.getExtension(contentType)
+
+  if (noCache.includes(fileExtension)) {
+    ctx.set('Cache-Control', 'no-cache, no-store, must-revalidate')
     ctx.set('Pragma', 'no-cache') // for HTTP/1.0 compatibility
     ctx.set('Expires', '0') // for Proxies
   } else {
