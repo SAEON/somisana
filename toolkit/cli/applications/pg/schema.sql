@@ -393,7 +393,7 @@ equation_vals as (
   where
     "r#" = 1
 ),
-interpolated_values as (
+_interpolated_values as (
   select
     e.coordinateid,
     e.depth,
@@ -407,18 +407,16 @@ interpolated_values as (
 grid as (
   select
     c.id coordinateid,
-    st_x(c.pixel) px,
-    st_y(c.pixel) py,
-  v.depth,
-  c.latitude lat,
-  c.longitude long,
-  v.interpolated_temperature,
-  v.interpolated_salinity,
-  v.interpolated_u,
-  v.interpolated_v
-from
-  interpolated_values v
-  right join coordinates c on c.id = v.coordinateid
+    v.depth,
+    c.latitude lat,
+    c.longitude long,
+    v.interpolated_temperature,
+    v.interpolated_salinity,
+    v.interpolated_u,
+    v.interpolated_v
+  from
+    _interpolated_values v
+    join coordinates c on c.id = v.coordinateid
   where
     c.modelid =(
       select
@@ -437,10 +435,7 @@ select
   g.interpolated_v,
   g.depth _depth
 from
-  grid g
-order by
-  py desc,
-  px asc;
+  grid g;
 end;
 $$
 language 'plpgsql'
