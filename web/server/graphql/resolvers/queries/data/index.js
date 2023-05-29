@@ -191,7 +191,7 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                   from
                     runs
                   where
-                    id = 61))
+                    id = $1))
               select
                 g.coordinateid,
                 x,
