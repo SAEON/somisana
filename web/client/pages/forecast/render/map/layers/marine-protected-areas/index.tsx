@@ -76,6 +76,7 @@ const Render = ({ map, selectedMPAs, setSelectedMPAs, showMPAs, TILESERV_BASE_UR
       source: 'mpas',
       'source-layer': 'public.mpas',
       paint: {
+        'fill-outline-color': 'transparent',
         'fill-color': [
           'case',
           [
@@ -84,9 +85,9 @@ const Render = ({ map, selectedMPAs, setSelectedMPAs, showMPAs, TILESERV_BASE_UR
             ['==', ['feature-state', 'clicked'], true],
           ],
           theme.palette.primary.main,
-          theme.palette.common.white,
+          theme.palette.grey[100],
         ],
-        'fill-opacity': 0.4,
+        'fill-opacity': 0.5,
       },
     })
 
