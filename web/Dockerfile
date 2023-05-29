@@ -1,4 +1,4 @@
-FROM node:20.1.0
+FROM node:20.2.0
 
 ##############
 # BUILD CONFIG
@@ -61,7 +61,7 @@ RUN echo "FEATURESERV_BASE_URL=${FEATURESERV_BASE_URL}" >> .env
 RUN echo "ESRI_API_KEY=${ESRI_API_KEY}" >> .env
 
 # Install deps
-RUN npm install -g chomp@0.2.12 & npm ci --omit=dev
+RUN npm install -g chomp@0.2.14 & npm ci --omit=dev
 
 # Build app using chomp
 RUN chomp build

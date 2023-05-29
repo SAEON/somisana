@@ -66,11 +66,11 @@ const ImageBackdrop = styled('span')(({ theme }) => ({
 }))
 
 const ImageMarked = styled('span')(({ theme }) => ({
-  height: 3,
+  height: 4,
   width: 18,
   backgroundColor: theme.palette.common.white,
   position: 'absolute',
-  bottom: -2,
+  bottom: -4,
   left: 'calc(50% - 9px)',
   transition: theme.transitions.create('opacity'),
 }))

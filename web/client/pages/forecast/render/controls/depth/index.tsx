@@ -28,9 +28,6 @@ export default () => {
 
   return (
     <Div sx={{ display: 'flex', flexDirection: 'column', flex: 1, alignItems: 'center' }}>
-      <Typography variant="overline" sx={{ marginBottom: theme => theme.spacing(1) }}>
-        Depth
-      </Typography>
       <Slider
         sx={{
           marginTop: theme => theme.spacing(1),
