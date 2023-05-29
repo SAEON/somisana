@@ -26,16 +26,13 @@ async def load(i, depth, runid, async_pool):
                             v.interpolated_temperature::float temperature,
                             v.interpolated_salinity::float salinity,
                             v.interpolated_u::float u,
-                            v.interpolated_v::float v,
-                            st_x (c.pixel) px,
-                            st_y (c.pixel) py
+                            v.interpolated_v::float v
                         from
                             somisana_interpolate_values(
                                 target_depth => {depth},
                                 runid => {runid},
                                 time_step => {time_step}
                             ) v
-                        inner join public.coordinates c on c.id = v.coordinateid
                     ) s on 
                         s.coordinateid = t.coordinateid
                         and s.time_step = t.time_step
@@ -44,9 +41,9 @@ async def load(i, depth, runid, async_pool):
                     when
                         not matched then
                             insert
-                                (coordinateid, time_step, depth, runid, x, y, temperature, salinity, u, v, px, py)
+                                (coordinateid, time_step, depth, runid, x, y, temperature, salinity, u, v)
                             values
-                                (s.coordinateid, s.time_step, s.depth, s.runid, s.x, s.y, s.temperature, s.salinity, s.u, s.v, s.px, s.py)
+                                (s.coordinateid, s.time_step, s.depth, s.runid, s.x, s.y, s.temperature, s.salinity, s.u, s.v)
                         when matched then
                             update
                                 set
@@ -55,9 +52,7 @@ async def load(i, depth, runid, async_pool):
                                     temperature = s.temperature,
                                     salinity = s.salinity,
                                     u = s.u,
-                                    v = s.v,
-                                    px = s.px,
-                                    py = s.py;
+                                    v = s.v;
                     """
                 )
 

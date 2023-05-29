@@ -1,4 +1,5 @@
 import { PASSPORT_SSO_SESSION_ID } from '../config/index.js'
+import { MongoClient } from 'mongodb'
 import DataLoader from 'dataloader'
 import { ObjectId } from 'mongodb'
 
@@ -98,11 +99,20 @@ export default collections => {
           const { insertedCount } = await Logs.insertMany(batch)
           console.info('Client events logged', insertedCount)
         } catch (error) {
-          console.error(
-            'Error logging client events to Mongo (ignore this unless very frequent).',
-            error,
-            JSON.stringify(batch, null, 2)
-          )
+          if (error instanceof MongoClient.MongoError && error.name === 'BulkWriteError') {
+            const validationError = error.result.writeErrors[0].err
+            console.error(
+              'Error logging client events to Mongo. (validation error)',
+              validationError,
+              JSON.stringify(batch, null, 2)
+            )
+          } else {
+            console.error(
+              'Error logging client events to Mongo (ignore this unless very frequent).',
+              error,
+              JSON.stringify(batch, null, 2)
+            )
+          }
         } finally {
           this.load()
         }

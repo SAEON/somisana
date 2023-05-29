@@ -41,15 +41,10 @@ export default {
           description: 'Log creation timestamp',
         },
 
-        // Not required
-        r: {
-          bsonType: 'string',
-          description: 'Link referrer, passed as a URL parameter (?r=...)',
-        },
+        // Not required (Can't specify types here as the Node.js client throws in that case')
+        r: { description: 'Link referrer, passed as a URL parameter (?r=...)' },
         clientVersion: { description: 'Version of the client defined in package.json' },
-        userId: {
-          description: 'ID of logged in user',
-        },
+        userId: { description: 'ID of logged in user' },
       },
     },
   },
