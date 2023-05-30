@@ -21,8 +21,6 @@ async def load(i, depth, runid, async_pool):
                             {time_step} time_step,
                             {depth} depth,
                             {runid} runid,
-                            v.long x,
-                            v.lat y,
                             v.interpolated_temperature::float temperature,
                             v.interpolated_salinity::float salinity,
                             v.interpolated_u::float u,
@@ -41,14 +39,12 @@ async def load(i, depth, runid, async_pool):
                     when
                         not matched then
                             insert
-                                (coordinateid, time_step, depth, runid, x, y, temperature, salinity, u, v)
+                                (coordinateid, time_step, depth, runid, temperature, salinity, u, v)
                             values
-                                (s.coordinateid, s.time_step, s.depth, s.runid, s.x, s.y, s.temperature, s.salinity, s.u, s.v)
+                                (s.coordinateid, s.time_step, s.depth, s.runid, s.temperature, s.salinity, s.u, s.v)
                         when matched then
                             update
                                 set
-                                    x = s.x,
-                                    y = s.y,
                                     temperature = s.temperature,
                                     salinity = s.salinity,
                                     u = s.u,
