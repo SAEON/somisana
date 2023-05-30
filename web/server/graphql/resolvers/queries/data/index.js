@@ -25,7 +25,7 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                 and v.time_step = $2
                 and v.depth_level = 1
             ),
-            interpolated_values as (
+            _interpolated_values as (
               select
                 v.coordinateid,
                 v.temp interpolated_temperature,
@@ -49,7 +49,7 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                 v.interpolated_v,
                 v.depth
             from
-              interpolated_values v
+              _interpolated_values v
               right join coordinates c on c.id = v.coordinateid
               where
                 c.modelid = (
@@ -97,7 +97,7 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                 and v.time_step = $2
                 and v.depth_level = ( select sigma_levels from models where id = ( select modelid from runs where id = $1 ) )
             ),
-            interpolated_values as (
+            _interpolated_values as (
               select
                 v.coordinateid,
                 v.temp interpolated_temperature,
@@ -121,7 +121,7 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                 v.interpolated_v,
                 v.depth
             from
-              interpolated_values v
+              _interpolated_values v
               right join coordinates c on c.id = v.coordinateid
               where
                 c.modelid = (
@@ -155,8 +155,6 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
             with _values as (
               select
                 v.coordinateid,
-                v.x,
-                v.y,
                 v.temperature,
                 v.salinity,
                 v.u,
@@ -168,7 +166,6 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                 runid = $1
                 and time_step = $2
                 and depth = $3
-                and temperature is not null
             ),
             grid as (
               select

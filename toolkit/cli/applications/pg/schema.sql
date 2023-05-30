@@ -104,14 +104,10 @@ create table if not exists public.interpolated_values(
   time_step smallint not null,
   depth decimal(7, 2),
   runid smallint not null references public.runs(id),
-  x float,
-  y float,
   temperature decimal(4, 2),
   salinity decimal(6, 4),
   u decimal(5, 4),
   v decimal(5, 4),
-  px float8,
-  py float8,
   primary key (coordinateid, time_step, depth, runid)
 )
 partition by list (runid);
