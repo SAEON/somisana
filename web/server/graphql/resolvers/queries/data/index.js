@@ -209,8 +209,6 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
         break
     }
 
-    console.log(res.rows.find(([, , , t]) => t !== null))
-
     return {
       id: `${timeStep}${runId}${depth}`,
       json: res.rows,
