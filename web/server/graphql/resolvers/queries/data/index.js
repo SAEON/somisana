@@ -63,11 +63,11 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
               g.coordinateid,
               x,
               y,
-              g.interpolated_temperature,
-              g.interpolated_salinity,
-              g.interpolated_u,
-              g.interpolated_v,
-              g.depth
+              g.interpolated_temperature::float,
+              g.interpolated_salinity::float,
+              g.interpolated_u::float,
+              g.interpolated_v::float,
+              g.depth::float
             from
               grid g
             order by
@@ -135,11 +135,11 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
               g.coordinateid,
               x,
               y,
-              g.interpolated_temperature,
-              g.interpolated_salinity,
-              g.interpolated_u,
-              g.interpolated_v,
-              g.depth
+              g.interpolated_temperature::float,
+              g.interpolated_salinity::float,
+              g.interpolated_u::float,
+              g.interpolated_v::float,
+              g.depth::float
             from
               grid g
             order by
@@ -193,11 +193,11 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
                 g.coordinateid,
                 x,
                 y,
-                g.temperature,
-                g.salinity,
-                g.u,
-                g.v,
-                g.depth
+                g.temperature::float,
+                g.salinity::float,
+                g.u::float,
+                g.v::float,
+                g.depth::float
               from
                 grid g
               order by
@@ -208,6 +208,8 @@ export default async (_, { timeStep, runId, depth }, ctx) => {
         })
         break
     }
+
+    console.log(res.rows.find(([, , , t]) => t !== null))
 
     return {
       id: `${timeStep}${runId}${depth}`,
