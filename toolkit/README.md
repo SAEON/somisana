@@ -207,6 +207,12 @@ Then activate the environment
 conda activate somisana
 ```
 
+If `Condafile.yml` is updated with new required dependences you can update your environment like this 
+
+```sh
+conda env update -f Condafile.yml --prune
+```
+
 ### Pyenv
 
 Pipenv is a wrapper over the regular pip package manager, but with a slightly better mechanism for locking dependencies of referenced libraries (I believe). Dependencies are managed via the `Pipfile` and the `Pipfile.lock`
