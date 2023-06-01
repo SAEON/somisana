@@ -23,8 +23,6 @@ export default () => {
   const { showBandData, setShowBandData, depth, timeStep, model } = useContext(dataContext)
   const { data } = useContext(bandContext)
 
-  console.log(model)
-
   return (
     <>
       <Tooltip placement="left-start" title="Show band data">
