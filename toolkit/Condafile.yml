@@ -25,6 +25,10 @@ dependencies:
   - fsspec
   - h5py
   - spyder=5.3.2
+  - asyncpg
+  - pydap
+  - lxml
+  - pytest
   - pip
   - pip:
     - motuclient==3.0.0
