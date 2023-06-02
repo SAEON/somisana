@@ -3,8 +3,8 @@ import numpy as np
 from lib.log import log
 import os
 from datetime import timedelta, datetime
-from cli.applications.croco.post_process_v1.depth_functions import z_levels
-from cli.applications.croco.post_process_v1.functions import (
+from cli.applications.croco.postprocess import (
+    z_levels,
     hour_rounder,
     u2rho_4d,
     v2rho_4d,
@@ -21,7 +21,7 @@ REFERENCE_DATE = datetime(2000, 1, 1, 0, 0, 0)
 # from grid points to real lat and lon data.
 
 
-def post_process_v1(args):
+def regrid_tier1(args):
     id = args.id
     grid = os.path.abspath(args.grid)
     input = os.path.abspath(args.input)
@@ -38,7 +38,6 @@ def post_process_v1(args):
 
     data = xr.open_dataset(input)
     data_grid = xr.open_dataset(grid)
-
     # Dimensions that need to be transformed
     time = data.time.values  # Time steps
     lon_rho = data.lon_rho.values  # Longitude (4326)
