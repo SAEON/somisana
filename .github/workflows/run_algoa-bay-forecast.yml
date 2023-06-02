@@ -348,6 +348,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       SHA: sha-${{ github.sha }}
     steps:
       - name: Check out source code
