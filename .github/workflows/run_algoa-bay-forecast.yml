@@ -42,7 +42,7 @@ jobs:
             /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH }}/* \
             -maxdepth 0 \
             -type d \
-            -ctime +7 \
+            -ctime +5 \
             -exec \
               rm \
                 -rf {} \;
