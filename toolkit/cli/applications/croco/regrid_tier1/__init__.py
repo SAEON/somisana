@@ -47,8 +47,8 @@ def regrid_tier1(args):
     time_steps = []
     for t in time:
         date_now = REFERENCE_DATE + timedelta(seconds=np.float64(t))
-        date_round = hour_rounder(date_now)
-        time_steps.append(date_round)
+        # date_round = hour_rounder(date_now) # GF: I'd rather keep the croco dates as they are saved in the raw output
+        time_steps.append(date_now)
 
     # Get the run_date from the CROCO output NetCDF file
     run_date = time_steps[119].strftime("%Y%m%d")
