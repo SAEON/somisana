@@ -1,11 +1,13 @@
-import os
-import numpy as np
+# Packages needed
 import xarray as xr
+import pandas as pd
+import numpy as np
 from glob import glob
 from natsort import natsorted
+# Import script used to define MHW (https://github.com/ecjoliver/marineHeatWaves)
+#from cli.applications.mhw.thresholds.climatology import detect
 
-
-def calculate_daily_clim(mhw_bulk_cache, nc_thresholds_path, domain):
+def calculate_daily_clim(mhw_bulk_cache, nc_mhw_output_path, domain):
     mhw_bulk_cache = os.path.abspath(mhw_bulk_cache)
 
     # Files for multiple domains may be cached - we want this one
@@ -15,106 +17,135 @@ def calculate_daily_clim(mhw_bulk_cache, nc_thresholds_path, domain):
     files = natsorted(glob(mhw_bulk_cache + "/*{id}.nc".format(id=cache_identifier)))
 
     # Importing data through loop saving memory (Seems like there is a issue with rolling means and xarray https://github.com/pydata/xarray/issues/3277 need to loop the load)
-    list_of_arrays = []
-    for file in files:
-        try:
-            ds = xr.open_dataset(file)
-            list_of_arrays.append(np.squeeze(ds["sst"]))
-        except:
-            print("Unable to open NetCDF file", file)
+    #list_of_arrays = []
+    #for file in files:
+    #    try:
+    #        ds = xr.open_dataset(file)
+    #        list_of_arrays.append(np.squeeze(ds["sst"]))
+    #    except:
+    #        print("Unable to open NetCDF file", file)
 
-    sst_ds = xr.concat(list_of_arrays[0 : len(list_of_arrays)], dim="time")
+    #sst_ds = xr.concat(list_of_arrays[0 : len(list_of_arrays)], dim="time")
+
+    # Loading in netcdf using xarray open_mfdataset could be used as rolling mean no longer used
+    sst_ds = xr.open_mfdataset(path_to_data+file_names)
 
     # Dropping empty dimesion zlev
     sst_ds = sst_ds.drop_vars("zlev")
     # Add a fill values as the rolling mean can't handle the land values
-    sst_ds = sst_ds.fillna(9999)
+    #sst_ds = sst_ds.fillna(9999)
 
     # # loading lon and lat
     lon = sst_ds.lon.values
     lat = sst_ds.lat.values
 
+    # Loading the temperature variable from OISST 
+    sst = sst_ds['sst'].values
+
+    #Formatting time dimesion 
+    time = sst_ds.time
+
+    # %% Detect Marine heat wave
+
+    # Find dimensions of sst variable to reproduce the netcdf output file
+    # Time dim
+    t_dim = np.shape(sst)[0]
+    # Number of rows
+    rows = np.shape(sst)[1]
+    # Number of columns
+    cols = np.shape(sst)[2]
+
+    # Creating empty array for output netcdf
+    # Climatology values of MHW
+    climatology = np.zeros([t_dim,rows,cols])
+    # Threshold used to determine if a MHW occured
+    threshold = np.zeros([t_dim,rows,cols])
+    # Creating a variable recording if MHW present or absent at each grid cell
+    MHW = np.zeros([t_dim,rows,cols])
+
+    # Define the mapping from converting string values to numeric values within the loop
+    mapping = {'Moderate': 1,'Strong': 2,'Severe': 3, 'Extreme': 4}
+
+    # loop through each grid cell in the sst matrix and caculate MHW over the entire time period
+    # tqdm is just a timing package to see how long loop takes to complete can be removed
+
+    #number of rows
+    for x in np.arange(rows):
+        #number of columns
+        for y in np.arange(cols):
+        
+            # IF a land value threshold climatolgy and MHW is filled with nans
+            if np.all(np.isnan(sst[:,x,y])):
+                climatology_tmp =np.full(t_dim, np.nan)
+                threshold_tmp =  np.full(t_dim, np.nan)
+                MHW_tmp = np.full(t_dim, np.nan)
+        
+            # ELSE detect MHWs
+            else:
+            
+                # Calculate mhw with ecjoliver script (https://github.com/ecjoliver/marineHeatWaves)
+                mhw_temp = detect(t_ordinal,sst[:,x,y])
+                
+                # Extracting climatology and threshold from diction created by script
+                climatology_tmp = mhw_temp[1]['seas']        
+                threshold_tmp = mhw_temp[1]['thresh']
+
+                # Extracting time indices (start and end) and category of defined MHW at grgid cell (x,y) 
+                index_start = mhw_temp[0]['index_start']
+                index_end = mhw_temp[0]['index_end']
+                category = mhw_temp[0]['category']
+
+                # Fill in the time indices as only start and end provided
+                # Create empty lists
+                mhw_index = []
+                mhw_category = []
+            
+                # Looping through all the time start time indices detected 
+                for i in np.arange(len(index_start)):
+                
+                    # Filling indices with np.arange(start,end,step)
+                    index_tmp = np.arange(index_start[i],index_end[i]+1)
+                    # Add corresponding category to each index (the category are strings)
+                    catergory_tmp = np.repeat(category[i],len(index_tmp))
+                       
+                    # Replace the string values with mapped values category 1-4 instead of 'moderate' to 'extreme'
+                    # function detect from (https://github.com/ecjoliver/marineHeatWaves) outputs the category as strings
+                    catergory_num_tmp = np.vectorize(mapping.get)(catergory_tmp)
+            
+                    # Adding the indices and categories to the empty lists created 
+                    mhw_index.append(index_tmp)
+                    mhw_category.append(catergory_num_tmp)
+            
+                # Create empty array full length of tim dimension 
+                mhw_detection_full = np.zeros(t_dim)
+                # Using the indices of MHW events full the category values (1-4) at the correct index
+                mhw_detection_full[np.concatenate(mhw_index)] = np.concatenate(mhw_category)
+
+            # Fill the variables one grid point at a time
+            climatology[:,x,y] = climatology_tmp
+            threshold[:,x,y] = threshold_tmp
+            MHW[:,x,y] = mhw_detection_full
+    
     ###############################################
-    # Computes the daily climatology
+    # Save netcdf file 
 
-    # Find daily climatology
-    daily_clim_tmp = sst_ds.groupby("time.dayofyear").mean(dim="time")
-    # Adding 15 days on each year of timeseries from beginning and end (need overlap for rolling mean 31 days)
-    daily_clim_pad = xr.concat(
-        [daily_clim_tmp[-15::], daily_clim_tmp, daily_clim_tmp[0:15]], dim="dayofyear"
-    )
-    # print(daily_clim_pad)
-    # Find 31 day rolling mean of the climatology
-    daily_clim = (
-        daily_clim_pad.rolling(dayofyear=31, center=15).mean().dropna("dayofyear")
-    )
-    # print(daily_clim)
-    ###################################
-    # Computes marine heat wave threshold
+    ds_save = xr.Dataset(
+            {
+                "threshold": (["time_leap","latitude","longitude"], climatology),
+                "climatology": (["time","latitude","longitude"], threshold),
+                "MHW": (["time","latitude","longitude"], MHW),
+                "sst": (["time","latitude","longitude"], sst),
+                            
+            },
+            coords={
+    
+                "latitude": (["latitude"], lat),
+                "longitude": (["longitude"], lon),
+                "time": (["time"], time.values),
 
-    # Group by day of year
-    day_of_year = sst_ds.groupby("time.dayofyear")
-    day_of_year_values = daily_clim.dayofyear.values
-
-    # Still have to loop
-    # Create empty variable to populate
-    daily_percentile = np.zeros(np.shape(daily_clim))
-    count = 0
-
-    # Loop through days of year not indices
-    for i in day_of_year_values:
-        # Find 90th percentile
-        daily_percentile[count, :, :] = np.percentile(
-            sst_ds[day_of_year.groups[i]], 90, axis=0
-        )
-        count = count + 1
-
-    # Convert back to xarray dataset (maybe lazy way)
-    daily_percentile = xr.DataArray(
-        daily_percentile,
-        dims=["dayofyear", "lat", "lon"],
-        coords=dict(
-            lat=lat,
-            lon=lon,
-            dayofyear=day_of_year_values,
-        ),
-    )
-    # Adding 15 days on each year of timeseries from beginning and end
-    daily_percentile_pad = xr.concat(
-        [daily_percentile[-15::], daily_percentile, daily_percentile[0:15]],
-        dim="dayofyear",
-    )
-    # Find 31 day rolling mean of the climatology
-    thres = (
-        daily_percentile_pad.rolling(dayofyear=31, center=15).mean().dropna("dayofyear")
-    )
-    ###################################
-    # Replace fill values with nans
-    daily_clim = daily_clim.where(daily_clim < 9998, np.nan)
-    thres = thres.where(thres < 9998, np.nan)
-
-    ds = xr.Dataset(
-        {
-            "clim": (["time", "latitude", "longitude"], daily_clim.values),
-            "thres": (["time", "latitude", "longitude"], thres.values),
-        },
-        coords={
-            "day_of_year": day_of_year_values,
-            "latitude": (["latitude"], lat),
-            "longitude": (["longitude"], lon),
-        },
-    )
-
-    ds.clim.attrs[
-        "comment"
-    ] = "The daily climatology calculated on a 31 day moving average"
-    ds.clim.attrs["units"] = "^oC"
-
-    ds.thres.attrs[
-        "comment"
-    ] = "The daily climatology calculated on a 31 day moving average"
-    ds.thres.attrs["units"] = "^oC"
-
+            },
+                        )
+    
     # Saving dataset to saving path and filename
-    ds.to_netcdf(nc_thresholds_path)
-    print("daily clim finished")
+    ds_save.to_netcdf(nc_mhw_output_path)
+    print("daily mhw detection finished")
