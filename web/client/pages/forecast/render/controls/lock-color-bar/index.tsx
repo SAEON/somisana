@@ -5,11 +5,20 @@ import { AxisLock as AxisLockIcon } from '../../../../../components/icons'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import * as d3 from 'd3'
+import Span from '../../../../../components/span'
 
 const Render = memo(
-  ({ lockColorBar, setLockColorBar, gridValues, selectedVariable, setScaleMin, setScaleMax }) => {
+  ({
+    lockColorBar,
+    setLockColorBar,
+    gridValues,
+    selectedVariable,
+    setScaleMin,
+    setScaleMax,
+    animateTimeStep,
+  }) => {
     useEffect(() => {
-      if (gridValues && !lockColorBar) {
+      if (!animateTimeStep && gridValues && !lockColorBar) {
         const [min, max] = d3.extent(gridValues.map(([, , v]) => parseFloat(v[selectedVariable])))
         setScaleMin(min)
         setScaleMax(max)
@@ -17,26 +26,48 @@ const Render = memo(
     })
 
     return (
-      <Tooltip title="Prevent color step recalculations per frame change" placement="left-start">
-        <IconButton onClick={() => setLockColorBar(b => !b)} color="primary" size="small">
-          <AxisLockIcon
-            sx={{
-              color: theme => (lockColorBar ? theme.palette.success.dark : 'primary'),
-            }}
-            fontSize="small"
-          />
-        </IconButton>
+      <Tooltip
+        title={
+          animateTimeStep
+            ? 'Disabled during timestep animation'
+            : 'Prevent color step recalculations per frame change'
+        }
+        placement="left-start"
+      >
+        <Span>
+          <IconButton
+            disabled={animateTimeStep}
+            onClick={() => setLockColorBar(b => !b)}
+            color="primary"
+            size="small"
+          >
+            <AxisLockIcon
+              sx={{
+                color: theme =>
+                  lockColorBar && !animateTimeStep ? theme.palette.success.dark : 'primary',
+              }}
+              fontSize="small"
+            />
+          </IconButton>
+        </Span>
       </Tooltip>
     )
   }
 )
 
 export default () => {
-  const { lockColorBar, setLockColorBar, selectedVariable, setScaleMax, setScaleMin } =
-    useContext(pageContext)
+  const {
+    lockColorBar,
+    setLockColorBar,
+    selectedVariable,
+    setScaleMax,
+    setScaleMin,
+    animateTimeStep,
+  } = useContext(pageContext)
   const { grid } = useContext(dataContext)
   return (
     <Render
+      animateTimeStep={animateTimeStep}
       lockColorBar={lockColorBar}
       setLockColorBar={setLockColorBar}
       gridValues={grid?.values}
