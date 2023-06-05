@@ -107,7 +107,7 @@ def regrid_tier1(args):
     log("Generating dataset")
     data_out = xr.Dataset(
         attrs={
-            "description": "CROCO output from algoa Bay model transformed lon/lat/depth/time",
+            "description": "CROCO output with u,v data on rho grid and rotated to be east,north components, and sigma levels replaced by depths in metres",
             "model_name": id,
             "run_date": run_date,
         },
@@ -152,7 +152,7 @@ def regrid_tier1(args):
                 ["time", "depth", "lat", "lon"],
                 m_rho,
                 {
-                    "description": "Depth level of grid points in meters, centred in grid cells"
+                    "description": "Depth of sigma levels in meters, centred in grid cells"
                 },
             ),
             "h": xr.Variable(
@@ -184,13 +184,13 @@ def regrid_tier1(args):
                     "description": "Latitude coordinate values of curvilinear grid cells",
                 },
             ),
-            "depth": xr.Variable(
-                ["depth"], s_rho, {"description": "Depth levels (grid levels)"}
+            "s_rho": xr.Variable(
+                ["depth"], s_rho, {"description": "S-coordinate at RHO-points)"}
             ),
             "time": xr.Variable(
                 ["time"],
                 time_steps,
-                {"description": "Time steps in hours"},
+                {"description": "time"},
             ),
         },
     )
