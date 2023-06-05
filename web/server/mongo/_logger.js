@@ -86,7 +86,7 @@ export default collections => {
     async load(...queries) {
       this._queries.push(...(await Promise.all(queries)))
 
-      process.nextTick(async () => {
+      setImmediate(async () => {
         if (!this._queries.length) {
           return
         }
