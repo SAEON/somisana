@@ -92,7 +92,7 @@ export default () => {
                 >
                   <DragHandle sx={{ margin: theme => `0 ${theme.spacing(1)}` }} />
                   <Typography>
-                    Data: (t={timeStep}, {depth} meters)
+                    Data: (t={timeStep}, {`${depth === -99999 ? 'bottom' : `${depth} meters`}`})
                   </Typography>
                   <Tooltip title="Download CSV data" placement="top-start">
                     <IconButton

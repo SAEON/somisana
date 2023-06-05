@@ -42,9 +42,23 @@ import {
   mdiTailwind,
   mdiTemperatureCelsius,
   mdiTranslate,
+  mdiAxisLock,
+  mdiRefresh,
 } from '@mdi/js'
 
 export { default as EgagasiniGraphic } from './egagasini-graphic'
+
+export const Refresh = styled(props => (
+  <SvgIcon {...props}>
+    <Path d={mdiRefresh} />
+  </SvgIcon>
+))({})
+
+export const AxisLock = styled(props => (
+  <SvgIcon {...props}>
+    <Path d={mdiAxisLock} />
+  </SvgIcon>
+))({})
 
 export const Download = styled(props => (
   <SvgIcon {...props}>

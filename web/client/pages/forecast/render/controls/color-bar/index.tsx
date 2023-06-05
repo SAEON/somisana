@@ -78,11 +78,7 @@ const Render = memo(
                 placement="right-start"
                 title={`${value} ${unit}`}
                 PopperProps={{
-                  sx: { cursor: 'pointer' },
-                  onClick: () =>
-                    alert(
-                      'Feature being implemented - hovering on individual temperatures will highlight those contours on the map for the duration of the hover. Clicking on a label will allow for activating specific contours on the map'
-                    ),
+                  onClick: () => console.log('tooltip clicked. This could be useful in the future'),
                 }}
               >
                 <Div
