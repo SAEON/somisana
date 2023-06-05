@@ -37,7 +37,16 @@ const Render = memo(
         <Span>
           <IconButton
             disabled={animateTimeStep}
-            onClick={() => setLockColorBar(b => !b)}
+            onClick={() =>
+              setLockColorBar(b => {
+                globalThis.dispatchEvent(
+                  new CustomEvent('interaction', {
+                    detail: { value: !b, type: 'lock-color-bar' },
+                  })
+                )
+                return !b
+              })
+            }
             color="primary"
             size="small"
           >

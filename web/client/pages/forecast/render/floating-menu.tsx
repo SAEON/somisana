@@ -9,7 +9,7 @@ export default styled(({ children, id, ...props }) => {
       onStop={e => {
         globalThis.dispatchEvent(
           new CustomEvent('interaction', {
-            detail: { type: 'drag-right-menu' },
+            detail: { type: 'drag-floating-menu', menuId: id },
           })
         )
       }}

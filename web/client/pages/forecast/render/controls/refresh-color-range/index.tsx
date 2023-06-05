@@ -12,6 +12,11 @@ const Render = ({ gridValues, selectedVariable, setScaleMin, setScaleMax }) => {
       <IconButton
         onClick={() => {
           if (gridValues) {
+            globalThis.dispatchEvent(
+              new CustomEvent('interaction', {
+                detail: { type: 're-calculate-color-range' },
+              })
+            )
             const [min, max] = d3.extent(
               gridValues.map(([, , v]) => parseFloat(v[selectedVariable]))
             )
