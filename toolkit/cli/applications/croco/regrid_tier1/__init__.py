@@ -6,8 +6,7 @@ from datetime import timedelta, datetime
 from cli.applications.croco.postprocess import (
     z_levels,
     hour_rounder,
-    u2rho_4d,
-    v2rho_4d,
+    uv2rho
 )
 import subprocess
 
@@ -27,7 +26,7 @@ def regrid_tier1(args):
     input = os.path.abspath(args.input)
     output = os.path.abspath(args.output)
 
-    log("Running CROCO output post-processing (v1)")
+    log("Running CROCO output re-gridding (tier1)")
     log("CONFIG::id", id)
     log("CONFIG::input", input)
     log("CONFIG::grid", grid)
@@ -42,6 +41,14 @@ def regrid_tier1(args):
     time = data.time.values  # Time steps
     lon_rho = data.lon_rho.values  # Longitude (4326)
     lat_rho = data.lat_rho.values  # Latitude (4326)
+    
+    # get the land-sea mask
+    mask_rho = data_grid.mask_rho.values
+    mask_rho[np.where(mask_rho == 0)] = np.nan
+    mask_u = data_grid.mask_u.values
+    mask_u[np.where(mask_u == 0)] = np.nan
+    mask_v = data_grid.mask_v.values
+    mask_v[np.where(mask_v == 0)] = np.nan
 
     # Convert time to human readable
     time_steps = []
@@ -55,34 +62,25 @@ def regrid_tier1(args):
     log("CONFIG::run_date", run_date)
 
     # Variables used in the visualisations
-    temperature = data.temp.values
-    salt = data.salt.values
-    ssh = data.zeta.values  # Sea-surface height
-    u = data.u.values  # East-West velocity
-    v = data.v.values  # North-South velocity
-    h = data.h.values  # Bathymetry elevation model
-
+    temperature = data.temp.values*mask_rho # it looks like numpy is clever enough to use the 2D mask on a 4D variable!
+    salt = data.salt.values*mask_rho 
+    ssh = data.zeta.values*mask_rho  # Sea-surface height
+    u = data.u.values*mask_u  # grid-aligned u-velocity
+    v = data.v.values*mask_v  # grid-aligned v-velocity 
+    
+    angle = data_grid.angle.values
+    h = data_grid.h.values
+    
+    # Convert u and v current components to the rho grid and rotate to be eastward and northward components
+    log("Regridding and rotating u/v model output variables")
+    u_rho,v_rho = uv2rho(u,v,angle)
+    
     # Variables used to calculate depth levels
     # CROCO uses these params to determine how to deform the grid
     s_rho = data.s_rho.values  # Vertical levels
     theta_s = data.theta_s
     theta_b = data.theta_b
-
-    # Variables used to calculate depth levels from grid (bathymetry)
-    h = data_grid.h.values
-
-    # Convert u and v current components to the rho grid (otherwise these values are on cell edges and not the center of the cells)
-    # use the function u2rho_4d and v2rho_4d
-    log("Normalizing u/v model output variables")
-    u_rho = u2rho_4d(u)
-    v_rho = v2rho_4d(v)
-
-    log("Masking 0 values (land) from variables")
-    temperature[np.where(temperature == 0)] = np.nan
-    salt[np.where(salt == 0)] = np.nan
-    u[np.where(u == 0)] = np.nan
-    v[np.where(v == 0)] = np.nan
-
+    
     # Variables hard coded set during model configuration
     # Relative to each model
     # Critical depth. Convergence of surface layers with bottom layers due to grid squeezing
@@ -97,7 +95,7 @@ def regrid_tier1(args):
         raise Exception("Unexpected value for vtransform (" + vtransform + ")")
 
     # m_rho refers to the depth level in meters
-    log("Converting depth levels to depth in meters")
+    log("Converting sigma levels to depth in meters")
     m_rho = np.zeros(np.shape(temperature))
     for x in np.arange(np.size(temperature, 0)):
         depth_temp = z_levels(
@@ -136,18 +134,18 @@ def regrid_tier1(args):
                 ["time", "depth", "lat", "lon"],
                 u_rho,
                 {
-                    "long_name": data.u.long_name,
+                    "long_name": "Eastward velocity",
                     "units": data.u.units,
-                    "description": "@MATT TODO at grid points",
+                    "description": "Eastward component of horizontal velocity vector at grid points",
                 },
             ),
             "v": xr.Variable(
                 ["time", "depth", "lat", "lon"],
                 v_rho,
                 {
-                    "long_name": data.v.long_name,
+                    "long_name": "Northward velocity",
                     "units": data.v.units,
-                    "description": "@MATT TODO at grid points",
+                    "description": "Northward component of horizontal velocity vector at grid points",
                 },
             ),
             "m_rho": xr.Variable(

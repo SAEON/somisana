@@ -1,47 +1,109 @@
 import numpy as np
 from datetime import timedelta
 
-"""
-Rounds to nearest hour by adding a timedelta hour if minute >= 30
-"""
 
 
 def hour_rounder(t):
+    """
+    Rounds to nearest hour by adding a timedelta hour if minute >= 30
+    """
     return t.replace(second=0, microsecond=0, minute=0, hour=t.hour) + timedelta(
         hours=t.minute // 30
     )
 
+def u2rho(u):
+    """
+    regrid the croco u-velocity from it's native u grid to the rho grid
+    u can be 2D, 3D or 4D
 
-"""
-Converts the v current component to the correct (rho) grid
-"""
+    """
+    Num_dims=len(u.shape)
+    if Num_dims==4:
+        [T, D, Mp, L] = u.shape
+        u_rho = np.zeros((T, D, Mp, L + 1))
+        u_rho[:, :, :, 1 : L - 1] = 0.5 * np.squeeze(
+            [u[:, :, :, 0 : L - 2] + u[:, :, :, 1 : L - 1]]
+        )
+        u_rho[:, :, :, 0] = u_rho[:, :, :, 1]
+        u_rho[:, :, :, L] = u_rho[:, :, :, L - 1]
+        
+    elif Num_dims==3:
+        [TorD, Mp, L] = u.shape # works if first dimension is time or depth
+        u_rho = np.zeros((TorD, Mp, L + 1))
+        u_rho[:, :, 1 : L - 1] = 0.5 * np.squeeze(
+            [u[:, :, 0 : L - 2] + u[ :, :, 1 : L - 1]]
+        )
+        u_rho[:, :, 0] = u_rho[:, :, 1]
+        u_rho[:, :, L] = u_rho[:, :, L - 1]
+        
+    elif Num_dims==2:
+        [Mp, L] = u.shape
+        u_rho = np.zeros((Mp, L + 1))
+        u_rho[:, 1 : L - 1] = 0.5 * np.squeeze(
+            [u[:, 0 : L - 2] + u[ :, 1 : L - 1]]
+        )
+        u_rho[:, 0] = u_rho[:, 1]
+        u_rho[:, L] = u_rho[:, L - 1]
+        
+    return u_rho
 
+def v2rho(v):
+    """
+    regrid the croco v-velocity from it's native v grid to the rho grid
+    v can be 2D, 3D or 4D
 
-def v2rho_4d(var_v):
-    [T, D, M, Lp] = var_v.shape
-    var_rho = np.zeros((T, D, M + 1, Lp))
-    var_rho[:, :, 1 : M - 1, :] = 0.5 * np.squeeze(
-        [var_v[:, :, 0 : M - 2, :] + var_v[:, :, 1 : M - 1, :]]
-    )
-    var_rho[:, :, 0, :] = var_rho[:, :, 1, :]
-    var_rho[:, :, M, :] = var_rho[:, :, M - 1, :]
-    return var_rho
+    """
+    Num_dims=len(v.shape)
+    if Num_dims==4:
+        [T, D, M, Lp] = v.shape
+        v_rho = np.zeros((T, D, M + 1, Lp))
 
+        v_rho[:, :, 1 : M - 1, :] = 0.5 * np.squeeze(
+            [v[:, :, 0 : M - 2, :] + v[:, :, 1 : M - 1, :]]
+        )
+        v_rho[:, :, 0, :] = v_rho[:, :, 1, :]
+        v_rho[:, :, M, :] = v_rho[:, :, M - 1, :]
+        
+    elif Num_dims==3:
+        [TorD, M, Lp] = v.shape # works if first dimension is time or depth
+        v_rho = np.zeros((TorD, M + 1, Lp))
 
-"""
-Converts the u current component to the correct (rho) grid
-"""
+        v_rho[:, 1 : M - 1, :] = 0.5 * np.squeeze(
+            [v[:, 0 : M - 2, :] + v[:, 1 : M - 1, :]]
+        )
+        v_rho[:, 0, :] = v_rho[:, 1, :]
+        v_rho[:, M, :] = v_rho[:, M - 1, :]
 
+        
+    elif Num_dims==2:
+        [M, Lp] = v.shape
+        v_rho = np.zeros((M + 1, Lp))
 
-def u2rho_4d(var_u):
-    [T, D, Mp, L] = var_u.shape
-    var_rho = np.zeros((T, D, Mp, L + 1))
-    var_rho[:, :, :, 1 : L - 1] = 0.5 * np.squeeze(
-        [var_u[:, :, :, 0 : L - 2] + var_u[:, :, :, 1 : L - 1]]
-    )
-    var_rho[:, :, :, 0] = var_rho[:, :, :, 1]
-    var_rho[:, :, :, L] = var_rho[:, :, :, L - 1]
-    return var_rho
+        v_rho[1 : M - 1, :] = 0.5 * np.squeeze(
+            [v[0 : M - 2, :] + v[1 : M - 1, :]]
+        )
+        v_rho[0, :] = v_rho[1, :]
+        v_rho[M, :] = v_rho[M - 1, :]
+        
+    return v_rho
+
+def uv2rho(u,v,angle):
+    """
+    regrid the croco u- and v-velocities from their native grids to the rho grid
+    and rotate them from being grid-aligned to being eastward and northward components
+    u and v can be 2D, 3D or 4D
+
+    """
+    u_rho=u2rho(u)
+    v_rho=v2rho(v)
+    
+    # use the grid angle to rotate the vectors
+    cosa = np.cos(angle);
+    sina = np.sin(angle);
+    u = u_rho*cosa - v_rho*sina;
+    v = v_rho*cosa + u_rho*sina;
+    
+    return u,v    
 
 
 def csf(sc, theta_s, theta_b):
