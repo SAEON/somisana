@@ -31,7 +31,7 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
   const [rows, setRows] = useState([])
 
   const closeCoordinate = useCallback(
-    id => setSelectedCoordinates(coordinates => ({ ...coordinates, [id]: false })),
+    id => setSelectedCoordinates(selectedCoordinates => ({ ...selectedCoordinates, [id]: false })),
     [setSelectedCoordinates]
   )
 
@@ -41,7 +41,7 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
       name: ` `,
       resizable: false,
       width: 50,
-      formatter: ({ row: { i } }) => <I sx={{ textAlign: 'center', display: 'block' }}>{i}</I>,
+      renderCell: ({ row: { i } }) => <I sx={{ textAlign: 'center', display: 'block' }}>{i}</I>,
     },
     { key: 'lat', name: 'Lat (°)' },
     { key: 'lng', name: 'Lng (°)' },
@@ -53,7 +53,7 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
       key: 'coordinateid',
       name: ` `,
       width: 40,
-      formatter: ({ row: { coordinateid } }) => (
+      renderCell: ({ row: { coordinateid } }) => (
         <Div
           sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
@@ -127,11 +127,16 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
     })
   }, [rows, sortColumns])
 
+  const height = useMemo(
+    () => 35 + 35 * Object.values(selectedCoordinates).filter(v => Boolean(v)).length,
+    [selectedCoordinates]
+  )
+
   return (
     <Div
       sx={{
-        height: 35 + 35 * Object.values(selectedCoordinates).filter(v => Boolean(v)).length,
-        maxHeight: 10 * 35,
+        height: height + 2,
+        maxHeight: 5 * 35,
         '& .rdg': {
           backgroundColor: 'inherit',
           '& .rdg-header-row': {
@@ -148,6 +153,11 @@ export default ({ selectedCoordinates, setSelectedCoordinates }) => {
     >
       <DndProvider backend={HTML5Backend}>
         <ReactDataGrid
+          enableVirtualization
+          style={{
+            height: height + 2,
+            maxHeight: 5 * 35,
+          }}
           className={colorScheme === 'light' ? 'rdg-light' : 'rdg-dark'}
           columns={draggableColumns}
           defaultColumnOptions={{
