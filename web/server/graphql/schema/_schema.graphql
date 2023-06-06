@@ -14,6 +14,15 @@ type Locale implements Node {
   code: String!
 }
 
+type Run {
+  id: ID!
+  run_date: DateTime!
+  modelid: ID!
+  step1_timestamp: DateTime!
+  timestep_attrs: JSON!
+  successful: Boolean!
+}
+
 type Model implements Node {
   """
   ID with table information added, so that table can be back-calculated
@@ -37,7 +46,7 @@ type Model implements Node {
   gridHeight: Int!
   convexhull: JSON!
   envelope: JSON!
-  runs: JSON
+  runs: [Run]
 }
 
 type PageInfo {
@@ -72,7 +81,7 @@ type Query {
   locales(id: ID, languages: [Language!]): [Node]!
   models(id: ID): [Node]!
 
-  data(timeStep: Int!, runId: Int!, depth: Int!): ModelData!
+  data(timeStep: Int!, runId: ID!, depth: Int!): ModelData!
     @cacheControl(maxAge: 604800, scope: PUBLIC)
 }
 

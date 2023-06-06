@@ -54,7 +54,14 @@ export default ({ modelid = undefined, children }) => {
             min_y
             gridWidth
             gridHeight
-            runs
+            runs {
+              id
+              run_date
+              modelid
+              step1_timestamp
+              timestep_attrs
+              successful
+            }
             creator
             creatorContactEmail
           }
