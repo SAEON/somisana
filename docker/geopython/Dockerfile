@@ -13,7 +13,8 @@ RUN apt-get update \
 RUN apt-get update \
   && apt-get install -yq \
     python3-pip \
-    postgis
+    postgis \
+    nco
 
 # Clean up the image
 RUN apt-get clean
