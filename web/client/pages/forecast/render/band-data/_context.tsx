@@ -8,7 +8,7 @@ export const context = createContext({})
 const Render = memo(({ children, depth, timeStep, runId }) => {
   const graphqlRequest = useQuery(
     gql`
-      query ($timeStep: Int!, $runId: Int!, $depth: Int!) {
+      query ($timeStep: Int!, $runId: ID!, $depth: Int!) {
         data(timeStep: $timeStep, runId: $runId, depth: $depth) {
           id
           json

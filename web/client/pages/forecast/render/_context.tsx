@@ -12,6 +12,7 @@ export default ({ modelid = undefined, children }) => {
   const [animateTimeStep, setAnimateTimeStep] = useState(false)
   const [colorScheme, setColorScheme] = useState('Magma')
   const [depth, setDepth] = useState(0)
+  const [lockColorBar, setLockColorBar] = useState(false)
   const [reverseColors, setReverseColors] = useState(false)
   const [scaleMax, setScaleMax] = useState(0)
   const [scaleMin, setScaleMin] = useState(0)
@@ -53,7 +54,14 @@ export default ({ modelid = undefined, children }) => {
             min_y
             gridWidth
             gridHeight
-            runs
+            runs {
+              id
+              run_date
+              modelid
+              step1_timestamp
+              timestep_attrs
+              successful
+            }
             creator
             creatorContactEmail
           }
@@ -88,6 +96,7 @@ export default ({ modelid = undefined, children }) => {
         color,
         colorScheme,
         depth,
+        lockColorBar,
         model,
         reverseColors,
         run,
@@ -102,6 +111,7 @@ export default ({ modelid = undefined, children }) => {
         setAnimateTimeStep,
         setColorScheme,
         setDepth,
+        setLockColorBar,
         setReverseColors,
         setScaleMax,
         setScaleMin,

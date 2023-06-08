@@ -1,4 +1,4 @@
-from cli.applications.mhw.start import start
-from cli.applications.mhw.thresholds import create_thresholds
+from cli.applications.mhw.update_catalogue import update_catalogue
+from cli.applications.mhw.detect import detect
 
-__all__ = ["start", "create_thresholds"]
+__all__ = ["update_catalogue", "detect"]

@@ -1,11 +1,8 @@
 def parse(cmd, args, module):
+    commands = {"update-catalogue": module.update_catalogue, "detect": module.detect}
+
     def e(*args):
         print(cmd.format_help())
         exit()
 
-    try:
-        cmds = {"start": module.start}
-        return cmds.get(args.mhw_command, e)
-    except Exception as err:
-        print(err)
-        return e
+    return commands.get(args.mhw_command, e)

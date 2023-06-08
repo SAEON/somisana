@@ -11,17 +11,17 @@ import TimeControl from './controls/time'
 import DataExplorer from './controls/data-explorer'
 import InfoControl from './controls/info'
 import { ToggleConfig } from './controls/color-bar'
-import { DragHorizontal } from '../../../components/icons'
 import ColorBar from './controls/color-bar'
 import Map from './map'
-import Stack from '@mui/material/Stack'
 import Timestamp from './controls/timestamp'
 import { ToggleData } from './controls/data'
 import LayerControl from './controls/layers'
-import Draggable from 'react-draggable'
+import LockColorBar from './controls/lock-color-bar'
+import RefreshColorRange from './controls/refresh-color-range'
 import BandDataTable from './controls/band-data'
 
 const ModelProvider = lazy(() => import('./_context'))
+const FloatingMenu = lazy(() => import('./floating-menu'))
 
 export default ({ modelid = undefined }) => {
   const [ref, setRef] = useState(null)
@@ -57,50 +57,51 @@ export default ({ modelid = undefined }) => {
                 {/* COLOR BAR */}
                 <ColorBar />
 
-                {/* FLOATING RIGHT MENU */}
-                <Draggable
-                  onStop={e => {
-                    globalThis.dispatchEvent(
-                      new CustomEvent('interaction', {
-                        detail: { type: 'drag-right-menu' },
-                      })
-                    )
+                {/* FLOATING RIGHT MENUS */}
+                <Div
+                  sx={{
+                    position: 'absolute',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    flexDirection: 'column',
+                    right: 0,
+                    marginTop: theme => theme.spacing(2),
+                    marginRight: theme => theme.spacing(2),
                   }}
-                  handle="#draggable-right-menu"
                 >
-                  <Stack
-                    sx={{
-                      opacity: 0.8,
-                      position: 'absolute',
-                      alignItems: 'center',
-                      zIndex: 1,
-                      right: 0,
-                      boxShadow: theme => theme.shadows[3],
-                      padding: theme => theme.spacing(1),
-                      borderRadius: theme => `${theme.shape.borderRadius}px`,
-                      backgroundColor: theme => theme.palette.background.paper,
-                      marginTop: theme => theme.spacing(2),
-                      marginRight: theme => theme.spacing(2),
-                    }}
-                    direction="column"
-                    spacing={1}
-                  >
-                    <DragHorizontal
-                      id="draggable-right-menu"
+                  <Suspense fallback={null}>
+                    <FloatingMenu
+                      id="fm2"
                       sx={{
-                        cursor: 'move',
+                        marginBottom: theme => theme.spacing(2),
                       }}
-                    />
-                    <ToggleConfig />
-                    <InfoControl />
-                    <LayerControl />
-                    <ToggleData />
-                    <BandDataTable />
-                    <ToggleTemperature />
-                    <ToggleSalinity />
-                    <ToggleCurrents />
-                  </Stack>
-                </Draggable>
+                    >
+                      <InfoControl />
+                      <ToggleData />
+                      <BandDataTable />
+                    </FloatingMenu>
+                  </Suspense>
+                  <Suspense fallback={null}>
+                    <FloatingMenu
+                      id="fm1"
+                      sx={{
+                        marginBottom: theme => theme.spacing(2),
+                      }}
+                    >
+                      <ToggleConfig />
+                      <LockColorBar />
+                      <RefreshColorRange />
+                    </FloatingMenu>
+                  </Suspense>
+                  <Suspense fallback={null}>
+                    <FloatingMenu id="fm3">
+                      <LayerControl />
+                      <ToggleTemperature />
+                      <ToggleSalinity />
+                      <ToggleCurrents />
+                    </FloatingMenu>
+                  </Suspense>
+                </Div>
               </Div>
 
               {/* RIGHT MENU */}

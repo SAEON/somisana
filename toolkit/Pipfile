@@ -29,6 +29,7 @@ pydap = "*"
 lxml = "*"
 motuclient = "*"
 pytest = "*"
+scipy = "*"
 
 [dev-packages]
 

@@ -36,7 +36,7 @@ export default () => {
       name: ` `,
       resizable: false,
       width: 50,
-      formatter: ({ row: { i } }) => <I sx={{ textAlign: 'center', display: 'block' }}>{i}</I>,
+      renderCell: ({ row: { i } }) => <I sx={{ textAlign: 'center', display: 'block' }}>{i}</I>,
     },
     { key: 'coordinateid', name: 'Coordinate ID', width: 140 },
     { key: 'lat', name: 'Lat (°)' },
