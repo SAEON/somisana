@@ -1,7 +1,7 @@
 import numpy as np
 from datetime import timedelta
-
-
+import xarray as xr
+from datetime import timedelta, datetime
 
 def hour_rounder(t):
     """
@@ -21,8 +21,8 @@ def u2rho(u):
     if Num_dims==4:
         [T, D, Mp, L] = u.shape
         u_rho = np.zeros((T, D, Mp, L + 1))
-        u_rho[:, :, :, 1 : L - 1] = 0.5 * np.squeeze(
-            [u[:, :, :, 0 : L - 2] + u[:, :, :, 1 : L - 1]]
+        u_rho[:, :, :, 1 : L] = 0.5 * np.squeeze(
+            [u[:, :, :, 0 : L - 1] + u[:, :, :, 1 : L]]
         )
         u_rho[:, :, :, 0] = u_rho[:, :, :, 1]
         u_rho[:, :, :, L] = u_rho[:, :, :, L - 1]
@@ -30,17 +30,17 @@ def u2rho(u):
     elif Num_dims==3:
         [TorD, Mp, L] = u.shape # works if first dimension is time or depth
         u_rho = np.zeros((TorD, Mp, L + 1))
-        u_rho[:, :, 1 : L - 1] = 0.5 * np.squeeze(
-            [u[:, :, 0 : L - 2] + u[ :, :, 1 : L - 1]]
+        u_rho[:, :, 1 : L] = 0.5 * np.squeeze(
+            [u[:, :, 0 : L - 1] + u[ :, :, 1 : L]]
         )
         u_rho[:, :, 0] = u_rho[:, :, 1]
         u_rho[:, :, L] = u_rho[:, :, L - 1]
         
-    elif Num_dims==2:
+    else: # Num_dims==2:
         [Mp, L] = u.shape
         u_rho = np.zeros((Mp, L + 1))
-        u_rho[:, 1 : L - 1] = 0.5 * np.squeeze(
-            [u[:, 0 : L - 2] + u[ :, 1 : L - 1]]
+        u_rho[:, 1 : L] = 0.5 * np.squeeze(
+            [u[:, 0 : L - 1] + u[ :, 1 : L]]
         )
         u_rho[:, 0] = u_rho[:, 1]
         u_rho[:, L] = u_rho[:, L - 1]
@@ -58,8 +58,8 @@ def v2rho(v):
         [T, D, M, Lp] = v.shape
         v_rho = np.zeros((T, D, M + 1, Lp))
 
-        v_rho[:, :, 1 : M - 1, :] = 0.5 * np.squeeze(
-            [v[:, :, 0 : M - 2, :] + v[:, :, 1 : M - 1, :]]
+        v_rho[:, :, 1 : M, :] = 0.5 * np.squeeze(
+            [v[:, :, 0 : M - 1, :] + v[:, :, 1 : M, :]]
         )
         v_rho[:, :, 0, :] = v_rho[:, :, 1, :]
         v_rho[:, :, M, :] = v_rho[:, :, M - 1, :]
@@ -68,42 +68,24 @@ def v2rho(v):
         [TorD, M, Lp] = v.shape # works if first dimension is time or depth
         v_rho = np.zeros((TorD, M + 1, Lp))
 
-        v_rho[:, 1 : M - 1, :] = 0.5 * np.squeeze(
-            [v[:, 0 : M - 2, :] + v[:, 1 : M - 1, :]]
+        v_rho[:, 1 : M, :] = 0.5 * np.squeeze(
+            [v[:, 0 : M - 1, :] + v[:, 1 : M, :]]
         )
         v_rho[:, 0, :] = v_rho[:, 1, :]
         v_rho[:, M, :] = v_rho[:, M - 1, :]
 
         
-    elif Num_dims==2:
+    else: # Num_dims==2:
         [M, Lp] = v.shape
         v_rho = np.zeros((M + 1, Lp))
 
-        v_rho[1 : M - 1, :] = 0.5 * np.squeeze(
-            [v[0 : M - 2, :] + v[1 : M - 1, :]]
+        v_rho[1 : M, :] = 0.5 * np.squeeze(
+            [v[0 : M - 1, :] + v[1 : M, :]]
         )
         v_rho[0, :] = v_rho[1, :]
         v_rho[M, :] = v_rho[M - 1, :]
         
     return v_rho
-
-def uv2rho(u,v,angle):
-    """
-    regrid the croco u- and v-velocities from their native grids to the rho grid
-    and rotate them from being grid-aligned to being eastward and northward components
-    u and v can be 2D, 3D or 4D
-
-    """
-    u_rho=u2rho(u)
-    v_rho=v2rho(v)
-    
-    # use the grid angle to rotate the vectors
-    cosa = np.cos(angle);
-    sina = np.sin(angle);
-    u = u_rho*cosa - v_rho*sina;
-    v = v_rho*cosa + u_rho*sina;
-    
-    return u,v    
 
 
 def csf(sc, theta_s, theta_b):
@@ -254,3 +236,134 @@ def hlev(var, z, depth):
         vnew = vnew * mask
 
     return vnew
+
+def get_depths(fname,gname,tstep=None):
+    
+    ds = xr.open_dataset(fname)
+    ds_grid = xr.open_dataset(gname)
+    
+    # get the surface and bottom levels
+    ssh=get_var(fname,gname,'zeta',tstep)
+    h = ds_grid.h.values
+    
+    # get the variables used to calculate the sigma levels
+    # CROCO uses these params to determine how to deform the grid
+    s_rho = ds.s_rho.values  # Vertical levels
+    theta_s = ds.theta_s
+    theta_b = ds.theta_b
+    hc = ds.hc.values
+    N = np.shape(ds.s_rho)[0]
+    type_coordinate = "rho"
+    vtransform = (
+        2 if ds.VertCoordType == "NEW" else 1 if ds.VertCoordType == "OLD" else -1
+    )
+    if vtransform == -1:
+        raise Exception("Unexpected value for vtransform (" + vtransform + ")")
+
+    if tstep:
+        depth_rho = z_levels(
+            h, ssh, theta_s, theta_b, hc, N, type_coordinate, vtransform
+        )
+    else:
+        T,M,L = np.shape(ssh)
+        depth_rho = np.zeros((T,N,M,L))
+        for x in np.arange(T):
+            depth_rho[x, ::] = z_levels(
+                h, ssh[x, :, :], theta_s, theta_b, hc, N, type_coordinate, vtransform
+            )
+
+    ds.close()
+    ds_grid.close()
+    
+    return depth_rho
+    
+def get_time(fname,ref_date):
+    '''         
+        ref_date = reference date for the croco run as a datetime object
+    
+    '''
+    data = xr.open_dataset(fname)
+    time = data.time.values
+    
+    time_dt = []
+    for t in time:
+        date_now = ref_date + timedelta(seconds=np.float64(t))
+        # date_round = hour_rounder(date_now) # GF: I'd rather keep the croco dates as they are saved in the raw output
+        time_dt.append(date_now)
+    
+    data.close()    
+    
+    return time_dt
+
+def get_lonlatmask(gname,type):
+    ds_grid = xr.open_dataset(gname)
+    if type=='u':
+        lon = ds_grid.lon_u.values 
+        lat = ds_grid.lat_u.values
+        mask = ds_grid.mask_u.values
+    elif type=='v':
+        lon = ds_grid.lon_v.values 
+        lat = ds_grid.lat_v.values
+        mask = ds_grid.mask_v.values
+    else:
+        lon = ds_grid.lon_rho.values 
+        lat = ds_grid.lat_rho.values 
+        mask = ds_grid.mask_rho.values
+    mask[np.where(mask == 0)] = np.nan
+    ds_grid.close()
+    return lon,lat,mask
+
+def get_var(fname,gname,var_str,tstep=None):
+    '''
+        extract a variable from a CROCO file
+        fname = CROCO output file
+        gname = CROCO grid file
+        var_str = variable name (string) in the CROCO output file
+        tstep = time step index to extract (integer starting at zero). If None, then all time-steps are extracted
+    '''
+    ds = xr.open_dataset(fname) 
+    
+    if tstep:
+        var = ds[var_str].values[tstep,::]
+    else:
+        var = ds[var_str].values
+        
+    lon,lat,mask=get_lonlatmask(gname,var_str) # var_str will define the mask type (u,v, or rho)
+    
+    # it looks like numpy is clever enough to use the 2D mask on a 3D or 4D variable
+    # that's useful!
+    var=var*mask
+    
+    ds.close()
+    
+    return var
+
+def get_uv(fname,gname,tstep=None):
+    '''
+        extract u and v components from a CROCO output file, regrid onto the 
+        rho grid and rotate from grid-aligned to east-north components
+        
+        fname = CROCO output file
+        gname = CROCO grid file
+        tstep = time step index to extract (starting at zero). If None, then all time-steps are extracted
+    '''
+    u=get_var(fname,gname,'u',tstep)
+    v=get_var(fname,gname,'v',tstep)
+    
+    # r
+    u=u2rho(u)
+    v=v2rho(v)
+    
+    # get the grid angle
+    ds_grid = xr.open_dataset(gname)
+    angle = ds_grid.angle.values
+    ds_grid.close()
+    
+    # use the grid angle to rotate the vectors
+    cosa = np.cos(angle)
+    sina = np.sin(angle)
+    # although 'angle' is 2D, numpy is clever enough for this to work even if u_rho and v_rho are 3D or 4D
+    u_out = u*cosa - v*sina
+    v_out = v*cosa + u*sina
+    
+    return u_out,v_out

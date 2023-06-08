@@ -3,22 +3,13 @@ import numpy as np
 from lib.log import log
 import os
 from datetime import timedelta, datetime
-from cli.applications.croco.postprocess import (
-    z_levels,
-    hour_rounder,
-    uv2rho
-)
+import cli.applications.croco.postprocess as post
 import subprocess
 
-# All dates in the CROCO output are represented
-# in seconds from 1 Jan 2000 (i.e. the reference date)
+# We are hard coding the reference date here as all our CROCO output are 
+# represented in seconds from 1 Jan 2000). This is of course not generally true
+# for all CROCO files
 REFERENCE_DATE = datetime(2000, 1, 1, 0, 0, 0)
-
-
-# Model variables use the dimensions time (time from reference date),
-# eta_rho (lat) and xi_rho (lon). We are changing eta_rho and xi_rho
-# from grid points to real lat and lon data.
-
 
 def regrid_tier1(args):
     id = args.id
@@ -34,158 +25,120 @@ def regrid_tier1(args):
 
     # Ensure the directory for the specified output exists
     os.makedirs(os.path.dirname(output), exist_ok=True)
-
-    data = xr.open_dataset(input)
-    data_grid = xr.open_dataset(grid)
-    # Dimensions that need to be transformed
-    time = data.time.values  # Time steps
-    lon_rho = data.lon_rho.values  # Longitude (4326)
-    lat_rho = data.lat_rho.values  # Latitude (4326)
-    
-    # get the land-sea mask
-    mask_rho = data_grid.mask_rho.values
-    mask_rho[np.where(mask_rho == 0)] = np.nan
-    mask_u = data_grid.mask_u.values
-    mask_u[np.where(mask_u == 0)] = np.nan
-    mask_v = data_grid.mask_v.values
-    mask_v[np.where(mask_v == 0)] = np.nan
-
-    # Convert time to human readable
-    time_steps = []
-    for t in time:
-        date_now = REFERENCE_DATE + timedelta(seconds=np.float64(t))
-        # date_round = hour_rounder(date_now) # GF: I'd rather keep the croco dates as they are saved in the raw output
-        time_steps.append(date_now)
+        
+    time_steps = post.get_time(input,REFERENCE_DATE)
 
     # Get the run_date from the CROCO output NetCDF file
-    run_date = time_steps[119].strftime("%Y%m%d")
+    run_date = time_steps[int(len(time_steps)/2)-1].strftime("%Y%m%d") # TODO: rather make this an input - what if in future the hindcast and forecast durations aren't equal
     log("CONFIG::run_date", run_date)
-
-    # Variables used in the visualisations
-    temperature = data.temp.values*mask_rho # it looks like numpy is clever enough to use the 2D mask on a 4D variable!
-    salt = data.salt.values*mask_rho 
-    ssh = data.zeta.values*mask_rho  # Sea-surface height
-    u = data.u.values*mask_u  # grid-aligned u-velocity
-    v = data.v.values*mask_v  # grid-aligned v-velocity 
     
-    angle = data_grid.angle.values
-    h = data_grid.h.values
+    log("Extracting the model output variables we need")
+    ds = xr.open_dataset(input)
+    h = ds.h.values
+    lon_rho = ds.lon_rho.values
+    lat_rho = ds.lat_rho.values
+    ds.close()
+    temp=post.get_var(input,grid,'temp')
+    salt=post.get_var(input,grid,'salt')
+    ssh=post.get_var(input,grid,'zeta')
+    log("Regridding and rotating u/v")
+    u,v=post.get_uv(input,grid)
     
-    # Convert u and v current components to the rho grid and rotate to be eastward and northward components
-    log("Regridding and rotating u/v model output variables")
-    u_rho,v_rho = uv2rho(u,v,angle)
+    # get the depth levels of the sigma layers
+    log("Computing depth of sigma levels")
+    depth=post.get_depths(input,grid)
     
-    # Variables used to calculate depth levels
-    # CROCO uses these params to determine how to deform the grid
-    s_rho = data.s_rho.values  # Vertical levels
-    theta_s = data.theta_s
-    theta_b = data.theta_b
-    
-    # Variables hard coded set during model configuration
-    # Relative to each model
-    # Critical depth. Convergence of surface layers with bottom layers due to grid squeezing
-    hc = data.hc.values
-    N = np.shape(data.s_rho)[0]
-    type_coordinate = "rho"
-    vtransform = (
-        2 if data.VertCoordType == "NEW" else 1 if data.VertCoordType == "OLD" else -1
-    )
-
-    if vtransform == -1:
-        raise Exception("Unexpected value for vtransform (" + vtransform + ")")
-
-    # m_rho refers to the depth level in meters
-    log("Converting sigma levels to depth in meters")
-    m_rho = np.zeros(np.shape(temperature))
-    for x in np.arange(np.size(temperature, 0)):
-        depth_temp = z_levels(
-            h, ssh[x, :, :], theta_s, theta_b, hc, N, type_coordinate, vtransform
-        )
-        m_rho[x, ::] = depth_temp
-
     # Create new xarray dataset with selected variables
     log("Generating dataset")
     data_out = xr.Dataset(
         attrs={
-            "description": "CROCO output with u,v data on rho grid and rotated to be east,north components, and sigma levels replaced by depths in metres",
+            "description": "subset of CROCO output with u,v data regridded to the rho grid and rotated to be east,north components. A new 'depth' variable is added to provide the depths of the sigma levels in metres",
             "model_name": id,
             "run_date": run_date,
         },
         data_vars={
-            "temperature": xr.Variable(
-                ["time", "depth", "lat", "lon"],
-                temperature,
+            "zeta": xr.Variable(
+                ["time", "eta_rho", "xi_rho"],
+                ssh,
                 {
-                    "long_name": data.temp.long_name,
-                    "units": data.temp.units,
-                    "description": "Temperature at grid points",
+                    "long_name": "averaged free-surface",
+                    "units": "meter",
+                    "standard_name": "sea_surface_height",                 
+                },                
+            ),
+            "temp": xr.Variable(
+                ["time", "s_rho", "eta_rho", "xi_rho"],
+                temp,
+                {
+                    "long_name": "averaged potential temperature",
+                    "units": "Celsius",
+                    "standard_name": "sea_water_potential_temperature",                  
                 },
             ),
             "salt": xr.Variable(
-                ["time", "depth", "lat", "lon"],
+                ["time", "s_rho", "eta_rho", "xi_rho"],
                 salt,
                 {
-                    "long_name": data.salt.long_name,
-                    "units": data.salt.units,
-                    "description": "Salinity at grid points",
+                    "long_name": "averaged salinity",
+                    "units": "PSU",
+                    "standard_name": "sea_water_salinity",                  
                 },
             ),
             "u": xr.Variable(
-                ["time", "depth", "lat", "lon"],
-                u_rho,
+                ["time", "s_rho", "eta_rho", "xi_rho"],
+                u,
                 {
                     "long_name": "Eastward velocity",
-                    "units": data.u.units,
-                    "description": "Eastward component of horizontal velocity vector at grid points",
+                    "units": "meters per second",
+                    "standard_name": "eastward_sea_water_velocity",
                 },
             ),
             "v": xr.Variable(
-                ["time", "depth", "lat", "lon"],
-                v_rho,
+                ["time", "s_rho", "eta_rho", "xi_rho"],
+                v,
                 {
                     "long_name": "Northward velocity",
-                    "units": data.v.units,
-                    "description": "Northward component of horizontal velocity vector at grid points",
+                    "units": "meters per second",
+                    "standard_name": "northward_sea_water_velocity",
                 },
             ),
-            "m_rho": xr.Variable(
-                ["time", "depth", "lat", "lon"],
-                m_rho,
+            "depth": xr.Variable(
+                ["time", "s_rho", "eta_rho", "xi_rho"],
+                depth,
                 {
-                    "description": "Depth of sigma levels in meters, centred in grid cells"
+                    "long_name": "Depth of sigma levels of the rho grid (centred in grid cells)",
+                    "units": "meter",
+                    "postive": "up",
                 },
             ),
             "h": xr.Variable(
-                ["lat", "lon"],
+                ["eta_rho", "xi_rho"],
                 h,
                 {
-                    "long_name": data.h.long_name,
-                    "units": data.h.units,
-                    "description": "Bathymetry elevation at grid XY points",
+                    "long_name": "bathymetry at RHO-points",
+                    "units": "meter",
+                    "standard_name": "model_sea_floor_depth_below_geoid",
                 },
             ),
         },
         coords={
             "lon_rho": xr.Variable(
-                ["lat", "lon"],
+                ["eta_rho", "xi_rho"],
                 lon_rho,
                 {
-                    "long_name": data.lon_rho.long_name,
-                    "units": data.lon_rho.units,
-                    "description": "Longitude coordinate values of curvilinear grid cells",
+                    "long_name": "longitude of RHO-points",
+                    "units": "degree_east" ,
+                    "standard_name": "longitude",
                 },
-            ),
+            ),            
             "lat_rho": xr.Variable(
-                ["lat", "lon"],
+                ["eta_rho", "xi_rho"],
                 lat_rho,
                 {
-                    "long_name": data.lat_rho.long_name,
-                    "units": data.lat_rho.units,
-                    "description": "Latitude coordinate values of curvilinear grid cells",
+                    "long_name": "latitude of RHO-points",
+                    "units": "degree_west" ,
+                    "standard_name": "latitude",
                 },
-            ),
-            "s_rho": xr.Variable(
-                ["depth"], s_rho, {"description": "S-coordinate at RHO-points)"}
             ),
             "time": xr.Variable(
                 ["time"],
@@ -196,16 +149,17 @@ def regrid_tier1(args):
     )
 
     encoding = {
-        "temperature": {"dtype": "float32"},
+        "zeta": {"dtype": "float32"},
+        "temp": {"dtype": "float32"},
         "salt": {"dtype": "float32"},
         "u": {"dtype": "float32"},
         "v": {"dtype": "float32"},
-        "m_rho": {"dtype": "float32"},
+        "depth": {"dtype": "float32"},
+        "h": {"dtype": "float32"},
         "lon_rho": {"dtype": "float32"},
         "lat_rho": {"dtype": "float32"},
-        "depth": {"dtype": "u2", "_FillValue": 65535},
         "time": {"dtype": "i4"},
-        "h": {"dtype": "float32"},
+        
     }
 
     log("Writing NetCDF file")
