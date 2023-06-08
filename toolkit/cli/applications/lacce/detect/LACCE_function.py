@@ -41,14 +41,7 @@ def LACCE(path_in,path_out,lat_var_name,lon_var_name,v_var_name,u_var_name,ssh_v
     import pylab as plt
     import xarray as xr
     import pandas as pd
-    from cli.applications.lacce.detect_lacce.mkDefsSRPV2_1 import (
-    getAgulhasCoreSSH as getAgulhasCoreSSH,
-    distance as distance,
-    intermediates as intermediates,
-    find_nearest as find_nearest,
-    setMap as setMap,
-    )   
-    #import mkDefsSRPV2_1 as srp
+    import cli.applications.lacce.detect.mkDefsSRPV2_1 as srp
     from scipy.ndimage import gaussian_filter1d
     import scipy.signal
     from shapely.geometry import Point

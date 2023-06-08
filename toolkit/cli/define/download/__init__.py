@@ -19,7 +19,7 @@ def build(module_parser):
     download.add_argument(
         "--provider",
         type=str,
-        choices=["gfs", "mercator"],
+        choices=["gfs", "mercator", "cmems-adt", "oisst"],
         help="Forcing data provider",
         required=True,
     )

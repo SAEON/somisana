@@ -7,10 +7,13 @@ from cli.applications.download.gfs import download as gfs_download
 
 
 def download(args):
-    workdir = args.workdir
-    matlab_env = args.matlab_env
     gfs = args.provider == "gfs"
     mercator = args.provider == "mercator"
+    cmems_adt = args.provider == "cmems-adt"
+    oisst = args.provider == "oisst"
+
+    workdir = args.workdir
+    matlab_env = args.matlab_env
     run_date = datetime.strptime(args.download_date, "%Y%m%d")
     domain = list(map(lambda i: float(i), args.domain.split(",")))
 
@@ -31,10 +34,13 @@ def download(args):
     log("CONFIG::workdir", os.path.abspath(workdir))
     Path(workdir).mkdir(parents=True, exist_ok=True)
 
-    if mercator:
+    if oisst:
+        log("Not implemented")
+    elif cmems_adt:
+        log("Not implemented")
+    elif mercator:
         mercator_download(run_date, hdays, fdays, domain, workdir)
-
-    if gfs:
+    elif gfs:
         delta_days_gfs = gfs_download(run_date, hdays, fdays, domain, workdir)
         log("Configuring MatLab...")
         with open(matlab_env, "w+") as env:
