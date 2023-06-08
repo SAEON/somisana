@@ -14,11 +14,10 @@ from cli.applications.mhw.detect.ecjoliver_mhw_source import (
 def open_dataset(file):
     try:
         ds = xr.open_dataset(file)
+        return ds
     except:
         print(f"Failed to open file: {file}")
         return None
-    ds.close()
-    return file
 
 
 def detect(args):
@@ -47,11 +46,11 @@ def detect(args):
         if ds is not None
     ]
 
-    log("Fond OISST cache", len(datasets), "items NetCDF files found")
+    log("Fond OISST cache", len(datasets), "valid NetCDF files found")
 
     #### RUN THE SCRIPT ####
 
-    with xr.open_mfdataset(datasets, parallel=True) as ds:
+    with xr.merge(datasets) as ds:
         # TODO - this is for future reference when we want to subset from a larger cached domain
         ds = ds.sel(lat=slice(min_lat, max_lat), lon=slice(min_long, max_long))
         ds = ds.drop_vars("zlev")
