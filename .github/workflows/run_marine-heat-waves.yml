@@ -141,6 +141,7 @@ jobs:
             ${{ needs.toolkit.outputs.image }} \
               mhw \
                 start \
+                  --domain="4,55,-40,-10" \
                   --oisst-cache /tmp/somisana/cache/ \
                   --output /tmp/somisana/current/mhw-${{ env.RUN_DATE }}.nc
 
