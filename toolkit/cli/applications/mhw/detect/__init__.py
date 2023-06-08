@@ -11,6 +11,16 @@ from cli.applications.mhw.detect.ecjoliver_mhw_source import (
 )
 
 
+def open_dataset(file):
+    try:
+        ds = xr.open_dataset(file)
+    except:
+        print(f"Failed to open file: {file}")
+        return None
+    ds.close()
+    return file
+
+
 def detect(args):
     log("Running MHW detect")
     output = os.path.abspath(args.output)
@@ -26,12 +36,22 @@ def detect(args):
     cache_identifier = "".join(str(v) for v in domain)
 
     # Selecting files in folder
-    files = natsorted(glob(oisst_cache + "/*{id}.nc".format(id=cache_identifier)))
-    log("Fond OISST cache", len(files), "items NetCDF files found")
+    datasets = [
+        ds
+        for ds in (
+            open_dataset(file)
+            for file in natsorted(
+                glob(oisst_cache + "/*{id}.nc".format(id=cache_identifier))
+            )
+        )
+        if ds is not None
+    ]
+
+    log("Fond OISST cache", len(datasets), "items NetCDF files found")
 
     #### RUN THE SCRIPT ####
 
-    with xr.open_mfdataset(files, parallel=True) as ds:
+    with xr.open_mfdataset(datasets, parallel=True) as ds:
         # TODO - this is for future reference when we want to subset from a larger cached domain
         ds = ds.sel(lat=slice(min_lat, max_lat), lon=slice(min_long, max_long))
         ds = ds.drop_vars("zlev")
