@@ -7,6 +7,39 @@ def build(module_parser):
         metavar="Available commands",
     )
 
+    # update-catalogue
+    mhw_update_catalogue = mhw_parser.add_parser(
+        "update-catalogue", help="Update daily OISST product cache in local environment"
+    )
+    mhw_update_catalogue.add_argument(
+        "--chown",
+        type=str,
+        required=False,
+        help='Run "chown" system call on downloaded/created files with the provided user:group (i.e. "runner:runners"")',
+    )
+    mhw_update_catalogue.add_argument(
+        "--domain",
+        help="Bounding box in 4326 projection (i.e. west,east,south,north)",
+        required=True,
+    )
+    mhw_update_catalogue.add_argument(
+        "--clear-cache",
+        action="store_true",
+        default=False,
+        help="Re-download data used for calculating thresholds",
+    )
+    mhw_update_catalogue.add_argument(
+        "--skip-caching-oisst",
+        action="store_true",
+        default=False,
+        help="Skip checking for new OISST entries",
+    )
+    mhw_update_catalogue.add_argument(
+        "--mhw-bulk-cache",
+        required=False,
+        help="Path to directory containing back data (AVHRR OISST data from NOAA) used to calculate thresholds NetCDF file",
+    )
+
     # Start
     mhw_start = mhw_parser.add_parser(
         "start", help="Track marine heat waves from daily data"
@@ -14,18 +47,7 @@ def build(module_parser):
     mhw_start.add_argument(
         "--nc-output-path", default=".output.nc", help="Path of NetCDF output path"
     )
-    mhw_start.add_argument(
-        "--clear-cache",
-        action="store_true",
-        default=False,
-        help="Re-download data used for calculating thresholds",
-    )
-    mhw_start.add_argument(
-        "--skip-caching-oisst",
-        action="store_true",
-        default=False,
-        help="Skip checking for new OISST entries",
-    )
+
     mhw_start.add_argument(
         "--nc-thresholds-path",
         default=".thresholds.nc",
@@ -36,11 +58,7 @@ def build(module_parser):
         default=".marine-heat-waves.nc",
         help="Path to SST Marine Heat Waves events NetCDF file",
     )
-    mhw_start.add_argument(
-        "--mhw-bulk-cache",
-        required=False,
-        help="Path to directory containing back data (AVHRR OISST data from NOAA) used to calculate thresholds NetCDF file",
-    )
+
     mhw_start.add_argument(
         "--thresholds-expiry",
         type=int,
@@ -48,17 +66,6 @@ def build(module_parser):
         metavar="",
         default=100,
         help="Maximum age in days of thresholds, before requiring new thresholds be calculated (0, always expire the thresholds file. -1 == never expire the thresholds file)",
-    )
-    mhw_start.add_argument(
-        "--chown",
-        type=str,
-        required=False,
-        help='Run "chown" system call on downloaded/created files with the provided user:group (i.e. "runner:runners"")',
-    )
-    mhw_start.add_argument(
-        "--domain",
-        help="Bounding box in 4326 projection (i.e. west,east,south,north)",
-        required=True,
     )
 
     return mhw

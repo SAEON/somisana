@@ -2,8 +2,6 @@ import os
 from os.path import join
 from config import CACHDIR
 from cli.applications.mhw.thresholds.catalogue import update_cache
-from cli.applications.mhw.thresholds.climatology import calculate_daily_clim
-from cli.applications.mhw.thresholds.climatology import detect
 from oisst import Catalogue
 
 MHW_BULK_CACHE = join(CACHDIR, "ohw", "thresholds", "bulk")
@@ -13,9 +11,7 @@ OISST_DATA = "https://www.ncei.noaa.gov/thredds/catalog/OisstBase/NetCDF/V2.1/AV
 os.makedirs(MHW_BULK_CACHE, exist_ok=True)
 
 
-def create_thresholds(args):
-    nc_thresholds_path = os.path.abspath(args.nc_thresholds_path)
-    nc_mhw_output_path = os.path.abspath(args.nc_mhw_output_path)
+def update_catalogue(args):
     chown = args.chown
     domain = [float(x) for x in args.domain.split(",")]
     skip_caching_oisst = args.skip_caching_oisst
@@ -32,14 +28,3 @@ def create_thresholds(args):
             refs = catalogue.catalog_refs
             update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, clear_cache, chown)
             print("OISST cache updated!")
-
-    # Create thresholds from OISST cache
-    calculate_daily_clim(mhw_bulk_cache, nc_mhw_output_path, domain)
-
-    # Create mhw output classifications of cached data? or part of cache data?
-    # calculate_mhw(mhw_bulk_cache, nc_thresholds_path, nc_mhw_output_path)
-    print(
-        """Marine Heat Wave events saved to {filename}""".format(
-            filename=args.nc_mhw_output_path
-        )
-    )
