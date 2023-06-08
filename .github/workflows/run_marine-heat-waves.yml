@@ -114,12 +114,13 @@ jobs:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       CACHDIR: ${{ needs.workdir.outputs.CACHDIR }}
       RUN_DATE: ${{ needs.envs.outputs.RUN_DATE }}
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Check out source code
         uses: actions/checkout@master
         with:
           ref: ${{ env.BRANCH_REF }}
-      - name: Run the MHW thresholds script
+      - name: Update the OISST cache with new daily data
         run: >-
           docker run \
             --rm \
@@ -130,9 +131,18 @@ jobs:
                 start \
                   --domain="4,55,-40,-10" \
                   --chown="runner:runners" \
-                  --nc-thresholds-path /tmp/somisana/current/thresholds.nc \
-                  --mhw-bulk-cache /tmp/somisana/cache/ \
-                  --nc-mhw-output-path /tmp/somisana/current/mhw-${{ env.RUN_DATE }}.nc
+                  --oisst-cache /tmp/somisana/cache/
+      - name: Run the detection script
+        run: >-
+          docker run \
+            --rm \
+            -v $WORKDIR:/tmp/somisana/current \
+            -v $CACHDIR:/tmp/somisana/cache \
+            ${{ needs.toolkit.outputs.image }} \
+              mhw \
+                start \
+                  --oisst-cache /tmp/somisana/cache/ \
+                  --output /tmp/somisana/current/mhw-${{ env.RUN_DATE }}.nc
 
   # Upload the combined thresholds and Marine Heat Waves events data to Mnemosyne
   archive-output:

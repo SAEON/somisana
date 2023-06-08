@@ -11,12 +11,12 @@ import subprocess
 MAX_CONCURRENT_NET_IO = 31
 
 
-async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache, chown):
+async def download_file(semaphore, file, domain, oisst_cache, reset_cache, chown):
     uri = file["uri"]
     filename = file["name"].replace(
         ".nc", "_{domain}.nc".format(domain="".join(str(v) for v in domain))
     )
-    file_path = os.path.join(mhw_bulk_cache, filename)
+    file_path = os.path.join(oisst_cache, filename)
     if not reset_cache:
         if os.path.isfile(file_path):
             # TODO check the file is valid otherwise overwrite it
@@ -25,7 +25,9 @@ async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache, ch
 
     west, east, south, north = domain
     async with semaphore:
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(
+            connector=aiohttp.TCPConnector(ssl=False)
+        ) as session:
             async with session.get(
                 uri,
                 params={
@@ -49,7 +51,7 @@ async def download_file(semaphore, file, domain, mhw_bulk_cache, reset_cache, ch
 
 
 async def resolve_download_uris(
-    semaphore, refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache, chown
+    semaphore, refs, OISST_DATA, domain, oisst_cache, reset_cache, chown
 ):
     tasks = []
     async with semaphore:
@@ -70,7 +72,7 @@ async def resolve_download_uris(
                                 semaphore,
                                 file,
                                 domain,
-                                mhw_bulk_cache,
+                                oisst_cache,
                                 reset_cache,
                                 chown,
                             )
@@ -79,14 +81,14 @@ async def resolve_download_uris(
     await asyncio.gather(*tasks)
 
 
-def delete_cached_preliminary_files(mhw_bulk_cache):
+def delete_cached_preliminary_files(oisst_cache):
     search = "_preliminary_"
-    files = glob(os.path.join(mhw_bulk_cache, f"*{search}*"))
+    files = glob(os.path.join(oisst_cache, f"*{search}*"))
     for p in files:
         os.remove(p)
 
 
-def update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache, chown):
+def update_cache(refs, OISST_DATA, domain, oisst_cache, reset_cache, chown):
     if PY_ENV == "development":
         print(
             "Warning! PY_ENV == development (for sanity sake, only a couple years of back data are checked)"
@@ -94,11 +96,11 @@ def update_cache(refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache, chown):
         refs = refs[-48:]
 
     # First delete any cached preliminary files
-    delete_cached_preliminary_files(mhw_bulk_cache)
+    delete_cached_preliminary_files(oisst_cache)
 
     semaphore = asyncio.BoundedSemaphore(MAX_CONCURRENT_NET_IO)
     asyncio.run(
         resolve_download_uris(
-            semaphore, refs, OISST_DATA, domain, mhw_bulk_cache, reset_cache, chown
+            semaphore, refs, OISST_DATA, domain, oisst_cache, reset_cache, chown
         )
     )
