@@ -128,7 +128,7 @@ jobs:
             -v $CACHDIR:/tmp/somisana/cache \
             ${{ needs.toolkit.outputs.image }} \
               mhw \
-                start \
+                update-catalogue \
                   --domain="4,55,-40,-10" \
                   --chown="runner:runners" \
                   --oisst-cache /tmp/somisana/cache/
@@ -140,7 +140,7 @@ jobs:
             -v $CACHDIR:/tmp/somisana/cache \
             ${{ needs.toolkit.outputs.image }} \
               mhw \
-                start \
+                detect \
                   --domain="4,55,-40,-10" \
                   --oisst-cache /tmp/somisana/cache/ \
                   --output /tmp/somisana/current/mhw-${{ env.RUN_DATE }}.nc
