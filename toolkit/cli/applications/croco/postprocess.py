@@ -238,6 +238,12 @@ def hlev(var, z, depth):
     return vnew
 
 def get_depths(fname,gname,tstep=None):
+    '''
+        extract the depth levels (in metres, negative downward) of the sigma levels in a CROCO file
+        fname = CROCO output file
+        gname = CROCO grid file
+        tstep = time step index to extract (integer starting at zero). If None, then all time-steps are extracted
+    '''
     
     ds = xr.open_dataset(fname)
     ds_grid = xr.open_dataset(gname)

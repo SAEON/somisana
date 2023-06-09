@@ -34,10 +34,10 @@ def regrid_tier1(args):
     
     log("Extracting the model output variables we need")
     ds = xr.open_dataset(input)
-    h = ds.h.values
     lon_rho = ds.lon_rho.values
     lat_rho = ds.lat_rho.values
     ds.close()
+    h=post.get_var(input,grid,'h')
     temp=post.get_var(input,grid,'temp')
     salt=post.get_var(input,grid,'salt')
     ssh=post.get_var(input,grid,'zeta')
