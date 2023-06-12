@@ -341,8 +341,10 @@ jobs:
         run: mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc
 
   # Regrid CROCO u,v to rho grid,
-  # rotate u,v components from grid aligned to east/north aligned
-  # and work out depth levels of sigma grid in meters
+  # rotate u,v components from grid aligned to east/north aligned and
+  # work out depth levels of sigma grid in meters (tier 1),
+  # interpolate data to constant vertical levels (tier 2),
+  # and interpolate data to a constant horizontal grid (tier 3)
   post-processing:
     needs: [branch-ref, croco, toolkit, envs, workdir]
     runs-on: somisana
@@ -356,7 +358,7 @@ jobs:
         uses: actions/checkout@master
         with:
           ref: ${{ env.BRANCH_REF }}
-      - name: Normalize the model output
+      - name: Tier 1 regridding
         run: >-
           docker run \
             --rm \
@@ -368,7 +370,29 @@ jobs:
                   --id algoa-bay-forecast \
                   --grid /tmp/somisana/current/croco/forcing/grd.nc \
                   --input /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
-                  --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc
+                  --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc
+      - name: Tier 2 regridding
+        run: >-
+          docker run \
+            --rm \
+            -v $WORKDIR:/tmp/somisana/current \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+              croco \
+                regrid-tier2 \
+                  --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
+                  --depths 0,1,2,5,10,15,20,30,40,50,60,70,100,150,200,500,1000,1500,2000,9999 \
+                  --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier2.nc
+      - name: Tier 3 regridding
+        run: >-
+          docker run \
+            --rm \
+            -v $WORKDIR:/tmp/somisana/current \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+              croco \
+                regrid-tier3 \
+                  --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier2.nc \
+                  --spacing 0.005 \ 
+                  --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier3.nc
 
   # Archive CROCO output
   archive-data:
@@ -382,6 +406,14 @@ jobs:
       - name: Load $PATH
         run: |
           source ~/.bashrc
+      - name: subset the raw CROCO NetCDF file for archiving
+        run: >-
+          sudo docker run \
+          --rm \
+          --entrypoint /bin/bash \
+          -v $WORKDIR:/tmp/somisana/current \
+          ghcr.io/saeon/somisana_geopython:3.10.6 \
+          -c "ncks -v temp,salt,u,v,w,zeta,sustr,svstr -d time,120, -O /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc"
       - name: Upload raw CROCO NetCDF file to mnemosyne HTTP-range server
         continue-on-error: false
         run: |
