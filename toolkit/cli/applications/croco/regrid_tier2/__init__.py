@@ -36,8 +36,14 @@ def regrid_tier2(args):
     for d, depth in enumerate(depth_out):
         if depth==0: # surace layer
             temp_out[:,d,:,:]=temp_in[:,N-1,:,:]
+            salt_out[:,d,:,:]=salt_in[:,N-1,:,:]
+            u_out[:,d,:,:]=u_in[:,N-1,:,:]
+            v_out[:,d,:,:]=v_in[:,N-1,:,:]
         elif depth==9999: # bottom layer
             temp_out[:,d,:,:]=temp_in[:,0,:,:]
+            salt_out[:,d,:,:]=salt_in[:,0,:,:]
+            u_out[:,d,:,:]=u_in[:,0,:,:]
+            v_out[:,d,:,:]=v_in[:,0,:,:]
         else:
             log("Depth = ", depth, " m")
             for t in np.arange(T):
