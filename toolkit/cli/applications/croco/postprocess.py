@@ -314,7 +314,7 @@ def get_time(fname,ref_date):
     
     return time_dt
 
-def get_lonlatmask(gname,type):
+def get_lonlatmask(gname,type='r'):
     ds_grid = xr.open_dataset(gname)
     if type=='u':
         lon = ds_grid.lon_u.values 
@@ -386,3 +386,14 @@ def get_uv(fname,gname,tstep=None):
     v_out = v*cosa + u*sina
     
     return u_out,v_out
+
+def get_boundary(gname):
+        '''
+        Return lon,lat of perimeter around a CROCO grid
+        '''
+        lon_rho,lat_rho,_=get_lonlatmask(gname,type='r')
+        lon = np.hstack((lon_rho[0:, 0], lon_rho[-1, 1:-1],
+                         lon_rho[-1::-1, -1], lon_rho[0, -2::-1]))
+        lat = np.hstack((lat_rho[0:, 0], lat_rho[-1, 1:-1],
+                         lat_rho[-1::-1, -1], lat_rho[0, -2::-1]))
+        return lon, lat
