@@ -203,37 +203,50 @@ def hlev(var, z, depth):
     """
     this extracts a horizontal slice
 
-    var = 3D extracted variable of interest
-    z = depths (in m) of sigma levels, also 3D array (this is done using zlevs)
+    var = 3D extracted variable of interest (assuming mask is already nan - use get_var() method in this file)
+    z = depths (in m) of sigma levels, also 3D array (use get_depths() method in this file)
     depth = the horizontal depth you want (should be negative)
 
-    Adapted (by J.Veitch) from vinterp.m in roms_tools (by P.Penven)
+    Adapted (by J.Veitch and G.Fearon) from vinterp.m in roms_tools (by P.Penven)
     """
     [N, Mp, Lp] = np.shape(z)
 
     a = z.copy()
+    a[a >= depth] = 0
     a[a < depth] = 1
-    a[a != 1] = 0
+    
+    # 2D variable containing the sigma level index directly above the constant depth level
     levs = np.sum(a, axis=0)
-    levs[levs == N] = N - 1
-    mask = levs / levs
+    # values of zero indicate the depth level is below our sigma levels so set to nan
+    levs[levs==0] = np.nan
+    # make levs the sigma level index directly below the constant depth level
+    levs = levs -1
 
     vnew = np.zeros((Mp, Lp))
-
+    vnew[np.isnan(levs)]=np.nan
+    
+    # looping through every horizontal grid point makes this slow
+    # TODO: understand how the matlab croco_tools function does this without a loop
     for m in np.arange(Mp):
         for l in np.arange(Lp):
-            ind1 = levs[m, l]
-            ind2 = levs[m, l] + 1
-
-            v1 = var[int(ind1), m, l]
-            v2 = var[int(ind2), m, l]
-
-            z1 = z[int(ind1), m, l]
-            z2 = z[int(ind2), m, l]
-
-            vnew[m, l] = ((v1 - v2) * depth + v2 * z1 - v1 * z2) / (z1 - z2)
-
-        vnew = vnew * mask
+            
+            if not np.isnan(levs[m,l]):
+            
+                ind1 = int(levs[m, l])
+                ind2 = int(levs[m, l]) + 1
+                
+                if ind1 == N-1: # there is no level above to interpolate between
+                    # so I'd rather use the surface layer than extrapolate
+                    vnew[m, l] = var[ind1, m, l]
+                else:
+    
+                    v1 = var[ind1, m, l]
+                    v2 = var[ind2, m, l]
+        
+                    z1 = z[ind1, m, l]
+                    z2 = z[ind2, m, l]
+        
+                    vnew[m, l] = ((v1 - v2) * depth + v2 * z1 - v1 * z2) / (z1 - z2)
 
     return vnew
 
