@@ -8,8 +8,9 @@ def parse(cmd, args, module):
 
     try:
         commands = {
-            "post-process-v1": module.post_process_v1,
-            "post-process-v2": module.post_process_v2,
+            "regrid-tier1": module.regrid_tier1,
+            "regrid-tier2": module.regrid_tier2,
+            "regrid-tier3": module.regrid_tier3,
         }
 
         # Validate args

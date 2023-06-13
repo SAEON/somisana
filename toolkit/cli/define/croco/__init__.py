@@ -8,63 +8,93 @@ def build(module_parser):
     )
 
     """
-    Post-processing V1:
-      -> Aligns u/v grid with density (rho) grid
-      -> Adds z-levels to data
+    Re-gridding tier 1:
+      -> Regrids u/v to the density (rho) grid
+      -> rotates u/v to be east/north components instead of grid-aligned components
+      -> Adds depths to the sigma levels at each time-step
       -> NOT CF compliant (I don't think)
       -> Outputs:
+        -> zeta
         -> temperature
         -> salt
-        -> u (re-aligned)
-        -> v (re-aligned)
-        -> m_rho
+        -> u (re-gridded and rotated)
+        -> v (re-gridded and rotated)
+        -> depth
         -> h
         -> lon_rho
         -> lat_rho
-        -> depth
-        -> time (steps in hours)
+        -> time
     """
-    croco_post_process_v1 = croco_parser.add_parser(
-        "post-process-v1", help="Post processing functions"
+    regrid_tier1 = croco_parser.add_parser(
+        "regrid-tier1", help="Post processing functions"
     )
-    croco_post_process_v1.add_argument(
+    regrid_tier1.add_argument(
         "--id",
         type=str,
         help="Name / ID of the model being post-processed. This gets included as a global attribute in the output",
         required=True,
     )
-    croco_post_process_v1.add_argument(
+    regrid_tier1.add_argument(
         "--grid", type=str, help="Path of NetCDF grid input path", required=True
     )
-    croco_post_process_v1.add_argument(
+    regrid_tier1.add_argument(
         "--input", type=str, help="Path of CROCO output file", required=True
     )
-    croco_post_process_v1.add_argument(
+    regrid_tier1.add_argument(
         "--output",
         type=str,
-        help="Path of processed output path",
-        default=".output/croco/post-process-v1-output.nc",
+        help="Path of processed output file",
+        default=".output/croco/regridded-tier1-output.nc",
     )
 
     """
-    Post-processing V2:
-      -> Aligns u/v grid with density (rho) grid
-      -> ... ? TODO
+    Re-gridding tier 2:
+      -> takes the output of regrid-tier1 as input and
+      -> regrids the sigma levels to constant z levels, including the surface and bottom layers
+      -> output variables are the same as tier 1, only depths are constant values
     """
-    croco_post_process_v2 = croco_parser.add_parser(
-        "post-process-v2", help="Post processing functions"
+    regrid_tier2 = croco_parser.add_parser(
+        "regrid-tier2", help="Post processing functions"
     )
-    croco_post_process_v2.add_argument(
-        "--grid", type=str, help="Path of NetCDF grid input path", required=True
+    regrid_tier2.add_argument(
+        "--input", type=str, help="Path of output file from regrid-tier1", required=True
     )
-    croco_post_process_v2.add_argument(
-        "--input", type=str, help="Path of CROCO output file", required=True
+    regrid_tier2.add_argument(
+        "--depths", 
+        type=str, 
+        help="comma separated depth levels (in metres, positive down) to interpolate to (a value of 9999 is used to indicate the bottom layer)", 
+        default="0,1,2,5,10,15,20,30,40,50,60,70,100,150,200,500,1000,1500,2000,9999",
     )
-    croco_post_process_v2.add_argument(
+    regrid_tier2.add_argument(
         "--output",
         type=str,
-        help="Path of processed output path",
-        default=".output/croco/post-process-v2-output.nc",
+        help="Path of processed output file",
+        default=".output/croco/regridded-tier2-output.nc",
+    )
+    
+    """
+    Re-gridding tier 3:
+      -> takes the output of regrid-tier2 as input and
+      -> regrids the horizontal grid to be regular with a specified grid spacing
+      -> output variables are the same as tier 1 and 2, only horizontal grid is constant
+    """
+    regrid_tier3 = croco_parser.add_parser(
+        "regrid-tier3", help="Post processing functions"
+    )
+    regrid_tier3.add_argument(
+        "--input", type=str, help="Path of output file from regrid-tier2", required=True
+    )
+    regrid_tier3.add_argument(
+        "--spacing", 
+        type=str, 
+        help="constant horizontal grid spacing (in degrees) to be used for the interpolated output", 
+        default="0.01",
+    )
+    regrid_tier3.add_argument(
+        "--output",
+        type=str,
+        help="Path of processed output file",
+        default=".output/croco/regridded-tier3-output.nc",
     )
 
     return croco

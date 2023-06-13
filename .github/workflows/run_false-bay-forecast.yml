@@ -345,8 +345,9 @@ jobs:
           mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc
           mv ${{ env.WORKDIR }}/croco/scratch/avg.nc.1 ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1
 
-  # Updates CROCO output vars to be centred
-  # and work out depth levels in meters
+  # Regrid CROCO u,v to rho grid,
+  # rotate u,v components from grid aligned to east/north aligned
+  # and work out depth levels of sigma grid in meters
   post-processing:
     needs: [branch-ref, croco, toolkit, envs, workdir]
     runs-on: somisana
@@ -369,7 +370,7 @@ jobs:
             -v $(pwd)/models/false-bay-forecast/lib/grd.nc.1:/tmp/somisana/current/croco/forcing/grd.nc.1 \
             ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               croco \
-                post-process-v1 \
+                regrid-tier1 \
                   --id false-bay-forecast \
                   --grid /tmp/somisana/current/croco/forcing/grd.nc.1 \
                   --input /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1 \
