@@ -5,8 +5,61 @@ on:
 
 env:
   TEST: 'HELLO WORLD'
+  REGISTRY: ghcr.io
 
 jobs:
+
+  toolkit:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_REF: giles
+      TOOLKIT_IMAGE: giles_test_toolkit
+      SHA: sha-${{ github.sha }}
+    outputs:
+      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
+    steps:
+      - name: Get image name lowercase
+        id: 'lowercase'
+        run: |
+          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
+          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
+      - name: Check out source code
+        uses: actions/checkout@master
+        with:
+          ref: ${{ env.BRANCH_REF }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@master
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check if image with sha tag already exists
+        id: check-image
+        run: |
+          set -e
+          SHA_IMAGE=$(docker images -q ${REGISTRY}/${{ steps.lowercase.outputs.image_name }}:${SHA} || true)
+          if [ -z "$SHA_IMAGE" ]; then
+            echo "image_exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "image_exists=true" >> $GITHUB_OUTPUT
+          fi
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@master
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
+          tags: |
+            latest
+            ${{ env.SHA }}
+      - name: Build and push
+        uses: docker/build-push-action@master
+        with:
+          context: toolkit
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+
   debugger:
     runs-on: ubuntu-latest
     steps:
