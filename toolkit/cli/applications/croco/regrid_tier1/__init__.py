@@ -33,8 +33,9 @@ def regrid_tier1(args):
     log("CONFIG::run_date", run_date)
     
     log("Extracting the model output variables we need")
-    lon_rho=post.get_var(input, grid, 'lon_rho')
-    lat_rho=post.get_var(input, grid, 'lat_rho')
+    with xr.open_dataset(input) as ds:
+        lon_rho=ds.lon_rho.values
+        lat_rho=ds.lat_rho.values
     h=post.get_var(input,grid,'h')
     temp=post.get_var(input,grid,'temp')
     salt=post.get_var(input,grid,'salt')
