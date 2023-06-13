@@ -33,6 +33,7 @@ jobs:
   cleanup-old-run-temp-files:
     needs: [branch-ref]
     runs-on: somisana
+    continue-on-error: true
     env:
       BRANCH: ${{ needs.branch-ref.outputs.value }}
     steps:
@@ -60,12 +61,16 @@ jobs:
       CROCO_IMAGE: ${{ steps.ENVS.outputs.CROCO_IMAGE }}
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}
+      MODEL_RUN_YEAR_MONTH: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR_MONTH }}
+      MODEL_RUN_YEAR: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR }}
       RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}
     steps:
       - name: Configure run date
         id: run_date
         run: |
-          echo "value=${RUN_DATE:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
+          echo "yyyymmdd=${RUN_DATE:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
+          echo "yyyymm=${RUN_DATE:=$(date +'%Y%m')}" >> $GITHUB_OUTPUT
+          echo "yyyy=${RUN_DATE:=$(date +'%Y')}" >> $GITHUB_OUTPUT
       - name: Configure restart date
         id: restart_date
         run: |
@@ -75,7 +80,9 @@ jobs:
         run: |
           echo "CROCO_IMAGE=${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
           echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
-          echo "MODEL_RUN_DATE=${{ steps.run_date.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_DATE=${{ steps.run_date.outputs.yyyymmdd }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_YEAR_MONTH=${{ steps.run_date.outputs.yyyymm }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_YEAR=${{ steps.run_date.outputs.yyyy }}" >> $GITHUB_OUTPUT
           echo "RESTART_FILE_DATE=${{ steps.restart_date.outputs.value }}" >> $GITHUB_OUTPUT
 
   # Compile CROCO model for the Algoa Bay forecast
@@ -358,6 +365,14 @@ jobs:
         uses: actions/checkout@master
         with:
           ref: ${{ env.BRANCH_REF }}
+      - name: subset the raw CROCO NetCDF file for archiving
+        run: >-
+          sudo docker run \
+            --rm \
+            --entrypoint /bin/bash \
+            -v $WORKDIR:/tmp/somisana/current \
+            ghcr.io/saeon/somisana_geopython:3.10.6 \
+              -c "ncks -v temp,salt,u,v,w,zeta,sustr,svstr -d time,120, -O /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc"
       - name: Tier 1 regridding
         run: >-
           docker run \
@@ -402,19 +417,12 @@ jobs:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      YYYYMM: ${{ needs.envs.outputs.MODEL_RUN_YEAR_MONTH }}
     steps:
       - name: Load $PATH
         run: |
           source ~/.bashrc
-      - name: subset the raw CROCO NetCDF file for archiving
-        run: >-
-          sudo docker run \
-          --rm \
-          --entrypoint /bin/bash \
-          -v $WORKDIR:/tmp/somisana/current \
-          ghcr.io/saeon/somisana_geopython:3.10.6 \
-          -c "ncks -v temp,salt,u,v,w,zeta,sustr,svstr -d time,120, -O /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc"
-      - name: Upload raw CROCO NetCDF file to mnemosyne HTTP-range server
+      - name: Archive raw CROCO output (hindcast / forecast)
         continue-on-error: false
         run: |
           cat \
@@ -428,11 +436,11 @@ jobs:
                 -T \
                 - \
                 https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.RUN_DATE }}-hourly-avg.nc;
-      - name: Upload processed CROCO NetCDF file to mnemosyne HTTP-range server
+      - name: Archive truncated CROCO output (forecast)
         continue-on-error: false
         run: |
           cat \
-            ${{ env.WORKDIR }}/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+            ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc \
               | curl \
                 --silent \
                 --keepalive-time 2400 \
@@ -441,7 +449,21 @@ jobs:
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.RUN_DATE }}-hourly-avg-processed.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg.nc;
+      - name: Upload processed CROCO NetCDF file to mnemosyne HTTP-range server
+        continue-on-error: false
+        run: |
+          cat \
+            ${{ env.WORKDIR }}/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
+              | curl \
+                --silent \
+                --keepalive-time 2400 \
+                -X PUT \
+                -H "Content-Type: application/octet-stream" \
+                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+                -T \
+                - \
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.RUN_DATE }}-hourly-avg-t1.nc;
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:
@@ -501,7 +523,7 @@ jobs:
             ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               pg \
                 load-croco-pp-v1-output-to-pg \
-                  --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
                   --parallelization 32
       - name: Delete old PostgreSQL data
         continue-on-error: true
