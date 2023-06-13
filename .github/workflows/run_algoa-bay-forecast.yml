@@ -367,7 +367,7 @@ jobs:
           ref: ${{ env.BRANCH_REF }}
       - name: subset the raw CROCO NetCDF file for archiving
         run: >-
-          sudo docker run \
+          docker run \
             --rm \
             --entrypoint /bin/bash \
             -v $WORKDIR:/tmp/somisana/current \
