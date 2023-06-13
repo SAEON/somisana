@@ -1,7 +1,7 @@
 import { HOSTNAME } from './_app.js'
 
-export const ODP_ADDRESS = process.env.ODP_ADDRESS || 'https://odp.saeon.ac.za'
-export const ODP_AUTH = `${ODP_ADDRESS}/auth`
+export const ODP_HOSTNAME = process.env.ODP_HOSTNAME || 'odp.saeon.ac.za'
+export const ODP_AUTH = `https://auth.${ODP_HOSTNAME}`
 export const ODP_AUTH_WELL_KNOWN = `${ODP_AUTH}/.well-known/openid-configuration`
 export const ODP_AUTH_LOGOUT_REDIRECT = `${ODP_AUTH}/oauth2/sessions/logout`
 export const ODP_SSO_CLIENT_ID = process.env.ODP_SSO_CLIENT_ID || 'SAEON.DataPortal'
