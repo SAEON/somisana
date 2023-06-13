@@ -17,7 +17,7 @@ def regrid_tier1(args):
     input = os.path.abspath(args.input)
     output = os.path.abspath(args.output)
 
-    log("Running CROCO output re-gridding (tier1)")
+    log("Running CROCO output regridding (tier1)")
     log("CONFIG::id", id)
     log("CONFIG::input", input)
     log("CONFIG::grid", grid)
@@ -33,14 +33,13 @@ def regrid_tier1(args):
     log("CONFIG::run_date", run_date)
     
     log("Extracting the model output variables we need")
-    ds = xr.open_dataset(input)
-    lon_rho = ds.lon_rho.values
-    lat_rho = ds.lat_rho.values
-    ds.close()
+    lon_rho=post.get_var(input, grid, 'lon_rho')
+    lat_rho=post.get_var(input, grid, 'lat_rho')
     h=post.get_var(input,grid,'h')
     temp=post.get_var(input,grid,'temp')
     salt=post.get_var(input,grid,'salt')
     ssh=post.get_var(input,grid,'zeta')
+    
     log("Regridding and rotating u/v")
     u,v=post.get_uv(input,grid)
     
@@ -108,7 +107,7 @@ def regrid_tier1(args):
                 {
                     "long_name": "Depth of sigma levels of the rho grid (centred in grid cells)",
                     "units": "meter",
-                    "postive": "up",
+                    "positive": "up",
                 },
             ),
             "h": xr.Variable(

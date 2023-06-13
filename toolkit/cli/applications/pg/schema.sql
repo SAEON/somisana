@@ -182,14 +182,14 @@ depths as(
     pixel,
     value
   from
-    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'm_rho', total_depth_levels => total_depth_levels)
+    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'depth', total_depth_levels => total_depth_levels)
 ),
 temperatures as(
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'temperature', total_depth_levels => total_depth_levels)
+    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'temp', total_depth_levels => total_depth_levels)
 ),
 salinity as(
   select

@@ -14,15 +14,15 @@
     "min_y": -34.85134506225586,
     "max_y": -33.07335662841797,
     "postgis_config": {
-      "temperature": { "xy": "152x106", "tile_size": "8x53" },
+      "temp": { "xy": "152x106", "tile_size": "8x53" },
       "salt": { "xy": "152x106", "tile_size": "8x53" },
       "u": { "xy": "152x106", "tile_size": "8x53" },
       "v": { "xy": "152x106", "tile_size": "8x53" },
-      "m_rho": { "xy": "152x106", "tile_size": "8x53" },
+      "depth": { "xy": "152x106", "tile_size": "8x53" },
       "lon_rho": { "xy": "152x106", "tile_size": "8x53" },
       "lat_rho": { "xy": "152x106", "tile_size": "8x53" },
       "time": { "xy": "NUL", "tile_size": "240x1" },
-      "depth": { "xy": "NUL", "tile_size": "20x1" },
+      "s_rho": { "xy": "NUL", "tile_size": "20x1" },
       "h": { "xy": "152x106", "tile_size": "8x53" }
     }
   },
@@ -41,15 +41,15 @@
     "min_y": -35.12773513793945,
     "max_y": -33.38367462158203,
     "postgis_config": {
-      "temperature": { "xy": "77x89", "tile_size": "11x89" },
+      "temp": { "xy": "77x89", "tile_size": "11x89" },
       "salt": { "xy": "77x89", "tile_size": "11x89" },
       "u": { "xy": "77x89", "tile_size": "11x89" },
       "v": { "xy": "77x89", "tile_size": "11x89" },
-      "m_rho": { "xy": "77x89", "tile_size": "11x89" },
+      "depth": { "xy": "77x89", "tile_size": "11x89" },
       "lon_rho": { "xy": "77x89", "tile_size": "11x89" },
       "lat_rho": { "xy": "77x89", "tile_size": "11x89" },
       "time": { "xy": "NUL", "tile_size": "240x1" },
-      "depth": { "xy": "NUL", "tile_size": "40x1" },
+      "s_rho": { "xy": "NUL", "tile_size": "40x1" },
       "h": { "xy": "77x89", "tile_size": "11x89" }
     }
   }

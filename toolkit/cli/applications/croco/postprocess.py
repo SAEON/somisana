@@ -15,19 +15,32 @@ def u2rho(u):
     """
     regrid the croco u-velocity from it's native u grid to the rho grid
     u can be 2D, 3D or 4D
-
     """
     Num_dims=len(u.shape)
     if Num_dims==4:
+        # T: Time 
+        # D: Depth
+        # Mp: Grid y
+        # L:  Grid x
         [T, D, Mp, L] = u.shape
+
+        # The u grid is length - 1 compared to rho grid
+        # Because u values represent mid points between the rho grid
+        # Create a new grid for interpolated u values that is equivalent to the rho grid
         u_rho = np.zeros((T, D, Mp, L + 1))
+        
+        # Interpolate from u grid to rho grid by summing adjacent u points, and divide by 2
         u_rho[:, :, :, 1 : L] = 0.5 * np.squeeze(
             [u[:, :, :, 0 : L - 1] + u[:, :, :, 1 : L]]
         )
+
+        # On the edges of the new u grid, you can't interpolate values.
+        # So just copy the closest values for the cells on the edge of the grid
         u_rho[:, :, :, 0] = u_rho[:, :, :, 1]
         u_rho[:, :, :, L] = u_rho[:, :, :, L - 1]
         
     elif Num_dims==3:
+        # TorD: Temperature or depth
         [TorD, Mp, L] = u.shape # works if first dimension is time or depth
         u_rho = np.zeros((TorD, Mp, L + 1))
         u_rho[:, :, 1 : L] = 0.5 * np.squeeze(
@@ -37,6 +50,7 @@ def u2rho(u):
         u_rho[:, :, L] = u_rho[:, :, L - 1]
         
     else: # Num_dims==2:
+        # 2D grid - no time/depth information (possibly a surface level at a single time step)
         [Mp, L] = u.shape
         u_rho = np.zeros((Mp, L + 1))
         u_rho[:, 1 : L] = 0.5 * np.squeeze(
@@ -52,6 +66,7 @@ def v2rho(v):
     regrid the croco v-velocity from it's native v grid to the rho grid
     v can be 2D, 3D or 4D
 
+    Refer to u2rho for helpful descriptions and comments
     """
     Num_dims=len(v.shape)
     if Num_dims==4:
@@ -299,20 +314,17 @@ def get_depths(fname,gname,tstep=None):
 def get_time(fname,ref_date):
     '''         
         ref_date = reference date for the croco run as a datetime object
-    
     '''
-    data = xr.open_dataset(fname)
-    time = data.time.values
-    
-    time_dt = []
-    for t in time:
-        date_now = ref_date + timedelta(seconds=np.float64(t))
-        # date_round = hour_rounder(date_now) # GF: I'd rather keep the croco dates as they are saved in the raw output
-        time_dt.append(date_now)
-    
-    data.close()    
-    
-    return time_dt
+    with xr.open_dataset(fname) as data:
+        time = data.time.values
+
+        time_dt = []
+        for t in time:
+            date_now = ref_date + timedelta(seconds=np.float64(t))
+            # date_round = hour_rounder(date_now) # GF: I'd rather keep the croco dates as they are saved in the raw output
+            time_dt.append(date_now)
+        
+        return time_dt
 
 def get_lonlatmask(gname,type='r'):
     ds_grid = xr.open_dataset(gname)
@@ -340,56 +352,52 @@ def get_var(fname,gname,var_str,tstep=None):
         var_str = variable name (string) in the CROCO output file
         tstep = time step index to extract (integer starting at zero). If None, then all time-steps are extracted
     '''
-    ds = xr.open_dataset(fname) 
-    
-    if tstep:
-        var = ds[var_str].values[tstep,::]
-    else:
-        var = ds[var_str].values
+    with xr.open_dataset(fname) as ds:
+        if tstep:
+            var = ds[var_str].values[tstep,::]
+        else:
+            var = ds[var_str].values
+            
+        lon,lat,mask=get_lonlatmask(gname,var_str) # var_str will define the mask type (u,v, or rho)
         
-    lon,lat,mask=get_lonlatmask(gname,var_str) # var_str will define the mask type (u,v, or rho)
-    
-    # it looks like numpy is clever enough to use the 2D mask on a 3D or 4D variable
-    # that's useful!
-    var=var*mask
-    
-    ds.close()
-    
-    return var
+        # it looks like numpy is clever enough to use the 2D mask on a 3D or 4D variable
+        # that's useful!
+        var=var*mask
+        
+        return var
 
 def get_uv(fname,gname,tstep=None):
     '''
-        extract u and v components from a CROCO output file, regrid onto the 
-        rho grid and rotate from grid-aligned to east-north components
-        
-        fname = CROCO output file
-        gname = CROCO grid file
-        tstep = time step index to extract (starting at zero). If None, then all time-steps are extracted
+    extract u and v components from a CROCO output file, regrid onto the 
+    rho grid and rotate from grid-aligned to east-north components
+    
+    fname = CROCO output file
+    gname = CROCO grid file
+    tstep = time step index to extract (starting at zero). If None, then all time-steps are extracted
     '''
     u=get_var(fname,gname,'u',tstep)
     v=get_var(fname,gname,'v',tstep)
-    
-    # r
     u=u2rho(u)
     v=v2rho(v)
+    angle=get_var(fname, gname, 'angle') # grid angle
     
-    # get the grid angle
-    ds_grid = xr.open_dataset(gname)
-    angle = ds_grid.angle.values
-    ds_grid.close()
-    
-    # use the grid angle to rotate the vectors
-    cosa = np.cos(angle)
-    sina = np.sin(angle)
+    # Use the grid angle to rotate the vectors
+    cos_a = np.cos(angle)
+    sin_a = np.sin(angle)
+
+    # Refer to https://en.wikipedia.org/wiki/Rotation_matrix
     # although 'angle' is 2D, numpy is clever enough for this to work even if u_rho and v_rho are 3D or 4D
-    u_out = u*cosa - v*sina
-    v_out = v*cosa + u*sina
+    u_out = u*cos_a - v*sin_a
+    v_out = v*cos_a + u*sin_a
     
+    # Return east / north vector vector components instead of x / y components
     return u_out,v_out
+
+
 
 def get_boundary(gname):
         '''
-        Return lon,lat of perimeter around a CROCO grid
+        Return lon,lat of perimeter around a CROCO grid (i.e. coordinates of bounding cells)
         '''
         lon_rho,lat_rho,_=get_lonlatmask(gname,type='r')
         lon = np.hstack((lon_rho[0:, 0], lon_rho[-1, 1:-1],

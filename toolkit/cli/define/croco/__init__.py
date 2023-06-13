@@ -48,7 +48,7 @@ def build(module_parser):
     )
 
     """
-    Re-gridding tier 2:
+    Regridding tier 2:
       -> takes the output of regrid-tier1 as input and
       -> regrids the sigma levels to constant z levels, including the surface and bottom layers
       -> output variables are the same as tier 1, only depths are constant values

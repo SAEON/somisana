@@ -85,9 +85,9 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
             await upsert_rasters(conn, runid, raster, input, model, ds)
 
     datetimes = ds.time.values
-    total_depth_levels = ds.sizes["depth"]
+    total_depth_levels = ds.sizes["s_rho"]
     total_timesteps = ds.sizes["time"]
-    log("Total depth levels", total_depth_levels)
+    log("Total s_rho levels", total_depth_levels)
     log("Total timesteps", total_timesteps)
 
     # Upsert values
