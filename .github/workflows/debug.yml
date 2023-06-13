@@ -47,7 +47,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@master
         with:
-          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
+          images: ${{ env.REGISTRY }}/saeon/${{ env.TOOLKIT_IMAGE }}
           tags: |
             latest
             ${{ env.SHA }}
