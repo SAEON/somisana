@@ -7,8 +7,8 @@ on:
         description: Run date (default = today). yyyymmdd
         required: false
         default:
-  schedule:
-    - cron: '0 02 * * *' # 0400 SAST
+  # schedule:
+  #   - cron: '0 02 * * *' # 0400 SAST
 
 env:
   REGISTRY: ghcr.io
@@ -99,7 +99,7 @@ jobs:
         run: |
           rm -rf /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/${{ env.dirname }}
           mkdir -p /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
-          chown -R runner:runners /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
+          chown -R :runners /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
           chmod -R 774 /home/runner/somisana/marine-heat-waves/${{ env.branch_ref }}/{oisst,${{ env.dirname }}}
       - name: Set directories
         id: WORKDIR
@@ -130,7 +130,7 @@ jobs:
               mhw \
                 update-catalogue \
                   --domain="4,55,-40,-10" \
-                  --chown="runner:runners" \
+                  --chown=":runners" \
                   --oisst-cache /tmp/somisana/cache/
       - name: Run the detection script
         run: >-
