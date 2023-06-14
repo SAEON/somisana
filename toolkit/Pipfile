@@ -30,6 +30,7 @@ lxml = "*"
 motuclient = "*"
 pytest = "*"
 scipy = "*"
+psutil = "*"
 
 [dev-packages]
 

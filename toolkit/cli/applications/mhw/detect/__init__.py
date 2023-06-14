@@ -5,19 +5,28 @@ from natsort import natsorted
 import pandas as pd
 import numpy as np
 from glob import glob
+import psutil
 from cli.applications.mhw.params import OISST_CACHE
 from cli.applications.mhw.detect.ecjoliver_mhw_source import (
     detect as detect_mhw_original_fn,
 )
 
 
-def open_dataset(file):
-    try:
-        xr.open_dataset(file)
-        return file
-    except:
-        print(f"Failed to open file: {file}")
-        return None
+def memory_usage_psutil():
+    # Get process details
+    process = psutil.Process(os.getpid())
+    # Get process memory info
+    mem_info = process.memory_info()
+    # mem_info.rss returns the resident set size in bytes
+    return get_size(mem_info.rss)
+
+def get_size(bytes, suffix="B"):
+    # Scale bytes to its proper format
+    factor = 1024
+    for unit in ["", "K", "M", "G", "T", "P"]:
+        if bytes < factor:
+            return f"{bytes:.2f}{unit}{suffix}"
+        bytes /= factor
 
 
 def detect(args):
@@ -35,22 +44,13 @@ def detect(args):
     cache_identifier = "".join(str(v) for v in domain)
 
     # Selecting files in folder
-    valid_nc_files = [
-        file
-        for file in (
-            open_dataset(file)
-            for file in natsorted(
-                glob(oisst_cache + "/*{id}.nc".format(id=cache_identifier))
-            )
-        )
-        if file is not None
-    ]
+    files = natsorted(glob(oisst_cache + "/*{id}.nc".format(id=cache_identifier)))
 
-    log("Fond OISST cache", len(valid_nc_files), "valid NetCDF files found")
+    log("Fond OISST cache", len(files), "NetCDF files found")
 
     #### RUN THE SCRIPT ####
 
-    with xr.open_mfdataset(valid_nc_files) as ds:
+    with xr.open_mfdataset(files) as ds:
         # TODO - this is for future reference when we want to subset from a larger cached domain
         ds = ds.sel(lat=slice(min_lat, max_lat), lon=slice(min_long, max_long))
         ds = ds.drop_vars("zlev")
@@ -79,12 +79,12 @@ def detect(args):
         mapping = {"Moderate": 1, "Strong": 2, "Severe": 3, "Extreme": 4}
 
         # Loop through the SST values (3D: lon/lat/time)
-        log(f"Running detection script on grid, size ({rows}, {cols})")
+        log("Running detection script on grid")
         for x in np.arange(rows):
             # number of columns
             for y in np.arange(cols):
                 log(
-                    f"Calculating cell [{x}, {y}] ({(x + 1) * (y + 1)} / {rows*cols} total points)"
+                    f"Calculating cell [{x}, {y}] / [{rows}, {cols}]). Memory usage {memory_usage_psutil()}"
                 )
                 # IF a land value threshold climatology and MHW is filled with nans
                 if np.all(np.isnan(sst[:, x, y])):
