@@ -410,7 +410,7 @@ jobs:
               croco \
                 regrid-tier3 \
                   --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier2.nc \
-                  --spacing 0.05 \ 
+                  --spacing 0.02 \ 
                   --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier3.nc
 
   # Archive CROCO output

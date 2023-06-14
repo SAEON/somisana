@@ -6,7 +6,6 @@ import os
 import dask
 import dask.array as da
 from lib.resource_stats import get_memory_usage
-import cli.applications.croco.postprocess as post
 import subprocess
 from scipy import interpolate
 import matplotlib.path as mplPath
