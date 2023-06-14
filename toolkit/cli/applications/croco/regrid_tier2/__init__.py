@@ -11,7 +11,7 @@ def regrid_tier2(args):
     input = os.path.abspath(args.input)
     output = os.path.abspath(args.output)
     depths = args.depths
-    log("Running CROCO output re-gridding (tier2)")
+    log("Running CROCO output regridding (tier2)")
     log("CONFIG::input", input)
     log("CONFIG::depths", depths)
     log("CONFIG::output", output)
@@ -34,12 +34,12 @@ def regrid_tier2(args):
     
     log("Doing the vertical interpolation to the constant depth levels")
     for d, depth in enumerate(depth_out):
-        if depth==0: # surace layer
+        if depth==0: # surface layer
             temp_out[:,d,:,:]=temp_in[:,N-1,:,:]
             salt_out[:,d,:,:]=salt_in[:,N-1,:,:]
             u_out[:,d,:,:]=u_in[:,N-1,:,:]
             v_out[:,d,:,:]=v_in[:,N-1,:,:]
-        elif depth==9999: # bottom layer
+        elif depth==99999: # bottom layer
             temp_out[:,d,:,:]=temp_in[:,0,:,:]
             salt_out[:,d,:,:]=salt_in[:,0,:,:]
             u_out[:,d,:,:]=u_in[:,0,:,:]

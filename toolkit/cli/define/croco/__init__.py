@@ -62,8 +62,8 @@ def build(module_parser):
     regrid_tier2.add_argument(
         "--depths", 
         type=str, 
-        help="comma separated depth levels (in metres, positive down) to interpolate to (a value of 9999 is used to indicate the bottom layer)", 
-        default="0,1,2,5,10,15,20,30,40,50,60,70,100,150,200,500,1000,1500,2000,9999",
+        help="comma separated depth levels (in metres, positive down) to interpolate to (a value of 99999 is used to indicate the bottom layer)", 
+        default="0,1,2,5,10,15,20,30,40,50,60,70,100,150,200,500,1000,1500,2000,99999",
     )
     regrid_tier2.add_argument(
         "--output",
