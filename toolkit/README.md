@@ -219,6 +219,9 @@ Pipenv is a wrapper over the regular pip package manager, but with a slightly be
 
 ```sh
 pip install --user pipenv
+
+# And to update pipenv in the future
+pip install --upgrade pipenv
 ```
 
 Now install the application Python dependencies as defined in `Pipfile.lock`
