@@ -7,8 +7,8 @@ on:
         description: Run date (default = today). yyyymmdd
         required: false
         default:
-  schedule:
-    - cron: '0 02 * * *' # 0400 SAST
+  # schedule:
+  #   - cron: '0 02 * * *' # 0400 SAST
 
 env:
   REGISTRY: ghcr.io
