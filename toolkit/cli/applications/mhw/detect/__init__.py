@@ -1,32 +1,17 @@
 import os
 import xarray as xr
 from lib.log import log
+from lib.resource_stats import get_memory_usage
 from natsort import natsorted
 import pandas as pd
 import numpy as np
 from glob import glob
-import psutil
 from cli.applications.mhw.params import OISST_CACHE
 from cli.applications.mhw.detect.ecjoliver_mhw_source import (
     detect as detect_mhw_original_fn,
 )
 
 
-def memory_usage_psutil():
-    # Get process details
-    process = psutil.Process(os.getpid())
-    # Get process memory info
-    mem_info = process.memory_info()
-    # mem_info.rss returns the resident set size in bytes
-    return get_size(mem_info.rss)
-
-def get_size(bytes, suffix="B"):
-    # Scale bytes to its proper format
-    factor = 1024
-    for unit in ["", "K", "M", "G", "T", "P"]:
-        if bytes < factor:
-            return f"{bytes:.2f}{unit}{suffix}"
-        bytes /= factor
 
 
 def detect(args):
@@ -84,7 +69,7 @@ def detect(args):
             # number of columns
             for y in np.arange(cols):
                 log(
-                    f"Calculating cell [{x}, {y}] / [{rows}, {cols}]). Memory usage {memory_usage_psutil()}"
+                    f"Calculating cell [{x}, {y}] / [{rows}, {cols}]). Memory usage {get_memory_usage()}"
                 )
                 # IF a land value threshold climatology and MHW is filled with nans
                 if np.all(np.isnan(sst[:, x, y])):
