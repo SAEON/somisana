@@ -8,7 +8,7 @@ def build(module_parser):
     )
 
     """
-    Re-gridding tier 1:
+    Regridding tier 1:
       -> Regrids u/v to the density (rho) grid
       -> rotates u/v to be east/north components instead of grid-aligned components
       -> Adds depths to the sigma levels at each time-step
@@ -73,7 +73,7 @@ def build(module_parser):
     )
     
     """
-    Re-gridding tier 3:
+    Regridding tier 3:
       -> takes the output of regrid-tier2 as input and
       -> regrids the horizontal grid to be regular with a specified grid spacing
       -> output variables are the same as tier 1 and 2, only horizontal grid is constant
@@ -85,16 +85,16 @@ def build(module_parser):
         "--input", type=str, help="Path of output file from regrid-tier2", required=True
     )
     regrid_tier3.add_argument(
-        "--spacing", 
-        type=str, 
-        help="constant horizontal grid spacing (in degrees) to be used for the interpolated output", 
-        default="0.01",
-    )
-    regrid_tier3.add_argument(
         "--output",
         type=str,
         help="Path of processed output file",
         default=".output/croco/regridded-tier3-output.nc",
+    )
+    regrid_tier3.add_argument(
+        "--spacing", 
+        type=str, 
+        help="constant horizontal grid spacing (in degrees) to be used for the interpolated output", 
+        default="0.01",
     )
 
     return croco

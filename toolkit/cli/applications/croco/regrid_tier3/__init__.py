@@ -17,8 +17,8 @@ def regrid_tier3(args):
     spacing = float(args.spacing)
     log("Running CROCO output regridding (tier3)")
     log("CONFIG::input", input)
-    log("CONFIG::spacing", spacing, "degrees")
     log("CONFIG::output", output)
+    log("CONFIG::spacing", spacing, "degrees")
 
     log("Extracting the tier 2 re-gridded model output")
     with xr.open_dataset(input) as ds:
