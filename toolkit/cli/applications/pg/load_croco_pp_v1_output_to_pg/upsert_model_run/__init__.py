@@ -82,7 +82,11 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
     rasters.sort()
     async with pool.acquire() as conn:
         for raster in rasters:
-            await upsert_rasters(conn, runid, raster, input, model, ds)
+            if model["postgis_config"].get(raster) is not None:
+                await upsert_rasters(conn, runid, raster, input, model, ds)
+            else:
+                log(f"No PostGIS configuration found for raster {raster} (defined in models.yml). Skipping raster load")
+
 
     datetimes = ds.time.values
     total_depth_levels = ds.sizes["s_rho"]
