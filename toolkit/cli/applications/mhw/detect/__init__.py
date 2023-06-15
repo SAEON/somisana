@@ -47,7 +47,7 @@ def detect(args):
         t_ordinal = np.array([pd.to_datetime(x).toordinal() for x in ds.time.values])
 
         # Find dimensions of sst variable to reproduce the netcdf output file
-        t_dim = np.shape(sst)[0]  # Time dim
+        t_dim = 365  # Time dim (set to 365 save a year with of data save memory)
         rows = np.shape(sst)[1]  # Number of rows
         cols = np.shape(sst)[2]  # Number of columns
 
@@ -118,10 +118,10 @@ def detect(args):
                         mhw_category
                     )
 
-                    # Fill the variables one grid point at a time
-                    climatology[:, x, y] = climatology_tmp
-                    threshold[:, x, y] = threshold_tmp
-                    MHW[:, x, y] = mhw_detection_full
+                    # Fill the variables one grid point at a time (save only last 365 days)
+                    climatology[:, x, y] = climatology_tmp[-365:]
+                    threshold[:, x, y] = threshold_tmp[-365:]
+                    MHW[:, x, y] = mhw_detection_full[-365:]
 
         #### OUTPUT ####
         ds_save = xr.Dataset(
@@ -134,7 +134,7 @@ def detect(args):
             coords={
                 "latitude": (["latitude"], ds.lat.values),
                 "longitude": (["longitude"], ds.lon.values),
-                "time": (["time"], time.values),
+                "time": (["time"], time[-365:].values),
             },
         )
         ds_save.to_netcdf(output)
