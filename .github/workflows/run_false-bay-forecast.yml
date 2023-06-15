@@ -118,12 +118,12 @@ jobs:
   toolkit:
     needs: [envs]
     runs-on: ubuntu-latest
-    outputs:
-      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
     env:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
       SHA: sha-${{ github.sha }}
+    outputs:
+      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
     steps:
       - name: Get image name lowercase
         id: 'lowercase'
@@ -156,7 +156,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
           tags: |
-            type=sha
+            latest
+            ${{ env.SHA }}
       - name: Build and push
         uses: docker/build-push-action@master
         with:
