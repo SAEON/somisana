@@ -31,17 +31,19 @@ def detect(args):
     # Selecting files in folder
     files = natsorted(glob(oisst_cache + "/*{id}.nc".format(id=cache_identifier)))
 
-    log("Fond OISST cache", len(files), "NetCDF files found")
+    log(f"FoUnd OISST cache ({len(files)} files)")
 
     #### RUN THE SCRIPT ####
 
+    # Open the daily SST .nc files, and concatenate them
+    # to create a single Xarray dataset (containing each day)
     with xr.open_mfdataset(files) as ds:
-        # TODO - this is for future reference when we want to subset from a larger cached domain
         ds = ds.sel(lat=slice(min_lat, max_lat), lon=slice(min_long, max_long))
         ds = ds.drop_vars("zlev")
         ds = np.squeeze(ds)
         log("Merged cached dataset opened!")
 
+        # sst is a 3D array of temperature values [time, x, y]
         sst = ds["sst"].values
         time = ds.time
         t_ordinal = np.array([pd.to_datetime(x).toordinal() for x in ds.time.values])
