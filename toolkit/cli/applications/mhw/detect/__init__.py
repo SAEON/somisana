@@ -31,7 +31,7 @@ def detect(args):
     # Selecting files in folder
     files = natsorted(glob(oisst_cache + "/*{id}.nc".format(id=cache_identifier)))
 
-    log(f"FoUnd OISST cache ({len(files)} files)")
+    log(f"Found OISST cache ({len(files)} files)")
 
     #### RUN THE SCRIPT ####
 
@@ -49,17 +49,18 @@ def detect(args):
         t_ordinal = np.array([pd.to_datetime(x).toordinal() for x in ds.time.values])
 
         # Find dimensions of sst variable to reproduce the netcdf output file
-        t_dim = 365  # Time dim (set to 365 save a year with of data save memory)
+        t_dim_limit = 365  # Time dim (set to 365 save a year with of data save memory)
+        t_dim = np.shape(sst)[0]
         rows = np.shape(sst)[1]  # Number of rows
         cols = np.shape(sst)[2]  # Number of columns
 
         # Creating empty array for output netcdf
-        climatology = np.zeros([t_dim, rows, cols])  # Climatology values of MHW
+        climatology = np.zeros([t_dim_limit, rows, cols])  # Climatology values of MHW
         threshold = np.zeros(
-            [t_dim, rows, cols]
+            [t_dim_limit, rows, cols]
         )  # Threshold used to determine if a MHW occurred
         MHW = np.zeros(
-            [t_dim, rows, cols]
+            [t_dim_limit, rows, cols]
         )  # Creating a variable recording if MHW present or absent at each grid cell
 
         # Define the mapping from converting string values to numeric values within the loop
@@ -71,24 +72,28 @@ def detect(args):
             # number of columns
             for y in np.arange(cols):
                 log(
-                    f"Calculating cell [{x}, {y}] / [{rows}, {cols}]). Memory usage {get_memory_usage()}"
+                    f"Calculating cell [{x + 1}, {y + 1}] / [{rows}, {cols}]). Memory usage {get_memory_usage()}"
                 )
                 # IF a land value threshold climatology and MHW is filled with nans
                 if np.all(np.isnan(sst[:, x, y])):
-                    climatology[:, x, y] = np.full(t_dim, np.nan)
-                    threshold[:, x, y] = np.full(t_dim, np.nan)
-                    MHW[:, x, y] = np.full(t_dim, np.nan)
+                    climatology[:, x, y] = np.full(t_dim_limit, np.nan)
+                    threshold[:, x, y] = np.full(t_dim_limit, np.nan)
+                    MHW[:, x, y] = np.full(t_dim_limit, np.nan)
 
                 # ELSE detect MHWs
                 else:
                     # Calculate mhw with ecjoliver script (https://github.com/ecjoliver/marineHeatWaves)
                     mhw_temp = detect_mhw_original_fn(t_ordinal, sst[:, x, y])
 
+                    # mhw_temp[0] => Dictionary of climatology related info
+                    # mhw_temp[1] => Dictionary of MHW related output
+
                     # Extracting climatology and threshold from diction created by script
-                    climatology_tmp = mhw_temp[1]["seas"]
-                    threshold_tmp = mhw_temp[1]["thresh"]
+                    climatology_tmp = mhw_temp[1]["seas"] # seas => climatology at this grid point
+                    threshold_tmp = mhw_temp[1]["thresh"] # Thresholds of each timestep at this grid point
 
                     # Extracting time indices (start and end) and category of defined MHW at grid cell (x,y)
+
                     index_start = mhw_temp[0]["index_start"]
                     index_end = mhw_temp[0]["index_end"]
                     category = mhw_temp[0]["category"]
@@ -98,7 +103,11 @@ def detect(args):
                     mhw_index = []
                     mhw_category = []
 
-                    # Looping through all the time start time indices detected
+                    # The output of the MHW script includes the start / end date3s
+                    # of events. But it's better to:
+                    #  (1) Have this information per timestep
+                    #  (2) Change categories into numbers for easier plotting
+                    # Which is what this code does
                     for i in np.arange(len(index_start)):
                         # Filling indices with np.arange(start,end,step)
                         index_tmp = np.arange(index_start[i], index_end[i] + 1)
@@ -121,22 +130,23 @@ def detect(args):
                     )
 
                     # Fill the variables one grid point at a time (save only last 365 days)
-                    climatology[:, x, y] = climatology_tmp[-365:]
-                    threshold[:, x, y] = threshold_tmp[-365:]
-                    MHW[:, x, y] = mhw_detection_full[-365:]
+                    climatology[:, x, y] = climatology_tmp[-t_dim_limit:]
+                    threshold[:, x, y] = threshold_tmp[-t_dim_limit:]
+                    MHW[:, x, y] = mhw_detection_full[-t_dim_limit:]
 
         #### OUTPUT ####
+        log("Saving output")
         ds_save = xr.Dataset(
             {
                 "threshold": (["time_leap", "latitude", "longitude"], climatology),
                 "climatology": (["time", "latitude", "longitude"], threshold),
                 "MHW": (["time", "latitude", "longitude"], MHW),
-                "sst": (["time", "latitude", "longitude"], sst),
+                "sst": (["time", "latitude", "longitude"], sst[-t_dim_limit:, :, :]),
             },
             coords={
                 "latitude": (["latitude"], ds.lat.values),
                 "longitude": (["longitude"], ds.lon.values),
-                "time": (["time"], time[-365:].values),
+                "time": (["time"], time[-t_dim_limit:].values),
             },
         )
         ds_save.to_netcdf(output)
