@@ -10,6 +10,7 @@ SOMISANA-related tooling
   - [Web application (visualizations)](#web-application-visualizations)
   - [Task server](#task-server)
   - [Mounted storage](#mounted-storage)
+- [Reporting](#reporting)
 - [Documentation](#documentation)
   - [Operational models](#operational-models)
   - [Python toolkit](#python-toolkit)
@@ -77,6 +78,13 @@ Most storage requirements are in the form of SAMBA mounts that can be mounted to
 - Data archive: 5TB? (must be backed up. TODO - @giles to calculate)
 - PostgreSQL: 500GB (does not have to be backed up, but should be mounted if possible)
 - MongoDB: 100GB
+
+# Reporting
+Contribution history can be accessed via interrogating the Git index. Here is a useful command for that:
+
+```sh
+git log --pretty=format:"%h%x09%an%x09%ad%x09%s"
+```
 
 # Documentation
 
