@@ -55,7 +55,9 @@ jobs:
     needs: [branch-ref]
     runs-on: ubuntu-latest
     env:
-      RUN_DATE: ${{ inputs.run_date }}
+      R1: ${{ inputs.run_date }}
+      R2: ${{ inputs.run_date }}
+      R3: ${{ inputs.run_date }}
     outputs:
       BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
       CROCO_IMAGE: ${{ steps.ENVS.outputs.CROCO_IMAGE }}
@@ -68,9 +70,9 @@ jobs:
       - name: Configure run date
         id: run_date
         run: |
-          echo "yyyymmdd=${RUN_DATE:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
-          echo "yyyymm=${RUN_DATE:=$(date +'%Y%m')}" >> $GITHUB_OUTPUT
-          echo "yyyy=${RUN_DATE:=$(date +'%Y')}" >> $GITHUB_OUTPUT
+          echo "yyyymmdd=${R1:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
+          echo "yyyymm=${R2:=$(date +'%Y%m')}" >> $GITHUB_OUTPUT
+          echo "yyyy=${R3:=$(date +'%Y')}" >> $GITHUB_OUTPUT
       - name: Configure restart date
         id: restart_date
         run: |
