@@ -265,49 +265,44 @@ def hlev(var, z, depth):
 
     return vnew
 
-def get_depths(fname,gname,tstep=None):
+def get_depths(fname,tstep=None):
     '''
         extract the depth levels (in metres, negative downward) of the sigma levels in a CROCO file
         fname = CROCO output file
-        gname = CROCO grid file
         tstep = time step index to extract (integer starting at zero). If None, then all time-steps are extracted
     '''
     
-    ds = xr.open_dataset(fname)
-    ds_grid = xr.open_dataset(gname)
-    
     # get the surface and bottom levels
-    ssh=get_var(fname,gname,'zeta',tstep)
-    h = ds_grid.h.values
+    ssh=get_var(fname,'zeta',tstep)
+    h = get_var(fname,'h')
     
-    # get the variables used to calculate the sigma levels
-    # CROCO uses these params to determine how to deform the grid
-    s_rho = ds.s_rho.values  # Vertical levels
-    theta_s = ds.theta_s
-    theta_b = ds.theta_b
-    hc = ds.hc.values
-    N = np.shape(ds.s_rho)[0]
-    type_coordinate = "rho"
-    vtransform = (
-        2 if ds.VertCoordType == "NEW" else 1 if ds.VertCoordType == "OLD" else -1
-    )
-    if vtransform == -1:
-        raise Exception("Unexpected value for vtransform (" + vtransform + ")")
-
-    if tstep:
-        depth_rho = z_levels(
-            h, ssh, theta_s, theta_b, hc, N, type_coordinate, vtransform
+    with xr.open_dataset(fname) as ds:
+    
+        # get the variables used to calculate the sigma levels
+        # CROCO uses these params to determine how to deform the grid
+        s_rho = ds.s_rho.values  # Vertical levels
+        theta_s = ds.theta_s
+        theta_b = ds.theta_b
+        hc = ds.hc.values
+        N = np.shape(ds.s_rho)[0]
+        type_coordinate = "rho"
+        vtransform = (
+            2 if ds.VertCoordType == "NEW" else 1 if ds.VertCoordType == "OLD" else -1
         )
-    else:
-        T,M,L = np.shape(ssh)
-        depth_rho = np.zeros((T,N,M,L))
-        for x in np.arange(T):
-            depth_rho[x, ::] = z_levels(
-                h, ssh[x, :, :], theta_s, theta_b, hc, N, type_coordinate, vtransform
+        if vtransform == -1:
+            raise Exception("Unexpected value for vtransform (" + vtransform + ")")
+    
+        if tstep:
+            depth_rho = z_levels(
+                h, ssh, theta_s, theta_b, hc, N, type_coordinate, vtransform
             )
-
-    ds.close()
-    ds_grid.close()
+        else:
+            T,M,L = np.shape(ssh)
+            depth_rho = np.zeros((T,N,M,L))
+            for x in np.arange(T):
+                depth_rho[x, ::] = z_levels(
+                    h, ssh[x, :, :], theta_s, theta_b, hc, N, type_coordinate, vtransform
+                )
     
     return depth_rho
     
@@ -326,29 +321,41 @@ def get_time(fname,ref_date):
         
         return time_dt
 
-def get_lonlatmask(gname,type='r'):
-    ds_grid = xr.open_dataset(gname)
-    if type=='u':
-        lon = ds_grid.lon_u.values 
-        lat = ds_grid.lat_u.values
-        mask = ds_grid.mask_u.values
-    elif type=='v':
-        lon = ds_grid.lon_v.values 
-        lat = ds_grid.lat_v.values
-        mask = ds_grid.mask_v.values
-    else:
-        lon = ds_grid.lon_rho.values 
-        lat = ds_grid.lat_rho.values 
-        mask = ds_grid.mask_rho.values
+def get_lonlatmask(fname,type='r'):
+    with xr.open_dataset(fname) as ds:
+        lon = ds.lon_rho.values 
+        lat = ds.lat_rho.values 
+        mask = ds.mask_rho.values
     mask[np.where(mask == 0)] = np.nan
-    ds_grid.close()
+    [Mp,Lp]=mask.shape;
+    
+    # croco output files don't have lon_u,lat_u, mask_u written to them.
+    # We could get these from the grid file but I'm rather computing them
+    # from lon_rho, lat_rho and mask_rho for the convenience of not having to 
+    # specify two input files in functions like get_var()
+    
+    if type=='u':
+        #lon = ds_grid.lon_u.values 
+        #lat = ds_grid.lat_u.values
+        #mask = ds_grid.mask_u.values
+        lon=0.5*(lon[:,0:Lp-1]+lon[:,1:Lp]);
+        lat=0.5*(lat[:,0:Lp-1]+lat[:,1:Lp]);
+        mask=mask[:,0:Lp-1]*mask[:,1:Lp];
+        
+    if type=='v':
+        #lon = ds_grid.lon_v.values 
+        #lat = ds_grid.lat_v.values
+        #mask = ds_grid.mask_v.values
+        lon=0.5*(lon[0:Mp-1,:]+lon[1:Mp,:]);
+        lat=0.5*(lat[0:Mp-1,:]+lat[1:Mp,:]);
+        mask=mask[0:Mp-1,:]*mask[1:Mp,:];
+        
     return lon,lat,mask
 
-def get_var(fname,gname,var_str,tstep=None):
+def get_var(fname,var_str,tstep=None):
     '''
         extract a variable from a CROCO file
         fname = CROCO output file
-        gname = CROCO grid file
         var_str = variable name (string) in the CROCO output file
         tstep = time step index to extract (integer starting at zero). If None, then all time-steps are extracted
     '''
@@ -358,7 +365,7 @@ def get_var(fname,gname,var_str,tstep=None):
         else:
             var = ds[var_str].values
             
-        lon,lat,mask=get_lonlatmask(gname,var_str) # var_str will define the mask type (u,v, or rho)
+        lon,lat,mask=get_lonlatmask(fname,var_str) # var_str will define the mask type (u,v, or rho)
         
         # it looks like numpy is clever enough to use the 2D mask on a 3D or 4D variable
         # that's useful!
@@ -366,20 +373,19 @@ def get_var(fname,gname,var_str,tstep=None):
         
         return var
 
-def get_uv(fname,gname,tstep=None):
+def get_uv(fname,tstep=None):
     '''
     extract u and v components from a CROCO output file, regrid onto the 
     rho grid and rotate from grid-aligned to east-north components
     
     fname = CROCO output file
-    gname = CROCO grid file
     tstep = time step index to extract (starting at zero). If None, then all time-steps are extracted
     '''
-    u=get_var(fname,gname,'u',tstep)
-    v=get_var(fname,gname,'v',tstep)
+    u=get_var(fname,'u',tstep)
+    v=get_var(fname,'v',tstep)
     u=u2rho(u)
     v=v2rho(v)
-    angle=get_var(fname, gname, 'angle') # grid angle
+    angle=get_var(fname, 'angle') # grid angle
     
     # Use the grid angle to rotate the vectors
     cos_a = np.cos(angle)
@@ -395,11 +401,11 @@ def get_uv(fname,gname,tstep=None):
 
 
 
-def get_boundary(gname):
+def get_boundary(fname):
         '''
         Return lon,lat of perimeter around a CROCO grid (i.e. coordinates of bounding cells)
         '''
-        lon_rho,lat_rho,_=get_lonlatmask(gname,type='r')
+        lon_rho,lat_rho,_=get_lonlatmask(fname,type='r')
         lon = np.hstack((lon_rho[0:, 0], lon_rho[-1, 1:-1],
                          lon_rho[-1::-1, -1], lon_rho[0, -2::-1]))
         lat = np.hstack((lat_rho[0:, 0], lat_rho[-1, 1:-1],
