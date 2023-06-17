@@ -36,17 +36,17 @@ def regrid_tier1(args):
     with xr.open_dataset(input) as ds:
         lon_rho=ds.lon_rho.values
         lat_rho=ds.lat_rho.values
-    h=post.get_var(input,grid,'h')
-    temp=post.get_var(input,grid,'temp')
-    salt=post.get_var(input,grid,'salt')
-    ssh=post.get_var(input,grid,'zeta')
+    h=post.get_var(input,'h')
+    temp=post.get_var(input,'temp')
+    salt=post.get_var(input,'salt')
+    ssh=post.get_var(input,'zeta')
     
     log("Regridding and rotating u/v")
-    u,v=post.get_uv(input,grid)
+    u,v=post.get_uv(input)
     
     # get the depth levels of the sigma layers
     log("Computing depth of sigma levels")
-    depth=post.get_depths(input,grid)
+    depth=post.get_depths(input)
     
     # Create new xarray dataset with selected variables
     log("Generating dataset")
