@@ -31,22 +31,30 @@ jobs:
     needs: [branch-ref]
     runs-on: ubuntu-latest
     env:
-      RUN_DATE: ${{ inputs.run_date }}
+      R1: ${{ inputs.run_date }}
+      R2: ${{ inputs.run_date }}
+      R3: ${{ inputs.run_date }}
     outputs:
       BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       RUN_DATE: ${{ steps.ENVS.outputs.RUN_DATE }}
+      RUN_DATE_YYYMM: ${{ steps.ENVS.outputs.RUN_DATE }}
+      RUN_DATE_YYYY: ${{ steps.ENVS.outputs.RUN_DATE }}
     steps:
       - name: Configure run date
         id: run_date
         run: |
-          echo "value=${RUN_DATE:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
+          echo "yyyymmdd=${R1:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
+          echo "yyyymm=${R2:=$(date +'%Y%m')}" >> $GITHUB_OUTPUT
+          echo "yyyy=${R3:=$(date +'%Y')}" >> $GITHUB_OUTPUT
       - name: Set envs
         id: ENVS
         run: |
           echo "CROCO_IMAGE=${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
           echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_mhw_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
-          echo "RUN_DATE=${{ steps.run_date.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "RUN_DATE=${{ steps.run_date.outputs.yyyymmdd }}" >> $GITHUB_OUTPUT
+          echo "RUN_DATE_YYYMM=${{ steps.run_date.outputs.yyyymm }}" >> $GITHUB_OUTPUT
+          echo "RUN_DATE_YYYY=${{ steps.run_date.outputs.yyyy }}" >> $GITHUB_OUTPUT
 
   toolkit:
     needs: [envs]
@@ -152,6 +160,7 @@ jobs:
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.RUN_DATE }}
+      RUN_DATE_YYYMM: ${{ needs.envs.outputs.RUN_DATE_YYYMM }}
     steps:
       - name: Load $PATH
         run: |
@@ -166,7 +175,7 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -T ${{ env.WORKDIR}}/mhw-${{ env.RUN_DATE }}.nc \
-            https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc;
+            https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE_YYYMM }}/${{ env.RUN_DATE }}.nc;
       - name: Kerchunk the NetCDF file output
         continue-on-error: false
         run: >-
@@ -176,7 +185,7 @@ jobs:
             ${{ needs.toolkit.outputs.image }} \
               kerchunk \
                 run \
-                  --inputs https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.nc \
+                  --inputs https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE_YYYMM }}/${{ env.RUN_DATE }}.nc \
                   --output /tmp/somisana/current/${{ env.RUN_DATE }}.kerchunk.json
       - name: Upload Kerchunk output to Mnemosyne
         continue-on-error: false
@@ -188,4 +197,4 @@ jobs:
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -H "Content-Type: application/octet-stream" \
             -T ${{ env.WORKDIR}}/${{ env.RUN_DATE }}.kerchunk.json \
-            https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE }}.kerchunk.json;
+            https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE_YYYMM }}/${{ env.RUN_DATE }}.kerchunk.json;
