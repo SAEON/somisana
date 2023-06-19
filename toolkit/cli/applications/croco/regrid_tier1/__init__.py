@@ -36,6 +36,7 @@ def regrid_tier1(args):
     with xr.open_dataset(input) as ds:
         lon_rho=ds.lon_rho.values
         lat_rho=ds.lat_rho.values
+        s_rho=ds.s_rho.values
     h=post.get_var(input,grid,'h')
     temp=post.get_var(input,grid,'temp')
     salt=post.get_var(input,grid,'salt')
@@ -140,6 +141,9 @@ def regrid_tier1(args):
                     "standard_name": "latitude",
                 },
             ),
+            "s_rho": xr.Variable(
+                ["s_rho"], s_rho, {"description": "Depth levels (grid levels)"}
+            ),
             "time": xr.Variable(
                 ["time"],
                 time_steps,
@@ -158,6 +162,7 @@ def regrid_tier1(args):
         "h": {"dtype": "float32"},
         "lon_rho": {"dtype": "float32"},
         "lat_rho": {"dtype": "float32"},
+        "s_rho": {"dtype": "float32"},
         "time": {"dtype": "i4"},
         
     }

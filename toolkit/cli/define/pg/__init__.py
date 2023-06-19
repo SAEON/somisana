@@ -13,17 +13,17 @@ def build(module_parser):
     )
 
     # Load post processing V1 to PostgreSQL
-    load_croco_pp_v1_output_to_pg = pg_parser.add_parser(
-        "load-croco-pp-v1-output-to-pg",
+    load_croco_tier1_output_to_pg = pg_parser.add_parser(
+        "load-croco-tier1-output-to-pg",
         help="Load CROCO post processing output (v1) to PostgreSQL",
     )
-    load_croco_pp_v1_output_to_pg.add_argument(
+    load_croco_tier1_output_to_pg.add_argument(
         "--input",
         type=str,
         help="Path to post-processed (v1) NetCDF file",
         default=".output/croco/post-process-v1-output.nc",
     )
-    load_croco_pp_v1_output_to_pg.add_argument(
+    load_croco_tier1_output_to_pg.add_argument(
         "--parallelization",
         type=int,
         default=4,

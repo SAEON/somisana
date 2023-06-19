@@ -7,10 +7,10 @@ from config import PG_DB, PG_PORT, PG_HOST, PG_PASSWORD, PG_USERNAME
 from lib.log import log
 from lib.open_files import open_files
 from datetime import datetime
-from cli.applications.pg.load_croco_pp_v1_output_to_pg.upsert_model_info import (
+from cli.applications.pg.load_croco_tier1_output_to_pg.upsert_model_info import (
     upsert_model_info,
 )
-from cli.applications.pg.load_croco_pp_v1_output_to_pg.upsert_model_run import (
+from cli.applications.pg.load_croco_tier1_output_to_pg.upsert_model_run import (
     upsert_model_run,
 )
 
@@ -28,10 +28,14 @@ update_geospatial_fields_file = os.path.join(
 
 async def run(args):
     log("Loading post-processed CROCO output (v1) to PostgreSQL")
+    
     input = os.path.abspath(args.input)
     parallelization = args.parallelization
     log("CONFIG::input", input)
     log("CONFIG::parallelization", parallelization)
+    log("CONFIG::DB::host", PG_HOST)
+    log("CONFIG::DB::port", PG_PORT)
+    log("CONFIG::DB::database", PG_DB)
 
     pool = await asyncpg.create_pool(
         database=PG_DB,
@@ -94,5 +98,5 @@ async def run(args):
             )
 
 
-def load_croco_pp_v1_output_to_pg(args):
+def load_croco_tier1_output_to_pg(args):
     asyncio.run(run(args))

@@ -1,4 +1,4 @@
-from cli.applications.pg.load_croco_pp_v1_output_to_pg.upsert_model_run.upsert_values.load_band import (
+from cli.applications.pg.load_croco_tier1_output_to_pg.upsert_model_run.upsert_values.load_band import (
     load,
 )
 from config import PG_DB, PG_PORT, PG_HOST, PG_PASSWORD, PG_USERNAME

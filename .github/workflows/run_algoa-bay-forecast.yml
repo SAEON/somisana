@@ -528,7 +528,7 @@ jobs:
             -e PG_DB=$PG_DB \
             ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               pg \
-                load-croco-pp-v1-output-to-pg \
+                load-croco-tier1-output-to-pg \
                   --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
                   --parallelization 32
       - name: Delete old PostgreSQL data
