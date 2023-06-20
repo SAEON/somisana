@@ -123,6 +123,7 @@
     "Pipeable",
     "pipenv",
     "pipfile",
+    "plpgsql",
     "POSTGIS",
     "postprocess",
     "pramsey",

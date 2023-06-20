@@ -116,7 +116,7 @@ partition by list (runid);
 /**
  * FUNCTIONS
  */
-drop function if exists public.somisana_get_pixel_values cascade;
+drop function if exists public.somisana_get_pixel_values;
 
 create function public.somisana_get_pixel_values(runid int, depth_level int, time_step int, variable text, total_depth_levels int default 20)
   returns table(
@@ -182,35 +182,35 @@ depths as(
     pixel,
     value
   from
-    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'depth', total_depth_levels => total_depth_levels)
+    public.somisana_get_pixel_values(runid => runid, depth_level => depth_level, time_step => time_step, variable => 'depth', total_depth_levels => total_depth_levels)
 ),
 temperatures as(
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'temp', total_depth_levels => total_depth_levels)
+    public.somisana_get_pixel_values(runid => runid, depth_level => depth_level, time_step => time_step, variable => 'temp', total_depth_levels => total_depth_levels)
 ),
 salinity as(
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'salt', total_depth_levels => total_depth_levels)
+    public.somisana_get_pixel_values(runid => runid, depth_level => depth_level, time_step => time_step, variable => 'salt', total_depth_levels => total_depth_levels)
 ),
 u as(
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'u', total_depth_levels => total_depth_levels)
+    public.somisana_get_pixel_values(runid => runid, depth_level => depth_level, time_step => time_step, variable => 'u', total_depth_levels => total_depth_levels)
 ),
 v as(
   select
     pixel,
     value
   from
-    public.somisana_get_pixel_values(runid, depth_level, time_step, variable => 'v', total_depth_levels => total_depth_levels))
+    public.somisana_get_pixel_values(runid => runid, depth_level => depth_level, time_step => time_step, variable => 'v', total_depth_levels => total_depth_levels))
 select
   c.id coordinateid,
   d.value depth,
