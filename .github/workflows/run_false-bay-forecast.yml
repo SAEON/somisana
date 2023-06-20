@@ -372,13 +372,19 @@ jobs:
           ref: ${{ env.BRANCH_REF }}
       - name: subset the raw CROCO NetCDF file for archiving
         continue-on-error: true
-        run: >-
+        run: |
           docker run \
             --rm \
             --entrypoint /bin/bash \
             -v $WORKDIR:/tmp/somisana/current \
             ghcr.io/saeon/somisana_geopython:3.10.6 \
               -c "ncks -v temp,salt,u,v,w,zeta,sustr,svstr -d time,120, -O /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc"
+          docker run \
+            --rm \
+            --entrypoint /bin/bash \
+            -v $WORKDIR:/tmp/somisana/current \
+            ghcr.io/saeon/somisana_geopython:3.10.6 \
+              -c "ncks -v temp,salt,u,v,w,zeta,sustr,svstr -d time,120, -O /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1 /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc.1"
       - name: Tier 1 regridding
         run: >-
           docker run \

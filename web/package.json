@@ -6,7 +6,7 @@
   "author": "zd.smith@saeon.nrf.ac.za",
   "dependencies": {
     "@apollo/client": "3.7.15",
-    "@arcgis/core": "^4.27.1",
+    "@arcgis/core": "^4.27.2",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
@@ -23,7 +23,7 @@
     "@saeon/cli-tools": "^0.2.0",
     "@saeon/logger": "^6.2.24",
     "@swc/cli": "^0.1.62",
-    "@types/react": "^18.2.12",
+    "@types/react": "^18.2.13",
     "apollo-server-core": "^3.12.0",
     "apollo-server-koa": "^3.12.0",
     "apollo-server-plugin-response-cache": "^3.8.2",
