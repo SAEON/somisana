@@ -38,8 +38,8 @@ jobs:
       BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       RUN_DATE: ${{ steps.ENVS.outputs.RUN_DATE }}
-      RUN_DATE_YYYMM: ${{ steps.ENVS.outputs.RUN_DATE }}
-      RUN_DATE_YYYY: ${{ steps.ENVS.outputs.RUN_DATE }}
+      RUN_DATE_YYYMM: ${{ steps.ENVS.outputs.RUN_DATE_YYYMM }}
+      RUN_DATE_YYYY: ${{ steps.ENVS.outputs.RUN_DATE_YYYY }}
     steps:
       - name: Configure run date
         id: run_date

@@ -54,18 +54,24 @@ jobs:
     needs: [branch-ref]
     runs-on: ubuntu-latest
     env:
-      RUN_DATE: ${{ inputs.run_date }}
+      R1: ${{ inputs.run_date }}
+      R2: ${{ inputs.run_date }}
+      R3: ${{ inputs.run_date }}
     outputs:
       BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
       CROCO_IMAGE: ${{ steps.ENVS.outputs.CROCO_IMAGE }}
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}
+      MODEL_RUN_YEAR_MONTH: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR_MONTH }}
+      MODEL_RUN_YEAR: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR }}
       RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}
     steps:
       - name: Configure run date
         id: run_date
         run: |
-          echo "value=${RUN_DATE:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
+          echo "yyyymmdd=${R1:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
+          echo "yyyymm=${R2:=$(date +'%Y%m')}" >> $GITHUB_OUTPUT
+          echo "yyyy=${R3:=$(date +'%Y')}" >> $GITHUB_OUTPUT
       - name: Configure restart date
         id: restart_date
         run: |
@@ -76,7 +82,9 @@ jobs:
           echo "CROCO_IMAGE=${{ github.repository }}_false_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
           echo "CROCO_IMAGE=${{ github.repository }}_false_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
           echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
-          echo "MODEL_RUN_DATE=${{ steps.run_date.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_DATE=${{ steps.run_date.outputs.yyyymmdd }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_YEAR_MONTH=${{ steps.run_date.outputs.yyyymm }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_YEAR=${{ steps.run_date.outputs.yyyy }}" >> $GITHUB_OUTPUT
           echo "RESTART_FILE_DATE=${{ steps.restart_date.outputs.value }}" >> $GITHUB_OUTPUT
 
   # Compile CROCO model for the False Bay forecast
@@ -362,7 +370,16 @@ jobs:
         uses: actions/checkout@master
         with:
           ref: ${{ env.BRANCH_REF }}
-      - name: Normalize the model output
+      - name: subset the raw CROCO NetCDF file for archiving
+        continue-on-error: true
+        run: >-
+          docker run \
+            --rm \
+            --entrypoint /bin/bash \
+            -v $WORKDIR:/tmp/somisana/current \
+            ghcr.io/saeon/somisana_geopython:3.10.6 \
+              -c "ncks -v temp,salt,u,v,w,zeta,sustr,svstr -d time,120, -O /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc"
+      - name: Tier 1 regridding
         run: >-
           docker run \
             --rm \
@@ -375,9 +392,33 @@ jobs:
                   --id false-bay-forecast \
                   --grid /tmp/somisana/current/croco/forcing/grd.nc.1 \
                   --input /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1 \
-                  --output /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc
+                  --output /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}-tier1.nc
+      - name: Tier 2 regridding
+        continue-on-error: true
+        run: >-
+          docker run \
+            --rm \
+            -v $WORKDIR:/tmp/somisana/current \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+              croco \
+                regrid-tier2 \
+                  --input /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
+                  --depths 0,1,2,5,10,15,20,30,40,50,60,70,100,150,200,500,1000,1500,2000,99999 \
+                  --output /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}-tier2.nc
+      - name: Tier 3 regridding
+        continue-on-error: true
+        run: >-
+          docker run \
+            --rm \
+            -v $WORKDIR:/tmp/somisana/current \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+              croco \
+                regrid-tier3 \
+                  --input /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}-tier2.nc \
+                  --output /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}-tier3.nc \
+                  --spacing 0.02
 
-  # Archive CROCO output
+  # Archive output
   archive-data:
     needs: [post-processing, workdir, envs]
     runs-on: somisana
@@ -385,11 +426,12 @@ jobs:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      YYYYMM: ${{ needs.envs.outputs.MODEL_RUN_YEAR_MONTH }}
     steps:
       - name: Load $PATH
         run: |
           source ~/.bashrc
-      - name: Upload raw CROCO NetCDF file to mnemosyne HTTP-range server
+      - name: Archive raw CROCO output (hindcast / forecast)
         continue-on-error: false
         run: |
           cat \
@@ -402,7 +444,7 @@ jobs:
                 -H "Content-Type: application/octet-stream" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/false-bay-forecast/${{ env.RUN_DATE }}-hourly-avg.nc;
+                https://mnemosyne.somisana.ac.za/somisana/false-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-with-hindcast.nc;
           cat \
             ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1 \
               | curl \
@@ -413,8 +455,22 @@ jobs:
                 -H "Content-Type: application/octet-stream" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/false-bay-forecast/${{ env.RUN_DATE }}-hourly-avg.nc.1;
-      - name: Upload processed CROCO NetCDF file to mnemosyne HTTP-range server
+                https://mnemosyne.somisana.ac.za/somisana/false-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-with-hindcast.nc.1;
+      - name: Archive truncated CROCO output (forecast)
+        continue-on-error: false
+        run: |
+          cat \
+            ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc \
+              | curl \
+                --silent \
+                --keepalive-time 2400 \
+                -X PUT \
+                -H "Content-Type: application/octet-stream" \
+                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+                -T \
+                - \
+                https://mnemosyne.somisana.ac.za/somisana/false-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg.nc;
+      - name: Archive tier 1 output
         continue-on-error: false
         run: |
           cat \
@@ -427,7 +483,35 @@ jobs:
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/false-bay-forecast/${{ env.RUN_DATE }}-hourly-avg-processed.nc;
+                https://mnemosyne.somisana.ac.za/somisana/false-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t1.nc;
+      - name: Archive tier 2 output
+        continue-on-error: false
+        run: |
+          cat \
+            ${{ env.WORKDIR }}/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}-tier2.nc \
+              | curl \
+                --silent \
+                --keepalive-time 2400 \
+                -X PUT \
+                -H "Content-Type: application/octet-stream" \
+                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+                -T \
+                - \
+                https://mnemosyne.somisana.ac.za/somisana/false-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t2.nc;
+      - name: Archive tier 3 output
+        continue-on-error: false
+        run: |
+          cat \
+            ${{ env.WORKDIR }}/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}-tier3.nc \
+              | curl \
+                --silent \
+                --keepalive-time 2400 \
+                -X PUT \
+                -H "Content-Type: application/octet-stream" \
+                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+                -T \
+                - \
+                https://mnemosyne.somisana.ac.za/somisana/false-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.nc;
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:
@@ -487,7 +571,7 @@ jobs:
             ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               pg \
                 load-croco-tier1-output-to-pg \
-                  --input /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}.nc \
+                  --input /tmp/somisana/current/croco/forecast/false-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
                   --parallelization 32
       - name: Delete old PostgreSQL data
         continue-on-error: true

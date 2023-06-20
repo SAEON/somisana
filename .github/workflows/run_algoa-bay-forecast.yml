@@ -415,7 +415,7 @@ jobs:
                   --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier3.nc \
                   --spacing 0.02
 
-  # Archive CROCO output
+  # Archive output
   archive-data:
     needs: [post-processing, workdir, envs]
     runs-on: somisana
@@ -441,7 +441,7 @@ jobs:
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.RUN_DATE }}-hourly-avg-with-hindcast.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-with-hindcast.nc;
       - name: Archive truncated CROCO output (forecast)
         continue-on-error: false
         run: |
