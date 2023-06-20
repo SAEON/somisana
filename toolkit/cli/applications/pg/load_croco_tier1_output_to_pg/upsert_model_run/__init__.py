@@ -11,12 +11,19 @@ from cli.applications.pg.load_croco_tier1_output_to_pg.upsert_model_run.upsert_i
 )
 
 
+async def update_values_schema(conn, *cmds):
+    for cmd in cmds:
+        log(f" => {cmd}")
+        await conn.fetch(cmd)
+
+
 async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization):
     run_date = datetime.strptime(run_date, "%Y%m%d").date()
     runid = None
 
     async with pool.acquire() as conn:
-        # Register the run
+        # Upsert into public.runs
+        log("Starting transaction")
         async with conn.transaction():
             q1 = await conn.prepare(
                 """
@@ -34,7 +41,10 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
                         values (s.run_date, s.modelid);
                 """
             )
+            log(f" => {q1}")
             await q1.fetch(run_date, id)
+
+            # Get the run ID
             q2 = await conn.prepare(
                 """
                 select
@@ -48,32 +58,26 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
                     and m.name = $2
                 """
             )
+            log(f" => {q2}")
             r = await q2.fetch(run_date, id)
             runid = r[0]["id"]
-            log("=> Run ID", runid)
+            log(f"  => Run ID {runid} cached")
 
-        # Register new partition and indexes
-        async with conn.transaction():
-            # values partition
-            await conn.fetch(
-                f"create table if not exists public.values_runid_{runid} partition of public.values for values in ({runid});"
+            # Register new partition and indexes
+            await update_values_schema(
+                conn,
+                # values partition
+                f"drop table if exists public.values_runid_{runid};",
+                f"create table if not exists public.values_runid_{runid} partition of public.values for values in ({runid});",
+                f"create index if not exists values_cols_{runid} on public.values_runid_{runid} using btree(time_step asc, depth_level desc);",
+                f"create index if not exists values_coordinateid_{runid} on public.values_runid_{runid} using btree(coordinateid asc);",
+                # interpolated_values partition
+                f"drop table if exists public.interpolated_values_runid_{runid};",
+                f"create table if not exists public.interpolated_values_runid_{runid} partition of public.interpolated_values for values in ({runid});",
+                f"create index if not exists interpolated_values_cols_band_{runid} on public.interpolated_values_runid_{runid} using btree(time_step asc, depth desc);",
+                f"create index if not exists interpolated_values_coordinateid_{runid} on public.interpolated_values_runid_{runid} using btree(coordinateid asc);",
             )
-            await conn.fetch(
-                f"create index if not exists values_cols_{runid} on public.values_runid_{runid} using btree(time_step asc, depth_level desc);"
-            )
-            await conn.fetch(
-                f"create index if not exists values_coordinateid_{runid} on public.values_runid_{runid} using btree(coordinateid asc);"
-            )
-            # interpolated_values partition
-            await conn.fetch(
-                f"create table if not exists public.interpolated_values_runid_{runid} partition of public.interpolated_values for values in ({runid});"
-            )
-            await conn.fetch(
-                f"create index if not exists interpolated_values_cols_band_{runid} on public.interpolated_values_runid_{runid} using btree(time_step asc, depth desc);"
-            )
-            await conn.fetch(
-                f"create index if not exists interpolated_values_coordinateid_{runid} on public.interpolated_values_runid_{runid} using btree(coordinateid asc);"
-            )
+        log("Transaction complete")
 
     # Upsert rasters
     variables = list(ds.keys())
@@ -85,8 +89,9 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
             if model["postgis_config"].get(raster) is not None:
                 await upsert_rasters(conn, runid, raster, input, model, ds)
             else:
-                log(f"No PostGIS configuration found for raster {raster} (defined in models.yml). Skipping raster load")
-
+                log(
+                    f"No PostGIS configuration found for raster {raster} (defined in models.yml). Skipping raster load"
+                )
 
     datetimes = ds.time.values
     total_depth_levels = ds.sizes["s_rho"]

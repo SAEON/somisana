@@ -6,7 +6,6 @@ import asyncpg
 from config import PG_DB, PG_PORT, PG_HOST, PG_PASSWORD, PG_USERNAME
 from lib.log import log
 from lib.open_files import open_files
-from datetime import datetime
 from cli.applications.pg.load_croco_tier1_output_to_pg.upsert_model_info import (
     upsert_model_info,
 )
@@ -65,7 +64,7 @@ async def run(args):
         with xr.open_dataset(input) as ds:
             id = ds.attrs["model_name"]
             run_date = ds.attrs["run_date"]
-            log("Model:", id, "run_date", run_date)
+            log(f"Model: {id}. Run date: {run_date}")
 
             # Get the model configuration
             model = [model for model in json.load(models_f) if model.get("id") == id]

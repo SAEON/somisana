@@ -3,6 +3,7 @@ from datetime import timedelta
 import xarray as xr
 from datetime import timedelta, datetime
 
+
 def hour_rounder(t):
     """
     Rounds to nearest hour by adding a timedelta hour if minute >= 30
@@ -11,14 +12,15 @@ def hour_rounder(t):
         hours=t.minute // 30
     )
 
+
 def u2rho(u):
     """
     regrid the croco u-velocity from it's native u grid to the rho grid
     u can be 2D, 3D or 4D
     """
-    Num_dims=len(u.shape)
-    if Num_dims==4:
-        # T: Time 
+    Num_dims = len(u.shape)
+    if Num_dims == 4:
+        # T: Time
         # D: Depth
         # Mp: Grid y
         # L:  Grid x
@@ -28,38 +30,35 @@ def u2rho(u):
         # Because u values represent mid points between the rho grid
         # Create a new grid for interpolated u values that is equivalent to the rho grid
         u_rho = np.zeros((T, D, Mp, L + 1))
-        
+
         # Interpolate from u grid to rho grid by summing adjacent u points, and divide by 2
-        u_rho[:, :, :, 1 : L] = 0.5 * np.squeeze(
-            [u[:, :, :, 0 : L - 1] + u[:, :, :, 1 : L]]
+        u_rho[:, :, :, 1:L] = 0.5 * np.squeeze(
+            [u[:, :, :, 0 : L - 1] + u[:, :, :, 1:L]]
         )
 
         # On the edges of the new u grid, you can't interpolate values.
         # So just copy the closest values for the cells on the edge of the grid
         u_rho[:, :, :, 0] = u_rho[:, :, :, 1]
         u_rho[:, :, :, L] = u_rho[:, :, :, L - 1]
-        
-    elif Num_dims==3:
+
+    elif Num_dims == 3:
         # TorD: Temperature or depth
-        [TorD, Mp, L] = u.shape # works if first dimension is time or depth
+        [TorD, Mp, L] = u.shape  # works if first dimension is time or depth
         u_rho = np.zeros((TorD, Mp, L + 1))
-        u_rho[:, :, 1 : L] = 0.5 * np.squeeze(
-            [u[:, :, 0 : L - 1] + u[ :, :, 1 : L]]
-        )
+        u_rho[:, :, 1:L] = 0.5 * np.squeeze([u[:, :, 0 : L - 1] + u[:, :, 1:L]])
         u_rho[:, :, 0] = u_rho[:, :, 1]
         u_rho[:, :, L] = u_rho[:, :, L - 1]
-        
-    else: # Num_dims==2:
+
+    else:  # Num_dims==2:
         # 2D grid - no time/depth information (possibly a surface level at a single time step)
         [Mp, L] = u.shape
         u_rho = np.zeros((Mp, L + 1))
-        u_rho[:, 1 : L] = 0.5 * np.squeeze(
-            [u[:, 0 : L - 1] + u[ :, 1 : L]]
-        )
+        u_rho[:, 1:L] = 0.5 * np.squeeze([u[:, 0 : L - 1] + u[:, 1:L]])
         u_rho[:, 0] = u_rho[:, 1]
         u_rho[:, L] = u_rho[:, L - 1]
-        
+
     return u_rho
+
 
 def v2rho(v):
     """
@@ -68,38 +67,33 @@ def v2rho(v):
 
     Refer to u2rho for helpful descriptions and comments
     """
-    Num_dims=len(v.shape)
-    if Num_dims==4:
+    Num_dims = len(v.shape)
+    if Num_dims == 4:
         [T, D, M, Lp] = v.shape
         v_rho = np.zeros((T, D, M + 1, Lp))
 
-        v_rho[:, :, 1 : M, :] = 0.5 * np.squeeze(
-            [v[:, :, 0 : M - 1, :] + v[:, :, 1 : M, :]]
+        v_rho[:, :, 1:M, :] = 0.5 * np.squeeze(
+            [v[:, :, 0 : M - 1, :] + v[:, :, 1:M, :]]
         )
         v_rho[:, :, 0, :] = v_rho[:, :, 1, :]
         v_rho[:, :, M, :] = v_rho[:, :, M - 1, :]
-        
-    elif Num_dims==3:
-        [TorD, M, Lp] = v.shape # works if first dimension is time or depth
+
+    elif Num_dims == 3:
+        [TorD, M, Lp] = v.shape  # works if first dimension is time or depth
         v_rho = np.zeros((TorD, M + 1, Lp))
 
-        v_rho[:, 1 : M, :] = 0.5 * np.squeeze(
-            [v[:, 0 : M - 1, :] + v[:, 1 : M, :]]
-        )
+        v_rho[:, 1:M, :] = 0.5 * np.squeeze([v[:, 0 : M - 1, :] + v[:, 1:M, :]])
         v_rho[:, 0, :] = v_rho[:, 1, :]
         v_rho[:, M, :] = v_rho[:, M - 1, :]
 
-        
-    else: # Num_dims==2:
+    else:  # Num_dims==2:
         [M, Lp] = v.shape
         v_rho = np.zeros((M + 1, Lp))
 
-        v_rho[1 : M, :] = 0.5 * np.squeeze(
-            [v[0 : M - 1, :] + v[1 : M, :]]
-        )
+        v_rho[1:M, :] = 0.5 * np.squeeze([v[0 : M - 1, :] + v[1:M, :]])
         v_rho[0, :] = v_rho[1, :]
         v_rho[M, :] = v_rho[M - 1, :]
-        
+
     return v_rho
 
 
@@ -229,57 +223,55 @@ def hlev(var, z, depth):
     a = z.copy()
     a[a >= depth] = 0
     a[a < depth] = 1
-    
+
     # 2D variable containing the sigma level index directly above the constant depth level
     levs = np.sum(a, axis=0)
     # values of zero indicate the depth level is below our sigma levels so set to nan
-    levs[levs==0] = np.nan
+    levs[levs == 0] = np.nan
     # make levs the sigma level index directly below the constant depth level
-    levs = levs -1
+    levs = levs - 1
 
     vnew = np.zeros((Mp, Lp))
-    vnew[np.isnan(levs)]=np.nan
-    
+    vnew[np.isnan(levs)] = np.nan
+
     # looping through every horizontal grid point makes this slow
     # TODO: understand how the matlab croco_tools function does this without a loop
     for m in np.arange(Mp):
         for l in np.arange(Lp):
-            
-            if not np.isnan(levs[m,l]):
-            
+            if not np.isnan(levs[m, l]):
                 ind1 = int(levs[m, l])
                 ind2 = int(levs[m, l]) + 1
-                
-                if ind1 == N-1: # there is no level above to interpolate between
+
+                if ind1 == N - 1:  # there is no level above to interpolate between
                     # so I'd rather use the surface layer than extrapolate
                     vnew[m, l] = var[ind1, m, l]
                 else:
-    
                     v1 = var[ind1, m, l]
                     v2 = var[ind2, m, l]
-        
+
                     z1 = z[ind1, m, l]
                     z2 = z[ind2, m, l]
-        
+
                     vnew[m, l] = ((v1 - v2) * depth + v2 * z1 - v1 * z2) / (z1 - z2)
 
     return vnew
 
-def get_depths(fname,gname,tstep=None):
-    '''
-        extract the depth levels (in metres, negative downward) of the sigma levels in a CROCO file
-        fname = CROCO output file
-        gname = CROCO grid file
-        tstep = time step index to extract (integer starting at zero). If None, then all time-steps are extracted
-    '''
-    
+
+def get_depths(fname, gname, tstep=None):
+    """
+    extract the depth levels (in metres, negative downward) of the sigma levels in a CROCO file
+    fname = CROCO output file
+    gname = CROCO grid file
+    tstep = time step index to extract (integer starting at zero). If None, then all time-steps are extracted
+    """
+
     ds = xr.open_dataset(fname)
     ds_grid = xr.open_dataset(gname)
-    
+
     # get the surface and bottom levels
-    ssh=get_var(fname,gname,'zeta',tstep)
+    ssh = get_var(fname, gname, "zeta", tstep)
     h = ds_grid.h.values
-    
+
     # get the variables used to calculate the sigma levels
     # CROCO uses these params to determine how to deform the grid
     s_rho = ds.s_rho.values  # Vertical levels
@@ -299,8 +291,8 @@ def get_depths(fname,gname,tstep=None):
             h, ssh, theta_s, theta_b, hc, N, type_coordinate, vtransform
         )
     else:
-        T,M,L = np.shape(ssh)
-        depth_rho = np.zeros((T,N,M,L))
+        T, M, L = np.shape(ssh)
+        depth_rho = np.zeros((T, N, M, L))
         for x in np.arange(T):
             depth_rho[x, ::] = z_levels(
                 h, ssh[x, :, :], theta_s, theta_b, hc, N, type_coordinate, vtransform
@@ -308,13 +300,14 @@ def get_depths(fname,gname,tstep=None):
 
     ds.close()
     ds_grid.close()
-    
+
     return depth_rho
-    
-def get_time(fname,ref_date):
-    '''         
-        ref_date = reference date for the croco run as a datetime object
-    '''
+
+
+def get_time(fname, ref_date):
+    """
+    ref_date = reference date for the croco run as a datetime object
+    """
     with xr.open_dataset(fname) as data:
         time = data.time.values
 
@@ -323,85 +316,91 @@ def get_time(fname,ref_date):
             date_now = ref_date + timedelta(seconds=np.float64(t))
             # date_round = hour_rounder(date_now) # GF: I'd rather keep the croco dates as they are saved in the raw output
             time_dt.append(date_now)
-        
+
         return time_dt
 
-def get_lonlatmask(gname,type='r'):
+
+def get_lonlatmask(gname, type="r"):
     ds_grid = xr.open_dataset(gname)
-    if type=='u':
-        lon = ds_grid.lon_u.values 
+    if type == "u":
+        lon = ds_grid.lon_u.values
         lat = ds_grid.lat_u.values
         mask = ds_grid.mask_u.values
-    elif type=='v':
-        lon = ds_grid.lon_v.values 
+    elif type == "v":
+        lon = ds_grid.lon_v.values
         lat = ds_grid.lat_v.values
         mask = ds_grid.mask_v.values
     else:
-        lon = ds_grid.lon_rho.values 
-        lat = ds_grid.lat_rho.values 
+        lon = ds_grid.lon_rho.values
+        lat = ds_grid.lat_rho.values
         mask = ds_grid.mask_rho.values
     mask[np.where(mask == 0)] = np.nan
     ds_grid.close()
-    return lon,lat,mask
+    return lon, lat, mask
 
-def get_var(fname,gname,var_str,tstep=None):
-    '''
-        extract a variable from a CROCO file
-        fname = CROCO output file
-        gname = CROCO grid file
-        var_str = variable name (string) in the CROCO output file
-        tstep = time step index to extract (integer starting at zero). If None, then all time-steps are extracted
-    '''
+
+def get_var(fname, gname, var_str, tstep=None):
+    """
+    extract a variable from a CROCO file
+    fname = CROCO output file
+    gname = CROCO grid file
+    var_str = variable name (string) in the CROCO output file
+    tstep = time step index to extract (integer starting at zero). If None, then all time-steps are extracted
+    """
     with xr.open_dataset(fname) as ds:
         if tstep:
-            var = ds[var_str].values[tstep,::]
+            var = ds[var_str].values[tstep, ::]
         else:
             var = ds[var_str].values
-            
-        lon,lat,mask=get_lonlatmask(gname,var_str) # var_str will define the mask type (u,v, or rho)
-        
+
+        lon, lat, mask = get_lonlatmask(
+            gname, var_str
+        )  # var_str will define the mask type (u,v, or rho)
+
         # it looks like numpy is clever enough to use the 2D mask on a 3D or 4D variable
         # that's useful!
-        var=var*mask
-        
+        var = var * mask
+
         return var
 
-def get_uv(fname,gname,tstep=None):
-    '''
-    extract u and v components from a CROCO output file, regrid onto the 
+
+def get_uv(fname, gname, tstep=None):
+    """
+    extract u and v components from a CROCO output file, regrid onto the
     rho grid and rotate from grid-aligned to east-north components
-    
+
     fname = CROCO output file
     gname = CROCO grid file
     tstep = time step index to extract (starting at zero). If None, then all time-steps are extracted
-    '''
-    u=get_var(fname,gname,'u',tstep)
-    v=get_var(fname,gname,'v',tstep)
-    u=u2rho(u)
-    v=v2rho(v)
-    angle=get_var(fname, gname, 'angle') # grid angle
-    
+    """
+    u = get_var(fname, gname, "u", tstep)
+    v = get_var(fname, gname, "v", tstep)
+    u = u2rho(u)
+    v = v2rho(v)
+    angle = get_var(fname, gname, "angle")  # grid angle
+
     # Use the grid angle to rotate the vectors
     cos_a = np.cos(angle)
     sin_a = np.sin(angle)
 
     # Refer to https://en.wikipedia.org/wiki/Rotation_matrix
     # although 'angle' is 2D, numpy is clever enough for this to work even if u_rho and v_rho are 3D or 4D
-    u_out = u*cos_a - v*sin_a
-    v_out = v*cos_a + u*sin_a
-    
-    # Return east / north vector vector components instead of x / y components
-    return u_out,v_out
+    u_out = u * cos_a - v * sin_a
+    v_out = v * cos_a + u * sin_a
 
+    # Return east / north vector vector components instead of x / y components
+    return u_out, v_out
 
 
 def get_boundary(gname):
-        '''
-        Return lon,lat of perimeter around a CROCO grid (i.e. coordinates of bounding cells)
-        '''
-        lon_rho,lat_rho,_=get_lonlatmask(gname,type='r')
-        lon = np.hstack((lon_rho[0:, 0], lon_rho[-1, 1:-1],
-                         lon_rho[-1::-1, -1], lon_rho[0, -2::-1]))
-        lat = np.hstack((lat_rho[0:, 0], lat_rho[-1, 1:-1],
-                         lat_rho[-1::-1, -1], lat_rho[0, -2::-1]))
-        return lon, lat
+    """
+    Return lon,lat of perimeter around a CROCO grid (i.e. coordinates of bounding cells)
+    """
+    lon_rho, lat_rho, _ = get_lonlatmask(gname, type="r")
+    lon = np.hstack(
+        (lon_rho[0:, 0], lon_rho[-1, 1:-1], lon_rho[-1::-1, -1], lon_rho[0, -2::-1])
+    )
+    lat = np.hstack(
+        (lat_rho[0:, 0], lat_rho[-1, 1:-1], lat_rho[-1::-1, -1], lat_rho[0, -2::-1])
+    )
+    return lon, lat

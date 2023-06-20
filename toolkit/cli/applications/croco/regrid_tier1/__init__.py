@@ -1,8 +1,7 @@
 import xarray as xr
-import numpy as np
 from lib.log import log
 import os
-from datetime import timedelta, datetime
+from datetime import datetime
 import cli.applications.croco.postprocess as post
 import subprocess
 
