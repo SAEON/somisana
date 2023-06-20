@@ -120,7 +120,7 @@ async def run(args):
                     r = await q2.fetch(run_date, id)
                     runid = r[0]["id"]
                     log(f"  => Run ID {runid} cached")
-                log("Transaction complete")
+                
 
                 # Upsert rasters
                 variables = list(ds.keys())
@@ -135,17 +135,19 @@ async def run(args):
                             f"No PostGIS configuration found for raster {raster} (defined in models.yml). Skipping raster load"
                         )
 
-            # Upsert model information
-            await upsert_model_info(
-                pool=pool,
-                id=id,
-                model=model,
-                merge_details=merge_details_f.read(),
-                merge_coordinates=merge_coordinates_f.read(),
-                update_geospatial_fields=update_geospatial_fields_f.read(),
-            )
+                    # Upsert model information
+                    await upsert_model_info(
+                        conn=conn,
+                        id=id,
+                        model=model,
+                        merge_details=merge_details_f.read(),
+                        merge_coordinates=merge_coordinates_f.read(),
+                        update_geospatial_fields=update_geospatial_fields_f.read(),
+                    )
+                log("Transaction complete")
 
             # Upsert model run
+            # This can't be in a single transaction as it is split across many connections for parallelization
             await upsert_model_run(
                 runid=runid,
                 pool=pool,

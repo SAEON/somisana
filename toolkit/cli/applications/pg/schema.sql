@@ -51,13 +51,10 @@ create table if not exists public.coordinates(
   coord geometry(point, 3857) not null,
   longitude float not null,
   latitude float not null,
-  bathymetry decimal(7, 2) not null,
-  has_value boolean default false
+  bathymetry decimal(7, 2) null
 );
 
 create unique index if not exists unique_coordinates on public.coordinates using btree(modelid, pixel);
-
-create index if not exists coordinates_has_value on public.coordinates using btree(has_value);
 
 create index if not exists coordinates_modelid on public.coordinates using btree(modelid);
 

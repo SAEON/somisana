@@ -1,6 +1,4 @@
-;
-
-with run as (
+;with run as (
   select
     r.id,
     m.id modelid
@@ -55,7 +53,7 @@ h as (
           from
             lat
             join lon on lon.geom = lat.geom
-            join h on h.geom = lat.geom) s on s.modelid = t.modelid
+            left outer join h on h.geom = lat.geom) s on s.modelid = t.modelid
     and s.pixel = t.pixel
   when not matched then
       insert

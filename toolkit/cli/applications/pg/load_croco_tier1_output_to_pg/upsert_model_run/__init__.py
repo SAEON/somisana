@@ -68,38 +68,6 @@ async def upsert_model_run(runid, pool, ds, parallelization):
 
     # Finalize the run
     async with pool.acquire() as conn:
-        # Update coordinate sea/land mask
-        await conn.fetch(
-            f"""
-            with _coordinates as (
-                select distinct
-                    c.id
-                from
-                    public.coordinates c
-                where
-                    c.has_value = false
-                    and exists (
-                        select
-                            1
-                        from
-                        public.values_runid_{runid}
-                        where
-                            coordinateid = c.id
-                    )
-            )
-            update public.coordinates c
-            set
-                has_value = true
-            where
-                c.id in (
-                    select
-                        id
-                    from
-                        _coordinates);
-            """
-        )
-        log("Updated coordinate mask")
-
         # Delete rasters
         q3 = await conn.prepare(
             """
