@@ -43,7 +43,7 @@ const Render = ({
       tiles: [
         `${TILESERV_BASE_URL}/public.coordinates/{z}/{x}/{y}.pbf?filter=${encodeURIComponent(
           `modelid=${modelid}
-          and bathymetry!=null`
+          and bathymetry is not null`
         )}`,
       ],
       url: `${TILESERV_BASE_URL}/public.coordinates.json`,
