@@ -1,8 +1,4 @@
 from lib.log import log
-from datetime import datetime
-from cli.applications.pg.load_croco_tier1_output_to_pg.upsert_model_run.upsert_rasters import (
-    upsert_rasters,
-)
 from cli.applications.pg.load_croco_tier1_output_to_pg.upsert_model_run.upsert_values import (
     upsert_values,
 )
@@ -17,52 +13,11 @@ async def update_values_schema(conn, *cmds):
         await conn.fetch(cmd)
 
 
-async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization):
-    run_date = datetime.strptime(run_date, "%Y%m%d").date()
-    runid = None
+async def upsert_model_run(runid, pool, ds, parallelization):
 
     async with pool.acquire() as conn:
-        # Upsert into public.runs
         log("Starting transaction")
         async with conn.transaction():
-            q1 = await conn.prepare(
-                """
-                merge into public.runs t
-                using (
-                    select
-                        $1::date run_date,
-                        ( select id from models where name = $2 ) modelid
-                ) s on
-                    s.run_date = t.run_date
-                    and s.modelid = t.modelid
-                when
-                    not matched then
-                        insert (run_date, modelid)
-                        values (s.run_date, s.modelid);
-                """
-            )
-            log(f" => {q1}")
-            await q1.fetch(run_date, id)
-
-            # Get the run ID
-            q2 = await conn.prepare(
-                """
-                select
-                    r.id
-                from
-                    runs r
-                join
-                    models m on m.id = r.modelid 
-                where
-                    r.run_date = $1
-                    and m.name = $2
-                """
-            )
-            log(f" => {q2}")
-            r = await q2.fetch(run_date, id)
-            runid = r[0]["id"]
-            log(f"  => Run ID {runid} cached")
-
             # Register new partition and indexes
             await update_values_schema(
                 conn,
@@ -78,20 +33,6 @@ async def upsert_model_run(pool, id, run_date, ds, input, model, parallelization
                 f"create index if not exists interpolated_values_coordinateid_{runid} on public.interpolated_values_runid_{runid} using btree(coordinateid asc);",
             )
         log("Transaction complete")
-
-    # Upsert rasters
-    variables = list(ds.keys())
-    coords = list(ds.coords)
-    rasters = list(set(variables + coords))
-    rasters.sort()
-    async with pool.acquire() as conn:
-        for raster in rasters:
-            if model["postgis_config"].get(raster) is not None:
-                await upsert_rasters(conn, runid, raster, input, model, ds)
-            else:
-                log(
-                    f"No PostGIS configuration found for raster {raster} (defined in models.yml). Skipping raster load"
-                )
 
     datetimes = ds.time.values
     total_depth_levels = ds.sizes["s_rho"]

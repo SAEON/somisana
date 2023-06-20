@@ -5,9 +5,13 @@ import json
 import asyncpg
 from config import PG_DB, PG_PORT, PG_HOST, PG_PASSWORD, PG_USERNAME
 from lib.log import log
+from datetime import datetime
 from lib.open_files import open_files
 from cli.applications.pg.load_croco_tier1_output_to_pg.upsert_model_info import (
     upsert_model_info,
+)
+from cli.applications.pg.load_croco_tier1_output_to_pg.upsert_rasters import (
+    upsert_rasters,
 )
 from cli.applications.pg.load_croco_tier1_output_to_pg.upsert_model_run import (
     upsert_model_run,
@@ -26,8 +30,8 @@ update_geospatial_fields_file = os.path.join(
 
 
 async def run(args):
-    log("Loading post-processed CROCO output (v1) to PostgreSQL")
-    
+    log("Loading tier1 regridded CROCO output to PostgreSQL")
+
     input = os.path.abspath(args.input)
     parallelization = args.parallelization
     log("CONFIG::input", input)
@@ -63,7 +67,7 @@ async def run(args):
         # Open the input dataset
         with xr.open_dataset(input) as ds:
             id = ds.attrs["model_name"]
-            run_date = ds.attrs["run_date"]
+            run_date = datetime.strptime(ds.attrs["run_date"], "%Y%m%d").date()
             log(f"Model: {id}. Run date: {run_date}")
 
             # Get the model configuration
@@ -74,6 +78,62 @@ async def run(args):
                     f'Model id: "{id}" is not defined in the models.json configuration file - this needs to be specified manually'
                 )
                 exit()
+
+            # Upsert into public.runs
+            log("Starting transaction")
+            async with pool.acquire() as conn:
+                async with conn.transaction():
+                    q1 = await conn.prepare(
+                        """
+                        merge into public.runs t
+                        using (
+                            select
+                                $1::date run_date,
+                                ( select id from models where name = $2 ) modelid
+                        ) s on
+                            s.run_date = t.run_date
+                            and s.modelid = t.modelid
+                        when
+                            not matched then
+                                insert (run_date, modelid)
+                                values (s.run_date, s.modelid);
+                        """
+                    )
+                    log(f" => {q1}")
+                    await q1.fetch(run_date, id)
+
+                    # Get the run ID
+                    q2 = await conn.prepare(
+                        """
+                        select
+                            r.id
+                        from
+                            runs r
+                        join
+                            models m on m.id = r.modelid 
+                        where
+                            r.run_date = $1
+                            and m.name = $2
+                        """
+                    )
+                    log(f" => {q2}")
+                    r = await q2.fetch(run_date, id)
+                    runid = r[0]["id"]
+                    log(f"  => Run ID {runid} cached")
+                log("Transaction complete")
+
+                # Upsert rasters
+                variables = list(ds.keys())
+                coords = list(ds.coords)
+                rasters = list(set(variables + coords))
+                rasters.sort()
+                for raster in rasters:
+                    if model["postgis_config"].get(raster) is not None:
+                        await upsert_rasters(conn, runid, raster, input, model, ds)
+                    else:
+                        log(
+                            f"No PostGIS configuration found for raster {raster} (defined in models.yml). Skipping raster load"
+                        )
 
             # Upsert model information
             await upsert_model_info(
@@ -87,12 +147,9 @@ async def run(args):
 
             # Upsert model run
             await upsert_model_run(
+                runid=runid,
                 pool=pool,
-                id=id,
-                run_date=run_date,
                 ds=ds,
-                input=input,
-                model=model,
                 parallelization=parallelization,
             )
 
