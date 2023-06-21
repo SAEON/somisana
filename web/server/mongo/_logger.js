@@ -1,7 +1,6 @@
 import { PASSPORT_SSO_SESSION_ID } from '../config/index.js'
-import { MongoClient } from 'mongodb'
+import { MongoClient, ObjectId } from 'mongodb'
 import DataLoader from 'dataloader'
-import { ObjectId } from 'mongodb'
 
 export const IP_RESOLVER_API_ADDRESS = 'http://ip-api.com/batch'
 
@@ -96,7 +95,8 @@ export default collections => {
 
       /**
        * Pushing this to the end of the event loop
-       * is probably unnecessary, but can potentially
+       * is probably unnecessary considering that
+       * insert batch is async, but can potentially
        * reduce the number of database trips
        */
       setImmediate(async () => {

@@ -9,6 +9,7 @@
     "arange",
     "arcgis",
     "asgeojson",
+    "asname",
     "astype",
     "asyncpg",
     "AUTOTILING",
