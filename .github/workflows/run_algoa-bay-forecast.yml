@@ -441,7 +441,7 @@ jobs:
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-with-hindcast.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/raw-croco-output/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-hcst-5d-fcst.nc;
       - name: Archive truncated CROCO output (forecast)
         continue-on-error: false
         run: |
@@ -455,7 +455,7 @@ jobs:
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg.nc;
       - name: Archive tier 1 output
         continue-on-error: false
         run: |
@@ -469,7 +469,7 @@ jobs:
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t1.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t1.nc;
       - name: Archive tier 2 output
         continue-on-error: false
         run: |
@@ -483,7 +483,7 @@ jobs:
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t2.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t2.nc;
       - name: Archive tier 3 output
         continue-on-error: false
         run: |
@@ -497,7 +497,7 @@ jobs:
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.nc;
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:
