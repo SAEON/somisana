@@ -441,7 +441,7 @@ jobs:
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/raw-croco-output/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-hcst-5d-fcst.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/croco/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-hcst-5d-fcst.nc;
       - name: Archive truncated CROCO output (forecast)
         continue-on-error: false
         run: |
@@ -455,7 +455,7 @@ jobs:
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/croco/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-fcst.nc;
       - name: Archive tier 1 output
         continue-on-error: false
         run: |

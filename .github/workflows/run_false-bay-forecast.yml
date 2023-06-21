@@ -450,7 +450,7 @@ jobs:
                 -H "Content-Type: application/octet-stream" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/sw-cape/raw-croco-output/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-hcst-5d-fcst.nc;
+                https://mnemosyne.somisana.ac.za/somisana/sw-cape/croco/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-hcst-5d-fcst.nc;
           cat \
             ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc.1 \
               | curl \
@@ -461,7 +461,7 @@ jobs:
                 -H "Content-Type: application/octet-stream" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/sw-cape/raw-croco-output/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-hcst-fd-fcst.nc.1;
+                https://mnemosyne.somisana.ac.za/somisana/sw-cape/croco/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-hcst-5d-fcst.nc.1;
       - name: Archive truncated CROCO output (forecast)
         continue-on-error: false
         run: |
@@ -475,7 +475,7 @@ jobs:
                 -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg.nc;
+                https://mnemosyne.somisana.ac.za/somisana/sw-cape/croco/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-fcst.nc;
       - name: Archive tier 1 output
         continue-on-error: false
         run: |
