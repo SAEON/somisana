@@ -476,6 +476,17 @@ jobs:
                 -T \
                 - \
                 https://mnemosyne.somisana.ac.za/somisana/sw-cape/croco/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-fcst.nc;
+          cat \
+            ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc.1 \
+              | curl \
+                --silent \
+                --keepalive-time 2400 \
+                -X PUT \
+                -H "Content-Type: application/octet-stream" \
+                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+                -T \
+                - \
+                https://mnemosyne.somisana.ac.za/somisana/sw-cape/croco/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-fcst.nc.1;
       - name: Archive tier 1 output
         continue-on-error: false
         run: |
