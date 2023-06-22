@@ -12,7 +12,7 @@ fi
 lines=(
   "## Added by SOMISANA Toolkit installer ##"
   "export TOOLKIT_VERSION=$TOOLKIT_VERSION"
-  "alias somisana='docker run -e TOOLKIT_VERSION=$TOOLKIT_VERSION -e PY_ENV=production -v /home/\$USER:/home/\$USER --mount type=bind,source=\$(pwd)/.env,target=/home/somisana/.env -it --rm ghcr.io/saeon/somisana_toolkit_stable:\$TOOLKIT_VERSION'"
+  "alias somisana='docker run -e TOOLKIT_VERSION=$TOOLKIT_VERSION -e PY_ENV=production -v /home/\$USER:/home/\$USER \$(if [ -f .env ]; then echo \"-v \$(pwd)/.env:/home/somisana/.env\"; fi) -it --rm ghcr.io/saeon/somisana_toolkit_stable:\$TOOLKIT_VERSION'"
   "alias ogr2ogr='docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION ogr2ogr'"
   "alias gdalinfo='docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION gdalinfo'"
   "alias gdalsrsinfo='docker run --net host -v /home/\$USER:/home/\$USER --rm osgeo/gdal:$GDAL_TOOLKIT_VERSION gdalsrsinfo'"
