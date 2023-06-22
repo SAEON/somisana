@@ -45,6 +45,9 @@ sudo service docker start
 
 # Run the CLI
 somisana -h
+
+# Update the CLI
+somisana update --version latest
 ```
 
 ## Update the CLI

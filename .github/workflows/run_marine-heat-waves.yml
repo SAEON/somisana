@@ -178,7 +178,7 @@ jobs:
             https://mnemosyne.somisana.ac.za/somisana/marine-heat-waves/${{ env.RUN_DATE_YYYMM }}/${{ env.RUN_DATE }}.nc;
       - name: Kerchunk the NetCDF file output
         continue-on-error: false
-        run: >-
+        run: |
           docker run \
             --rm \
             -v $WORKDIR:/tmp/somisana/current \
