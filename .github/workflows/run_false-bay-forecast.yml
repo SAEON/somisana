@@ -426,13 +426,14 @@ jobs:
 
   # Archive output
   archive-data:
-    needs: [post-processing, workdir, envs]
+    needs: [post-processing, workdir, envs, toolkit]
     runs-on: somisana
     env:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
       YYYYMM: ${{ needs.envs.outputs.MODEL_RUN_YEAR_MONTH }}
+      SHA: sha-${{ github.sha }}
     steps:
       - name: Load $PATH
         run: |
@@ -529,6 +530,28 @@ jobs:
                 -T \
                 - \
                 https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.nc;
+      - name: Kerchunk NetCDF tier 3 output
+        continue-on-error: true
+        run: |
+          docker run \
+            --rm \
+            -v $WORKDIR:/tmp/somisana/current \
+            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+              kerchunk \
+                run \
+                  --inputs https://mnemosyne.somisana.ac.za/somisana/false-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.nc \
+                  --output /tmp/somisana/current/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json
+      - name: Upload Kerchunked tier 3 output to Mnemosyne
+        continue-on-error: true
+        run: |
+          curl \
+            --silent \
+            --keepalive-time 1200 \
+            -X PUT \
+            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+            -H "Content-Type: application/octet-stream" \
+            -T ${{ env.WORKDIR}}/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json \
+            https://mnemosyne.somisana.ac.za/somisana/false-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json;
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:
