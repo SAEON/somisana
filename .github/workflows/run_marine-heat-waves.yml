@@ -8,7 +8,7 @@ on:
         required: false
         default:
   schedule:
-    - cron: '0 02 * * *' # 0400 SAST
+    - cron: '0 05 * * *' # 0700 SAST
 
 env:
   REGISTRY: ghcr.io
