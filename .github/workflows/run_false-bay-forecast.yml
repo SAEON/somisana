@@ -539,7 +539,7 @@ jobs:
             ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
               kerchunk \
                 run \
-                  --inputs https://mnemosyne.somisana.ac.za/somisana/false-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.nc \
+                  --inputs https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.nc \
                   --output /tmp/somisana/current/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json
       - name: Upload Kerchunked tier 3 output to Mnemosyne
         continue-on-error: true
@@ -551,7 +551,7 @@ jobs:
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -H "Content-Type: application/octet-stream" \
             -T ${{ env.WORKDIR}}/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json \
-            https://mnemosyne.somisana.ac.za/somisana/false-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json;
+            https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json;
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:
