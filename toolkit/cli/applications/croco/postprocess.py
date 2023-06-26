@@ -352,19 +352,41 @@ def get_lonlatmask(fname,type='r'):
         
     return lon,lat,mask
 
-def get_var(fname,var_str,tstep=None):
+def get_var(fname,var_str,tstep=None,level=None):
     '''
         extract a variable from a CROCO file
         fname = CROCO output file
         var_str = variable name (string) in the CROCO output file
-        tstep = time step index to extract (integer starting at zero). If None, then all time-steps are extracted
+        tstep = time step index to extract 
+                integer starting at zero
+                If None, then all time-steps are extracted
+        level = vertical level to extract
+                If >= 0 then a sigma level is extracted 
+                If <0 then a z level in meters is extracted
+                If None, then all sigma levels are extracted
     '''
     with xr.open_dataset(fname) as ds:
-        if tstep:
+        if tstep is not None: # get a single time-step
             var = ds[var_str].values[tstep,::]
-        else:
+            if level is not None:
+                if level>=0: # get a single sigma level
+                    var=var[level,::]
+                else: # level<0: # interpolate to a constant z level
+                    z=get_depths(fname,tstep=tstep)
+                    var=hlev(var,z,level)
+        else: # get all the time-steps
             var = ds[var_str].values
-            
+            if level is not None:
+                if level>=0: # get a single sigma level
+                    var=var[:,level,::]
+                else: # level<0: # for each time-step interpolate to a constant z level
+                    z=get_depths(fname)
+                    T,D,M,L=var.shape
+                    var_out=np.zeros((T,M,L))
+                    for t in np.arange(T):
+                        var_out[t,:,:]=hlev(var[t,::], z[t,::], level)
+                        var=hlev(var,z,level)
+        
         lon,lat,mask=get_lonlatmask(fname,var_str) # var_str will define the mask type (u,v, or rho)
         
         # it looks like numpy is clever enough to use the 2D mask on a 3D or 4D variable
@@ -373,16 +395,21 @@ def get_var(fname,var_str,tstep=None):
         
         return var
 
-def get_uv(fname,tstep=None):
+def get_uv(fname,tstep=None,level=None):
     '''
     extract u and v components from a CROCO output file, regrid onto the 
     rho grid and rotate from grid-aligned to east-north components
     
     fname = CROCO output file
-    tstep = time step index to extract (starting at zero). If None, then all time-steps are extracted
-    '''
-    u=get_var(fname,'u',tstep)
-    v=get_var(fname,'v',tstep)
+    tstep = time step index to extract 
+            integer starting at zero
+            If None, then all time-steps are extracted
+    level = vertical level to extract
+            If >= 0 then a sigma level is extracted 
+            If <0 then a z level in meters is extracted
+            If None, then all sigma levels are extracted    '''
+    u=get_var(fname,'u',tstep,level)
+    v=get_var(fname,'v',tstep,level)
     u=u2rho(u)
     v=v2rho(v)
     angle=get_var(fname, 'angle') # grid angle
