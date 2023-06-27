@@ -8,6 +8,7 @@ import {
 } from '../config/index.js'
 import makeDataFinders from './data-finders/index.js'
 import _collections from './collections/index.js'
+import views from './views/index.js'
 import insertLocales from './locales/index.js'
 import _Logger from './_logger.js'
 export { makeLog } from './_logger.js'
@@ -118,6 +119,26 @@ export const updateValidationRules = async () => {
 
   await insertLocales(_db)
 
+  // Upsert views
+  await Promise.allSettled(
+    Object.entries(views).map(async ([, { name, sourceCollection, pipeline }]) => {
+      try {
+        const viewExists = (await _db.listCollections({ name }).toArray()).length > 0
+
+        // Drop the view if it exists
+        if (viewExists) await _db.collection(name).drop()
+
+        // Create (or recreate) the view
+        return _db.createCollection(name, {
+          viewOn: sourceCollection,
+          pipeline,
+        })
+      } catch (error) {
+        console.error('Error creating view', error)
+        throw error
+      }
+    })
+  )
   console.info('MongoDB configured')
 })().catch(error => {
   console.error('Error seeding MongoDB', error.message)
