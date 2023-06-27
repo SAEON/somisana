@@ -1,11 +1,9 @@
-import { ApolloServer } from 'apollo-server-koa'
-import {
-  ApolloServerPluginDrainHttpServer,
-  ApolloServerPluginLandingPageGraphQLPlayground,
-} from 'apollo-server-core'
+import { ApolloServer } from '@apollo/server'
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
+import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground'
 import _schema from './schema/index.js'
-import apolloCache from 'apollo-server-plugin-response-cache'
-const { default: responseCachePlugin } = apolloCache
+import responseCachePlugin from '@apollo/server-plugin-response-cache'
+import { koaMiddleware } from '@as-integrations/koa'
 
 export const schema = _schema
 
@@ -34,7 +32,13 @@ export default async ({ httpServer, api }) => {
   })
 
   await apolloServer.start()
-  apolloServer.applyMiddleware({ app: api, cors: false })
+  api.use(
+    koaMiddleware(apolloServer, {
+      context: async ({ ctx }) => {
+        return ctx
+      },
+    })
+  )
 
   return apolloServer
 }

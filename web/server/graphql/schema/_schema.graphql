@@ -3,11 +3,7 @@ scalar JSON
 scalar Void
 scalar WKT_4326
 
-interface Node {
-  id: ID!
-}
-
-type Locale implements Node {
+type Locale {
   id: ID!
   name: String!
   language: String!
@@ -23,7 +19,7 @@ type Run {
   successful: Boolean!
 }
 
-type Model implements Node {
+type Model {
   """
   ID with table information added, so that table can be back-calculated
   """
@@ -77,9 +73,8 @@ type ModelData {
 }
 
 type Query {
-  node(id: ID!): Node
-  locales(id: ID, languages: [Language!]): [Node]!
-  models(id: ID): [Node]!
+  locales(id: ID, languages: [Language!]): [Locale]!
+  models(id: ID): [Model]!
 
   data(timeStep: Int!, runId: ID!, depth: Int!): ModelData!
     @cacheControl(maxAge: 604800, scope: PUBLIC)

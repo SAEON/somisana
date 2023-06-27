@@ -67,7 +67,7 @@ export default ({ models }) => {
         if (test.results.length) {
           const graphic = test.results[0].graphic
           const attributes = graphic.attributes
-          const { id, source } = attributes
+          const { F_id: id, source } = attributes
           if (source === 'models') {
             navigate(`/explore/${id}`)
           }

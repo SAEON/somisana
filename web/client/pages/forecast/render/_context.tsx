@@ -44,27 +44,25 @@ export default ({ modelid = undefined, children }) => {
       query models($id: ID) {
         models(id: $id) {
           id
-          ... on Model {
-            _id
-            title
-            description
-            max_x
-            max_y
-            min_x
-            min_y
-            gridWidth
-            gridHeight
-            runs {
-              id
-              run_date
-              modelid
-              step1_timestamp
-              timestep_attrs
-              successful
-            }
-            creator
-            creatorContactEmail
+          _id
+          title
+          description
+          max_x
+          max_y
+          min_x
+          min_y
+          gridWidth
+          gridHeight
+          runs {
+            id
+            run_date
+            modelid
+            step1_timestamp
+            timestep_attrs
+            successful
           }
+          creator
+          creatorContactEmail
         }
       }
     `,

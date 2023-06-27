@@ -9,7 +9,7 @@ import koaSession from 'koa-session'
 import koaPassport from 'koa-passport'
 import { hoursToMilliseconds } from './lib/index.js'
 import ssr from '../.ssr/index.js'
-import graphql from './graphql/index.js'
+import configureApolloGQLServer from './graphql/index.js'
 import './passport/index.js'
 import {
   clientSession,
@@ -99,8 +99,9 @@ api
 // Create the HTTP server
 export const httpServer = createServer()
 
-// Create the Apollo server
-export const apolloServer = await graphql({ httpServer, api })
+// Configure Apollo server
+await configureApolloGQLServer({ httpServer, api })
+console.info('Apollo server configured')
 
 // Start the API
 httpServer.on('request', api.callback()).listen(PORT, () => {

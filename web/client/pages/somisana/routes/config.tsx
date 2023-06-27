@@ -85,10 +85,8 @@ export default [
           query ($id: ID) {
             models(id: $id) {
               id
-              ... on Model {
-                _id
-                title
-              }
+              _id
+              title
             }
           }
         `,

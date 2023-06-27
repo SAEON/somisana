@@ -1,6 +1,5 @@
 export default {
   name: 'permissions',
-  gqlType: 'Permission',
   validator: {
     $jsonSchema: {
       bsonType: 'object',
