@@ -1,6 +1,6 @@
 export const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',') || [
   'http://localhost:3000',
-  'http://localhost:5776',
+  'http://localhost:3001',
 ]
 export const DEPLOYMENT_ENV = process.env.DEPLOYMENT_ENV || 'development'
 export const HOSTNAME = process.env.HOSTNAME || 'http://localhost:3000'

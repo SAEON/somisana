@@ -91,6 +91,5 @@ input BrowserEventInput {
   """
   createdAt: DateTime
   info: JSON!
-  clientVersion: String!
   r: String
 }
