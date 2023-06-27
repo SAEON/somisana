@@ -1,0 +1,258 @@
+name: Run SOMISANA forecast models
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
+  COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
+  MLM_LICENSE_FILE: ${{ secrets.MLM_LICENSE_FILE }}
+  MNEMOSYNE_TOKEN: ${{ secrets.MNEMOSYNE_TOKEN }}
+
+jobs:
+  # Dynamically set the branch ref to the currently executing branch
+  branch-ref:
+    runs-on: ubuntu-latest
+    outputs:
+      value: ${{ steps.BRANCH_REF.outputs.value }}
+    steps:
+      - name: Set the BRANCH_REF
+        id: BRANCH_REF
+        run: |
+          echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+
+  # Many of the env variables reference the current branch
+  # Set the environment variables using the current branch reference
+  # (which is set dynamically)
+  envs:
+    needs: [branch-ref]
+    runs-on: ubuntu-latest
+    env:
+      R1: ${{ inputs.run_date }}
+      R2: ${{ inputs.run_date }}
+      R3: ${{ inputs.run_date }}
+    outputs:
+      BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
+      # I am commenting CROCO_IMAGE because it depends on *_algoa_bay_* directory. We need to set CROCO_IMAGE based on the model run
+      # CROCO_IMAGE: ${{ steps.ENVS.outputs.CROCO_IMAGE }}
+      TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
+      MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}
+      MODEL_RUN_YEAR_MONTH: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR_MONTH }}
+      MODEL_RUN_YEAR: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR }}
+      RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}
+      GLOBAL_DIR: ${{ steps.ENVS.outputs.GLOBAL_DIR }}
+    steps:
+      - name: Configure run date
+        id: run_date
+        run: |
+          echo "yyyymmdd=${R1:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
+          echo "yyyymm=${R2:=$(date +'%Y%m')}" >> $GITHUB_OUTPUT
+          echo "yyyy=${R3:=$(date +'%Y')}" >> $GITHUB_OUTPUT
+      - name: Configure restart date
+        id: restart_date
+        run: |
+          echo "value=$(date -d '${{ steps.run_date.outputs.value }} -1 days' +'%Y%m%d')" >> $GITHUB_OUTPUT
+      - name: Set envs
+        id: ENVS
+        run: |
+          # I am commenting CROCO_IMAGE because it depends on *_algoa_bay_* directory. We need to set CROCO_IMAGE based on the model run
+          # echo "CROCO_IMAGE=${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_DATE=${{ steps.run_date.outputs.yyyymmdd }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_YEAR_MONTH=${{ steps.run_date.outputs.yyyymm }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_YEAR=${{ steps.run_date.outputs.yyyy }}" >> $GITHUB_OUTPUT
+          echo "RESTART_FILE_DATE=${{ steps.restart_date.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "GLOBAL_DIR=/home/runner/somisana/global_data/${{ env.MODEL_RUN_DATE }}/${{ env.BRANCH_REF }}/" >> $GITHUB_OUTPUT # do we need to include the branch-ref in this directory? Think it would have been better to have BRANCH_REF/MODEL_RUN_DATE but putting it the other way round to be consistent with how the model directories were set up - too much hassle to change them
+
+  # The SOMISANA toolkit is a suite of scripts to facilitate
+  # running SOMISANA models - for example the Algoa Bay Forecast.
+  # In the context of a testing environment, where updates to these
+  # scripts is part of the development workflow, the toolkit needs
+  # to be compiled on every run
+#  toolkit:
+#    needs: [envs]
+#    runs-on: ubuntu-latest
+#    env:
+#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+#      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
+#      SHA: sha-${{ github.sha }}
+#    outputs:
+#      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
+#    steps:
+#      - name: Get image name lowercase
+#        id: 'lowercase'
+#        run: |
+#          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
+#          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
+#      - name: Check out source code
+#        uses: actions/checkout@master
+#        with:
+#          ref: ${{ env.BRANCH_REF }}
+#      - name: Log in to the Container registry
+#        uses: docker/login-action@master
+#        with:
+#          registry: ${{ env.REGISTRY }}
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Check if image with sha tag already exists
+#        id: check-image
+#        run: |
+#          set -e
+#          SHA_IMAGE=$(docker images -q ${REGISTRY}/${{ steps.lowercase.outputs.image_name }}:${SHA} || true)
+#          if [ -z "$SHA_IMAGE" ]; then
+#            echo "image_exists=false" >> $GITHUB_OUTPUT
+#          else
+#            echo "image_exists=true" >> $GITHUB_OUTPUT
+#          fi
+#      - name: Extract metadata (tags, labels) for Docker
+#        id: meta
+#        uses: docker/metadata-action@master
+#        with:
+#          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
+#          tags: |
+#            latest
+#            ${{ env.SHA }}
+#      - name: Build and push
+#        uses: docker/build-push-action@master
+#        with:
+#          context: toolkit
+#          push: true
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }
+#  }
+
+  # Download environmental data used to constrain model boundaries.
+  # This job is retried if it fails, since the failure can be due to upstream errors
+  # These downloads are used to create forcing files that are fed as input to the CROCO model
+  # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
+  # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
+#  boundary-data:
+#    #needs: [toolkit, workdir, envs]
+#    needs: [toolkit, envs]
+#    runs-on: somisana
+#    env:
+#      #WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+#      GLOBAL_DIR: ${{ needs.envs.outputs.GLOBAL_DIR }}
+#      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+#      SHA: sha-${{ github.sha }}
+#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+#    steps:
+#      - name: Configure no. retries
+#        id: retries
+#        run: |
+#          if [ "$BRANCH_REF" = "stable" ]
+#          then
+#            echo "RETRIES=30" >> $GITHUB_OUTPUT
+#          else
+#            echo "RETRIES=1" >> $GITHUB_OUTPUT
+#          fi
+#      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
+#        continue-on-error: true # Maybe Node.js exists anyway
+#        run: |
+#          source ~/.bashrc
+#          nvm use 19.6.0
+#      - name: Download GFS
+#        uses: nick-fields/retry@master
+#        with:
+#          timeout_minutes: 30 # Script is considered failed if this limit is reached
+#          retry_wait_seconds: 300 # Wait 5 minutes and try again
+#          max_attempts: ${{ steps.retries.outputs.RETRIES }}
+#          retry_on: any
+#          warning_on_retry: true
+#          shell: bash
+#          continue_on_error: false
+#          on_retry_command: rm -f $WORKDIR/forcing-inputs/*grb*
+#          command: >-
+#            docker run \
+#              --rm \
+#              -v $WORKDIR/:/tmp/somisana/current \
+#              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+#              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+#              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+#                download \
+#                  --provider gfs \
+#                  --workdir /tmp/somisana/current/forcing-inputs \
+#                  --matlab-env /tmp/somisana/current/.env \
+#                  --download-date ${{ env.MODEL_RUN_DATE }} \
+#                  --domain 22,31,-37,-31
+#      - name: Download Mercator
+#        uses: nick-fields/retry@master
+#        with:
+#          timeout_minutes: 30 # Script is considered failed if this limit is reached
+#          retry_wait_seconds: 300 # Wait 5 minutes and try again
+#          max_attempts: ${{ steps.retries.outputs.RETRIES }}
+#          retry_on: any
+#          warning_on_retry: true
+#          shell: bash
+#          continue_on_error: false
+#          on_retry_command: rm -f $WORKDIR/forcing-inputs/*mercator*
+#          command: >-
+#            docker run \
+#              --rm \
+#              -v $WORKDIR/:/tmp/somisana/current \
+#              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+#              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+#              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+#                download \
+#                  --provider mercator \
+#                  --workdir /tmp/somisana/current/forcing-inputs \
+#                  --download-date ${{ env.MODEL_RUN_DATE }} \
+#                  --domain 22,31,-37,-31
+
+  # Create a tmp folder structure for mode run assets. The format is:
+  ## YYYYMMDD/
+  ##  - forcing-inputs/
+  ##  - croco/
+  ##     - forcing/
+  ##     - forecast/
+  ##     - scratch/
+# Commenting this for now as it depends on the model run - needs to be done in a loop 
+#  workdir:
+#    needs: [envs]
+#    runs-on: somisana
+#    outputs:
+#      WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
+#      WORKDIR_YESTERDAY: ${{ steps.WORKDIR.outputs.WORKDIR_YESTERDAY }}
+#    env:
+#      dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+#      dirname_yesterday: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
+#      branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
+#    steps:
+#      - name: Create /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} directory structure
+#        run: |
+#          rm -rf /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
+#          mkdir -p /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch},forcing-inputs}
+#          chown -R :runners /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
+#          chmod -R 774 /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
+#      - name: Set WORKDIRs
+#        id: WORKDIR
+#        run: |
+#          echo "WORKDIR=/home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
+#          echo "WORKDIR_YESTERDAY=/home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
+
+
+  # Cleanup old runs temp files
+  # this is commented for now as it needs to be based on the model run i.e. to be done inside a loop
+  # it will need to be extended so that the global data download dir is also cleaned 
+#  cleanup-old-run-temp-files:
+#    needs: [branch-ref]
+#    runs-on: somisana
+#    continue-on-error: true
+#    env:
+#      BRANCH: ${{ needs.branch-ref.outputs.value }}
+#    steps:
+#      - name: Clean /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH }}
+#        run: >-
+#          find \
+#            /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH }}/* \
+#            -maxdepth 0 \
+#            -type d \
+#            -ctime +5 \
+#            -exec \
+#              rm \
+#                -rf {} \; 
+       
+# Compile CROCO code for the model run
+# (haven't copied any code here yet as need to be done inside a loop)
+
