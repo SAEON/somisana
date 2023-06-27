@@ -12,11 +12,9 @@ const SelectLocale = ({ updateSetting, language, LANGUAGES }) => {
       query locales($languages: [Language!]) {
         locales(languages: $languages) {
           id
-          ... on Locale {
-            name
-            code
-            language
-          }
+          name
+          code
+          language
         }
       }
     `,

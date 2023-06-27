@@ -1,6 +1,5 @@
 export default {
   name: 'logs',
-  gqlType: 'Log',
   validator: {
     $jsonSchema: {
       bsonType: 'object',

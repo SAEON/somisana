@@ -1,6 +1,5 @@
 export default {
   name: 'locales',
-  gqlType: 'Locale',
   indices: [
     {
       index: 'language',
