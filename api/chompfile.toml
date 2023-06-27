@@ -1,0 +1,55 @@
+version = 0.1
+default-task = 'start'
+
+extensions = ['chomp@0.1:prettier']
+
+[[task]]
+name = 'start'
+env = { TZ = 'UTC', NODE_ENV = 'development' }
+deps = ["src/**/*.js"]
+run = """
+node \
+  --trace-warnings \
+  src
+"""
+
+
+[[task]]
+name = 'prettier'
+template = 'prettier'
+[task.template-options]
+ignore-path = '../.prettierignore'
+loglevel = 'warn'
+files = 'src/**/*.@(js|json|geojson|cjs|mjs|graphql)'
+
+
+[[task]]
+name = 'reset'
+deps = ['clear-cache', 'clear-jspm-cache']
+run = """
+rm -rf node_modules
+find . \
+  -name node_modules \
+  -type d \
+  -exec rm -rv {} + \
+    && find . \
+      -name package-lock.json \
+      -type f \
+      -delete
+"""
+
+[[task]]
+name = 'clear-cache'
+run = '''
+rimraf node.importmap
+rimraf .client
+rimraf .ssr
+'''
+
+[[task]]
+name = 'clear-jspm-cache'
+engine = 'node'
+run = """
+import { clearCache } from '@jspm/generator';
+clearCache();
+"""
