@@ -63,7 +63,7 @@ jobs:
           echo "MODEL_RUN_YEAR_MONTH=${{ steps.run_date.outputs.yyyymm }}" >> $GITHUB_OUTPUT
           echo "MODEL_RUN_YEAR=${{ steps.run_date.outputs.yyyy }}" >> $GITHUB_OUTPUT
           echo "RESTART_FILE_DATE=${{ steps.restart_date.outputs.value }}" >> $GITHUB_OUTPUT
-          echo "GLOBAL_DIR=/home/runner/somisana/global_data/${{ env.MODEL_RUN_DATE }}/${{ env.BRANCH_REF }}/" >> $GITHUB_OUTPUT # do we need to include the branch-ref in this directory? Think it would have been better to have BRANCH_REF/MODEL_RUN_DATE but putting it the other way round to be consistent with how the model directories were set up - too much hassle to change them
+          echo "GLOBAL_DIR=/home/runner/somisana/global_data/${{ steps.run_date.outputs.yyyymmdd }}/${{ needs.branch-ref.outputs.value }}/" >> $GITHUB_OUTPUT # do we need to include the branch-ref in this directory? Think it would have been better to have BRANCH_REF/MODEL_RUN_DATE but putting it the other way round to be consistent with how the model directories were set up - too much hassle to change them
 
   # The SOMISANA toolkit is a suite of scripts to facilitate
   # running SOMISANA models - for example the Algoa Bay Forecast.
