@@ -65,6 +65,14 @@
   border-radius: 4px;
   background-color: var(--dl-color-gray-white);
 }
+.content-header {
+  align-self: flex-start;
+  margin-bottom: var(--dl-space-space-fourunits);
+}
+.content-header-not-first-child {
+  align-self: flex-start;
+  margin-top: var(--dl-space-space-doubleunit);
+}
 .Section-Text {
   font-size: 18px;
   font-family: Open Sans;
@@ -125,3 +133,6 @@
   text-transform: none;
   text-decoration: none;
 }
+
+
+
