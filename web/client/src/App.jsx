@@ -1,7 +1,7 @@
 import { API_GQL } from './modules/config/env'
 import { ApolloProvider } from '@apollo/client'
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
-import {light} from './theme/mui'
+import { light } from './theme/mui'
 import { SnackbarProvider } from 'notistack'
 import { ThemeProvider } from '@mui/material/styles'
 import AuthenticationProvider from './modules/authentication'
@@ -13,6 +13,10 @@ import ApplicationLogger from './modules/application-logger'
 import LogAppRender from './modules/application-logger/app-render'
 import InteractionLogger from './modules/application-logger/interaction-logger'
 import { BrowserRouter as Router } from 'react-router-dom'
+import Background from './modules/background'
+import Div from './components/div'
+import Header from './header'
+import routes from './routes/config'
 
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache({}),
@@ -28,23 +32,27 @@ function App() {
       <ApolloProvider client={apolloClient}>
         <ThemeProvider theme={light}>
           <CssBaseline>
-            <ErrorBoundary>
-              <NativeExtensions>
-                <SnackbarProvider>
-                  <AuthenticationProvider>
-                    <ApplicationLogger>
-                      <LogAppRender>
-                        <InteractionLogger>
-                          <Router>
-                            <div>hi</div>
-                          </Router>
-                        </InteractionLogger>
-                      </LogAppRender>
-                    </ApplicationLogger>
-                  </AuthenticationProvider>
-                </SnackbarProvider>
-              </NativeExtensions>
-            </ErrorBoundary>
+            <Background>
+              <ErrorBoundary>
+                <NativeExtensions>
+                  <SnackbarProvider>
+                    <AuthenticationProvider>
+                      <ApplicationLogger>
+                        <LogAppRender>
+                          <InteractionLogger>
+                            <Router>
+                              <Header routes={routes}>
+                                <Div sx={{ display: 'flex', alignItems: 'center' }} />
+                              </Header>
+                            </Router>
+                          </InteractionLogger>
+                        </LogAppRender>
+                      </ApplicationLogger>
+                    </AuthenticationProvider>
+                  </SnackbarProvider>
+                </NativeExtensions>
+              </ErrorBoundary>
+            </Background>
           </CssBaseline>
         </ThemeProvider>
       </ApolloProvider>

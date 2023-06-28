@@ -4,9 +4,11 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.16",
+    "@arcgis/core": "^4.27.6",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@mdi/js": "^7.2.96",
     "@mui/material": "^5.13.6",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
