@@ -154,7 +154,7 @@ jobs:
         run: |
           source ~/.bashrc
           nvm use 19.6.0
-      - name: Create ${{ env.GLOBAL_DIR } directory 
+      - name: Create ${{ env.GLOBAL_DIR }} directory 
         run: |
           rm -rf ${{ env.GLOBAL_DIR }} 
           mkdir -p ${{ env.GLOBAL_DIR }} 
