@@ -69,7 +69,7 @@ jobs:
           echo "MODEL_RUN_YEAR_MONTH=${{ steps.run_date.outputs.yyyymm }}" >> $GITHUB_OUTPUT
           echo "MODEL_RUN_YEAR=${{ steps.run_date.outputs.yyyy }}" >> $GITHUB_OUTPUT
           echo "RESTART_FILE_DATE=${{ steps.restart_date.outputs.value }}" >> $GITHUB_OUTPUT
-          echo "GLOBAL_DIR=/home/runner/somisana/global_data/${{ steps.run_date.outputs.yyyymmdd }}/${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT # Think it would have been better to have BRANCH_REF/MODEL_RUN_DATE but putting it the other way round to be consistent with how the model directories were set up - too much hassle to change them
+          echo "GLOBAL_DIR=/home/runner/somisana/global_data/${{ steps.run_date.outputs.yyyymmdd }}/${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT # Think it would have been better to have $BRANCH_REF after somisana i.e. somisana/$BRANCH_REF but doing it this way to be consistent with how the model run directories were set up. Maybe we can change it later...
 
   # The SOMISANA toolkit is a suite of scripts to facilitate
   # running SOMISANA models - for example the Algoa Bay Forecast.
@@ -119,93 +119,133 @@ jobs:
           tags: |
             latest
             ${{ env.SHA }}
-      - name: Build and push
-        uses: docker/build-push-action@master
-        with:
-          context: toolkit
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+#      - name: Build and push
+#        uses: docker/build-push-action@master
+#        with:
+#          context: toolkit
+#          push: true
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
 
   # Download environmental data used to constrain model boundaries.
   # This job is retried if it fails, since the failure can be due to upstream errors
   # These downloads are used to create forcing files that are fed as input to the CROCO model
   # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
   # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
-  boundary-data:
+#  boundary-data:
+#    needs: [toolkit, envs]
+#    runs-on: somisana
+#    env:
+#      GLOBAL_DIR: ${{ needs.envs.outputs.GLOBAL_DIR }}
+#      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+#      SHA: sha-${{ github.sha }}
+#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+#    steps:
+#      - name: Configure no. retries
+#        id: retries
+#        run: |
+#          if [ "$BRANCH_REF" = "stable" ]
+#          then
+#            echo "RETRIES=30" >> $GITHUB_OUTPUT
+#          else
+#            echo "RETRIES=1" >> $GITHUB_OUTPUT
+#          fi
+#      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
+#        continue-on-error: true # Maybe Node.js exists anyway
+#        run: |
+#          source ~/.bashrc
+#          nvm use 19.6.0
+#      - name: Create ${{ env.GLOBAL_DIR }} directory 
+#        run: |
+#          rm -rf ${{ env.GLOBAL_DIR }} 
+#          mkdir -p ${{ env.GLOBAL_DIR }} 
+#          chown -R :runners ${{ env.GLOBAL_DIR }} 
+#          chmod -R 774 ${{ env.GLOBAL_DIR }} 
+#      - name: Download GFS
+#        uses: nick-fields/retry@master
+#        with:
+#          timeout_minutes: 30 # Script is considered failed if this limit is reached
+#          retry_wait_seconds: 300 # Wait 5 minutes and try again
+#          max_attempts: ${{ steps.retries.outputs.RETRIES }}
+#          retry_on: any
+#          warning_on_retry: true
+#          shell: bash
+#          continue_on_error: false
+#          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*grb*
+#          command: >-
+#            docker run \
+#              --rm \
+#              -v ${{ env.GLOBAL_DIR }}/:/tmp/ \
+#              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+#                download \
+#                  --provider gfs \
+#                  --workdir /tmp \
+#                  --matlab-env /tmp/.env \
+#                  --download-date ${{ env.MODEL_RUN_DATE }} \
+#                  --domain 22,31,-37,-31
+#      - name: Download Mercator
+#        uses: nick-fields/retry@master
+#        with:
+#          timeout_minutes: 30 # Script is considered failed if this limit is reached
+#          retry_wait_seconds: 300 # Wait 5 minutes and try again
+#          max_attempts: ${{ steps.retries.outputs.RETRIES }}
+#          retry_on: any
+#          warning_on_retry: true
+#          shell: bash
+#          continue_on_error: false
+#          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*mercator*
+#          command: >-
+#            docker run \
+#              --rm \
+#              -v ${{ env.GLOBAL_DIR }}/:/tmp/ \
+#              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+#              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+#              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+#                download \
+#                  --provider mercator \
+#                  --workdir /tmp \
+#                  --download-date ${{ env.MODEL_RUN_DATE }} \
+#                  --domain 22,31,-37,-31
+
+  loop_job:
     needs: [toolkit, envs]
     runs-on: somisana
     env:
       GLOBAL_DIR: ${{ needs.envs.outputs.GLOBAL_DIR }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      SHA: sha-${{ github.sha }}
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
-      - name: Configure no. retries
-        id: retries
+      - name: Loop through models
         run: |
-          if [ "$BRANCH_REF" = "stable" ]
-          then
-            echo "RETRIES=30" >> $GITHUB_OUTPUT
-          else
-            echo "RETRIES=1" >> $GITHUB_OUTPUT
-          fi
-      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
-        continue-on-error: true # Maybe Node.js exists anyway
-        run: |
-          source ~/.bashrc
-          nvm use 19.6.0
-      - name: Create ${{ env.GLOBAL_DIR }} directory 
-        run: |
-          rm -rf ${{ env.GLOBAL_DIR }} 
-          mkdir -p ${{ env.GLOBAL_DIR }} 
-          chown -R :runners ${{ env.GLOBAL_DIR }} 
-          chmod -R 774 ${{ env.GLOBAL_DIR }} 
-      - name: Download GFS
-        uses: nick-fields/retry@master
-        with:
-          timeout_minutes: 30 # Script is considered failed if this limit is reached
-          retry_wait_seconds: 300 # Wait 5 minutes and try again
-          max_attempts: ${{ steps.retries.outputs.RETRIES }}
-          retry_on: any
-          warning_on_retry: true
-          shell: bash
-          continue_on_error: false
-          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*grb*
-          command: >-
-            docker run \
-              --rm \
-              -v ${{ env.GLOBAL_DIR }}/:/tmp/ \
-              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-                download \
-                  --provider gfs \
-                  --workdir /tmp \
-                  --matlab-env /tmp/.env \
-                  --download-date ${{ env.MODEL_RUN_DATE }} \
-                  --domain 22,31,-37,-31
-      - name: Download Mercator
-        uses: nick-fields/retry@master
-        with:
-          timeout_minutes: 30 # Script is considered failed if this limit is reached
-          retry_wait_seconds: 300 # Wait 5 minutes and try again
-          max_attempts: ${{ steps.retries.outputs.RETRIES }}
-          retry_on: any
-          warning_on_retry: true
-          shell: bash
-          continue_on_error: false
-          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*mercator*
-          command: >-
-            docker run \
-              --rm \
-              -v ${{ env.GLOBAL_DIR }}/:/tmp/ \
-              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
-              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-                download \
-                  --provider mercator \
-                  --workdir /tmp \
-                  --download-date ${{ env.MODEL_RUN_DATE }} \
-                  --domain 22,31,-37,-31
+          models=("algoa-bay-forecast") # "false-bay-forecast")  # Define the models to loop through
+          for model in "${models[@]}"; do
+            echo "Processing $model"
+            # Define the jobs to run for each model
+            echo "::set-env name=MODEL::$model"
+            env:
+              MODEL: ${{ model }}
+            jobs:
+              job1:
+                needs: []
+                runs-on: somisana
+                steps:
+                  - name: Job 1 for ${{ env.MODEL }}
+                    run: |
+                      echo "Running Job 1 for $MODEL"
+                      # Add your desired actions or commands for Job 1
+
+              job2:
+                needs: []
+                runs-on: somisana
+                steps:
+                  - name: Job 2 for ${{ env.MODEL }}
+                    run: |
+                      echo "Running Job 2 for $MODEL"
+                      # Add your desired actions or commands for Job 2
+
+              # Add more jobs as needed
+
+          done
 
   # Create a tmp folder structure for mode run assets. The format is:
   ## YYYYMMDD/
