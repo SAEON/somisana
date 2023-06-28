@@ -10,6 +10,9 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  # how do we get this from secrets??
+  #COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
+  #COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
   COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
   COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
   MLM_LICENSE_FILE: ${{ secrets.MLM_LICENSE_FILE }}
@@ -197,8 +200,8 @@ jobs:
             docker run \
               --rm \
               -v ${{ env.GLOBAL_DIR }}/:/tmp/ \
-              -e COPERNICUS_USERNAME=gfearon \
-              -e COPERNICUS_PASSWORD=Isabella_2015 \
+              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
               ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
                 download \
                   --provider mercator \
