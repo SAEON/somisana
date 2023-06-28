@@ -172,7 +172,7 @@ jobs:
           continue_on_error: false
           on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*grb*
           command: >-
-            echo " docker run --rm -v ${{ env.GLOBAL_DIR }}/:/tmp/ ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} download --provider gfs --workdir /tmp --matlab-env /tmp/.env --download-date ${{ env.MODEL_RUN_DATE }} --domain 22,31,-37,-31"
+            #echo " docker run --rm -v ${{ env.GLOBAL_DIR }}/:/tmp/ ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} download --provider gfs --workdir /tmp --matlab-env /tmp/.env --download-date ${{ env.MODEL_RUN_DATE }} --domain 22,31,-37,-31"
             docker run --rm -v ${{ env.GLOBAL_DIR }}/:/tmp/ ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} download --provider gfs --workdir /tmp --matlab-env /tmp/.env --download-date ${{ env.MODEL_RUN_DATE }} --domain 22,31,-37,-31
 #            docker run \
 #              --rm \
