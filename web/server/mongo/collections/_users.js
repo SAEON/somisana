@@ -1,6 +1,5 @@
 export default {
   name: 'users',
-  gqlType: 'User',
   validator: {
     $jsonSchema: {
       bsonType: 'object',

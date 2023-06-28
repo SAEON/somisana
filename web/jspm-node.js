@@ -13,9 +13,9 @@ const generator = new Generator({
   defaultProvider: 'jspm.io',
   ignore: [
     '@graphql-tools/merge',
-    'apollo-server-core',
-    'apollo-server-koa',
-    'apollo-server-plugin-response-cache',
+    '@apollo/server',
+    '@apollo/server-plugin-response-cache',
+    '@apollo/server-plugin-landing-page-graphql-playground',
     'cacache',
     'dataloader',
     'graphql',

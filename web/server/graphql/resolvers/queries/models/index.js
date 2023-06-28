@@ -21,8 +21,7 @@ export default async (self, { id = undefined }, ctx) => {
           m.grid_width, 
           m.grid_height, 
           st_asgeojson(m.convexhull) convexhull, 
-          st_asgeojson(m.envelope) envelope, 
-          'Model' "_gqlType", 
+          st_asgeojson(m.envelope) envelope,
           ( select 
               json_agg(t_runs) 
             from 

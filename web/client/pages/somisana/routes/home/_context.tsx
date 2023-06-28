@@ -10,14 +10,12 @@ export default ({ children }) => {
     gql`
       query models {
         models {
-          ... on Model {
-            id
-            _id
-            title
-            description
-            creator
-            creatorContactEmail
-          }
+          id
+          _id
+          title
+          description
+          creator
+          creatorContactEmail
         }
       }
     `
