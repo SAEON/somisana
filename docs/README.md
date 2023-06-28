@@ -1,7 +1,7 @@
 # SOMISANA
 Sustainable Ocean Modelling Initiative: A South African Approach
 
-## Heading 1
+## News
 Some content
 
 ## Heading 2
