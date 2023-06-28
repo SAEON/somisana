@@ -75,56 +75,56 @@ jobs:
   # In the context of a testing environment, where updates to these
   # scripts is part of the development workflow, the toolkit needs
   # to be compiled on every run
-  toolkit:
-    needs: [envs]
-    runs-on: ubuntu-latest
-    env:
-      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
-      SHA: sha-${{ github.sha }}
-    outputs:
-      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
-    steps:
-      - name: Get image name lowercase
-        id: 'lowercase'
-        run: |
-          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
-          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
-      - name: Check out source code
-        uses: actions/checkout@master
-        with:
-          ref: ${{ env.BRANCH_REF }}
-      - name: Log in to the Container registry
-        uses: docker/login-action@master
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check if image with sha tag already exists
-        id: check-image
-        run: |
-          set -e
-          SHA_IMAGE=$(docker images -q ${REGISTRY}/${{ steps.lowercase.outputs.image_name }}:${SHA} || true)
-          if [ -z "$SHA_IMAGE" ]; then
-            echo "image_exists=false" >> $GITHUB_OUTPUT
-          else
-            echo "image_exists=true" >> $GITHUB_OUTPUT
-          fi
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@master
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
-          tags: |
-            latest
-            ${{ env.SHA }}
-      - name: Build and push
-        uses: docker/build-push-action@master
-        with:
-          context: toolkit
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+#  toolkit:
+#    needs: [envs]
+#    runs-on: ubuntu-latest
+#    env:
+#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+#      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
+#      SHA: sha-${{ github.sha }}
+#    outputs:
+#      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
+#    steps:
+#      - name: Get image name lowercase
+#        id: 'lowercase'
+#        run: |
+#          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
+#          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
+#      - name: Check out source code
+#        uses: actions/checkout@master
+#        with:
+#          ref: ${{ env.BRANCH_REF }}
+#      - name: Log in to the Container registry
+#        uses: docker/login-action@master
+#        with:
+#          registry: ${{ env.REGISTRY }}
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Check if image with sha tag already exists
+#        id: check-image
+#        run: |
+#          set -e
+#          SHA_IMAGE=$(docker images -q ${REGISTRY}/${{ steps.lowercase.outputs.image_name }}:${SHA} || true)
+#          if [ -z "$SHA_IMAGE" ]; then
+#            echo "image_exists=false" >> $GITHUB_OUTPUT
+#          else
+#            echo "image_exists=true" >> $GITHUB_OUTPUT
+#          fi
+#      - name: Extract metadata (tags, labels) for Docker
+#        id: meta
+#        uses: docker/metadata-action@master
+#        with:
+#          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
+#          tags: |
+#            latest
+#            ${{ env.SHA }}
+#      - name: Build and push
+#        uses: docker/build-push-action@master
+#        with:
+#          context: toolkit
+#          push: true
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
 
   # Download environmental data used to constrain model boundaries.
   # This job is retried if it fails, since the failure can be due to upstream errors
@@ -154,12 +154,12 @@ jobs:
         run: |
           source ~/.bashrc
           nvm use 19.6.0
-      - name: Create $GLOBAL_DIR directory 
+      - name: Create ${{ env.GLOBAL_DIR } directory 
         run: |
-          rm -rf $GLOBAL_DIR 
-          mkdir -p $GLOBAL_DIR 
-          chown -R :runners $GLOBAL_DIR 
-          chmod -R 774 $GLOBAL_DIR 
+          rm -rf ${{ env.GLOBAL_DIR }} 
+          mkdir -p ${{ env.GLOBAL_DIR }} 
+          chown -R :runners ${{ env.GLOBAL_DIR }} 
+          chmod -R 774 ${{ env.GLOBAL_DIR }} 
       - name: Download GFS
         uses: nick-fields/retry@master
         with:
@@ -170,11 +170,11 @@ jobs:
           warning_on_retry: true
           shell: bash
           continue_on_error: false
-          on_retry_command: rm -f $GLOBAL_DIR/*grb*
+          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*grb*
           command: >-
             docker run \
               --rm \
-              -v $GLOBAL_DIR/:/tmp/ \ 
+              -v ${{ env.GLOBAL_DIR }}/:/tmp/ \ 
               -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
               ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
@@ -194,11 +194,11 @@ jobs:
           warning_on_retry: true
           shell: bash
           continue_on_error: false
-          on_retry_command: rm -f $GLOBAL_DIR/*mercator*
+          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*mercator*
           command: >-
             docker run \
               --rm \
-              -v $GLOBAL_DIR/:/tmp/ \
+              -v ${{ env.GLOBAL_DIR }}/:/tmp/ \
               -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
               -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
               ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
