@@ -13,7 +13,6 @@ run = '''
 name = 'doc'
 run = '''
   doctoc *.md
-  doctoc **/*.md
   doctoc toolkit/*.md
   doctoc models/**/*.md
   doctoc models/**/**/*.md
