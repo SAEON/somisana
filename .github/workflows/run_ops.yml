@@ -76,49 +76,49 @@ jobs:
   # In the context of a testing environment, where updates to these
   # scripts is part of the development workflow, the toolkit needs
   # to be compiled on every run
-  toolkit:
-    needs: [envs]
-    runs-on: ubuntu-latest
-    env:
-      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
-      SHA: sha-${{ github.sha }}
-    outputs:
-      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
-    steps:
-      - name: Get image name lowercase
-        id: 'lowercase'
-        run: |
-          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
-          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
-      - name: Check out source code
-        uses: actions/checkout@master
-        with:
-          ref: ${{ env.BRANCH_REF }}
-      - name: Log in to the Container registry
-        uses: docker/login-action@master
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check if image with sha tag already exists
-        id: check-image
-        run: |
-          set -e
-          SHA_IMAGE=$(docker images -q ${REGISTRY}/${{ steps.lowercase.outputs.image_name }}:${SHA} || true)
-          if [ -z "$SHA_IMAGE" ]; then
-            echo "image_exists=false" >> $GITHUB_OUTPUT
-          else
-            echo "image_exists=true" >> $GITHUB_OUTPUT
-          fi
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@master
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
-          tags: |
-            latest
-            ${{ env.SHA }}
+#  toolkit:
+#    needs: [envs]
+#    runs-on: ubuntu-latest
+#    env:
+#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+#      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
+#      SHA: sha-${{ github.sha }}
+#    outputs:
+#      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
+#    steps:
+#      - name: Get image name lowercase
+#        id: 'lowercase'
+#        run: |
+#          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
+#          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
+#      - name: Check out source code
+#        uses: actions/checkout@master
+#        with:
+#          ref: ${{ env.BRANCH_REF }}
+#      - name: Log in to the Container registry
+#        uses: docker/login-action@master
+#        with:
+#          registry: ${{ env.REGISTRY }}
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Check if image with sha tag already exists
+#        id: check-image
+#        run: |
+#          set -e
+#          SHA_IMAGE=$(docker images -q ${REGISTRY}/${{ steps.lowercase.outputs.image_name }}:${SHA} || true)
+#          if [ -z "$SHA_IMAGE" ]; then
+#            echo "image_exists=false" >> $GITHUB_OUTPUT
+#          else
+#            echo "image_exists=true" >> $GITHUB_OUTPUT
+#          fi
+#      - name: Extract metadata (tags, labels) for Docker
+#        id: meta
+#        uses: docker/metadata-action@master
+#        with:
+#          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
+#          tags: |
+#            latest
+#            ${{ env.SHA }}
 #      - name: Build and push
 #        uses: docker/build-push-action@master
 #        with:
@@ -207,45 +207,6 @@ jobs:
 #                  --download-date ${{ env.MODEL_RUN_DATE }} \
 #                  --domain 22,31,-37,-31
 
-  loop_job:
-    needs: [toolkit, envs]
-    runs-on: somisana
-    env:
-      GLOBAL_DIR: ${{ needs.envs.outputs.GLOBAL_DIR }}
-      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-    steps:
-      - name: Loop through models
-        run: |
-          models=("algoa-bay-forecast") # "false-bay-forecast")  # Define the models to loop through
-          for model in "${models[@]}"; do
-            echo "Processing $model"
-            # Define the jobs to run for each model
-            echo "::set-env name=MODEL::$model"
-            env:
-              MODEL: ${{ model }}
-            jobs:
-              job1:
-                needs: []
-                runs-on: somisana
-                steps:
-                  - name: Job 1 for ${{ env.MODEL }}
-                    run: |
-                      echo "Running Job 1 for $MODEL"
-                      # Add your desired actions or commands for Job 1
-
-              job2:
-                needs: []
-                runs-on: somisana
-                steps:
-                  - name: Job 2 for ${{ env.MODEL }}
-                    run: |
-                      echo "Running Job 2 for $MODEL"
-                      # Add your desired actions or commands for Job 2
-
-              # Add more jobs as needed
-
-          done
 
   # Create a tmp folder structure for mode run assets. The format is:
   ## YYYYMMDD/
@@ -254,29 +215,31 @@ jobs:
   ##     - forcing/
   ##     - forecast/
   ##     - scratch/
-# Commenting this for now as it depends on the model run - needs to be done in a loop 
-#  workdir:
-#    needs: [envs]
-#    runs-on: somisana
-#    outputs:
-#      WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
-#      WORKDIR_YESTERDAY: ${{ steps.WORKDIR.outputs.WORKDIR_YESTERDAY }}
-#    env:
-#      dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-#      dirname_yesterday: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
-#      branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
-#    steps:
-#      - name: Create /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} directory structure
-#        run: |
-#          rm -rf /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
-#          mkdir -p /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch},forcing-inputs}
-#          chown -R :runners /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
-#          chmod -R 774 /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
-#      - name: Set WORKDIRs
-#        id: WORKDIR
-#        run: |
-#          echo "WORKDIR=/home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
-#          echo "WORKDIR_YESTERDAY=/home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
+  workdir:
+    needs: [envs]
+    runs-on: somisana
+    strategy:
+      matrix:
+        model_name: ["algoa-bay-forecast", "false-bay-forecast"]
+    outputs:
+      WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
+      WORKDIR_YESTERDAY: ${{ steps.WORKDIR.outputs.WORKDIR_YESTERDAY }}
+    env:
+      dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      dirname_yesterday: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
+      branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
+    steps:
+      - name: Create /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }} directory structure
+        run: |
+          rm -rf /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}
+          mkdir -p /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch}}
+          chown -R :runners /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}
+          chmod -R 774 /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}
+      - name: Set WORKDIRs
+        id: WORKDIR
+        run: |
+          echo "WORKDIR=/home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
+          echo "WORKDIR_YESTERDAY=/home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
 
 
   # Cleanup old runs temp files

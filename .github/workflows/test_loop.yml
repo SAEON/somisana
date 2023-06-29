@@ -7,7 +7,7 @@ jobs:
   main_job:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 1
+      max-parallel: 1 # make sure the jobs are run in series (I presume the model will still be able to run in parallel?)
       matrix:
         input_string: ["string1", "string2", "string3"]
 
