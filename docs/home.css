@@ -219,8 +219,12 @@
 .home-text03 {
   color: #ffffff;
 }
+.home-link4 {
+  display: contents;
+}
 .home-text05 {
   text-transform: uppercase;
+  text-decoration: none;
 }
 .home-text06 {
   color: #ffffff;
@@ -326,7 +330,7 @@
   text-align: center;
   margin-bottom: var(--dl-space-space-fourunits);
 }
-.home-link4 {
+.home-link5 {
   color: var(--dl-color-gray-white);
   width: 80%;
   align-self: center;
@@ -338,7 +342,7 @@
   text-decoration: none;
   background-color: var(--dl-color-primary-100);
 }
-.home-link5 {
+.home-link6 {
   display: contents;
 }
 .home-service-card1 {
@@ -603,7 +607,7 @@
   flex-direction: row;
   justify-content: space-between;
 }
-.home-link6 {
+.home-link7 {
   display: contents;
 }
 .home-testimonial-card {
@@ -753,7 +757,7 @@
   width: 24px;
   height: 24px;
 }
-.home-link7 {
+.home-link8 {
   display: contents;
 }
 .home-image4 {
@@ -766,17 +770,22 @@
     height: 100%;
   }
   .home-text05 {
-    background-color: rgb(50, 45, 236);
+    text-transform: uppercase;
   }
   .home-text06 {
     color: #f9f8f8;
     font-size: 14px;
     text-transform: lowercase;
+    background-color: inherit;
   }
   .home-text07 {
     color: #f9f8f8;
     font-size: 14px;
     text-transform: lowercase;
+    background-color: inherit;
+  }
+  .home-text08 {
+    background-color: rgb(50, 45, 236);
   }
   .home-text36 {
     color: var(--dl-color-primary-700);
