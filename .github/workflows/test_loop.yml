@@ -9,6 +9,8 @@ jobs:
     strategy:
       matrix:
         input_string: ["string1", "string2", "string3"]
+    concurrency:
+      group: ${{ github.run_id }}
 
     steps:
       - name: Clone repository
