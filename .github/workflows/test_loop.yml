@@ -21,12 +21,12 @@ jobs:
             echo "ITEM=$item" >> $GITHUB_ENV
 
             # Run the jobs for each item
-            - name: Job 1 for ${{ env.ITEM }}
+            name: Job 1 for ${{ env.ITEM }}
               run: |
                 echo "Running Job 1 for $ITEM"
                 # Add your desired actions or commands for Job 1
 
-            - name: Job 2 for ${{ env.ITEM }}
+            name: Job 2 for ${{ env.ITEM }}
               run: |
                 echo "Running Job 2 for $ITEM"
                 # Add your desired actions or commands for Job 2
