@@ -232,7 +232,7 @@ jobs:
       - name: Create /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }} directory structure
         run: |
           rm -rf /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}
-          mkdir -p /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch}}
+          mkdir -p /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}/croco/{forcing,forecast,scratch}
           chown -R :runners /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}
           chmod -R 774 /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}
       - name: Set WORKDIRs
