@@ -1,24 +1,3 @@
-#name: Loop Job Example
-#
-#on:
-#  workflow_dispatch:
-#
-#jobs:
-#  loop_job:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Clone repository
-#        uses: actions/checkout@master
-#
-#      - name: Loop through items
-#        run: |
-#          items=("item1" "item2" "item3")  # Define the items to loop through
-#          for item in "${items[@]}"; do
-#            echo "Processing $item"
-#            # Add your desired actions or commands here for each item in the loop
-#          done
-
 name: Loop Jobs Example
 
 on:
@@ -37,6 +16,7 @@ jobs:
           items=("item1" "item2" "item3")  # Define the items to loop through
           for item in "${items[@]}"; do
             echo "Processing $item"
+          done
             # Define the jobs to run for each item
 #            echo "::set-env name=ITEM::$item"
 #            env:
@@ -62,6 +42,27 @@ jobs:
 
               # Add more jobs as needed
 
-          done
+          #done
 
+
+#name: Loop Job Example
+#
+#on:
+#  workflow_dispatch:
+#
+#jobs:
+#  loop_job:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Clone repository
+#        uses: actions/checkout@master
+#
+#      - name: Loop through items
+#        run: |
+#          items=("item1" "item2" "item3")  # Define the items to loop through
+#          for item in "${items[@]}"; do
+#            echo "Processing $item"
+#            # Add your desired actions or commands here for each item in the loop
+#          done
 
