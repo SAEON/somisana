@@ -1,4 +1,4 @@
-name: Loop Jobs Example
+name: Loop Job Example
 
 on:
   workflow_dispatch:
@@ -8,39 +8,61 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source code
+      - name: Clone repository
         uses: actions/checkout@master
-      #- name: Clone repository
-      #  uses: actions/checkout@v2
 
       - name: Loop through items
         run: |
           items=("item1" "item2" "item3")  # Define the items to loop through
           for item in "${items[@]}"; do
             echo "Processing $item"
-            # Define the jobs to run for each item
-            echo "::set-env name=ITEM::$item"
-            env:
-              ITEM: ${{ item }}
-            jobs:
-              job1:
-                needs: []
-                runs-on: ubuntu-latest
-                steps:
-                  - name: Job 1 for ${{ env.ITEM }}
-                    run: |
-                      echo "Running Job 1 for $ITEM"
-                      # Add your desired actions or commands for Job 1
-
-              job2:
-                needs: []
-                runs-on: ubuntu-latest
-                steps:
-                  - name: Job 2 for ${{ env.ITEM }}
-                    run: |
-                      echo "Running Job 2 for $ITEM"
-                      # Add your desired actions or commands for Job 2
-
-              # Add more jobs as needed
-
+            # Add your desired actions or commands here for each item in the loop
           done
+
+
+#name: Loop Jobs Example
+#
+#on:
+#  workflow_dispatch:
+#
+#jobs:
+#  loop_job:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout source code
+#        uses: actions/checkout@master
+#      #- name: Clone repository
+#      #  uses: actions/checkout@v2
+#
+#      - name: Loop through items
+#        run: |
+#          items=("item1" "item2" "item3")  # Define the items to loop through
+#          for item in "${items[@]}"; do
+#            echo "Processing $item"
+#            # Define the jobs to run for each item
+#            echo "::set-env name=ITEM::$item"
+#            env:
+#              ITEM: ${{ item }}
+#            jobs:
+#              job1:
+#                needs: []
+#                runs-on: ubuntu-latest
+#                steps:
+#                  - name: Job 1 for ${{ env.ITEM }}
+#                    run: |
+#                      echo "Running Job 1 for $ITEM"
+#                      # Add your desired actions or commands for Job 1
+#
+#              job2:
+#                needs: []
+#                runs-on: ubuntu-latest
+#                steps:
+#                  - name: Job 2 for ${{ env.ITEM }}
+#                    run: |
+#                      echo "Running Job 2 for $ITEM"
+#                      # Add your desired actions or commands for Job 2
+#
+#              # Add more jobs as needed
+#
+#          done
