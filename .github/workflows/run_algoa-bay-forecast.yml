@@ -525,7 +525,7 @@ jobs:
   # Load raster data into postgis using raster2pgsql
   load-postgis:
     needs: [post-processing, branch-ref, toolkit, envs, workdir]
-    runs-on: croco
+    runs-on: postgres
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
