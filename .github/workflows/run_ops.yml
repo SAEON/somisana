@@ -228,6 +228,7 @@ jobs:
       dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
       dirname_yesterday: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
       branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
+      workdir_test: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.MODEL_RUN_DATE }}
     steps:
       - name: Create /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }} directory structure
         run: |
@@ -238,7 +239,8 @@ jobs:
       - name: Set WORKDIRs
         id: WORKDIR
         run: |
-          echo "WORKDIR=/home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
+          # echo "WORKDIR=/home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
+          echo "WORKDIR=${{ env.workdir_test }}" >> $GITHUB_OUTPUT
           echo "WORKDIR_YESTERDAY=/home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
 
 
