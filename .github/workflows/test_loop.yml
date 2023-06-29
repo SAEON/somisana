@@ -31,22 +31,22 @@ jobs:
             #
             # does this break anything?
             # 
-            # jobs:
-            #   job1:
-            #     needs: []
-            #     runs-on: ubuntu-latest
-            #     steps:
-            #       - name: Job 1 for $item
-            #         run: |
-            #           echo "Running Job 1 for $item"
-            #           # Add your desired actions or commands for Job 1
-            #
-            #   job2:
-            #     needs: []
-            #     runs-on: ubuntu-latest
-            #     steps:
-            #       - name: Job 2 for $item
-            #         run: |
-            #           echo "Running Job 2 for $item"
-            #           # Add your desired actions or commands for Job 2
+            jobs:
+              job1:
+                needs: []
+                runs-on: ubuntu-latest
+                steps:
+                  - name: Job 1 for $item
+                    run: |
+                      echo "Running Job 1 for $item"
+                      # Add your desired actions or commands for Job 1
+            
+              job2:
+                needs: []
+                runs-on: ubuntu-latest
+                steps:
+                  - name: Job 2 for $item
+                    run: |
+                      echo "Running Job 2 for $item"
+                      # Add your desired actions or commands for Job 2
           done
