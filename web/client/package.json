@@ -13,19 +13,30 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
+    "d3": "^7.8.5",
+    "d3-contour": "^4.0.2",
     "date-fns": "^2.30.0",
+    "maplibre-gl": "^3.1.0",
+    "ncp": "^2.0.0",
     "notistack": "^3.0.1",
     "react": "^18.2.0",
+    "react-data-grid": "^7.0.0-beta.34",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
+    "react-draggable": "^4.4.5",
+    "react-markdown": "^8.0.7",
     "react-router-dom": "^6.14.0",
     "react-scripts": "5.0.1",
+    "twgl.js": "^5.3.1",
     "web-vitals": "^3.3.2"
   },
   "scripts": {
-    "start": "PORT=3001 react-scripts start",
-    "build": "react-scripts build",
+    "start": "npm run copy && PORT=3001 react-scripts start",
+    "build": "npm run copy && react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "copy": "ncp ./node_modules/@arcgis/core/assets ./public/assets"
   },
   "eslintConfig": {
     "extends": [

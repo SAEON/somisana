@@ -1,9 +1,9 @@
 import { lazy, Suspense } from 'react'
-import { Linear as Loading } from '../../../../components/loading'
+import { Linear as Loading } from '../../components/loading'
 import { useParams } from 'react-router-dom'
-import Div from '../../../../components/div'
+import Div from '../../components/div'
 
-const Forecast = lazy(() => import('../../../forecast/render/index'))
+const Forecast = lazy(() => import('../forecast'))
 
 export default () => {
   const { id } = useParams()

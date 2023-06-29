@@ -39,7 +39,7 @@ export default () => {
           ],
         },
       }),
-    []
+    [TILESERV_BASE_URL, theme.palette.success.main]
   )
 
   map.add(layer)

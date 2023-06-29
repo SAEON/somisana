@@ -16,7 +16,11 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import Background from './modules/background'
 import Div from './components/div'
 import Header from './header'
+import Footer from './modules/footer'
 import routes from './routes/config'
+import RouteSwitcher from './modules/layout/route-switcher'
+import esriConfig from "@arcgis/core/config.js";
+esriConfig.assetsPath = "./assets";
 
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache({}),
@@ -44,6 +48,8 @@ function App() {
                               <Header routes={routes}>
                                 <Div sx={{ display: 'flex', alignItems: 'center' }} />
                               </Header>
+                              <RouteSwitcher routes={routes} />
+                              <Footer routes={routes} />
                             </Router>
                           </InteractionLogger>
                         </LogAppRender>

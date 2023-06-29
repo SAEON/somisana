@@ -52,7 +52,7 @@ export default ({ models }) => {
           )
         ),
       }),
-    []
+    [models, theme.palette.primary.dark]
   )
 
   map.add(layer)

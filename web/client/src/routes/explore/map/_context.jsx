@@ -23,7 +23,7 @@ export default ({ children }) => {
         basemap: ESRI_BASEMAP,
         layers: [],
       }),
-    []
+    [ESRI_BASEMAP]
   )
 
   const view = useMemo(

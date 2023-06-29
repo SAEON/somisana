@@ -1,6 +1,6 @@
 import { useContext, createContext } from 'react'
 import { gql, useQuery } from '@apollo/client'
-import { context as configContext } from '../../../../modules/config'
+import { context as configContext } from '../../modules/config'
 
 export const context = createContext({})
 

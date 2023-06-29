@@ -8,7 +8,7 @@ export default () => {
   // Client only
   useEffect(() => {
     setHref(`http://localhost:3000/http/login?redirect=${window.location.href}`)
-  })
+  }, [setHref])
 
   return (
     <Typography href={href} component={Link} sx={{ margin: theme => `0 ${theme.spacing(1)}` }}>

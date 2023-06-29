@@ -1,7 +1,6 @@
 import Typography from '@mui/material/Typography'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import { Link, useLocation } from 'react-router-dom'
-import MuiIcon from '@mui/material/Icon'
 import MuiLink from '@mui/material/Link'
 import Span from '../../../components/span'
 

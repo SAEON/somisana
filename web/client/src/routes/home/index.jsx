@@ -1,6 +1,6 @@
 import { useRef, memo } from 'react'
 import Title from './title'
-import Div from '../../../../components/div'
+import Div from  '../../components/div'
 import { alpha } from '@mui/system/colorManipulator'
 import ForecastModels from './forecast-models'
 import ModelsProvider from './_context'

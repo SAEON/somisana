@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
-import debounce from '../../../../lib/debounce'
-import ScrollButton from '../../../../components/fancy-buttons/scroll-button'
+import debounce from '../../lib/debounce'
+import ScrollButton from '../../components/fancy-buttons/scroll-button'
 import Fade from '@mui/material/Fade'
-import Div from '../../../../components/div'
+import Div from '../../components/div'
 
 export default ({ contentRef }) => {
   const [pageScrolled, setPageScrolled] = useState(false)
 
   const onScroll = debounce(() => {
     const _pageScrolled = window.scrollY > 0
-    if (pageScrolled != _pageScrolled) {
+    if (pageScrolled !== _pageScrolled) {
       setPageScrolled(_pageScrolled)
     }
   })

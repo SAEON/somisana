@@ -1,8 +1,8 @@
 import { useContext } from 'react'
 import { context as homeContext } from '../_context'
-import ImageButton from '../../../../../components/fancy-buttons/image-button'
-import Div from '../../../../../components/div'
-import { Circular as Loading } from '../../../../../components/loading'
+import ImageButton from '../../../components/fancy-buttons/image-button'
+import Div from '../../../components/div'
+import { Circular as Loading } from '../../../components/loading'
 import Fade from '@mui/material/Fade'
 
 const imageUrls = {
@@ -11,7 +11,7 @@ const imageUrls = {
 }
 
 export default () => {
-  const { loading, data } = useContext(homeContext)
+  const {  data } = useContext(homeContext)
   const models = data?.models || []
 
   return (
