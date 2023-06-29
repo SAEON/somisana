@@ -18,7 +18,7 @@ jobs:
             echo "Processing $item"
             # Add your desired actions or commands here for each item in the loop
             env:
-              ITEM: ${{ item }}
+              ITEM: $item
             jobs:
               job1:
                 needs: []
