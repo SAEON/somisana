@@ -5,14 +5,18 @@ on:
 
 jobs:
   loop_job:
-    runs-on: somisana
+    runs-on: ubuntu-latest
 
     steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+
       - name: Loop through items
         run: |
           items=("item1" "item2" "item3")  # Define the items to loop through
           for item in "${items[@]}"; do
             echo "Processing $item"
+            
             # Set environment variable for current item
             echo "ITEM=$item" >> $GITHUB_ENV
 
@@ -37,4 +41,7 @@ jobs:
                       # Add your desired actions or commands for Job 2
 
               # Add more jobs as needed
+
           done
+
+
