@@ -208,40 +208,29 @@ jobs:
 #                  --domain 22,31,-37,-31
 
 
-  # Create a tmp folder structure for mode run assets. The format is:
-  ## YYYYMMDD/
-  ##  - forcing-inputs/
-  ##  - croco/
-  ##     - forcing/
-  ##     - forecast/
-  ##     - scratch/
-  workdir:
+  run_models:
     needs: [envs]
     runs-on: somisana
     strategy:
       matrix:
         model_name: ["algoa-bay-forecast", "false-bay-forecast"]
-    outputs:
-      WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
-      WORKDIR_YESTERDAY: ${{ steps.WORKDIR.outputs.WORKDIR_YESTERDAY }}
     env:
-      dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      dirname_yesterday: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
-      branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
-      workdir_test: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+      WORKDIR: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      WORKDIR_YESTERDAY: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/$${{ needs.envs.outputs.RESTART_FILE_DATE }}
     steps:
-      - name: Create /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }} directory structure
+      - name: Create ${{ env.WORKDIR }} directory structure
+      # Create a tmp folder structure for mode run assets. The format is:
+      ## YYYYMMDD/
+      ##  - croco/
+      ##     - forcing/
+      ##     - forecast/
+      ##     - scratch/
         run: |
-          rm -rf /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}
-          mkdir -p /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}/croco/{forcing,forecast,scratch}
-          chown -R :runners /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}
-          chmod -R 774 /home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}
-      - name: Set WORKDIRs
-        id: WORKDIR
-        run: |
-          # echo "WORKDIR=/home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
-          echo "WORKDIR=${{ env.workdir_test }}" >> $GITHUB_OUTPUT
-          echo "WORKDIR_YESTERDAY=/home/runner/somisana/${{ matrix.model_name }}/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
+          rm -rf ${{ env.WORKDIR }}
+          mkdir -p ${{ env.WORKDIR }}/croco/{forcing,forecast,scratch}
+          chown -R :runners ${{ env.WORKDIR }}
+          chmod -R 774 ${{ env.WORKDIR }}
 
 
   # Cleanup old runs temp files
