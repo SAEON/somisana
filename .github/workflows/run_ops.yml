@@ -35,6 +35,7 @@ jobs:
     needs: [branch-ref]
     runs-on: ubuntu-latest
     env:
+      # why do we need three of these when they are all the same?
       R1: ${{ inputs.run_date }}
       R2: ${{ inputs.run_date }}
       R3: ${{ inputs.run_date }}
@@ -127,12 +128,12 @@ jobs:
 #          tags: ${{ steps.meta.outputs.tags }}
 #          labels: ${{ steps.meta.outputs.labels }}
 
-  # Download environmental data used to constrain model boundaries.
+  # Download environmental data used for model boundaries and surface forcing.
   # This job is retried if it fails, since the failure can be due to upstream errors
   # These downloads are used to create forcing files that are fed as input to the CROCO model
-  # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
-  # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
-#  boundary-data:
+  # => marine.copernicus.eu: This is ocean data that forms the lateral boundaries of our model run
+  # => ncei.noaa.gov: This is atmospheric data used to create surface boundary conditions for our model run
+#  download-global-data:
 #    needs: [toolkit, envs]
 #    runs-on: somisana
 #    env:
@@ -141,6 +142,16 @@ jobs:
 #      SHA: sha-${{ github.sha }}
 #      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
 #    steps:
+#      - name: Clean /home/runner/somisana/global_data/ # haven't tested this part of the job yet!
+#        run: >-
+#          find \
+#            /home/runner/somisana/global_data/* \
+#            -maxdepth 0 \
+#            -type d \
+#            -ctime +5 \
+#            -exec \
+#              rm \
+#                -rf {} \; 
 #      - name: Configure no. retries
 #        id: retries
 #        run: |
@@ -215,17 +226,23 @@ jobs:
       matrix:
         model_name: ["algoa-bay-forecast", "false-bay-forecast"]
     env:
-      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+      BRANCH: ${{ needs.envs.outputs.BRANCH_REF }}
+      BRANCHDIR: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}
       WORKDIR: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.MODEL_RUN_DATE }}
       WORKDIR_YESTERDAY: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/$${{ needs.envs.outputs.RESTART_FILE_DATE }}
     steps:
+      - name: Clean ${{ env.BRANCHDIR }}
+        run: >-
+          find \
+            ${{ env.BRANCHDIR }}/* \
+            -maxdepth 0 \
+            -type d \
+            -ctime +5 \
+            -exec \
+              rm \
+                -rf {} \; 
+      
       - name: Create ${{ env.WORKDIR }} directory structure
-      # Create a tmp folder structure for mode run assets. The format is:
-      ## YYYYMMDD/
-      ##  - croco/
-      ##     - forcing/
-      ##     - forecast/
-      ##     - scratch/
         run: |
           rm -rf ${{ env.WORKDIR }}
           mkdir -p ${{ env.WORKDIR }}/croco/{forcing,forecast,scratch}
@@ -233,26 +250,6 @@ jobs:
           chmod -R 774 ${{ env.WORKDIR }}
 
 
-  # Cleanup old runs temp files
-  # this is commented for now as it needs to be based on the model run i.e. to be done inside a loop
-  # it will need to be extended so that the global data download dir is also cleaned 
-#  cleanup-old-run-temp-files:
-#    needs: [branch-ref]
-#    runs-on: somisana
-#    continue-on-error: true
-#    env:
-#      BRANCH: ${{ needs.branch-ref.outputs.value }}
-#    steps:
-#      - name: Clean /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH }}
-#        run: >-
-#          find \
-#            /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH }}/* \
-#            -maxdepth 0 \
-#            -type d \
-#            -ctime +5 \
-#            -exec \
-#              rm \
-#                -rf {} \; 
        
 # Compile CROCO code for the model run
 # (haven't copied any code here yet as need to be done inside a loop)
