@@ -5,12 +5,9 @@ on:
 
 jobs:
   loop_job:
-    runs-on: ubuntu-latest
+    runs-on: somisana
 
     steps:
-      - name: Clone repository
-        uses: actions/checkout@master
-
       - name: Loop through items
         run: |
           items=("item1" "item2" "item3")  # Define the items to loop through
