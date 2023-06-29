@@ -38,26 +38,26 @@ jobs:
           for item in "${items[@]}"; do
             echo "Processing $item"
             # Define the jobs to run for each item
-            echo "::set-env name=ITEM::$item"
-            env:
-              ITEM: ${{ item }}
-            jobs:
-              job1:
-                needs: []
-                runs-on: ubuntu-latest
-                steps:
-                  - name: Job 1 for ${{ env.ITEM }}
-                    run: |
-                      echo "Running Job 1 for $ITEM"
-                      # Add your desired actions or commands for Job 1
-
-              job2:
-                needs: []
-                runs-on: ubuntu-latest
-                steps:
-                  - name: Job 2 for ${{ env.ITEM }}
-                    run: |
-                      echo "Running Job 2 for $ITEM"
+#            echo "::set-env name=ITEM::$item"
+#            env:
+#              ITEM: ${{ item }}
+#            jobs:
+#              job1:
+#                needs: []
+#                runs-on: ubuntu-latest
+#                steps:
+#                  - name: Job 1 for ${{ env.ITEM }}
+#                    run: |
+#                      echo "Running Job 1 for $ITEM"
+#                      # Add your desired actions or commands for Job 1
+#
+#              job2:
+#                needs: []
+#                runs-on: ubuntu-latest
+#                steps:
+#                  - name: Job 2 for ${{ env.ITEM }}
+#                    run: |
+#                      echo "Running Job 2 for $ITEM"
                       # Add your desired actions or commands for Job 2
 
               # Add more jobs as needed
