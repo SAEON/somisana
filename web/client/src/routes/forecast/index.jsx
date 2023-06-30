@@ -106,7 +106,7 @@ export default ({ modelid = undefined }) => {
 
               {/* RIGHT MENU */}
               <Paper
-                variant="outlined"
+                variant="elevation"
                 sx={{
                   padding: theme => `${theme.spacing(1)} 0`,
                   alignItems: 'center',

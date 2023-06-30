@@ -1,9 +1,9 @@
 import { API_GQL } from './modules/config/env'
 import { ApolloProvider } from '@apollo/client'
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
-import { light } from './theme/mui'
 import { SnackbarProvider } from 'notistack'
-import { ThemeProvider } from '@mui/material/styles'
+import Theme from './theme'
+import { light as lightTheme, dark as darkTheme } from './theme/mui'
 import AuthenticationProvider from './modules/authentication'
 import CssBaseline from '@mui/material/CssBaseline'
 import ErrorBoundary from './components/error-boundary'
@@ -18,9 +18,13 @@ import Div from './components/div'
 import Header from './header'
 import Footer from './modules/footer'
 import routes from './routes/config'
+import I18nProvider from './modules/i18n'
 import RouteSwitcher from './modules/layout/route-switcher'
-import esriConfig from "@arcgis/core/config.js";
-esriConfig.assetsPath = "./assets";
+import SiteSettingsProvider from './modules/site-settings'
+import c from 'cookie'
+import esriConfig from '@arcgis/core/config.js'
+
+esriConfig.assetsPath = './assets'
 
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache({}),
@@ -30,38 +34,61 @@ const apolloClient = new ApolloClient({
   }),
 })
 
+const SETTINGS_COOKIE_KEY = 'SOMISANA_SITE_SETTINGS'
+
+const LANGS = ['en']
+
+const negotiator = language => {
+  return LANGS[0]
+}
+
 function App() {
+  /**
+   * Load the cookie
+   */
+  const _cookie = c.parse(document.cookie || '')?.[SETTINGS_COOKIE_KEY]
+  const acceptLanguage = negotiator(window.navigator.language)
+  const sessionSettings = JSON.parse(_cookie || '{}')
+
   return (
     <ConfigProvider>
-      <ApolloProvider client={apolloClient}>
-        <ThemeProvider theme={light}>
-          <CssBaseline>
-            <Background>
-              <ErrorBoundary>
-                <NativeExtensions>
-                  <SnackbarProvider>
-                    <AuthenticationProvider>
-                      <ApplicationLogger>
-                        <LogAppRender>
-                          <InteractionLogger>
-                            <Router>
-                              <Header routes={routes}>
-                                <Div sx={{ display: 'flex', alignItems: 'center' }} />
-                              </Header>
-                              <RouteSwitcher routes={routes} />
-                              <Footer routes={routes} />
-                            </Router>
-                          </InteractionLogger>
-                        </LogAppRender>
-                      </ApplicationLogger>
-                    </AuthenticationProvider>
-                  </SnackbarProvider>
-                </NativeExtensions>
-              </ErrorBoundary>
-            </Background>
-          </CssBaseline>
-        </ThemeProvider>
-      </ApolloProvider>
+      <SiteSettingsProvider
+        acceptLanguage={acceptLanguage}
+        cookieKey={SETTINGS_COOKIE_KEY}
+        sessionSettings={sessionSettings}
+      >
+        <ApolloProvider client={apolloClient}>
+          <Theme themes={{ light: lightTheme, dark: darkTheme }}>
+            <CssBaseline>
+              <I18nProvider>
+                <ErrorBoundary>
+                  <Background>
+                    <NativeExtensions>
+                      <SnackbarProvider>
+                        <AuthenticationProvider>
+                          <ApplicationLogger>
+                            <LogAppRender>
+                              <InteractionLogger>
+                                <Router>
+                                  <Header routes={routes}>
+                                    <Div sx={{ display: 'flex', alignItems: 'center' }} />
+                                  </Header>
+                                  <RouteSwitcher routes={routes} />
+                                  <Footer routes={routes} />
+                                </Router>
+                              </InteractionLogger>
+                            </LogAppRender>
+                          </ApplicationLogger>
+                        </AuthenticationProvider>
+                      </SnackbarProvider>
+                    </NativeExtensions>
+                  </Background>
+                </ErrorBoundary>
+              </I18nProvider>
+            </CssBaseline>
+          </Theme>
+        </ApolloProvider>
+      </SiteSettingsProvider>
     </ConfigProvider>
   )
 }

@@ -2,7 +2,7 @@ import { useContext, useMemo } from 'react'
 import { context as mapContext } from './_context'
 import { context as configContext } from '../../../modules/config'
 import VectorTileLayer from '@arcgis/core/layers/VectorTileLayer'
-import { useTheme } from '@mui/material/styles'
+import { useTheme, alpha } from '@mui/material/styles'
 import Div from '../../../components/div'
 import Typography from '@mui/material/Typography'
 
@@ -47,16 +47,21 @@ export default () => {
   return (
     <Div
       sx={{
+        backgroundColor: theme => alpha(theme.palette.common.white, 0.8),
         position: 'absolute',
         top: 0,
         right: 0,
+        paddingLeft: theme => theme.spacing(2),
+        paddingRight: theme => theme.spacing(2),
+        marginTop: theme => theme.spacing(1),
+        marginRight: theme => theme.spacing(1)
       }}
     >
       <Typography
         variant="overline"
         sx={{
           zIndex: 1,
-          color: theme => theme.palette.common.white,
+          color: theme => theme.palette.common.black,
         }}
       >
         Map of models and marine protected areas

@@ -64,6 +64,10 @@ const Render = memo(({ children, depth, timeStep, runId }) => {
 export default props => {
   const { model, depth, timeStep, run: { id: runId = undefined } = {} } = useContext(pageContext)
 
+  if (!model) {
+    return <Typography sx={{ margin: 2 }}>Unknown model</Typography>
+  }
+
   if (!runId) {
     return <Typography sx={{ margin: 2 }}>No completed runs for the {model.title} model</Typography>
   }

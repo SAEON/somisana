@@ -69,7 +69,7 @@ export default [
         throw error
       }
 
-      return data.models[0].title
+      return data.models[0]?.title
     },
     includeInNavMenu: false,
     includeInFooter: false,

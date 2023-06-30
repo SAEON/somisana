@@ -122,6 +122,7 @@ export const updateValidationRules = async () => {
   // Upsert views
   await Promise.allSettled(
     Object.entries(views).map(async ([, { name, sourceCollection, pipeline }]) => {
+      console.info('Applying view', name, 'to collection', sourceCollection)
       try {
         const viewExists = (await _db.listCollections({ name }).toArray()).length > 0
 

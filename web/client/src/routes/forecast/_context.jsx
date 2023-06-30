@@ -82,7 +82,7 @@ export default ({ modelid = undefined, children }) => {
     throw error
   }
 
-  const model = data.models.find(({ _id }) => _id === id)
+  const model = data.models.find(({ _id }) => `${_id}` === `${id}`)
   const runs = [...(model?.runs || [])]
   const run = runs[activeRun]
 
