@@ -8,7 +8,7 @@ on:
         required: false
         default:
 
-# NEED TO REMOVE THIS - RATHER JUST CALL THESE VARS AS {{ sectrets.VAR }}
+# NEED TO EDIT THIS - RATHER JUST CALL THE SECRET VARS AS {{ sectrets.VAR }}
 env:
   REGISTRY: ghcr.io
   # I don't know how we get these from secrets? What is sectrets?
@@ -42,8 +42,6 @@ jobs:
       R3: ${{ inputs.run_date }}
     outputs:
       BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
-      # I am commenting CROCO_IMAGE because it depends on *_algoa_bay_* directory. We need to set CROCO_IMAGE based on the model run
-      # CROCO_IMAGE: ${{ steps.ENVS.outputs.CROCO_IMAGE }}
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}
       MODEL_RUN_YEAR_MONTH: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR_MONTH }}
@@ -64,8 +62,6 @@ jobs:
       - name: Set envs
         id: ENVS
         run: |
-          # I am commenting CROCO_IMAGE because it depends on *_algoa_bay_* directory. We need to set CROCO_IMAGE based on the model run
-          # echo "CROCO_IMAGE=${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
           echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
           echo "MODEL_RUN_DATE=${{ steps.run_date.outputs.yyyymmdd }}" >> $GITHUB_OUTPUT
           echo "MODEL_RUN_YEAR_MONTH=${{ steps.run_date.outputs.yyyymm }}" >> $GITHUB_OUTPUT
@@ -78,146 +74,146 @@ jobs:
   # In the context of a testing environment, where updates to these
   # scripts is part of the development workflow, the toolkit needs
   # to be compiled on every run
-#  toolkit:
-#    needs: [envs]
-#    runs-on: ubuntu-latest
-#    env:
-#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-#      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
-#      SHA: sha-${{ github.sha }}
-#    outputs:
-#      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
-#    steps:
-#      - name: Get image name lowercase
-#        id: 'lowercase'
-#        run: |
-#          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
-#          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
-#      - name: Check out source code
-#        uses: actions/checkout@master # change to main
-#        with:
-#          ref: ${{ env.BRANCH_REF }}
-#      - name: Log in to the Container registry
-#        uses: docker/login-action@master
-#        with:
-#          registry: ${{ env.REGISTRY }}
-#          username: ${{ github.actor }}
-#          password: ${{ secrets.GITHUB_TOKEN }}
-#      - name: Check if image with sha tag already exists
-#        id: check-image
-#        run: |
-#          set -e
-#          SHA_IMAGE=$(docker images -q ${REGISTRY}/${{ steps.lowercase.outputs.image_name }}:${SHA} || true)
-#          if [ -z "$SHA_IMAGE" ]; then
-#            echo "image_exists=false" >> $GITHUB_OUTPUT
-#          else
-#            echo "image_exists=true" >> $GITHUB_OUTPUT
-#          fi
-#      - name: Extract metadata (tags, labels) for Docker
-#        id: meta
-#        uses: docker/metadata-action@master
-#        with:
-#          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
-#          tags: |
-#            latest
-#            ${{ env.SHA }}
-#      - name: Build and push
-#        uses: docker/build-push-action@master
-#        with:
-#          context: toolkit
-#          push: true
-#          tags: ${{ steps.meta.outputs.tags }}
-#          labels: ${{ steps.meta.outputs.labels }}
+  toolkit:
+    needs: [envs]
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
+      SHA: sha-${{ github.sha }}
+    outputs:
+      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
+    steps:
+      - name: Get image name lowercase
+        id: 'lowercase'
+        run: |
+          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
+          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
+      - name: Check out source code
+        uses: actions/checkout@master # change to main
+        with:
+          ref: ${{ env.BRANCH_REF }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@master
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check if image with sha tag already exists
+        id: check-image
+        run: |
+          set -e
+          SHA_IMAGE=$(docker images -q ${REGISTRY}/${{ steps.lowercase.outputs.image_name }}:${SHA} || true)
+          if [ -z "$SHA_IMAGE" ]; then
+            echo "image_exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "image_exists=true" >> $GITHUB_OUTPUT
+          fi
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@master
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
+          tags: |
+            latest
+            ${{ env.SHA }}
+      - name: Build and push
+        uses: docker/build-push-action@master
+        with:
+          context: toolkit
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   # Download environmental data used for model boundaries and surface forcing.
   # This job is retried if it fails, since the failure can be due to upstream errors
   # These downloads are used to create forcing files that are fed as input to the CROCO model
   # => marine.copernicus.eu: This is ocean data that forms the lateral boundaries of our model run
   # => ncei.noaa.gov: This is atmospheric data used to create surface boundary conditions for our model run
-#  download-global-data:
-#    needs: [toolkit, envs]
-#    runs-on: somisana
-#    env:
-#      GLOBAL_DIR: ${{ needs.envs.outputs.GLOBAL_DIR }}
-#      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-#      SHA: sha-${{ github.sha }}
-#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-#    steps:
-#      - name: Clean /home/runner/somisana/global_data/ # haven't tested this part of the job yet!
-#        run: >-
-#          find \
-#            /home/runner/somisana/global_data/* \
-#            -maxdepth 0 \
-#            -type d \
-#            -ctime +5 \
-#            -exec \
-#              rm \
-#                -rf {} \; 
-#      - name: Configure no. retries
-#        id: retries
-#        run: |
-#          if [ "$BRANCH_REF" = "stable" ]
-#          then
-#            echo "RETRIES=30" >> $GITHUB_OUTPUT
-#          else
-#            echo "RETRIES=1" >> $GITHUB_OUTPUT
-#          fi
-#      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
-#        continue-on-error: true # Maybe Node.js exists anyway
-#        run: |
-#          source ~/.bashrc
-#          nvm use 19.6.0
-#      - name: Create ${{ env.GLOBAL_DIR }} directory 
-#        run: |
-#          rm -rf ${{ env.GLOBAL_DIR }} 
-#          mkdir -p ${{ env.GLOBAL_DIR }} 
-#          chown -R :runners ${{ env.GLOBAL_DIR }} 
-#          chmod -R 774 ${{ env.GLOBAL_DIR }} 
-#      - name: Download GFS # NOTE - DON"T WRITE TO /tmp IN THE IMAGE - RATHER USE /tmp/somisana/blah
-#        uses: nick-fields/retry@master 
-#        with:
-#          timeout_minutes: 30 # Script is considered failed if this limit is reached
-#          retry_wait_seconds: 300 # Wait 5 minutes and try again
-#          max_attempts: ${{ steps.retries.outputs.RETRIES }}
-#          retry_on: any
-#          warning_on_retry: true
-#          shell: bash
-#          continue_on_error: false
-#          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*grb*
-#          command: >-
-#            docker run \
-#              --rm \
-#              -v ${{ env.GLOBAL_DIR }}/:/tmp/ \
-#              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-#                download \
-#                  --provider gfs \
-#                  --workdir /tmp \
-#                  --matlab-env /tmp/.env \
-#                  --download-date ${{ env.MODEL_RUN_DATE }} \
-#                  --domain 22,31,-37,-31
-#      - name: Download Mercator
-#        uses: nick-fields/retry@master
-#        with:
-#          timeout_minutes: 30 # Script is considered failed if this limit is reached
-#          retry_wait_seconds: 300 # Wait 5 minutes and try again
-#          max_attempts: ${{ steps.retries.outputs.RETRIES }}
-#          retry_on: any
-#          warning_on_retry: true
-#          shell: bash
-#          continue_on_error: false
-#          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*mercator*
-#          command: >-
-#            docker run \
-#              --rm \
-#              -v ${{ env.GLOBAL_DIR }}/:/tmp/ \
-#              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
-#              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-#              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-#                download \
-#                  --provider mercator \
-#                  --workdir /tmp \
-#                  --download-date ${{ env.MODEL_RUN_DATE }} \
-#                  --domain 22,31,-37,-31
+  download-global-data:
+    needs: [toolkit, envs]
+    runs-on: somisana
+    env:
+      GLOBAL_DIR: ${{ needs.envs.outputs.GLOBAL_DIR }}
+      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+    steps:
+      - name: Clean /home/runner/somisana/global_data/ # haven't tested this part of the job yet!
+        run: >-
+          find \
+            /home/runner/somisana/global_data/* \
+            -maxdepth 0 \
+            -type d \
+            -ctime +5 \
+            -exec \
+              rm \
+                -rf {} \; 
+      - name: Configure no. retries
+        id: retries
+        run: |
+          if [ "$BRANCH_REF" = "stable" ]
+          then
+            echo "RETRIES=30" >> $GITHUB_OUTPUT
+          else
+            echo "RETRIES=1" >> $GITHUB_OUTPUT
+          fi
+      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
+        continue-on-error: true # Maybe Node.js exists anyway
+        run: |
+          source ~/.bashrc
+          nvm use 19.6.0
+      - name: Create ${{ env.GLOBAL_DIR }} directory 
+        run: |
+          rm -rf ${{ env.GLOBAL_DIR }} 
+          mkdir -p ${{ env.GLOBAL_DIR }} 
+          chown -R :runners ${{ env.GLOBAL_DIR }} 
+          chmod -R 774 ${{ env.GLOBAL_DIR }} 
+      - name: Download GFS # NOTE - DON"T WRITE TO /tmp IN THE IMAGE - RATHER USE /tmp/somisana/blah
+        uses: nick-fields/retry@master 
+        with:
+          timeout_minutes: 30 # Script is considered failed if this limit is reached
+          retry_wait_seconds: 300 # Wait 5 minutes and try again
+          max_attempts: ${{ steps.retries.outputs.RETRIES }}
+          retry_on: any
+          warning_on_retry: true
+          shell: bash
+          continue_on_error: false
+          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*grb*
+          command: >-
+            docker run \
+              --rm \
+              -v ${{ env.GLOBAL_DIR }}/:/tmp/somisana/current \
+              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+                download \
+                  --provider gfs \
+                  --workdir /tmp/somisana/current \
+                  --matlab-env /tmp/somisana/current.env \
+                  --download-date ${{ env.MODEL_RUN_DATE }} \
+                  --domain 22,31,-37,-31
+      - name: Download Mercator
+        uses: nick-fields/retry@master
+        with:
+          timeout_minutes: 30 # Script is considered failed if this limit is reached
+          retry_wait_seconds: 300 # Wait 5 minutes and try again
+          max_attempts: ${{ steps.retries.outputs.RETRIES }}
+          retry_on: any
+          warning_on_retry: true
+          shell: bash
+          continue_on_error: false
+          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*mercator*
+          command: >-
+            docker run \
+              --rm \
+              -v ${{ env.GLOBAL_DIR }}/:/tmp/somisana/current/ \
+              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
+              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
+              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+                download \
+                  --provider mercator \
+                  --workdir /tmp/somisana/current \
+                  --download-date ${{ env.MODEL_RUN_DATE }} \
+                  --domain 22,31,-37,-31
 
 
   run_models:
@@ -225,13 +221,13 @@ jobs:
     runs-on: somisana
     strategy:
       matrix:
-        model_name: ["algoa-bay-forecast", "false-bay-forecast"]
+        model_name: ["algoa-bay-forecast"] #, "false-bay-forecast"]
     env:
       BRANCH: ${{ needs.envs.outputs.BRANCH_REF }}
       BRANCHDIR: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}
       WORKDIR: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.MODEL_RUN_DATE }}
       WORKDIR_YESTERDAY: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.RESTART_FILE_DATE }}
-      CROCO_IMAGE: ${{ github.repository }}_${{ matrix.model_name }}_croco_${{ needs.envs.outputs.BRANCH_REF }} 
+      CROCO_IMAGE: ${{ github.repository }}_${{ matrix.model_name }}_croco_${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Clean ${{ env.BRANCHDIR }}
         run: >-
@@ -271,13 +267,28 @@ jobs:
           tags: |
             type=sha
 
-      - name: Build and push the CROCO image
-        uses: docker/build-push-action@master
-        with:
-          context: models/${{ matrix.model_name }}
-          file: models/${{ matrix.model_name }}/croco.Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+#      - name: Build and push the CROCO image
+#        uses: docker/build-push-action@master
+#        with:
+#          context: models/${{ matrix.model_name }}
+#          file: models/${{ matrix.model_name }}/croco.Dockerfile
+#          push: true
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
 
-
+      - name: Copy yesterday's restart file (if it exists)
+        run: cp ${{ env.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc ${{ env.WORKDIR }}/croco/forcing/rst_${{ needs.envs.outputs.RESTART_FILE_DATE }}.nc
+        continue-on-error: true # Allow for the case where the restart file doesn't exist
+      - name: Configure MatLab env restart file path
+        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ needs.envs.outputs.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
+      - name: Make forcing files
+        run: >-
+          docker run \
+            --rm \
+            -v $(pwd)/models/${{ matrix.model_name }}/crocotools:/crocotools/ \
+            -v $(pwd)/models/${{ matrix.model_name }}/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
+            -v ${{ env.GLOBAL_DIR }}:/tmp/somisana/current/forcing-inputs/
+            -v ${{ env.WORKDIR }}:/tmp/somisana/current \
+            -e MLM_LICENSE_FILE=${{ env.MLM_LICENSE_FILE }} \
+            ghcr.io/saeon/somisana_matlab:r2022a \
+              -batch "run('/crocotools/run.m')"
