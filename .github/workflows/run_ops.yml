@@ -217,7 +217,7 @@ jobs:
 
 
   run_models:
-    needs: [envs]
+    needs: [envs, download-global-data]
     runs-on: somisana
     strategy:
       matrix:
