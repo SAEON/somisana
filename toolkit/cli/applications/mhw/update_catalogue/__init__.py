@@ -1,6 +1,7 @@
 import os
 from cli.applications.mhw.update_catalogue.update_cache import update_cache
 from oisst import Catalogue
+import glob
 from cli.applications.mhw.params import OISST_CACHE, OISST_DATA
 
 
