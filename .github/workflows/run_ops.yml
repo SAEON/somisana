@@ -188,7 +188,7 @@ jobs:
                 download \
                   --provider gfs \
                   --workdir /tmp/somisana/current \
-                  --matlab-env /tmp/somisana/current.env \
+                  --matlab-env /tmp/somisana/current/.env \
                   --download-date ${{ env.MODEL_RUN_DATE }} \
                   --domain 22,31,-37,-31
       - name: Download Mercator
