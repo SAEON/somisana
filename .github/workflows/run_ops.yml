@@ -231,7 +231,7 @@ jobs:
       BRANCHDIR: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}
       WORKDIR: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.MODEL_RUN_DATE }}
       WORKDIR_YESTERDAY: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.RESTART_FILE_DATE }}
-      CROCO_IMAGE: ${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.envs.outputs.BRANCH_REF }} # HEREIN LIES A PROBLEM - we need underscores for the model name where we currently have hyphens
+      CROCO_IMAGE: ${{ github.repository }}_${{ matrix.model_name }}_croco_${{ needs.envs.outputs.BRANCH_REF }} 
     steps:
       - name: Clean ${{ env.BRANCHDIR }}
         run: >-
@@ -251,8 +251,33 @@ jobs:
           chown -R :runners ${{ env.WORKDIR }}
           chmod -R 774 ${{ env.WORKDIR }}
 
+      - name: Checkout source code
+        uses: actions/checkout@main
+        with:
+          ref: ${{ env.BRANCH }}
 
-       
-# Compile CROCO code for the model run
-# (haven't copied any code here yet as need to be done inside a loop)
+      - name: Log in to the Container registry
+        uses: docker/login-action@master
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@master
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }} 
+          tags: |
+            type=sha
+
+      - name: Build and push the CROCO image
+        uses: docker/build-push-action@master
+        with:
+          context: models/${{ matrix.model_name }}
+          file: models/${{ matrix.model_name }}/croco.Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
 
