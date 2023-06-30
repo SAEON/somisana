@@ -8,6 +8,7 @@ on:
         required: false
         default:
 
+# NEED TO REMOVE THIS - RATHER JUST CALL THESE VARS AS {{ sectrets.VAR }}
 env:
   REGISTRY: ghcr.io
   # I don't know how we get these from secrets? What is sectrets?
@@ -93,7 +94,7 @@ jobs:
 #          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
 #          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
 #      - name: Check out source code
-#        uses: actions/checkout@master
+#        uses: actions/checkout@master # change to main
 #        with:
 #          ref: ${{ env.BRANCH_REF }}
 #      - name: Log in to the Container registry
@@ -172,8 +173,8 @@ jobs:
 #          mkdir -p ${{ env.GLOBAL_DIR }} 
 #          chown -R :runners ${{ env.GLOBAL_DIR }} 
 #          chmod -R 774 ${{ env.GLOBAL_DIR }} 
-#      - name: Download GFS
-#        uses: nick-fields/retry@master
+#      - name: Download GFS # NOTE - DON"T WRITE TO /tmp IN THE IMAGE - RATHER USE /tmp/somisana/blah
+#        uses: nick-fields/retry@master 
 #        with:
 #          timeout_minutes: 30 # Script is considered failed if this limit is reached
 #          retry_wait_seconds: 300 # Wait 5 minutes and try again
@@ -229,7 +230,8 @@ jobs:
       BRANCH: ${{ needs.envs.outputs.BRANCH_REF }}
       BRANCHDIR: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}
       WORKDIR: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      WORKDIR_YESTERDAY: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/$${{ needs.envs.outputs.RESTART_FILE_DATE }}
+      WORKDIR_YESTERDAY: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.RESTART_FILE_DATE }}
+      CROCO_IMAGE: ${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.envs.outputs.BRANCH_REF }} # HEREIN LIES A PROBLEM - we need underscores for the model name where we currently have hyphens
     steps:
       - name: Clean ${{ env.BRANCHDIR }}
         run: >-
