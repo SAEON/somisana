@@ -43,12 +43,10 @@ const negotiator = language => {
 }
 
 function App() {
-  /**
-   * Load the cookie
-   */
-  const _cookie = c.parse(document.cookie || '')?.[SETTINGS_COOKIE_KEY]
+  // Load settings cookie
+  const cookie = c.parse(document.cookie || '')?.[SETTINGS_COOKIE_KEY]
   const acceptLanguage = negotiator(window.navigator.language)
-  const sessionSettings = JSON.parse(_cookie || '{}')
+  const sessionSettings = JSON.parse(cookie || '{}')
 
   return (
     <ConfigProvider>

@@ -5,7 +5,6 @@ import { ThemeProvider } from '@mui/material/styles'
 export default function Theme({ themes, ...props }) {
   const { colorScheme, updateSetting } = useContext(siteSettingsContext)
 
-  // Client-side only
   useEffect(() => {
     if (!colorScheme) {
       updateSetting({
@@ -15,7 +14,7 @@ export default function Theme({ themes, ...props }) {
             : 'light',
       })
     }
-  }, [])
+  }, [colorScheme, updateSetting])
 
   return <ThemeProvider theme={themes[colorScheme || 'light']} {...props} />
 }
