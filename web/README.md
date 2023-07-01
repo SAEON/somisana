@@ -26,7 +26,7 @@ npm install -g chomp && chomp --version
 
 cd api
 npm install
-chomp
+chomp --watch
 ```
 
 ## Start the React.js client
