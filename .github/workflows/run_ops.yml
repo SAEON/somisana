@@ -220,6 +220,7 @@ jobs:
     needs: [envs]
     uses: ./.github/workflows/run_algoa-bay-forecast.yml
     with:
+      REGISTRY: ${{ env.REGISTRY }} 
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }} 
     secrets: inherit
 
