@@ -6,6 +6,12 @@ on:
       BRANCH_REF:
         required: true
         type: string
+      RESTART_FILE_DATE:
+        required: true
+        type: string
+      MODEL_RUN_DATE:
+        required: true
+        type: string
 #    secrets:
 #        required: true
 
@@ -14,24 +20,21 @@ env:
 
 jobs:
 
-#  # Cleanup old runs temp files
-#  cleanup-old-run-temp-files:
-#    needs: [branch-ref]
-#    runs-on: somisana
-#    continue-on-error: true
-#    env:
-#      BRANCH: ${{ needs.branch-ref.outputs.value }}
-#    steps:
-#      - name: Clean /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH }}
-#        run: >-
-#          find \
-#            /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH }}/* \
-#            -maxdepth 0 \
-#            -type d \
-#            -ctime +5 \
-#            -exec \
-#              rm \
-#                -rf {} \;
+  # Cleanup old runs temp files
+  cleanup-old-run-temp-files:
+    runs-on: somisana
+    continue-on-error: true
+    steps:
+      - name: Clean /home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}
+        run: >-
+          find \
+            /home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/* \
+            -maxdepth 0 \
+            -type d \
+            -ctime +5 \
+            -exec \
+              rm \
+                -rf {} \;
 
   envs:
     runs-on: ubuntu-latest
@@ -78,36 +81,31 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-#  # Create a tmp folder structure for mode run assets. The format is:
-#  ## YYYYMMDD/
-#  ##  - forcing-inputs/
-#  ##  - croco/
-#  ##     - forcing/
-#  ##     - forecast/
-#  ##     - scratch/
-#  workdir:
-#    needs: [envs]
-#    runs-on: somisana
-#    outputs:
-#      WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
-#      WORKDIR_YESTERDAY: ${{ steps.WORKDIR.outputs.WORKDIR_YESTERDAY }}
-#    env:
-#      dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-#      dirname_yesterday: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
-#      branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
-#    steps:
-#      - name: Create /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} directory structure
-#        run: |
-#          rm -rf /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
-#          mkdir -p /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch},forcing-inputs}
-#          chown -R :runners /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
-#          chmod -R 774 /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
-#      - name: Set WORKDIRs
-#        id: WORKDIR
-#        run: |
-#          echo "WORKDIR=/home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
-#          echo "WORKDIR_YESTERDAY=/home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
-#
+  # Create a tmp folder structure for mode run assets. The format is:
+  ## YYYYMMDD/
+  ##  - croco/
+  ##     - forcing/
+  ##     - forecast/
+  ##     - scratch/
+  workdir:
+    needs: [envs]
+    runs-on: somisana
+    outputs:
+      WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
+      WORKDIR_YESTERDAY: ${{ steps.WORKDIR.outputs.WORKDIR_YESTERDAY }}
+    steps:
+      - name: Create /home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ inputs.MODEL_RUN_DATE }} directory structure
+        run: |
+          rm -rf /home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ inputs.MODEL_RUN_DATE }}
+          mkdir -p /home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ inputs.MODEL_RUN_DATE }}/croco/{forcing,forecast,scratch}
+          chown -R :runners /home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ inputs.MODEL_RUN_DATE }}
+          chmod -R 774 /home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ inputs.MODEL_RUN_DATE }}
+      - name: Set WORKDIRs
+        id: WORKDIR
+        run: |
+          echo "WORKDIR=/home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ inputs.MODEL_RUN_DATE }}" >> $GITHUB_OUTPUT
+          echo "WORKDIR_YESTERDAY=/home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ inputs.RESTART_FILE_DATE }}" >> $GITHUB_OUTPUT
+
 #  # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
 #  # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
 #  crocotools:
@@ -139,8 +137,8 @@ jobs:
 #            -e MLM_LICENSE_FILE=${{ env.MLM_LICENSE_FILE }} \
 #            ghcr.io/saeon/somisana_matlab:r2022a \
 #              -batch "run('/crocotools/run.m')"
-#
-#  # Execute the CROCO model using the forcing files created previously
+
+  # Execute the CROCO model using the forcing files created previously
 #  # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image.
 #  # As such the CROCO model run must be in the context of a container instantiated from that Docker image
 #  croco:
