@@ -3,14 +3,14 @@ name: Run Algoa Bay Forecast model
 on:
   workflow_call:
     inputs:
-      REGISTRY:
-        required: true
-        type: string
       BRANCH_REF:
         required: true
         type: string
 #    secrets:
 #        required: true
+
+env:
+  REGISTRY: ghcr.io
 
 jobs:
 
@@ -59,14 +59,14 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@master
         with:
-          registry: ${{ inputs.REGISTRY }}
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@master
         with:
-          images: ${{ inputs.REGISTRY }}/${{ env.CROCO_IMAGE }}
+          images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
           tags: |
             type=sha
       - name: Build and push
