@@ -217,10 +217,10 @@ jobs:
 #                  --domain 22,31,-37,-31
 
   call_run_algoa-bay-forecast:
-    needs: [branch-ref]
+    needs: [envs]
     uses: ./.github/workflows/run_algoa-bay-forecast.yml
     with:
-      BRANCH_REF: ${{ env.BRANCH_REF }} 
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }} 
     secrets: inherit
 
 #  run_models:
