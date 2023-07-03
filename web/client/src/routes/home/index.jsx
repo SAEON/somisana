@@ -1,52 +1,28 @@
-import { useRef, memo } from 'react'
-import Title from './title'
-import Div from  '../../components/div'
-import { alpha } from '@mui/system/colorManipulator'
-import ForecastModels from './forecast-models'
-import ModelsProvider from './_context'
-import ScrollButton from './_scroll-button'
-import Content from './content'
+import { useState, useEffect, lazy, Suspense } from 'react'
+import { Linear as Loading } from '../../components/loading'
+import Box from '@mui/material/Box'
 
-const Home = memo(() => {
-  const ref = useRef(null)
-
-  return (
-    <Div
-      sx={{
-        flex: 1,
-        maxWidth: '100%',
-      }}
-    >
-      {/* TITLE */}
-      <Div
-        sx={{
-          background: theme =>
-            `linear-gradient(45deg, ${alpha(theme.palette.common.black, 0.3)} 25%, ${alpha(
-              theme.palette.common.black,
-              0.7
-            )} 85%)`,
-          height: theme => `calc(100vh - ${theme.spacing(6)})`,
-          display: 'flex',
-          flex: 1,
-          position: 'relative',
-          flexDirection: 'column',
-        }}
-      >
-        <Title />
-        <ForecastModels />
-        <ScrollButton contentRef={ref} />
-      </Div>
-
-      {/* CONTENT */}
-      <Content ref={ref} />
-    </Div>
-  )
-})
+const Map = lazy(() => import('./map'))
 
 export default () => {
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   return (
-    <ModelsProvider>
-      <Home />
-    </ModelsProvider>
+    <Box
+      sx={{
+        height: theme => `calc(100vh - ${theme.spacing(6)})`,
+        position: 'relative',
+      }}
+    >
+      {isClient && (
+        <Suspense fallback={<Loading />}>
+          <Map />
+        </Suspense>
+      )}
+    </Box>
   )
 }

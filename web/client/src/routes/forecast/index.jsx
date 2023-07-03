@@ -1,6 +1,5 @@
-import { Suspense, useState, useEffect, lazy } from 'react'
+import { Suspense, useState, lazy } from 'react'
 import { Linear as Loading } from '../../components/loading'
-import Div from  '../../components/div'
 import Paper from '@mui/material/Paper'
 import BandDataProvider from './band-data'
 import DepthControl from './controls/depth'
@@ -17,23 +16,30 @@ import Timestamp from './controls/timestamp'
 import { ToggleData } from './controls/data'
 import LayerControl from './controls/layers'
 import LockColorBar from './controls/lock-color-bar'
+import { useParams } from 'react-router-dom'
 import RefreshColorRange from './controls/refresh-color-range'
 import BandDataTable from './controls/band-data'
+import Div from '../../components/div'
 
 const ModelProvider = lazy(() => import('./_context'))
 const FloatingMenu = lazy(() => import('./floating-menu'))
 
-export default ({ modelid = undefined }) => {
+export default () => {
+  const { id: modelid } = useParams()
   const [ref, setRef] = useState(null)
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => setIsClient(true), [])
-
-  if (!isClient) {
-    return null
-  }
 
   return (
+    <Div
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      flexGrow: 1,
+      height: `calc(100vh - 48px)`,
+      position: 'relative',
+      overflow: 'hidden',
+    }}
+  >
     <Suspense fallback={<Loading />}>
       <ModelProvider modelid={modelid}>
         <BandDataProvider>
@@ -135,5 +141,6 @@ export default ({ modelid = undefined }) => {
         </BandDataProvider>
       </ModelProvider>
     </Suspense>
+    </Div>
   )
 }

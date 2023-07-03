@@ -1,20 +1,19 @@
 import { lazy, Suspense } from 'react'
 import { Linear as LinearLoading, Circular as CircularLoading } from '../components/loading'
 import {
-  Home,
   Contract,
-  Map,
+  Home,
   Github,
   License,
   Link,
 } from  '../components/icons'
 import { gql, useQuery } from '@apollo/client'
-import HomePage from './home'
 import Div from '../components/div'
+import { Navigate } from "react-router-dom";
 
 const PrivacyPolicyPage = lazy(() => import('./privacy-policy'))
-const ExplorePage = lazy(() => import('./explore'))
-const ExploreModelPage = lazy(() => import('./model'))
+const HomePage = lazy(() => import('./home'))
+const ExploreModelPage = lazy(() => import('./forecast'))
 
 const L = ({ sx = {}, ...props }) => (
   <Div sx={{ flex: 1 }}>
@@ -28,14 +27,18 @@ export const dictionary = {
 }
 
 export default [
-  {
+{
     to: '/',
     path: '*',
-    label: 'Home',
+    label: 'SOMISANA',
     Icon: Home,
     includeInNavMenu: true,
     includeInFooter: true,
-    element: props => <HomePage {...props} />,
+    element: props => (
+      <Suspense fallback={<L />}>
+        <HomePage {...props} />
+      </Suspense>
+    ),
   },
   
 
@@ -80,18 +83,13 @@ export default [
     ),
   },
 
-  {
+{
     to: '/explore',
     path: '/explore',
     label: 'Explore',
-    Icon: Map,
-    includeInNavMenu: true,
-    includeInFooter: true,
-    element: props => (
-      <Suspense fallback={<L />}>
-        <ExplorePage {...props} />
-      </Suspense>
-    ),
+    includeInNavMenu: false,
+    includeInFooter: false,
+    element: props => <Navigate to="/" />,
   },
 
   {
