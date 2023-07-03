@@ -1,603 +1,423 @@
 name: Run Algoa Bay Forecast model
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      run_date:
-        description: Run date (default = today). yyyymmdd
-        required: false
-        default:
-  schedule:
-    - cron: '0 02 * * *' # 0400 SAST
-
-env:
-  REGISTRY: ghcr.io
-  COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
-  COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
-  MLM_LICENSE_FILE: ${{ secrets.MLM_LICENSE_FILE }}
-  MNEMOSYNE_TOKEN: ${{ secrets.MNEMOSYNE_TOKEN }}
+      BRANCH_REF:
+        required: true
+        type: string
+#    secrets:
+#        required: true
 
 jobs:
-  # Dynamically set the branch ref to the currently executing branch
-  branch-ref:
-    runs-on: ubuntu-latest
-    outputs:
-      value: ${{ steps.BRANCH_REF.outputs.value }}
-    steps:
-      - name: Set the BRANCH_REF
-        id: BRANCH_REF
-        run: |
-          echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
-  # Cleanup old runs temp files
-  cleanup-old-run-temp-files:
-    needs: [branch-ref]
-    runs-on: somisana
-    continue-on-error: true
-    env:
-      BRANCH: ${{ needs.branch-ref.outputs.value }}
-    steps:
-      - name: Clean /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH }}
-        run: >-
-          find \
-            /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH }}/* \
-            -maxdepth 0 \
-            -type d \
-            -ctime +5 \
-            -exec \
-              rm \
-                -rf {} \;
+#  # Cleanup old runs temp files
+#  cleanup-old-run-temp-files:
+#    needs: [branch-ref]
+#    runs-on: somisana
+#    continue-on-error: true
+#    env:
+#      BRANCH: ${{ needs.branch-ref.outputs.value }}
+#    steps:
+#      - name: Clean /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH }}
+#        run: >-
+#          find \
+#            /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH }}/* \
+#            -maxdepth 0 \
+#            -type d \
+#            -ctime +5 \
+#            -exec \
+#              rm \
+#                -rf {} \;
 
-  # Many of the env variables reference the current branch
-  # Set the environment variables using the current branch reference
-  # (which is set dynamically)
   envs:
-    needs: [branch-ref]
     runs-on: ubuntu-latest
-    env:
-      R1: ${{ inputs.run_date }}
-      R2: ${{ inputs.run_date }}
-      R3: ${{ inputs.run_date }}
     outputs:
-      BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
       CROCO_IMAGE: ${{ steps.ENVS.outputs.CROCO_IMAGE }}
-      TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
-      MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}
-      MODEL_RUN_YEAR_MONTH: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR_MONTH }}
-      MODEL_RUN_YEAR: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR }}
-      RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}
     steps:
-      - name: Configure run date
-        id: run_date
-        run: |
-          echo "yyyymmdd=${R1:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
-          echo "yyyymm=${R2:=$(date +'%Y%m')}" >> $GITHUB_OUTPUT
-          echo "yyyy=${R3:=$(date +'%Y')}" >> $GITHUB_OUTPUT
-      - name: Configure restart date
-        id: restart_date
-        run: |
-          echo "value=$(date -d '${{ steps.run_date.outputs.value }} -1 days' +'%Y%m%d')" >> $GITHUB_OUTPUT
       - name: Set envs
         id: ENVS
         run: |
-          echo "CROCO_IMAGE=${{ github.repository }}_algoa_bay_forecast_croco_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
-          echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
-          echo "MODEL_RUN_DATE=${{ steps.run_date.outputs.yyyymmdd }}" >> $GITHUB_OUTPUT
-          echo "MODEL_RUN_YEAR_MONTH=${{ steps.run_date.outputs.yyyymm }}" >> $GITHUB_OUTPUT
-          echo "MODEL_RUN_YEAR=${{ steps.run_date.outputs.yyyy }}" >> $GITHUB_OUTPUT
-          echo "RESTART_FILE_DATE=${{ steps.restart_date.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "CROCO_IMAGE=${{ github.repository }}_algoa_bay_forecast_croco_${{ inputs.BRANCH_REF }}" >> $GITHUB_OUTPUT
 
-  # Compile CROCO model for the Algoa Bay forecast
-  compile-croco:
-    needs: [envs]
-    runs-on: ubuntu-latest
-    env:
-      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-      CROCO_IMAGE: ${{ needs.envs.outputs.CROCO_IMAGE }}
-    outputs:
-      image: ${{ steps.meta.outputs.tags }}
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@master
-        with:
-          ref: ${{ env.BRANCH_REF }}
-      - name: Log in to the Container registry
-        uses: docker/login-action@master
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@master
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }}
-          tags: |
-            type=sha
-      - name: Build and push
-        uses: docker/build-push-action@master
-        with:
-          context: models/algoa-bay-forecast
-          file: models/algoa-bay-forecast/croco.Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-  # The SOMISANA toolkit is a suite of scripts to facilitate
-  # running SOMISANA models - for example the Algoa Bay Forecast.
-  # In the context of a testing environment, where updates to these
-  # scripts is part of the development workflow, the toolkit needs
-  # to be compiled on every run
-  toolkit:
-    needs: [envs]
-    runs-on: ubuntu-latest
-    env:
-      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
-      SHA: sha-${{ github.sha }}
-    outputs:
-      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
-    steps:
-      - name: Get image name lowercase
-        id: 'lowercase'
-        run: |
-          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
-          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
-      - name: Check out source code
-        uses: actions/checkout@master
-        with:
-          ref: ${{ env.BRANCH_REF }}
-      - name: Log in to the Container registry
-        uses: docker/login-action@master
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check if image with sha tag already exists
-        id: check-image
-        run: |
-          set -e
-          SHA_IMAGE=$(docker images -q ${REGISTRY}/${{ steps.lowercase.outputs.image_name }}:${SHA} || true)
-          if [ -z "$SHA_IMAGE" ]; then
-            echo "image_exists=false" >> $GITHUB_OUTPUT
-          else
-            echo "image_exists=true" >> $GITHUB_OUTPUT
-          fi
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@master
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
-          tags: |
-            latest
-            ${{ env.SHA }}
-      - name: Build and push
-        uses: docker/build-push-action@master
-        with:
-          context: toolkit
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-  # Create a tmp folder structure for mode run assets. The format is:
-  ## YYYYMMDD/
-  ##  - forcing-inputs/
-  ##  - croco/
-  ##     - forcing/
-  ##     - forecast/
-  ##     - scratch/
-  workdir:
-    needs: [envs]
-    runs-on: somisana
-    outputs:
-      WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
-      WORKDIR_YESTERDAY: ${{ steps.WORKDIR.outputs.WORKDIR_YESTERDAY }}
-    env:
-      dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      dirname_yesterday: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
-      branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
-    steps:
-      - name: Create /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} directory structure
-        run: |
-          rm -rf /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
-          mkdir -p /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch},forcing-inputs}
-          chown -R :runners /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
-          chmod -R 774 /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
-      - name: Set WORKDIRs
-        id: WORKDIR
-        run: |
-          echo "WORKDIR=/home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
-          echo "WORKDIR_YESTERDAY=/home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
-
-  # Download environmental data used to constrain model boundaries.
-  # This job is retried if it fails, since the failure can be due to upstream errors
-  # These downloads are used to create forcing files that are fed as input to the CROCO model
-  # => marine.copernicus.eu: This is ocean data that forms the boundary of our model run
-  # => ncei.noaa.gov: This is weather data used to create sea-surface conditions for our model run
-  boundary-data:
-    needs: [toolkit, workdir, envs]
-    runs-on: somisana
-    env:
-      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      SHA: sha-${{ github.sha }}
-      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-    steps:
-      - name: Configure no. retries
-        id: retries
-        run: |
-          if [ "$BRANCH_REF" = "stable" ]
-          then
-            echo "RETRIES=30" >> $GITHUB_OUTPUT
-          else
-            echo "RETRIES=1" >> $GITHUB_OUTPUT
-          fi
-      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
-        continue-on-error: true # Maybe Node.js exists anyway
-        run: |
-          source ~/.bashrc
-          nvm use 19.6.0
-      - name: Download GFS
-        uses: nick-fields/retry@master
-        with:
-          timeout_minutes: 30 # Script is considered failed if this limit is reached
-          retry_wait_seconds: 300 # Wait 5 minutes and try again
-          max_attempts: ${{ steps.retries.outputs.RETRIES }}
-          retry_on: any
-          warning_on_retry: true
-          shell: bash
-          continue_on_error: false
-          on_retry_command: rm -f $WORKDIR/forcing-inputs/*grb*
-          command: >-
-            docker run \
-              --rm \
-              -v $WORKDIR/:/tmp/somisana/current \
-              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
-              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-                download \
-                  --provider gfs \
-                  --workdir /tmp/somisana/current/forcing-inputs \
-                  --matlab-env /tmp/somisana/current/.env \
-                  --download-date ${{ env.MODEL_RUN_DATE }} \
-                  --domain 22,31,-37,-31
-      - name: Download Mercator
-        uses: nick-fields/retry@master
-        with:
-          timeout_minutes: 30 # Script is considered failed if this limit is reached
-          retry_wait_seconds: 300 # Wait 5 minutes and try again
-          max_attempts: ${{ steps.retries.outputs.RETRIES }}
-          retry_on: any
-          warning_on_retry: true
-          shell: bash
-          continue_on_error: false
-          on_retry_command: rm -f $WORKDIR/forcing-inputs/*mercator*
-          command: >-
-            docker run \
-              --rm \
-              -v $WORKDIR/:/tmp/somisana/current \
-              -e COPERNICUS_USERNAME=${{ env.COPERNICUS_USERNAME }} \
-              -e COPERNICUS_PASSWORD=${{ env.COPERNICUS_PASSWORD }} \
-              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-                download \
-                  --provider mercator \
-                  --workdir /tmp/somisana/current/forcing-inputs \
-                  --download-date ${{ env.MODEL_RUN_DATE }} \
-                  --domain 22,31,-37,-31
-
-  # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
-  # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
-  crocotools:
-    needs: [boundary-data, workdir, envs]
-    runs-on: somisana
-    env:
-      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
-      RESTART_FILE_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
-      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-    steps:
-      - name: Check out source code
-        uses: actions/checkout@master
-        with:
-          ref: ${{ env.BRANCH_REF }}
-      - name: Copy yesterday's restart file (if it exists)
-        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc
-        continue-on-error: true # Allow for the case where the restart file doesn't exist
-      - name: Configure MatLab env restart file path
-        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
-      - name: Make forcing files
-        run: >-
-          docker run \
-            --rm \
-            -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
-            -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
-            -v $WORKDIR:/tmp/somisana/current \
-            -e MLM_LICENSE_FILE=${{ env.MLM_LICENSE_FILE }} \
-            ghcr.io/saeon/somisana_matlab:r2022a \
-              -batch "run('/crocotools/run.m')"
-
-  # Execute the CROCO model using the forcing files created previously
-  # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image.
-  # As such the CROCO model run must be in the context of a container instantiated from that Docker image
-  croco:
-    needs: [compile-croco, crocotools, envs, workdir]
-    runs-on: croco
-    env:
-      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-      RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-    steps:
-      - name: Check out source code
-        uses: actions/checkout@master
-        with:
-          ref: ${{ env.BRANCH_REF }}
-      - name: Execute CROCO binary
-        run: >-
-          docker run \
-            --rm \
-            -v $WORKDIR:/algoa-bay-forecast/current \
-            -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
-            -e NP_XI=3 \
-            -e NP_ETA=4 \
-            --cpus 12 \
-            ${{ needs.compile-croco.outputs.image }} \
-              ./run_croco.bash \
-                /algoa-bay-forecast/current \
-                ${{ needs.envs.outputs.MODEL_RUN_DATE }} \
-                ${{ needs.envs.outputs.RESTART_FILE_DATE }}
-      - name: Move CROCO output
-        run: mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc
-
-  # Regrid CROCO u,v to rho grid,
-  # rotate u,v components from grid aligned to east/north aligned and
-  # work out depth levels of sigma grid in meters (tier 1),
-  # interpolate data to constant vertical levels (tier 2),
-  # and interpolate data to a constant horizontal grid (tier 3)
-  post-processing:
-    needs: [branch-ref, croco, toolkit, envs, workdir]
-    runs-on: somisana
-    env:
-      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-      RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-      SHA: sha-${{ github.sha }}
-    steps:
-      - name: Check out source code
-        uses: actions/checkout@master
-        with:
-          ref: ${{ env.BRANCH_REF }}
-      - name: subset the raw CROCO NetCDF file for archiving
-        continue-on-error: true
-        run: >-
-          docker run \
-            --rm \
-            --entrypoint /bin/bash \
-            -v $WORKDIR:/tmp/somisana/current \
-            ghcr.io/saeon/somisana_geopython:3.10.6 \
-              -c "ncks -v temp,salt,u,v,w,zeta,sustr,svstr -d time,120, -O /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc"
-      - name: Tier 1 regridding
-        continue-on-error: true
-        run: >-
-          docker run \
-            --rm \
-            -v $WORKDIR:/tmp/somisana/current \
-            -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/tmp/somisana/current/croco/forcing/grd.nc \
-            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-              croco \
-                regrid-tier1 \
-                  --id algoa-bay-forecast \
-                  --grid /tmp/somisana/current/croco/forcing/grd.nc \
-                  --input /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
-                  --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc
-      - name: Tier 2 regridding
-        continue-on-error: true
-        run: >-
-          docker run \
-            --rm \
-            -v $WORKDIR:/tmp/somisana/current \
-            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-              croco \
-                regrid-tier2 \
-                  --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
-                  --depths 0,1,2,5,10,15,20,30,40,50,60,70,100,150,200,500,1000,1500,2000,99999 \
-                  --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier2.nc
-      - name: Tier 3 regridding
-        continue-on-error: true
-        run: >-
-          docker run \
-            --rm \
-            -v $WORKDIR:/tmp/somisana/current \
-            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-              croco \
-                regrid-tier3 \
-                  --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier2.nc \
-                  --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier3.nc \
-                  --spacing 0.02
-
-  # Archive output
-  archive-data:
-    needs: [post-processing, workdir, envs, toolkit]
-    runs-on: somisana
-    env:
-      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-      RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      YYYYMM: ${{ needs.envs.outputs.MODEL_RUN_YEAR_MONTH }}
-      SHA: sha-${{ github.sha }}
-    steps:
-      - name: Load $PATH
-        run: |
-          source ~/.bashrc
-      - name: Archive raw CROCO output (hindcast / forecast)
-        continue-on-error: false
-        run: |
-          cat \
-            ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
-              | curl \
-                --silent \
-                --keepalive-time 2400 \
-                -X PUT \
-                -H "Content-Type: application/octet-stream" \
-                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
-                -T \
-                - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-hcst-5d-fcst.nc;
-      - name: Archive truncated CROCO output (forecast)
-        continue-on-error: false
-        run: |
-          cat \
-            ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc \
-              | curl \
-                --silent \
-                --keepalive-time 2400 \
-                -X PUT \
-                -H "Content-Type: application/octet-stream" \
-                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
-                -T \
-                - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-fcst.nc;
-      - name: Archive tier 1 output
-        continue-on-error: false
-        run: |
-          cat \
-            ${{ env.WORKDIR }}/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
-              | curl \
-                --silent \
-                --keepalive-time 2400 \
-                -X PUT \
-                -H "Content-Type: application/octet-stream" \
-                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
-                -T \
-                - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t1.nc;
-      - name: Archive tier 2 output
-        continue-on-error: false
-        run: |
-          cat \
-            ${{ env.WORKDIR }}/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier2.nc \
-              | curl \
-                --silent \
-                --keepalive-time 2400 \
-                -X PUT \
-                -H "Content-Type: application/octet-stream" \
-                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
-                -T \
-                - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t2.nc;
-      - name: Archive tier 3 output
-        continue-on-error: false
-        run: |
-          cat \
-            ${{ env.WORKDIR }}/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier3.nc \
-              | curl \
-                --silent \
-                --keepalive-time 2400 \
-                -X PUT \
-                -H "Content-Type: application/octet-stream" \
-                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
-                -T \
-                - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.nc;
-      - name: Kerchunk NetCDF tier 3 output
-        continue-on-error: true
-        run: |
-          docker run \
-            --rm \
-            -v $WORKDIR:/tmp/somisana/current \
-            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-              kerchunk \
-                run \
-                  --inputs https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.nc \
-                  --output /tmp/somisana/current/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json
-      - name: Upload Kerchunked tier 3 output to Mnemosyne
-        continue-on-error: true
-        run: |
-          curl \
-            --silent \
-            --keepalive-time 1200 \
-            -X PUT \
-            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-            -H "Content-Type: application/octet-stream" \
-            -T ${{ env.WORKDIR}}/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json \
-            https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json;
-
-  # Load raster data into postgis using raster2pgsql
-  load-postgis:
-    needs: [post-processing, branch-ref, toolkit, envs, workdir]
-    runs-on: postgres
-    env:
-      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-      RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      SHA: sha-${{ github.sha }}
-    steps:
-      - name: Get PG_HOST secret name
-        id: _PG_HOST_
-        run: |
-          STRING=PG_HOST_${{ needs.branch-ref.outputs.value }}
-          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
-          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
-      - name: Get PG_PORT secret name
-        id: _PG_PORT_
-        run: |
-          STRING=PG_PORT_${{ needs.branch-ref.outputs.value }}
-          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
-          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
-      - name: Get PG_DB secret name
-        id: _PG_DB_
-        run: |
-          STRING=PG_DB_${{ needs.branch-ref.outputs.value }}
-          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
-          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
-      - name: Get PG_USERNAME secret name
-        id: _PG_USERNAME_
-        run: |
-          STRING=PG_USERNAME_${{ needs.branch-ref.outputs.value }}
-          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
-          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
-      - name: Get PG_PASSWORD secret name
-        id: _PG_PASSWORD_
-        run: |
-          STRING=PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
-          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
-          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
-      - name: Load normalized NetCDF output to PostGIS
-        env:
-          PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
-          PG_PORT: ${{ secrets[steps._PG_PORT_.outputs.uppercase] }}
-          PG_DB: ${{ secrets[steps._PG_DB_.outputs.uppercase] }}
-          PG_USERNAME: ${{ secrets[steps._PG_USERNAME_.outputs.uppercase] }}
-          PG_PASSWORD: ${{ secrets[steps._PG_PASSWORD_.outputs.uppercase] }}
-        run: >-
-          docker run \
-            --rm \
-            -v $WORKDIR:/tmp/somisana/current \
-            -e PG_HOST=$PG_HOST \
-            -e PG_PORT=$PG_PORT \
-            -e PG_USERNAME=$PG_USERNAME \
-            -e PG_PASSWORD=$PG_PASSWORD \
-            -e PG_DB=$PG_DB \
-            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-              pg \
-                load-croco-tier1-output-to-pg \
-                  --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
-                  --parallelization 32
-      - name: Delete old PostgreSQL data
-        continue-on-error: true
-        env:
-          PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
-          PG_PORT: ${{ secrets[steps._PG_PORT_.outputs.uppercase] }}
-          PG_DB: ${{ secrets[steps._PG_DB_.outputs.uppercase] }}
-          PG_USERNAME: ${{ secrets[steps._PG_USERNAME_.outputs.uppercase] }}
-          PG_PASSWORD: ${{ secrets[steps._PG_PASSWORD_.outputs.uppercase] }}
-        run: >-
-          docker run \
-            --rm \
-            -e PG_HOST=$PG_HOST \
-            -e PG_PORT=$PG_PORT \
-            -e PG_USERNAME=$PG_USERNAME \
-            -e PG_PASSWORD=$PG_PASSWORD \
-            -e PG_DB=$PG_DB \
-            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-              pg \
-                prune-values
+#  # Compile CROCO model for the Algoa Bay forecast
+#  compile-croco:
+#    needs: [envs]
+#    runs-on: ubuntu-latest
+#    env:
+#      CROCO_IMAGE: ${{ needs.envs.outputs.CROCO_IMAGE }}
+#    outputs:
+#      image: ${{ steps.meta.outputs.tags }}
+#    steps:
+#      - name: Checkout source code
+#        uses: actions/checkout@main
+#        with:
+#          ref: ${{ inputs.BRANCH_REF }}
+#      - name: Log in to the Container registry
+#        uses: docker/login-action@master
+#        with:
+#          registry: ${{ env.REGISTRY }}
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Extract metadata (tags, labels) for Docker
+#        id: meta
+#        uses: docker/metadata-action@master
+#        with:
+#          images: ${{ inputs.REGISTRY }}/${{ env.CROCO_IMAGE }}
+#          tags: |
+#            type=sha
+#      - name: Build and push
+#        uses: docker/build-push-action@master
+#        with:
+#          context: models/algoa-bay-forecast
+#          file: models/algoa-bay-forecast/croco.Dockerfile
+#          push: true
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
+#
+#  # Create a tmp folder structure for mode run assets. The format is:
+#  ## YYYYMMDD/
+#  ##  - forcing-inputs/
+#  ##  - croco/
+#  ##     - forcing/
+#  ##     - forecast/
+#  ##     - scratch/
+#  workdir:
+#    needs: [envs]
+#    runs-on: somisana
+#    outputs:
+#      WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
+#      WORKDIR_YESTERDAY: ${{ steps.WORKDIR.outputs.WORKDIR_YESTERDAY }}
+#    env:
+#      dirname: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+#      dirname_yesterday: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
+#      branch_ref: ${{ needs.envs.outputs.BRANCH_REF }}
+#    steps:
+#      - name: Create /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }} directory structure
+#        run: |
+#          rm -rf /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
+#          mkdir -p /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}/{croco/{forcing,forecast,scratch},forcing-inputs}
+#          chown -R :runners /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
+#          chmod -R 774 /home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}
+#      - name: Set WORKDIRs
+#        id: WORKDIR
+#        run: |
+#          echo "WORKDIR=/home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname }}" >> $GITHUB_OUTPUT
+#          echo "WORKDIR_YESTERDAY=/home/runner/somisana/algoa-bay-forecast/${{ env.branch_ref }}/${{ env.dirname_yesterday }}" >> $GITHUB_OUTPUT
+#
+#  # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
+#  # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
+#  crocotools:
+#    needs: [boundary-data, workdir, envs]
+#    runs-on: somisana
+#    env:
+#      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+#      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+#      RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
+#      RESTART_FILE_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
+#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+#    steps:
+#      - name: Check out source code
+#        uses: actions/checkout@master
+#        with:
+#          ref: ${{ env.BRANCH_REF }}
+#      - name: Copy yesterday's restart file (if it exists)
+#        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc
+#        continue-on-error: true # Allow for the case where the restart file doesn't exist
+#      - name: Configure MatLab env restart file path
+#        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
+#      - name: Make forcing files
+#        run: >-
+#          docker run \
+#            --rm \
+#            -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
+#            -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
+#            -v $WORKDIR:/tmp/somisana/current \
+#            -e MLM_LICENSE_FILE=${{ env.MLM_LICENSE_FILE }} \
+#            ghcr.io/saeon/somisana_matlab:r2022a \
+#              -batch "run('/crocotools/run.m')"
+#
+#  # Execute the CROCO model using the forcing files created previously
+#  # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image.
+#  # As such the CROCO model run must be in the context of a container instantiated from that Docker image
+#  croco:
+#    needs: [compile-croco, crocotools, envs, workdir]
+#    runs-on: croco
+#    env:
+#      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+#      RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+#    steps:
+#      - name: Check out source code
+#        uses: actions/checkout@master
+#        with:
+#          ref: ${{ env.BRANCH_REF }}
+#      - name: Execute CROCO binary
+#        run: >-
+#          docker run \
+#            --rm \
+#            -v $WORKDIR:/algoa-bay-forecast/current \
+#            -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
+#            -e NP_XI=3 \
+#            -e NP_ETA=4 \
+#            --cpus 12 \
+#            ${{ needs.compile-croco.outputs.image }} \
+#              ./run_croco.bash \
+#                /algoa-bay-forecast/current \
+#                ${{ needs.envs.outputs.MODEL_RUN_DATE }} \
+#                ${{ needs.envs.outputs.RESTART_FILE_DATE }}
+#      - name: Move CROCO output
+#        run: mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc
+#
+#  # Regrid CROCO u,v to rho grid,
+#  # rotate u,v components from grid aligned to east/north aligned and
+#  # work out depth levels of sigma grid in meters (tier 1),
+#  # interpolate data to constant vertical levels (tier 2),
+#  # and interpolate data to a constant horizontal grid (tier 3)
+#  post-processing:
+#    needs: [branch-ref, croco, toolkit, envs, workdir]
+#    runs-on: somisana
+#    env:
+#      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+#      RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+#      SHA: sha-${{ github.sha }}
+#    steps:
+#      - name: Check out source code
+#        uses: actions/checkout@master
+#        with:
+#          ref: ${{ env.BRANCH_REF }}
+#      - name: subset the raw CROCO NetCDF file for archiving
+#        continue-on-error: true
+#        run: >-
+#          docker run \
+#            --rm \
+#            --entrypoint /bin/bash \
+#            -v $WORKDIR:/tmp/somisana/current \
+#            ghcr.io/saeon/somisana_geopython:3.10.6 \
+#              -c "ncks -v temp,salt,u,v,w,zeta,sustr,svstr -d time,120, -O /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc"
+#      - name: Tier 1 regridding
+#        continue-on-error: true
+#        run: >-
+#          docker run \
+#            --rm \
+#            -v $WORKDIR:/tmp/somisana/current \
+#            -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/tmp/somisana/current/croco/forcing/grd.nc \
+#            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+#              croco \
+#                regrid-tier1 \
+#                  --id algoa-bay-forecast \
+#                  --grid /tmp/somisana/current/croco/forcing/grd.nc \
+#                  --input /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
+#                  --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc
+#      - name: Tier 2 regridding
+#        continue-on-error: true
+#        run: >-
+#          docker run \
+#            --rm \
+#            -v $WORKDIR:/tmp/somisana/current \
+#            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+#              croco \
+#                regrid-tier2 \
+#                  --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
+#                  --depths 0,1,2,5,10,15,20,30,40,50,60,70,100,150,200,500,1000,1500,2000,99999 \
+#                  --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier2.nc
+#      - name: Tier 3 regridding
+#        continue-on-error: true
+#        run: >-
+#          docker run \
+#            --rm \
+#            -v $WORKDIR:/tmp/somisana/current \
+#            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+#              croco \
+#                regrid-tier3 \
+#                  --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier2.nc \
+#                  --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier3.nc \
+#                  --spacing 0.02
+#
+#  # Archive output
+#  archive-data:
+#    needs: [post-processing, workdir, envs, toolkit]
+#    runs-on: somisana
+#    env:
+#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+#      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+#      RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+#      YYYYMM: ${{ needs.envs.outputs.MODEL_RUN_YEAR_MONTH }}
+#      SHA: sha-${{ github.sha }}
+#    steps:
+#      - name: Load $PATH
+#        run: |
+#          source ~/.bashrc
+#      - name: Archive raw CROCO output (hindcast / forecast)
+#        continue-on-error: false
+#        run: |
+#          cat \
+#            ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc \
+#              | curl \
+#                --silent \
+#                --keepalive-time 2400 \
+#                -X PUT \
+#                -H "Content-Type: application/octet-stream" \
+#                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+#                -T \
+#                - \
+#                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-hcst-5d-fcst.nc;
+#      - name: Archive truncated CROCO output (forecast)
+#        continue-on-error: false
+#        run: |
+#          cat \
+#            ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc \
+#              | curl \
+#                --silent \
+#                --keepalive-time 2400 \
+#                -X PUT \
+#                -H "Content-Type: application/octet-stream" \
+#                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+#                -T \
+#                - \
+#                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-5d-fcst.nc;
+#      - name: Archive tier 1 output
+#        continue-on-error: false
+#        run: |
+#          cat \
+#            ${{ env.WORKDIR }}/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
+#              | curl \
+#                --silent \
+#                --keepalive-time 2400 \
+#                -X PUT \
+#                -H "Content-Type: application/octet-stream" \
+#                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+#                -T \
+#                - \
+#                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t1.nc;
+#      - name: Archive tier 2 output
+#        continue-on-error: false
+#        run: |
+#          cat \
+#            ${{ env.WORKDIR }}/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier2.nc \
+#              | curl \
+#                --silent \
+#                --keepalive-time 2400 \
+#                -X PUT \
+#                -H "Content-Type: application/octet-stream" \
+#                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+#                -T \
+#                - \
+#                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t2.nc;
+#      - name: Archive tier 3 output
+#        continue-on-error: false
+#        run: |
+#          cat \
+#            ${{ env.WORKDIR }}/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier3.nc \
+#              | curl \
+#                --silent \
+#                --keepalive-time 2400 \
+#                -X PUT \
+#                -H "Content-Type: application/octet-stream" \
+#                -H "Authorization: ${{ env.MNEMOSYNE_TOKEN }}" \
+#                -T \
+#                - \
+#                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.nc;
+#      - name: Kerchunk NetCDF tier 3 output
+#        continue-on-error: true
+#        run: |
+#          docker run \
+#            --rm \
+#            -v $WORKDIR:/tmp/somisana/current \
+#            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+#              kerchunk \
+#                run \
+#                  --inputs https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.nc \
+#                  --output /tmp/somisana/current/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json
+#      - name: Upload Kerchunked tier 3 output to Mnemosyne
+#        continue-on-error: true
+#        run: |
+#          curl \
+#            --silent \
+#            --keepalive-time 1200 \
+#            -X PUT \
+#            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+#            -H "Content-Type: application/octet-stream" \
+#            -T ${{ env.WORKDIR}}/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json \
+#            https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.YYYYMM }}/${{ env.RUN_DATE }}-hourly-avg-t3.kerchunk.json;
+#
+#  # Load raster data into postgis using raster2pgsql
+#  load-postgis:
+#    needs: [post-processing, branch-ref, toolkit, envs, workdir]
+#    runs-on: postgres
+#    env:
+#      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+#      RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+#      SHA: sha-${{ github.sha }}
+#    steps:
+#      - name: Get PG_HOST secret name
+#        id: _PG_HOST_
+#        run: |
+#          STRING=PG_HOST_${{ needs.branch-ref.outputs.value }}
+#          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+#          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
+#      - name: Get PG_PORT secret name
+#        id: _PG_PORT_
+#        run: |
+#          STRING=PG_PORT_${{ needs.branch-ref.outputs.value }}
+#          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+#          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
+#      - name: Get PG_DB secret name
+#        id: _PG_DB_
+#        run: |
+#          STRING=PG_DB_${{ needs.branch-ref.outputs.value }}
+#          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+#          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
+#      - name: Get PG_USERNAME secret name
+#        id: _PG_USERNAME_
+#        run: |
+#          STRING=PG_USERNAME_${{ needs.branch-ref.outputs.value }}
+#          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+#          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
+#      - name: Get PG_PASSWORD secret name
+#        id: _PG_PASSWORD_
+#        run: |
+#          STRING=PG_PASSWORD_${{ needs.branch-ref.outputs.value }}
+#          STRING_UPPERCASE=$(echo $STRING | tr '[:lower:]' '[:upper:]')
+#          echo "uppercase=$STRING_UPPERCASE" >> $GITHUB_OUTPUT
+#      - name: Load normalized NetCDF output to PostGIS
+#        env:
+#          PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
+#          PG_PORT: ${{ secrets[steps._PG_PORT_.outputs.uppercase] }}
+#          PG_DB: ${{ secrets[steps._PG_DB_.outputs.uppercase] }}
+#          PG_USERNAME: ${{ secrets[steps._PG_USERNAME_.outputs.uppercase] }}
+#          PG_PASSWORD: ${{ secrets[steps._PG_PASSWORD_.outputs.uppercase] }}
+#        run: >-
+#          docker run \
+#            --rm \
+#            -v $WORKDIR:/tmp/somisana/current \
+#            -e PG_HOST=$PG_HOST \
+#            -e PG_PORT=$PG_PORT \
+#            -e PG_USERNAME=$PG_USERNAME \
+#            -e PG_PASSWORD=$PG_PASSWORD \
+#            -e PG_DB=$PG_DB \
+#            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+#              pg \
+#                load-croco-tier1-output-to-pg \
+#                  --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ env.RUN_DATE }}-tier1.nc \
+#                  --parallelization 32
+#      - name: Delete old PostgreSQL data
+#        continue-on-error: true
+#        env:
+#          PG_HOST: ${{ secrets[steps._PG_HOST_.outputs.uppercase] }}
+#          PG_PORT: ${{ secrets[steps._PG_PORT_.outputs.uppercase] }}
+#          PG_DB: ${{ secrets[steps._PG_DB_.outputs.uppercase] }}
+#          PG_USERNAME: ${{ secrets[steps._PG_USERNAME_.outputs.uppercase] }}
+#          PG_PASSWORD: ${{ secrets[steps._PG_PASSWORD_.outputs.uppercase] }}
+#        run: >-
+#          docker run \
+#            --rm \
+#            -e PG_HOST=$PG_HOST \
+#            -e PG_PORT=$PG_PORT \
+#            -e PG_USERNAME=$PG_USERNAME \
+#            -e PG_PASSWORD=$PG_PASSWORD \
+#            -e PG_DB=$PG_DB \
+#            ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+#              pg \
+#                prune-values
