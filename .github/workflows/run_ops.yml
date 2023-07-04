@@ -118,13 +118,13 @@ jobs:
           tags: |
             latest
             ${{ env.SHA }}
-#      - name: Build and push
-#        uses: docker/build-push-action@master
-#        with:
-#          context: toolkit
-#          push: true
-#          tags: ${{ steps.meta.outputs.tags }}
-#          labels: ${{ steps.meta.outputs.labels }}
+      - name: Build and push
+        uses: docker/build-push-action@master
+        with:
+          context: toolkit
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   # Download environmental data used for model boundaries and surface forcing.
   # This job is retried if it fails, since the failure can be due to upstream errors
