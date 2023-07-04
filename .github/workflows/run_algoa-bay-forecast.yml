@@ -15,8 +15,9 @@ on:
       TOOLKIT_IMAGE:
         required: true
         type: string
-#    secrets:
-#        required: true
+      GLOBAL_DIR:
+        required: true
+        type: string
 
 env:
   REGISTRY: ghcr.io
