@@ -12,6 +12,9 @@ on:
       MODEL_RUN_DATE:
         required: true
         type: string
+      TOOLKIT_IMAGE:
+        required: true
+        type: string
 #    secrets:
 #        required: true
 
@@ -106,37 +109,34 @@ jobs:
           echo "WORKDIR=/home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ inputs.MODEL_RUN_DATE }}" >> $GITHUB_OUTPUT
           echo "WORKDIR_YESTERDAY=/home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ inputs.RESTART_FILE_DATE }}" >> $GITHUB_OUTPUT
 
-#  # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
-#  # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
-#  crocotools:
-#    needs: [boundary-data, workdir, envs]
-#    runs-on: somisana
-#    env:
-#      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-#      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-#      RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
-#      RESTART_FILE_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
-#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
-#    steps:
-#      - name: Check out source code
-#        uses: actions/checkout@master
-#        with:
-#          ref: ${{ env.BRANCH_REF }}
-#      - name: Copy yesterday's restart file (if it exists)
-#        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc
-#        continue-on-error: true # Allow for the case where the restart file doesn't exist
-#      - name: Configure MatLab env restart file path
-#        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
-#      - name: Make forcing files
-#        run: >-
-#          docker run \
-#            --rm \
-#            -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
-#            -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
-#            -v $WORKDIR:/tmp/somisana/current \
-#            -e MLM_LICENSE_FILE=${{ env.MLM_LICENSE_FILE }} \
-#            ghcr.io/saeon/somisana_matlab:r2022a \
-#              -batch "run('/crocotools/run.m')"
+  # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
+  # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
+  crocotools:
+    needs: [workdir, envs]
+    runs-on: somisana
+    env:
+      WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+      RESTART_FILE_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@master
+        with:
+          ref: ${{ inputs.BRANCH_REF }}
+      - name: Copy yesterday's restart file (if it exists)
+        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ inputs.RESTART_FILE_DATE }}.nc
+        continue-on-error: true # Allow for the case where the restart file doesn't exist
+      - name: Configure MatLab env restart file path
+        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ inputs.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
+      - name: Make forcing files
+        run: >-
+          docker run \
+            --rm \
+            -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
+            -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
+            -v $WORKDIR:/tmp/somisana/current \
+            -e MLM_LICENSE_FILE=${{ secrets.MLM_LICENSE_FILE }} \
+            ${{ env.REGISTRY }}/saeon/somisana_matlab:r2022a \
+              -batch "run('/crocotools/run.m')"
 
   # Execute the CROCO model using the forcing files created previously
 #  # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image.
@@ -195,7 +195,7 @@ jobs:
 #            --rm \
 #            --entrypoint /bin/bash \
 #            -v $WORKDIR:/tmp/somisana/current \
-#            ghcr.io/saeon/somisana_geopython:3.10.6 \
+#            ${{ env.REGISTRY }}/saeon/somisana_geopython:3.10.6 \
 #              -c "ncks -v temp,salt,u,v,w,zeta,sustr,svstr -d time,120, -O /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}.nc /tmp/somisana/current/croco/forecast/hourly-avg-${{ env.RUN_DATE }}-archive.nc"
 #      - name: Tier 1 regridding
 #        continue-on-error: true

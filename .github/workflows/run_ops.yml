@@ -140,7 +140,7 @@ jobs:
       SHA: sha-${{ github.sha }}
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
-      - name: Clean /home/runner/somisana/global_data/ # haven't tested this part of the job yet!
+      - name: Clean /home/runner/somisana/global_data/ 
         run: >-
           find \
             /home/runner/somisana/global_data/* \
@@ -217,7 +217,7 @@ jobs:
                   --domain 22,31,-37,-31
 
   call_run_algoa-bay-forecast:
-    needs: [envs]
+    needs: [envs,download-global-data]
     uses: ./.github/workflows/run_algoa-bay-forecast.yml
     with:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
