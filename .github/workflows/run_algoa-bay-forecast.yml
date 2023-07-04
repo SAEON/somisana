@@ -126,16 +126,21 @@ jobs:
       - name: Copy yesterday's restart file (if it exists)
         run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ inputs.RESTART_FILE_DATE }}.nc
         continue-on-error: true # Allow for the case where the restart file doesn't exist
-      - name: Configure MatLab env paths
-        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ inputs.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
+      - name: copy the MatLab .env file generated during the download global GFS data step to the working directory
+        run: cp ${{ inputs.GLOBAL_DIR }}/.env ${{ env.WORKDIR }}
+        continue-on-error: true # Allow for the case where the restart file doesn't exist
+      - name: Add the restart file path to the MatLab .env file
+        run: |
+          echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ inputs.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
+          # NEED TO ADD THE MODEL_RUN_DATE here and remove writing this during the download GFS step - in the future we may not download GFS data but we'll still want these variables
       - name: Make forcing files
         run: >-
           docker run \
             --rm \
             -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
-            -v ${{ env.WORKDIR  }}:/tmp/somisana/current \
-            -v ${{ inputs.GLOBAL_DIR  }}:/tmp/somisana/global-data \
+            -v ${{ env.WORKDIR }}:/tmp/somisana/current \
+            -v ${{ inputs.GLOBAL_DIR }}:/tmp/somisana/global-data \
             -e MLM_LICENSE_FILE=${{ secrets.MLM_LICENSE_FILE }} \
             ${{ env.REGISTRY }}/saeon/somisana_matlab:r2022a \
               -batch "run('/crocotools/run.m')"

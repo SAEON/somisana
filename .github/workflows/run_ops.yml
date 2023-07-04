@@ -150,71 +150,71 @@ jobs:
             -exec \
               rm \
                 -rf {} \; 
-#      - name: Configure no. retries
-#        id: retries
-#        run: |
-#          if [ "$BRANCH_REF" = "stable" ]
-#          then
-#            echo "RETRIES=30" >> $GITHUB_OUTPUT
-#          else
-#            echo "RETRIES=1" >> $GITHUB_OUTPUT
-#          fi
-#      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
-#        continue-on-error: true # Maybe Node.js exists anyway
-#        run: |
-#          source ~/.bashrc
-#          nvm use 19.6.0
-#      - name: Create ${{ env.GLOBAL_DIR }} directory 
-#        run: |
-#          rm -rf ${{ env.GLOBAL_DIR }} 
-#          mkdir -p ${{ env.GLOBAL_DIR }} 
-#          chown -R :runners ${{ env.GLOBAL_DIR }} 
-#          chmod -R 774 ${{ env.GLOBAL_DIR }} 
-#      - name: Download GFS # NOTE - DON"T WRITE TO /tmp IN THE IMAGE - RATHER USE /tmp/somisana/blah. Zach had --workdir /tmp/somisana/current/forcing-inputs - we don't have the forcing inputs directory. Not sure this impacts us now that we write the .env file to the same directory as where the global data are downloaded instead of above - need to check this still works with the matlab step
-#        uses: nick-fields/retry@master 
-#        with:
-#          timeout_minutes: 30 # Script is considered failed if this limit is reached
-#          retry_wait_seconds: 300 # Wait 5 minutes and try again
-#          max_attempts: ${{ steps.retries.outputs.RETRIES }}
-#          retry_on: any
-#          warning_on_retry: true
-#          shell: bash
-#          continue_on_error: false
-#          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*grb*
-#          command: >-
-#            docker run \
-#              --rm \
-#              -v ${{ env.GLOBAL_DIR }}/:/tmp/somisana/current \
-#              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-#                download \
-#                  --provider gfs \
-#                  --workdir /tmp/somisana/current \
-#                  --matlab-env /tmp/somisana/current/.env \
-#                  --download-date ${{ env.MODEL_RUN_DATE }} \
-#                  --domain 22,31,-37,-31
-#      - name: Download Mercator
-#        uses: nick-fields/retry@master
-#        with:
-#          timeout_minutes: 30 # Script is considered failed if this limit is reached
-#          retry_wait_seconds: 300 # Wait 5 minutes and try again
-#          max_attempts: ${{ steps.retries.outputs.RETRIES }}
-#          retry_on: any
-#          warning_on_retry: true
-#          shell: bash
-#          continue_on_error: false
-#          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*mercator*
-#          command: >-
-#            docker run \
-#              --rm \
-#              -v ${{ env.GLOBAL_DIR }}/:/tmp/somisana/current/ \
-#              -e COPERNICUS_USERNAME=${{ secrets.COPERNICUS_USERNAME }} \
-#              -e COPERNICUS_PASSWORD=${{ secrets.COPERNICUS_PASSWORD }} \
-#              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
-#                download \
-#                  --provider mercator \
-#                  --workdir /tmp/somisana/current \
-#                  --download-date ${{ env.MODEL_RUN_DATE }} \
-#                  --domain 22,31,-37,-31
+      - name: Configure no. retries
+        id: retries
+        run: |
+          if [ "$BRANCH_REF" = "stable" ]
+          then
+            echo "RETRIES=30" >> $GITHUB_OUTPUT
+          else
+            echo "RETRIES=1" >> $GITHUB_OUTPUT
+          fi
+      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
+        continue-on-error: true # Maybe Node.js exists anyway
+        run: |
+          source ~/.bashrc
+          nvm use 19.6.0
+      - name: Create ${{ env.GLOBAL_DIR }} directory 
+        run: |
+          rm -rf ${{ env.GLOBAL_DIR }} 
+          mkdir -p ${{ env.GLOBAL_DIR }} 
+          chown -R :runners ${{ env.GLOBAL_DIR }} 
+          chmod -R 774 ${{ env.GLOBAL_DIR }} 
+      - name: Download GFS # NOTE - DON"T WRITE TO /tmp IN THE IMAGE - RATHER USE /tmp/somisana/blah. Zach had --workdir /tmp/somisana/current/forcing-inputs - we don't have the forcing inputs directory. Not sure this impacts us now that we write the .env file to the same directory as where the global data are downloaded instead of above - need to check this still works with the matlab step
+        uses: nick-fields/retry@master 
+        with:
+          timeout_minutes: 30 # Script is considered failed if this limit is reached
+          retry_wait_seconds: 300 # Wait 5 minutes and try again
+          max_attempts: ${{ steps.retries.outputs.RETRIES }}
+          retry_on: any
+          warning_on_retry: true
+          shell: bash
+          continue_on_error: false
+          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*grb*
+          command: >-
+            docker run \
+              --rm \
+              -v ${{ env.GLOBAL_DIR }}/:/tmp/somisana/current \
+              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+                download \
+                  --provider gfs \
+                  --workdir /tmp/somisana/current \
+                  --matlab-env /tmp/somisana/current/.env \
+                  --download-date ${{ env.MODEL_RUN_DATE }} \
+                  --domain 22,31,-37,-31
+      - name: Download Mercator
+        uses: nick-fields/retry@master
+        with:
+          timeout_minutes: 30 # Script is considered failed if this limit is reached
+          retry_wait_seconds: 300 # Wait 5 minutes and try again
+          max_attempts: ${{ steps.retries.outputs.RETRIES }}
+          retry_on: any
+          warning_on_retry: true
+          shell: bash
+          continue_on_error: false
+          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*mercator*
+          command: >-
+            docker run \
+              --rm \
+              -v ${{ env.GLOBAL_DIR }}/:/tmp/somisana/current/ \
+              -e COPERNICUS_USERNAME=${{ secrets.COPERNICUS_USERNAME }} \
+              -e COPERNICUS_PASSWORD=${{ secrets.COPERNICUS_PASSWORD }} \
+              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+                download \
+                  --provider mercator \
+                  --workdir /tmp/somisana/current \
+                  --download-date ${{ env.MODEL_RUN_DATE }} \
+                  --domain 22,31,-37,-31
 
   call_run_algoa-bay-forecast:
     needs: [envs,download-global-data]
