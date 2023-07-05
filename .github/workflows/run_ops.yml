@@ -224,7 +224,7 @@ jobs:
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
       MODEL_RUN_YEAR_MONTH: ${{ needs.envs.outputs.MODEL_RUN_YEAR_MONTH }}
       RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }} 
-      TOOLKIT_IMAGE: ${{ needs.toolkit.outputs.image }}:${{ env.SHA }}
+      TOOLKIT_IMAGE: ${{ needs.toolkit.outputs.image }}:sha-${{ github.sha }}
       GLOBAL_DIR: ${{ needs.envs.outputs.GLOBAL_DIR }}
     secrets: inherit
 
