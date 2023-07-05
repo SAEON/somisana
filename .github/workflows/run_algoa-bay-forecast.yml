@@ -161,22 +161,22 @@ jobs:
         uses: actions/checkout@main
         with:
           ref: ${{ inputs.BRANCH_REF }}
-#      - name: Execute CROCO binary
-#        run: >-
-#          docker run \
-#            --rm \
-#            -v $WORKDIR:/algoa-bay-forecast/current \
-#            -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
-#            -e NP_XI=3 \
-#            -e NP_ETA=4 \
-#            --cpus 12 \
-#            ${{ needs.compile-croco.outputs.image }} \
-#              ./run_croco.bash \
-#                /algoa-bay-forecast/current \
-#                ${{ inputs.MODEL_RUN_DATE }} \
-#                ${{ inputs.RESTART_FILE_DATE }}
-#      - name: Move CROCO output
-#        run: mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ inputs.MODEL_RUN_DATE }}.nc
+      - name: Execute CROCO binary
+        run: >-
+          docker run \
+            --rm \
+            -v $WORKDIR:/algoa-bay-forecast/current \
+            -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/algoa-bay-forecast/current/croco/forcing/grd.nc \
+            -e NP_XI=3 \
+            -e NP_ETA=4 \
+            --cpus 12 \
+            ${{ needs.compile-croco.outputs.image }} \
+              ./run_croco.bash \
+                /algoa-bay-forecast/current \
+                ${{ inputs.MODEL_RUN_DATE }} \
+                ${{ inputs.RESTART_FILE_DATE }}
+      - name: Move CROCO output
+        run: mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ inputs.MODEL_RUN_DATE }}.nc
 
   # Regrid CROCO u,v to rho grid,
   # rotate u,v components from grid aligned to east/north aligned and
