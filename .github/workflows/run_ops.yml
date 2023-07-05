@@ -11,12 +11,12 @@ on:
 #  schedule: 
 #    - cron: '0 02 * * *' # 0400 SAST
 
+
+# Many of the env variables reference the current branch, 
+# which is set dynamically in the branch-ref job below
+# So the env variables are mostly set in the envs job below the branch-ref job
 env:
   REGISTRY: ghcr.io
-  #COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
-  #COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
-  #MLM_LICENSE_FILE: ${{ secrets.MLM_LICENSE_FILE }}
-  #MNEMOSYNE_TOKEN: ${{ secrets.MNEMOSYNE_TOKEN }}
 
 jobs:
   # Dynamically set the branch ref to the currently executing branch
@@ -30,17 +30,12 @@ jobs:
         run: |
           echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
-  # Many of the env variables reference the current branch
   # Set the environment variables using the current branch reference
-  # (which is set dynamically)
   envs:
     needs: [branch-ref]
     runs-on: ubuntu-latest
     env:
-      # why do we need three of these when they are all the same?
-      R1: ${{ inputs.run_date }}
-      R2: ${{ inputs.run_date }}
-      R3: ${{ inputs.run_date }}
+      RUN_DATE: ${{ inputs.run_date }}
     outputs:
       BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
@@ -53,9 +48,9 @@ jobs:
       - name: Configure run date
         id: run_date
         run: |
-          echo "yyyymmdd=${R1:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
-          echo "yyyymm=${R2:=$(date +'%Y%m')}" >> $GITHUB_OUTPUT
-          echo "yyyy=${R3:=$(date +'%Y')}" >> $GITHUB_OUTPUT
+          echo "yyyymmdd=${RUN_DATE:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
+          echo "yyyymm=${RUN_DATE:=$(date +'%Y%m')}" >> $GITHUB_OUTPUT
+          echo "yyyy=${RUN_DATE:=$(date +'%Y')}" >> $GITHUB_OUTPUT
       - name: Configure restart date
         id: restart_date
         run: |
@@ -170,7 +165,7 @@ jobs:
           mkdir -p ${{ env.GLOBAL_DIR }} 
           chown -R :runners ${{ env.GLOBAL_DIR }} 
           chmod -R 774 ${{ env.GLOBAL_DIR }} 
-      - name: Download GFS # NOTE - DON"T WRITE TO /tmp IN THE IMAGE - RATHER USE /tmp/somisana/blah. Zach had --workdir /tmp/somisana/current/forcing-inputs - we don't have the forcing inputs directory. Not sure this impacts us now that we write the .env file to the same directory as where the global data are downloaded instead of above - need to check this still works with the matlab step
+      - name: Download GFS 
         uses: nick-fields/retry@master 
         with:
           timeout_minutes: 30 # Script is considered failed if this limit is reached
@@ -216,90 +211,22 @@ jobs:
                   --download-date ${{ env.MODEL_RUN_DATE }} \
                   --domain 22,31,-37,-31
 
+  # now do the model specific steps 
+  # currently this is done by calling different model reusable workflows in series
+  # In future we should make a generic model reusable workflow which takes the model name as an input
+  # Then the model runs can be carried out using a matrix strategy 
+  # (there's an example of this here: https://docs.github.com/en/actions/using-workflows/reusing-workflows#example-reusable-workflow)
   call_run_algoa-bay-forecast:
     needs: [envs,download-global-data]
     uses: ./.github/workflows/run_algoa-bay-forecast.yml
     with:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      MODEL_RUN_YEAR_MONTH: ${{ needs.envs.outputs.MODEL_RUN_YEAR_MONTH }}
       RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }} 
       TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
       GLOBAL_DIR: ${{ needs.envs.outputs.GLOBAL_DIR }}
     secrets: inherit
 
-#  run_models:
-#    needs: [envs, download-global-data]
-#    runs-on: somisana
-#    strategy:
-#      matrix:
-#        model_name: ["algoa-bay-forecast"] #, "false-bay-forecast"]
-#    env:
-#      BRANCH: ${{ needs.envs.outputs.BRANCH_REF }}
-#      BRANCHDIR: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}
-#      WORKDIR: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.MODEL_RUN_DATE }}
-#      WORKDIR_YESTERDAY: /home/runner/somisana/${{ matrix.model_name }}/${{ needs.envs.outputs.BRANCH_REF }}/${{ needs.envs.outputs.RESTART_FILE_DATE }}
-#      CROCO_IMAGE: ${{ github.repository }}_${{ matrix.model_name }}_croco_${{ needs.envs.outputs.BRANCH_REF }}
-#    steps:
-#      - name: Clean ${{ env.BRANCHDIR }}
-#        run: >-
-#          find \
-#            ${{ env.BRANCHDIR }}/* \
-#            -maxdepth 0 \
-#            -type d \
-#            -ctime +5 \
-#            -exec \
-#              rm \
-#                -rf {} \; 
-#      
-#      - name: Create ${{ env.WORKDIR }} directory structure
-#        run: |
-#          rm -rf ${{ env.WORKDIR }}
-#          mkdir -p ${{ env.WORKDIR }}/croco/{forcing,forecast,scratch}
-#          chown -R :runners ${{ env.WORKDIR }}
-#          chmod -R 774 ${{ env.WORKDIR }}
-#
-#      - name: Checkout source code
-#        uses: actions/checkout@main
-#        with:
-#          ref: ${{ env.BRANCH }}
-#
-#      - name: Log in to the Container registry
-#        uses: docker/login-action@master
-#        with:
-#          registry: ${{ env.REGISTRY }}
-#          username: ${{ github.actor }}
-#          password: ${{ secrets.GITHUB_TOKEN }}
-#
-#      - name: Extract metadata (tags, labels) for Docker
-#        id: meta
-#        uses: docker/metadata-action@master
-#        with:
-#          images: ${{ env.REGISTRY }}/${{ env.CROCO_IMAGE }} 
-#          tags: |
-#            type=sha
-#
-#      - name: Build and push the CROCO image
-#        uses: docker/build-push-action@master
-#        with:
-#          context: models/${{ matrix.model_name }}
-#          file: models/${{ matrix.model_name }}/croco.Dockerfile
-#          push: true
-#          tags: ${{ steps.meta.outputs.tags }}
-#          labels: ${{ steps.meta.outputs.labels }}
-#
-#      - name: Copy yesterday's restart file (if it exists)
-#        run: cp ${{ env.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc ${{ env.WORKDIR }}/croco/forcing/rst_${{ needs.envs.outputs.RESTART_FILE_DATE }}.nc
-#        continue-on-error: true # Allow for the case where the restart file doesn't exist
-#      - name: Configure MatLab env restart file path
-#        run: echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ needs.envs.outputs.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
-#      - name: Make forcing files
-#        run: >-
-#          docker run \
-#            --rm \
-#            -v $(pwd)/models/${{ matrix.model_name }}/crocotools:/crocotools/ \
-#            -v $(pwd)/models/${{ matrix.model_name }}/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
-#            -v ${{ env.GLOBAL_DIR }}:/tmp/somisana/current/forcing-inputs/
-#            -v ${{ env.WORKDIR }}:/tmp/somisana/current \
-#            -e MLM_LICENSE_FILE=${{ env.MLM_LICENSE_FILE }} \
-#            ghcr.io/saeon/somisana_matlab:r2022a \
-#              -batch "run('/crocotools/run.m')"
+  # the false bay workflow should have the algoa bay one in "needs" as they must run in series
+
