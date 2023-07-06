@@ -23,6 +23,10 @@ services:
       restart_policy:
         condition: any
         delay: 30s
+      resources:
+        limits:
+          cpus: "1"
+          memory: 100M
     environment:
       ALLOWED_ORIGINS: https://somisana.dvn
       MONGO_HOST: $MONGO_HOST

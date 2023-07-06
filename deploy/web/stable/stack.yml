@@ -23,6 +23,10 @@ services:
       restart_policy:
         condition: any
         delay: 15s
+      resources:
+        limits:
+          cpus: "4"
+          memory: 500M
     environment:
       ALLOWED_ORIGINS: https://somisana.ac.za,https://explore.somisana.ac.za
       ODP_SSO_CLIENT_SECRET: $ODP_SSO_CLIENT_SECRET
