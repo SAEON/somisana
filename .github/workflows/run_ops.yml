@@ -204,15 +204,23 @@ jobs:
   # In future we should make a generic model reusable workflow which takes the model name as an input
   # Then the model runs can be carried out using a matrix strategy 
   # (there's an example of this here: https://docs.github.com/en/actions/using-workflows/reusing-workflows#example-reusable-workflow)
-  call_run_algoa-bay-forecast:
+#  call_run_algoa-bay-forecast:
+#    needs: [envs,toolkit,download-global-data]
+#    uses: ./.github/workflows/run_algoa-bay-forecast.yml
+#    with:
+#      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+#      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+#      TOOLKIT_IMAGE: ${{ needs.toolkit.outputs.image }}:sha-${{ github.sha }}
+#      EEZ_DATA_DIR: ${{ needs.envs.outputs.EEZ_DATA_DIR }}
+#    secrets: inherit
+
+  call_run_false-bay-forecast:
     needs: [envs,toolkit,download-global-data]
-    uses: ./.github/workflows/run_algoa-bay-forecast.yml
+    uses: ./.github/workflows/run_false-bay-forecast.yml
     with:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
       TOOLKIT_IMAGE: ${{ needs.toolkit.outputs.image }}:sha-${{ github.sha }}
       EEZ_DATA_DIR: ${{ needs.envs.outputs.EEZ_DATA_DIR }}
     secrets: inherit
-
-  # the false bay workflow should have the algoa bay one in "needs" as they must run in series
 
