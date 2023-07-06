@@ -3,22 +3,20 @@ name: Run Algoa Bay Forecast model
 on:
   workflow_call:
     inputs:
+      # the branch on which the model is run e.g. "stable"
       BRANCH_REF:
         required: true
         type: string
-      RESTART_FILE_DATE:
-        required: true
-        type: string
-      MODEL_RUN_YEAR_MONTH:
-        required: true
-        type: string
+      # model run date in format "yyyymmdd"
       MODEL_RUN_DATE:
         required: true
         type: string
+      # toolkit image in format ghcr.io/saeon/somisana_toolkit_$BRANCH_REF:sha-<commit>
       TOOLKIT_IMAGE:
         required: true
         type: string
-      GLOBAL_DIR:
+      # directory where forcing input data over the EEZ is downloaded to
+      EEZ_DATA_DIR:
         required: true
         type: string
 
@@ -47,11 +45,23 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       CROCO_IMAGE: ${{ steps.ENVS.outputs.CROCO_IMAGE }}
+      MODEL_RUN_YEAR_MONTH: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR_MONTH }}
+      RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}
     steps:
+      - name: Configure restart date
+        id: restart_date
+        run: |
+          echo "value=$(date -d '${{ inputs.MODEL_RUN_DATE }} -1 days' +'%Y%m%d')" >> $GITHUB_OUTPUT
+      - name: Configure run date as yyyymm format
+        id: run_date_yyyymm
+        run: |
+          echo "value=$(date -d '${{ inputs.MODEL_RUN_DATE }}' +'%Y%m')" >> $GITHUB_OUTPUT
       - name: Set envs
         id: ENVS
         run: |
           echo "CROCO_IMAGE=${{ github.repository }}_algoa_bay_forecast_croco_${{ inputs.BRANCH_REF }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_YEAR_MONTH=${{ steps.run_date_yyyymm.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "RESTART_FILE_DATE=${{ steps.restart_date.outputs.value }}" >> $GITHUB_OUTPUT
 
   # Compile CROCO model for the Algoa Bay forecast
   compile-croco:
@@ -97,6 +107,8 @@ jobs:
   workdir:
     needs: [envs]
     runs-on: somisana
+    env:
+      RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
     outputs:
       WORKDIR: ${{ steps.WORKDIR.outputs.WORKDIR}}
       WORKDIR_YESTERDAY: ${{ steps.WORKDIR.outputs.WORKDIR_YESTERDAY }}
@@ -111,7 +123,7 @@ jobs:
         id: WORKDIR
         run: |
           echo "WORKDIR=/home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ inputs.MODEL_RUN_DATE }}" >> $GITHUB_OUTPUT
-          echo "WORKDIR_YESTERDAY=/home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ inputs.RESTART_FILE_DATE }}" >> $GITHUB_OUTPUT
+          echo "WORKDIR_YESTERDAY=/home/runner/somisana/algoa-bay-forecast/${{ inputs.BRANCH_REF }}/${{ env.RESTART_FILE_DATE }}" >> $GITHUB_OUTPUT
 
   # CROCOTOOLS is a collection of MatLab scripts for converting environmental data (i.e. the boundary data downloaded previously)
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
@@ -120,21 +132,21 @@ jobs:
     runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
-      RESTART_FILE_PATH: ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc
+      RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
     steps:
       - name: Check out source code
         uses: actions/checkout@main
         with:
           ref: ${{ inputs.BRANCH_REF }}
       - name: Copy yesterday's restart file (if it exists)
-        run: cp ${{ env.RESTART_FILE_PATH }} ${{ env.WORKDIR }}/croco/forcing/rst_${{ inputs.RESTART_FILE_DATE }}.nc
+        run: cp ${{ needs.workdir.outputs.WORKDIR_YESTERDAY }}/croco/scratch/rst.nc ${{ env.WORKDIR }}/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc
         continue-on-error: true # Allow for the case where the restart file doesn't exist
       - name: copy the MatLab .env file generated during the download global GFS data step to the working directory
-        run: cp ${{ inputs.GLOBAL_DIR }}/.env ${{ env.WORKDIR }}
+        run: cp ${{ inputs.EEZ_DATA_DIR }}/.env ${{ env.WORKDIR }}
         continue-on-error: true # Allow for the case where the restart file doesn't exist
       - name: Add the restart file path to the MatLab .env file
         run: |
-          echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ inputs.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
+          echo "RESTART_FILE_PATH=/tmp/somisana/current/croco/forcing/rst_${{ env.RESTART_FILE_DATE }}.nc" >> ${{ env.WORKDIR }}/.env
           # NEED TO ADD THE MODEL_RUN_DATE here and remove writing this during the download GFS step - in the future we may not download GFS data but we'll still want these variables
       - name: Make forcing files
         run: >-
@@ -143,7 +155,7 @@ jobs:
             -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
             -v ${{ env.WORKDIR }}:/tmp/somisana/current \
-            -v ${{ inputs.GLOBAL_DIR }}:/tmp/somisana/global-data \
+            -v ${{ inputs.EEZ_DATA_DIR }}:/tmp/somisana/global-data \
             -e MLM_LICENSE_FILE=${{ secrets.MLM_LICENSE_FILE }} \
             ${{ env.REGISTRY }}/saeon/somisana_matlab:r2022a \
               -batch "run('/crocotools/run.m')"
@@ -152,10 +164,11 @@ jobs:
   # The CROCO model executable is compiled a part of a Docker build, and is baked into a docker image.
   # As such the CROCO model run must be in the context of a container instantiated from that Docker image
   croco:
-    needs: [compile-croco, crocotools, workdir]
+    needs: [envs, compile-croco, crocotools, workdir]
     runs-on: croco
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+      RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
     steps:
       - name: Check out source code
         uses: actions/checkout@main
@@ -174,7 +187,7 @@ jobs:
               ./run_croco.bash \
                 /algoa-bay-forecast/current \
                 ${{ inputs.MODEL_RUN_DATE }} \
-                ${{ inputs.RESTART_FILE_DATE }}
+                ${{ env.RESTART_FILE_DATE }}
       - name: Move CROCO output
         run: mv ${{ env.WORKDIR }}/croco/scratch/avg.nc ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ inputs.MODEL_RUN_DATE }}.nc
 
@@ -243,10 +256,11 @@ jobs:
 
   # Archive output
   archive-data:
-    needs: [post-processing, workdir]
+    needs: [envs, post-processing, workdir]
     runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+      MODEL_RUN_YEAR_MONTH: ${{ needs.envs.outputs.MODEL_RUN_YEAR_MONTH }}
     steps:
       - name: Load $PATH
         run: |
@@ -264,7 +278,7 @@ jobs:
                 -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ inputs.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-5d-hcst-5d-fcst.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-5d-hcst-5d-fcst.nc;
       - name: Archive truncated CROCO output (forecast)
         continue-on-error: false
         run: |
@@ -278,7 +292,7 @@ jobs:
                 -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ inputs.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-5d-fcst.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-5d-fcst.nc;
       - name: Archive tier 1 output
         continue-on-error: false
         run: |
@@ -292,7 +306,7 @@ jobs:
                 -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ inputs.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t1.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t1.nc;
       - name: Archive tier 2 output
         continue-on-error: false
         run: |
@@ -306,7 +320,7 @@ jobs:
                 -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ inputs.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t2.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t2.nc;
       - name: Archive tier 3 output
         continue-on-error: false
         run: |
@@ -320,7 +334,7 @@ jobs:
                 -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
                 -T \
                 - \
-                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ inputs.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.nc;
+                https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.nc;
       - name: Kerchunk NetCDF tier 3 output
         continue-on-error: true
         run: |
@@ -330,7 +344,7 @@ jobs:
             ${{ inputs.TOOLKIT_IMAGE }} \
               kerchunk \
                 run \
-                  --inputs https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ inputs.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.nc \
+                  --inputs https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.nc \
                   --output /tmp/somisana/current/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.kerchunk.json
       - name: Upload Kerchunked tier 3 output to Mnemosyne
         continue-on-error: true
@@ -342,7 +356,7 @@ jobs:
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -H "Content-Type: application/octet-stream" \
             -T ${{ env.WORKDIR}}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.kerchunk.json \
-            https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ inputs.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.kerchunk.json;
+            https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.kerchunk.json;
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:

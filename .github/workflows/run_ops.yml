@@ -40,30 +40,18 @@ jobs:
       BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
       TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}
-      MODEL_RUN_YEAR_MONTH: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR_MONTH }}
-      MODEL_RUN_YEAR: ${{ steps.ENVS.outputs.MODEL_RUN_YEAR }}
-      RESTART_FILE_DATE: ${{ steps.ENVS.outputs.RESTART_FILE_DATE }}
-      GLOBAL_DIR: ${{ steps.ENVS.outputs.GLOBAL_DIR }}
+      EEZ_DATA_DIR: ${{ steps.ENVS.outputs.EEZ_DATA_DIR }}
     steps:
       - name: Configure run date
         id: run_date
         run: |
           echo "yyyymmdd=${RUN_DATE:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
-          echo "yyyymm=${RUN_DATE:=$(date +'%Y%m')}" >> $GITHUB_OUTPUT
-          echo "yyyy=${RUN_DATE:=$(date +'%Y')}" >> $GITHUB_OUTPUT
-      - name: Configure restart date
-        id: restart_date
-        run: |
-          echo "value=$(date -d '${{ steps.run_date.outputs.value }} -1 days' +'%Y%m%d')" >> $GITHUB_OUTPUT
       - name: Set envs
         id: ENVS
         run: |
           echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
           echo "MODEL_RUN_DATE=${{ steps.run_date.outputs.yyyymmdd }}" >> $GITHUB_OUTPUT
-          echo "MODEL_RUN_YEAR_MONTH=${{ steps.run_date.outputs.yyyymm }}" >> $GITHUB_OUTPUT
-          echo "MODEL_RUN_YEAR=${{ steps.run_date.outputs.yyyy }}" >> $GITHUB_OUTPUT
-          echo "RESTART_FILE_DATE=${{ steps.restart_date.outputs.value }}" >> $GITHUB_OUTPUT
-          echo "GLOBAL_DIR=/home/runner/somisana/global_data/${{ steps.run_date.outputs.yyyymmdd }}/${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT # Think it would have been better to have $BRANCH_REF after somisana i.e. somisana/$BRANCH_REF but doing it this way to be consistent with how the model run directories were set up. Maybe we can change it later...
+          echo "EEZ_DATA_DIR=/home/runner/somisana/global_data/${{ steps.run_date.outputs.yyyymmdd }}/${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT # Think it would have been better to have $BRANCH_REF after somisana i.e. somisana/$BRANCH_REF but doing it this way to be consistent with how the model run directories were set up. Maybe we can change it later...
 
   # The SOMISANA toolkit is a suite of scripts to facilitate
   # running SOMISANA models - for example the Algoa Bay Forecast.
@@ -130,7 +118,7 @@ jobs:
     needs: [toolkit, envs]
     runs-on: somisana
     env:
-      GLOBAL_DIR: ${{ needs.envs.outputs.GLOBAL_DIR }}
+      EEZ_DATA_DIR: ${{ needs.envs.outputs.EEZ_DATA_DIR }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
       SHA: sha-${{ github.sha }}
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
@@ -159,12 +147,12 @@ jobs:
         run: |
           source ~/.bashrc
           nvm use 19.6.0
-      - name: Create ${{ env.GLOBAL_DIR }} directory 
+      - name: Create ${{ env.EEZ_DATA_DIR }} directory 
         run: |
-          rm -rf ${{ env.GLOBAL_DIR }} 
-          mkdir -p ${{ env.GLOBAL_DIR }} 
-          chown -R :runners ${{ env.GLOBAL_DIR }} 
-          chmod -R 774 ${{ env.GLOBAL_DIR }} 
+          rm -rf ${{ env.EEZ_DATA_DIR }} 
+          mkdir -p ${{ env.EEZ_DATA_DIR }} 
+          chown -R :runners ${{ env.EEZ_DATA_DIR }} 
+          chmod -R 774 ${{ env.EEZ_DATA_DIR }} 
       - name: Download GFS 
         uses: nick-fields/retry@master 
         with:
@@ -175,11 +163,11 @@ jobs:
           warning_on_retry: true
           shell: bash
           continue_on_error: false
-          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*grb*
+          on_retry_command: rm -f ${{ env.EEZ_DATA_DIR }}/*grb*
           command: >-
             docker run \
               --rm \
-              -v ${{ env.GLOBAL_DIR }}/:/tmp/somisana/current \
+              -v ${{ env.EEZ_DATA_DIR }}/:/tmp/somisana/current \
               ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
                 download \
                   --provider gfs \
@@ -197,11 +185,11 @@ jobs:
           warning_on_retry: true
           shell: bash
           continue_on_error: false
-          on_retry_command: rm -f ${{ env.GLOBAL_DIR }}/*mercator*
+          on_retry_command: rm -f ${{ env.EEZ_DATA_DIR }}/*mercator*
           command: >-
             docker run \
               --rm \
-              -v ${{ env.GLOBAL_DIR }}/:/tmp/somisana/current/ \
+              -v ${{ env.EEZ_DATA_DIR }}/:/tmp/somisana/current/ \
               -e COPERNICUS_USERNAME=${{ secrets.COPERNICUS_USERNAME }} \
               -e COPERNICUS_PASSWORD=${{ secrets.COPERNICUS_PASSWORD }} \
               ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
@@ -222,10 +210,8 @@ jobs:
     with:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
-      MODEL_RUN_YEAR_MONTH: ${{ needs.envs.outputs.MODEL_RUN_YEAR_MONTH }}
-      RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }} 
       TOOLKIT_IMAGE: ${{ needs.toolkit.outputs.image }}:sha-${{ github.sha }}
-      GLOBAL_DIR: ${{ needs.envs.outputs.GLOBAL_DIR }}
+      EEZ_DATA_DIR: ${{ needs.envs.outputs.EEZ_DATA_DIR }}
     secrets: inherit
 
   # the false bay workflow should have the algoa bay one in "needs" as they must run in series
