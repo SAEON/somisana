@@ -12,8 +12,6 @@ from cli.applications.mhw.detect.ecjoliver_mhw_source import (
 )
 
 
-
-
 def detect(args):
     log("Running MHW detect")
     output = os.path.abspath(args.output)
@@ -37,7 +35,7 @@ def detect(args):
 
     # Open the daily SST .nc files, and concatenate them
     # to create a single Xarray dataset (containing each day)
-    with xr.open_mfdataset(files) as ds:
+    with xr.open_mfdataset(files, engine="netcdf4", combine="by_coords",  chunks={'lat': 10, 'lon': 10}, parallel=True) as ds:
         ds = ds.sel(lat=slice(min_lat, max_lat), lon=slice(min_long, max_long))
         ds = ds.drop_vars("zlev")
         ds = np.squeeze(ds)
@@ -89,8 +87,12 @@ def detect(args):
                     # mhw_temp[1] => Dictionary of MHW related output
 
                     # Extracting climatology and threshold from diction created by script
-                    climatology_tmp = mhw_temp[1]["seas"] # seas => climatology at this grid point
-                    threshold_tmp = mhw_temp[1]["thresh"] # Thresholds of each timestep at this grid point
+                    climatology_tmp = mhw_temp[1][
+                        "seas"
+                    ]  # seas => climatology at this grid point
+                    threshold_tmp = mhw_temp[1][
+                        "thresh"
+                    ]  # Thresholds of each timestep at this grid point
 
                     # Extracting time indices (start and end) and category of defined MHW at grid cell (x,y)
 

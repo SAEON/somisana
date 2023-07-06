@@ -44,7 +44,7 @@ WORKDIR /home/somisana
 ENV PATH="/home/somisana/.local/bin:$PATH"
 ENV PIPENV_VENV_IN_PROJECT="enabled"
 ENV LANG="en_US.UTF-8"
-RUN pip install --user pipenv==2023.6.12
+RUN pip install --user pipenv==2023.6.26
 
 COPY --chown=somisana:somisana . .
 

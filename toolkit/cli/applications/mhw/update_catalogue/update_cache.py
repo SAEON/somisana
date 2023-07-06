@@ -14,12 +14,26 @@ MAX_CONCURRENT_NET_IO = 31
 
 
 def validate_nc_file(file):
+    log(f"Validating {file}")
     try:
         with xr.open_dataset(file) as ds:
-            log(f"Validating {file}", ds.variables)
-    except:
-        os.unlink(file)
-        print(f"NetCDF file invalid {file}. Deleted")
+            
+            dimensions = {
+                "time": len(ds["time"]),
+                "lon": len(ds["lon"]),
+                "lat": len(ds["lat"]),
+            }
+            for dim, size in dimensions.items():
+                if size < 1:
+                    log(f"0-length dimension found. {dim}: {size}")
+                    raise Exception("Empty NetCDF file found")
+    except Exception as e:
+        print(f"NetCDF file invalid {file}. Deleted", e)
+        try:
+            os.unlink(file)
+        except Exception as e2:
+            log(f"Failed to delete {file}")
+            raise e2
 
 
 async def download_file(semaphore, file, domain, oisst_cache, reset_cache, chown):
@@ -55,12 +69,12 @@ async def download_file(semaphore, file, domain, oisst_cache, reset_cache, chown
                         if not chunk:
                             break
                         await f.write(chunk)
-    # Check the NetCDF file is valid, otherwise delete
-    validate_nc_file(file_path)
+                # Check the NetCDF file is valid, otherwise delete
+                validate_nc_file(file_path)
     if chown:
         subprocess.call(["chown", chown, file_path])
     subprocess.call(["chmod", "775", file_path])
-    print("Downloaded", file_path)
+    log("Downloaded", file_path)
 
 
 async def resolve_download_uris(
