@@ -129,7 +129,7 @@ jobs:
   # into NetCDF files that can be used as input to the CROCO model. https://www.croco-ocean.org/documentation/crocotools-documentation/
   crocotools:
     needs: [workdir, envs]
-    runs-on: somisana
+    runs-on: croco
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
       RESTART_FILE_DATE: ${{ needs.envs.outputs.RESTART_FILE_DATE }}
