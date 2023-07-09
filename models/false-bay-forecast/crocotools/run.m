@@ -47,4 +47,6 @@ make_GFS_ocims_nest(date_now_year,date_now_month,date_now_day);
 make_OGCM_ocims(date_now_year,date_now_month,date_now_day,hdays,makeini);
 
 % Run function to create child ini file (from parent)
+% GF note - I see that the adopted approach doesn't actually use the child domain restart file if it exists
+% this is an error, as the child domain will have to spin up from the parent domain
 make_OGCM_ocims_nest(date_now_year,date_now_month,date_now_day,makeini)

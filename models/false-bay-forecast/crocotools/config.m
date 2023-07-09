@@ -1,5 +1,7 @@
 d = dotenv('/tmp/somisana/current/.env');
 
+% GF note - we should be using the RESTART_FILE_2_PATH too!
+% Ignoring it and creating the child restart from the parent is an error
 RESTART_FILE_1_PATH = d.env.RESTART_FILE_1_PATH
 
 RUN_DATE = datetime(d.env.RUN_DATE, 'InputFormat','yyyy-MM-dd');

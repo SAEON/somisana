@@ -33,9 +33,6 @@ else
      makeini=1;
 end
 
-%cd /somisana-scripts/forcing-inputs
-%ls
-
 % Run function to create atomspheric forcing (GFS)
 make_GFS_ocims(date_now_year,date_now_month,date_now_day,delta_days_gfs,hdays,fdays);
 

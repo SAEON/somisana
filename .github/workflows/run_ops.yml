@@ -2,18 +2,225 @@ name: Run SOMISANA forecast models
 
 on:
   workflow_dispatch:
+    inputs:
+      run_date:
+        description: Run date (default = today). yyyymmdd
+        required: false
+        default:
+# commenting the schedule for now until we are ready to deploy this workflow operationally
+  schedule: 
+    - cron: '0 02 * * *' # 0400 SAST
 
+
+# Many of the env variables reference the current branch, 
+# which is set dynamically in the branch-ref job below
+# So the env variables are mostly set in the envs job below the branch-ref job
 env:
   REGISTRY: ghcr.io
-  COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
-  COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
-  MLM_LICENSE_FILE: ${{ secrets.MLM_LICENSE_FILE }}
 
 jobs:
-  test:
+  # Dynamically set the branch ref to the currently executing branch
+  branch-ref:
     runs-on: ubuntu-latest
+    outputs:
+      value: ${{ steps.BRANCH_REF.outputs.value }}
     steps:
-      - name: Run shell test
+      - name: Set the BRANCH_REF
+        id: BRANCH_REF
         run: |
-          echo hello
-          echo world
+          echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+
+  # Set the environment variables using the current branch reference
+  envs:
+    needs: [branch-ref]
+    runs-on: ubuntu-latest
+    env:
+      RUN_DATE: ${{ inputs.run_date }}
+    outputs:
+      BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
+      TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
+      MODEL_RUN_DATE: ${{ steps.ENVS.outputs.MODEL_RUN_DATE }}
+      EEZ_DATA_DIR: ${{ steps.ENVS.outputs.EEZ_DATA_DIR }}
+    steps:
+      - name: Configure run date
+        id: run_date
+        run: |
+          echo "yyyymmdd=${RUN_DATE:=$(date +'%Y%m%d')}" >> $GITHUB_OUTPUT
+      - name: Set envs
+        id: ENVS
+        run: |
+          echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "MODEL_RUN_DATE=${{ steps.run_date.outputs.yyyymmdd }}" >> $GITHUB_OUTPUT
+          echo "EEZ_DATA_DIR=/home/runner/somisana/global_data/${{ steps.run_date.outputs.yyyymmdd }}/${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT # Think it would have been better to have $BRANCH_REF after somisana i.e. somisana/$BRANCH_REF but doing it this way to be consistent with how the model run directories were set up. Maybe we can change it later...
+
+  # The SOMISANA toolkit is a suite of scripts to facilitate
+  # running SOMISANA models - for example the Algoa Bay Forecast.
+  # In the context of a testing environment, where updates to these
+  # scripts is part of the development workflow, the toolkit needs
+  # to be compiled on every run
+  toolkit:
+    needs: [envs]
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
+      SHA: sha-${{ github.sha }}
+    outputs:
+      image: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name }}
+    steps:
+      - name: Get image name lowercase
+        id: 'lowercase'
+        run: |
+          IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
+          echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
+      - name: Check out source code
+        uses: actions/checkout@master # change to main
+        with:
+          ref: ${{ env.BRANCH_REF }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@master
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check if image with sha tag already exists
+        id: check-image
+        run: |
+          set -e
+          SHA_IMAGE=$(docker images -q ${REGISTRY}/${{ steps.lowercase.outputs.image_name }}:${SHA} || true)
+          if [ -z "$SHA_IMAGE" ]; then
+            echo "image_exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "image_exists=true" >> $GITHUB_OUTPUT
+          fi
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@master
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.TOOLKIT_IMAGE }}
+          tags: |
+            latest
+            ${{ env.SHA }}
+      - name: Build and push
+        uses: docker/build-push-action@master
+        with:
+          context: toolkit
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  # Download environmental data used for model boundaries and surface forcing.
+  # This job is retried if it fails, since the failure can be due to upstream errors
+  # These downloads are used to create forcing files that are fed as input to the CROCO model
+  # => marine.copernicus.eu: This is ocean data that forms the lateral boundaries of our model run
+  # => ncei.noaa.gov: This is atmospheric data used to create surface boundary conditions for our model run
+  download-global-data:
+    needs: [toolkit, envs]
+    runs-on: somisana
+    env:
+      EEZ_DATA_DIR: ${{ needs.envs.outputs.EEZ_DATA_DIR }}
+      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+    steps:
+      - name: Clean /home/runner/somisana/global_data/ 
+        run: >-
+          find \
+            /home/runner/somisana/global_data/* \
+            -maxdepth 0 \
+            -type d \
+            -ctime +5 \
+            -exec \
+              rm \
+                -rf {} \; 
+      - name: Configure no. retries
+        id: retries
+        run: |
+          if [ "$BRANCH_REF" = "stable" ]
+          then
+            echo "RETRIES=30" >> $GITHUB_OUTPUT
+          else
+            echo "RETRIES=1" >> $GITHUB_OUTPUT
+          fi
+      - name: Source ~/.bashrc (for NVM - required for non-interactive shells)
+        continue-on-error: true # Maybe Node.js exists anyway
+        run: |
+          source ~/.bashrc
+          nvm use 19.6.0
+      - name: Create ${{ env.EEZ_DATA_DIR }} directory 
+        run: |
+          rm -rf ${{ env.EEZ_DATA_DIR }} 
+          mkdir -p ${{ env.EEZ_DATA_DIR }} 
+          chown -R :runners ${{ env.EEZ_DATA_DIR }} 
+          chmod -R 774 ${{ env.EEZ_DATA_DIR }} 
+      - name: Download GFS 
+        uses: nick-fields/retry@master 
+        with:
+          timeout_minutes: 30 # Script is considered failed if this limit is reached
+          retry_wait_seconds: 300 # Wait 5 minutes and try again
+          max_attempts: ${{ steps.retries.outputs.RETRIES }}
+          retry_on: any
+          warning_on_retry: true
+          shell: bash
+          continue_on_error: false
+          on_retry_command: rm -f ${{ env.EEZ_DATA_DIR }}/*grb*
+          command: >-
+            docker run \
+              --rm \
+              -v ${{ env.EEZ_DATA_DIR }}/:/tmp/somisana/current \
+              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+                download \
+                  --provider gfs \
+                  --workdir /tmp/somisana/current \
+                  --matlab-env /tmp/somisana/current/.env \
+                  --download-date ${{ env.MODEL_RUN_DATE }} \
+                  --domain 11,36,-39,-25
+      - name: Download Mercator
+        uses: nick-fields/retry@master
+        with:
+          timeout_minutes: 30 # Script is considered failed if this limit is reached
+          retry_wait_seconds: 300 # Wait 5 minutes and try again
+          max_attempts: ${{ steps.retries.outputs.RETRIES }}
+          retry_on: any
+          warning_on_retry: true
+          shell: bash
+          continue_on_error: false
+          on_retry_command: rm -f ${{ env.EEZ_DATA_DIR }}/*mercator*
+          command: >-
+            docker run \
+              --rm \
+              -v ${{ env.EEZ_DATA_DIR }}/:/tmp/somisana/current/ \
+              -e COPERNICUS_USERNAME=${{ secrets.COPERNICUS_USERNAME }} \
+              -e COPERNICUS_PASSWORD=${{ secrets.COPERNICUS_PASSWORD }} \
+              ${{ needs.toolkit.outputs.image }}:${{ env.SHA }} \
+                download \
+                  --provider mercator \
+                  --workdir /tmp/somisana/current \
+                  --download-date ${{ env.MODEL_RUN_DATE }} \
+                  --domain 11,36,-39,-25
+
+  # now do the model specific steps 
+  # currently this is done by calling different model reusable workflows in series
+  # In future we should make a generic model reusable workflow which takes the model name as an input
+  # Then the model runs can be carried out using a matrix strategy 
+  # (there's an example of this here: https://docs.github.com/en/actions/using-workflows/reusing-workflows#example-reusable-workflow)
+  call_run_algoa-bay-forecast:
+    needs: [envs,toolkit,download-global-data]
+    uses: ./.github/workflows/run_algoa-bay-forecast.yml
+    with:
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      TOOLKIT_IMAGE: ${{ needs.toolkit.outputs.image }}:sha-${{ github.sha }}
+      EEZ_DATA_DIR: ${{ needs.envs.outputs.EEZ_DATA_DIR }}
+    secrets: inherit
+
+  call_run_false-bay-forecast:
+    needs: [envs,toolkit,download-global-data]
+    uses: ./.github/workflows/run_false-bay-forecast.yml
+    with:
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      TOOLKIT_IMAGE: ${{ needs.toolkit.outputs.image }}:sha-${{ github.sha }}
+      EEZ_DATA_DIR: ${{ needs.envs.outputs.EEZ_DATA_DIR }}
+    secrets: inherit
+
