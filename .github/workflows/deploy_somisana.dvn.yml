@@ -1,4 +1,4 @@
-name: Deploy somisana.ac.za
+name: Deploy somisana.dvn
 
 on:
   workflow_dispatch:
