@@ -66,7 +66,7 @@ jobs:
       TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@master
+        uses: actions/checkout@main
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Log in to the Container registry
@@ -125,7 +125,7 @@ jobs:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@master
+        uses: actions/checkout@main
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Update the OISST cache with new daily data

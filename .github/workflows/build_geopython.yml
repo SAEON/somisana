@@ -28,7 +28,7 @@ jobs:
       BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@master
+        uses: actions/checkout@main
         with:
           ref: ${{ env.BRANCH_REF }}
 

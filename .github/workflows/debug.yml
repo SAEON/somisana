@@ -24,7 +24,7 @@ jobs:
           IMAGE_NAME_LOWER=$(echo $TOOLKIT_IMAGE | tr '[:upper:]' '[:lower:]')
           echo "image_name=$IMAGE_NAME_LOWER" >> $GITHUB_OUTPUT
       - name: Check out source code
-        uses: actions/checkout@master
+        uses: actions/checkout@main
         with:
           ref: ${{ env.BRANCH_REF }}
       - name: Log in to the Container registry
