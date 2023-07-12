@@ -80,3 +80,6 @@ COPY --from=client /somisana-client/build /app/client
 RUN npm ci --omit=dev
 
 EXPOSE 3000
+
+ENTRYPOINT [ "node" ]
+CMD ["--no-warnings", "src"]

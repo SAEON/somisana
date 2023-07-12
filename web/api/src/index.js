@@ -27,6 +27,16 @@ import {
   home as homeRoute,
   oauthAuthenticationCallback as oauthAuthenticationCallbackRoute,
 } from './http/index.js'
+import mount from 'koa-mount'
+import serve from 'koa-static'
+import send from 'koa-send'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+// Serve the React client
+const currentFilePath = fileURLToPath(import.meta.url)
+const currentDirPath = dirname(currentFilePath)
+const clientDirPath = join(currentDirPath, '../client')
 
 const api = new Koa()
 api.keys = [KEY]
@@ -87,7 +97,29 @@ api
         .get('/http/login', loginRoute) // passport
         .get('/http/authenticate', authenticateRoute)
         .get('/http/logout', logoutRoute)
-        .get(/^.*$/, async req => (req.body = 'Welcome to the SOMISANA API'))
+        .get(/^.*$/, async ctx => {
+          // Try serving the request path as a static file from the client directory
+          try {
+            let requestPath = ctx.path
+
+            // If root path, serve index.html
+            if (requestPath === '/') {
+              requestPath = '/index.html'
+            }
+
+            // Try to send a static file
+            await send(ctx, requestPath, { root: clientDirPath })
+          } catch (err) {
+            // If static file not found, send index.html
+            try {
+              await send(ctx, 'index.html', { root: clientDirPath })
+            } catch (err) {
+              console.error(err)
+              ctx.body = 'Error 404: File not found' // or other error handling you prefer
+            }
+          }
+        })
+
         .routes(),
       '/graphql'
     )
