@@ -1,0 +1,67 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@apollo/client": "^3.7.17",
+    "@arcgis/core": "^4.27.6",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mdi/js": "^7.2.96",
+    "@mui/material": "^5.14.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
+    "cookie": "^0.5.0",
+    "d3": "^7.8.5",
+    "d3-contour": "^4.0.2",
+    "date-fns": "^2.30.0",
+    "maplibre-gl": "^3.2.0",
+    "ncp": "^2.0.0",
+    "notistack": "^3.0.1",
+    "react": "^18.2.0",
+    "react-data-grid": "^7.0.0-beta.34",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dom": "^18.2.0",
+    "react-draggable": "^4.4.5",
+    "react-markdown": "^8.0.7",
+    "react-router-dom": "^6.14.1",
+    "react-scripts": "5.0.1",
+    "twgl.js": "^5.3.1",
+    "web-vitals": "^3.4.0"
+  },
+  "scripts": {
+    "start": "npm run copy && PORT=3001 react-scripts start",
+    "build": "npm run copy && NODE_OPTIONS=--max_old_space_size=8192 react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "copy": "ncp ./node_modules/@arcgis/core/assets ./public/assets"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "globals": {
+      "globalThis": true
+    },
+    "rules": {
+      "import/no-anonymous-default-export": "off",
+      "no-extend-native": "off"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

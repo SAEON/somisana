@@ -1,0 +1,78 @@
+FROM node:20.3.1
+
+##############
+# BUILD CONFIG
+##############
+
+ARG ALLOWED_ORIGINS
+ARG HOSTNAME
+ARG DEPLOYMENT_ENV
+ARG ESRI_API_KEY
+ARG FEATURESERV_BASE_URL
+ARG MONGO_DB
+ARG MONGO_HOST
+ARG MONGO_PASSWORD
+ARG MONGO_USERNAME
+ARG NODE_ENV
+ARG ODP_SSO_CLIENT_SECRET
+ARG PG_DB
+ARG PG_HOST
+ARG PG_PASSWORD
+ARG PG_PORT
+ARG PG_USERNAME
+ARG TECHNICAL_CONTACT
+ARG TILESERV_BASE_URL
+ARG TZ
+
+##############
+# RUNTIME
+##############
+
+ENV ALLOWED_ORIGINS=$ALLOWED_ORIGINS
+ENV DEPLOYMENT_ENV=$DEPLOYMENT_ENV
+ENV MONGO_DB=$MONGO_DB
+ENV MONGO_HOST=$MONGO_HOST
+ENV MONGO_PASSWORD=$MONGO_PASSWORD
+ENV MONGO_USERNAME=$MONGO_USERNAME
+ENV NODE_ENV=$NODE_ENV
+ENV ODP_SSO_CLIENT_SECRET=$ODP_SSO_CLIENT_SECRET
+ENV PG_DB=$PG_DB
+ENV PG_HOST=$PG_HOST
+ENV PG_PASSWORD=$PG_PASSWORD
+ENV PG_PORT=$PG_PORT
+ENV PG_USERNAME=$PG_USERNAME
+ENV TZ=$TZ
+
+##############
+# SOMISANA WEB
+##############
+
+WORKDIR /somisana
+
+COPY . .
+
+# Configure client (build time only)
+RUN echo "HOSTNAME=${HOSTNAME}" > .env
+RUN echo "NODE_ENV=${NODE_ENV}" >> .env
+RUN echo "TECHNICAL_CONTACT=${TECHNICAL_CONTACT}" >> .env
+RUN echo "DEPLOYMENT_ENV=${DEPLOYMENT_ENV}" >> .env
+RUN echo "TILESERV_BASE_URL=${TILESERV_BASE_URL}" >> .env
+RUN echo "FEATURESERV_BASE_URL=${FEATURESERV_BASE_URL}" >> .env
+RUN echo "ESRI_API_KEY=${ESRI_API_KEY}" >> .env
+
+# Install deps
+RUN npm install -g chomp@0.2.17 & npm ci --omit=dev
+
+# Build app using chomp
+RUN chomp build
+
+# Install CLI
+ENV PATH="$PATH:/somisana/bin"
+RUN chmod +x bin/s
+
+# Expose the Noode.js HTTP port
+EXPOSE 3000
+
+# Start command
+ENTRYPOINT [ "node" ]
+CMD ["--no-warnings", "--loader", "./loaders/http/index.js", "--loader", "@node-loader/import-maps", "--loader", "./loaders/std-lib-imports/index.js", "server"]

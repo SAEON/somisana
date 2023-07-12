@@ -1,0 +1,95 @@
+scalar DateTime
+scalar JSON
+scalar Void
+scalar WKT_4326
+
+type Locale {
+  id: ID!
+  name: String!
+  language: String!
+  code: String!
+}
+
+type Run {
+  id: ID!
+  run_date: DateTime!
+  modelid: ID!
+  step1_timestamp: DateTime!
+  timestep_attrs: JSON!
+  successful: Boolean!
+}
+
+type Model {
+  """
+  ID with table information added, so that table can be back-calculated
+  """
+  id: ID!
+  """
+  Database ID
+  """
+  _id: Int!
+  name: String!
+  title: String!
+  description: String
+  creator: String
+  creatorContactEmail: String
+  type: String
+  min_x: Float!
+  max_x: Float!
+  min_y: Float!
+  max_y: Float!
+  gridWidth: Int!
+  gridHeight: Int!
+  convexhull: JSON!
+  envelope: JSON!
+  runs: [Run]
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+enum Language {
+  en
+}
+
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+  inheritMaxAge: Boolean
+) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+
+type ModelData {
+  id: ID!
+  json: JSON!
+}
+
+type Query {
+  locales(id: ID, languages: [Language!]): [Locale]!
+  models(id: ID): [Model]!
+
+  data(timeStep: Int!, runId: ID!, depth: Int!): ModelData!
+    @cacheControl(maxAge: 604800, scope: PUBLIC)
+}
+
+type Mutation {
+  logBrowserEvents(input: [BrowserEventInput]!): Void
+}
+
+input BrowserEventInput {
+  type: String!
+  """
+  If the createdAt field is not included in the browser request it is created at insertion time (to )
+  """
+  createdAt: DateTime
+  info: JSON!
+  r: String
+}

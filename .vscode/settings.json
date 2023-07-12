@@ -118,6 +118,7 @@
     "NWEIGHT",
     "OISST",
     "OPENMP",
+    "Optout",
     "Parens",
     "PGCONNECT",
     "pgdata",
