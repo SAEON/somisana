@@ -56,13 +56,13 @@ jobs:
         with:
           context: web
           build-args: |
-            HOSTNAME=${{ env.HOSTNAME }}
+            TZ=utc
             NODE_ENV=production
             DEPLOYMENT_ENV=production
-            TZ=utc
-            TECHNICAL_CONTACT=zd.smith@saeon.nrf.ac.za
-            TILESERV_BASE_URL=https://maps.somisana.ac.za
-            ESRI_API_KEY=${{ secrets.ESRI_API_KEY }}
+            REACT_APP_ESRI_API_KEY=${{ secrets.ESRI_API_KEY }}
+            REACT_APP_HOSTNAME=${{ env.HOSTNAME }}
+            REACT_APP_TECHNICAL_CONTACT=zd.smith@saeon.nrf.ac.za
+            REACT_APP_TILESERV_BASE_URL=https://maps.somisana.ac.za
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -115,4 +115,4 @@ jobs:
             echo "PG_USERNAME=${{ secrets.PG_USERNAME_STABLE }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "PG_PASSWORD=${{ secrets.PG_PASSWORD_STABLE }}" >> /home/runner/somisana/deploy/web/stable/stack.env
             echo "PG_DATABASE_URL=postgres://${{ secrets.PG_USERNAME_STABLE }}:${{ secrets.PG_PASSWORD_STABLE }}@${{ secrets.PG_HOST_STABLE }}:${{ secrets.PG_PORT_STABLE }}/${{ secrets.PG_DB_STABLE }}" >> /home/runner/somisana/deploy/web/stable/stack.env
-            sudo /opt/deploy-docker-stack.sh /home/runner/somisana/deploy/web/stable/stack.yml /home/runner/somisana/deploy/web/stable/stack.env somisana_stable
+            sudo /opt/deploy-docker-stack.sh /home/runner/somisana/deploy/web/stable/stack.yml /home/runner/somisana/deploy/web/stable/stack.env somisana_stable_2

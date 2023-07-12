@@ -1,6 +1,6 @@
 export const NODE_ENV = process.env.NODE_ENV
-export const REACT_APP_HOSTNAME = process.env.REACT_APP_HOSTNAME || 'http://localhost:3001'
-export const REACT_APP_API_ADDRESS = process.env.REACT_APP_API_ADDRESS || 'http://localhost:3000'
+export const REACT_APP_HOSTNAME = process.env.REACT_APP_HOSTNAME || window.location.origin
+export const REACT_APP_API_ADDRESS = process.env.REACT_APP_API_ADDRESS || window.location.origin
 export const REACT_APP_TILESERV_BASE_URL = process.env.REACT_APP_TILESERV_BASE_URL
 export const REACT_APP_ESRI_API_KEY = process.env.REACT_APP_ESRI_API_KEY
 export const REACT_APP_TECHNICAL_CONTACT =
