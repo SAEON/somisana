@@ -4,7 +4,7 @@ import { context as pageContext } from '../../../_context'
 import { context as configContext } from '../../../../../modules/config'
 import { useTheme } from '@mui/material/styles'
 
-const Render = memo(({ TILESERV_BASE_URL, map, modelid, showDomain }) => {
+const Render = memo(({ REACT_APP_TILESERV_BASE_URL, map, modelid, showDomain }) => {
   const theme = useTheme()
 
   useEffect(() => {
@@ -16,11 +16,11 @@ const Render = memo(({ TILESERV_BASE_URL, map, modelid, showDomain }) => {
     map.addSource('metadata', {
       type: 'vector',
       tiles: [
-        `${TILESERV_BASE_URL}/public.models/{z}/{x}/{y}.pbf?filter=${encodeURIComponent(
+        `${REACT_APP_TILESERV_BASE_URL}/public.models/{z}/{x}/{y}.pbf?filter=${encodeURIComponent(
           `id=${modelid}`
         )}`,
       ],
-      url: `${TILESERV_BASE_URL}/public.models.json`,
+      url: `${REACT_APP_TILESERV_BASE_URL}/public.models.json`,
       promoteId: 'id',
     })
 
@@ -40,11 +40,11 @@ const Render = memo(({ TILESERV_BASE_URL, map, modelid, showDomain }) => {
       map.removeLayer('metadata')
       map.removeSource('metadata')
     }
-  }, [map, showDomain, TILESERV_BASE_URL, modelid, theme.palette.grey])
+  }, [map, showDomain, REACT_APP_TILESERV_BASE_URL, modelid, theme.palette.grey])
 })
 
 export default () => {
-  const { TILESERV_BASE_URL } = useContext(configContext)
+  const { REACT_APP_TILESERV_BASE_URL } = useContext(configContext)
   const { map } = useContext(mapContext)
   const { model: { _id: modelid = 0 } = {}, showDomain } = useContext(pageContext)
 
@@ -52,7 +52,7 @@ export default () => {
     <Render
       map={map}
       modelid={modelid}
-      TILESERV_BASE_URL={TILESERV_BASE_URL}
+      REACT_APP_TILESERV_BASE_URL={REACT_APP_TILESERV_BASE_URL}
       showDomain={showDomain}
     />
   )

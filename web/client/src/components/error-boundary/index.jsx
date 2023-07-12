@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import { TECHNICAL_CONTACT } from '../../modules/config/env'
+import { REACT_APP_TECHNICAL_CONTACT } from '../../modules/config/env'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -29,7 +29,7 @@ class ErrorBoundary extends Component {
         <p>
           Please try refreshing this page in a few minutes. If the error persists, or if assistance
           is required, please contact{' '}
-          <a href={`mailto:${TECHNICAL_CONTACT}`}>{TECHNICAL_CONTACT}</a> with a screenshot of this
+          <a href={`mailto:${REACT_APP_TECHNICAL_CONTACT}`}>{REACT_APP_TECHNICAL_CONTACT}</a> with a screenshot of this
           page so that we may resolve the issue speedily
         </p>
         <pre

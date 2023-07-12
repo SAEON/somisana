@@ -9,10 +9,10 @@ import ExaggeratedElevationLayer from './_exaggerated-elevation-layer'
 export const context = createContext({})
 
 export default ({ children }) => {
-  const { ESRI_API_KEY, ESRI_BASEMAP } = useContext(configContext)
+  const { REACT_APP_ESRI_API_KEY, ESRI_BASEMAP } = useContext(configContext)
   const ref = useRef(null)
 
-  esriConfig.apiKey = ESRI_API_KEY
+  esriConfig.apiKey = REACT_APP_ESRI_API_KEY
 
   const map = useMemo(
     () =>

@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography'
 export default () => {
   const theme = useTheme()
   const { map } = useContext(mapContext)
-  const { TILESERV_BASE_URL } = useContext(configContext)
+  const { REACT_APP_TILESERV_BASE_URL } = useContext(configContext)
 
   const layer = useMemo(
     () =>
@@ -20,7 +20,7 @@ export default () => {
           sources: {
             mpas: {
               type: 'vector',
-              tiles: [`${TILESERV_BASE_URL}/public.mpas/{z}/{x}/{y}.pbf`],
+              tiles: [`${REACT_APP_TILESERV_BASE_URL}/public.mpas/{z}/{x}/{y}.pbf`],
             },
           },
           layers: [
@@ -39,7 +39,7 @@ export default () => {
           ],
         },
       }),
-    [TILESERV_BASE_URL, theme.palette.success.main]
+    [REACT_APP_TILESERV_BASE_URL, theme.palette.success.main]
   )
 
   map.add(layer)

@@ -10,7 +10,7 @@ const Render = ({
   setSelectedCoordinates,
   selectedCoordinates,
   modelid,
-  TILESERV_BASE_URL,
+  REACT_APP_TILESERV_BASE_URL,
 }) => {
   const theme = useTheme()
 
@@ -41,12 +41,12 @@ const Render = ({
     map.addSource('coordinates', {
       type: 'vector',
       tiles: [
-        `${TILESERV_BASE_URL}/public.coordinates/{z}/{x}/{y}.pbf?filter=${encodeURIComponent(
+        `${REACT_APP_TILESERV_BASE_URL}/public.coordinates/{z}/{x}/{y}.pbf?filter=${encodeURIComponent(
           `modelid=${modelid}
           and bathymetry is not null`
         )}`,
       ],
-      url: `${TILESERV_BASE_URL}/public.coordinates.json`,
+      url: `${REACT_APP_TILESERV_BASE_URL}/public.coordinates.json`,
     })
 
     const MAX_ZOOM = 8
@@ -100,7 +100,7 @@ const Render = ({
     mouseenter,
     mouseleave,
     showCoordinates,
-    TILESERV_BASE_URL,
+    REACT_APP_TILESERV_BASE_URL,
     modelid,
     setSelectedCoordinates,
     theme.palette.common.black,
@@ -124,7 +124,7 @@ const Render = ({
 }
 
 export default () => {
-  const { TILESERV_BASE_URL } = useContext(configContext)
+  const { REACT_APP_TILESERV_BASE_URL } = useContext(configContext)
   const { map } = useContext(mapContext)
   const {
     setSelectedCoordinates,
@@ -135,7 +135,7 @@ export default () => {
 
   return (
     <Render
-      TILESERV_BASE_URL={TILESERV_BASE_URL}
+      REACT_APP_TILESERV_BASE_URL={REACT_APP_TILESERV_BASE_URL}
       map={map}
       showCoordinates={showCoordinates}
       selectedCoordinates={selectedCoordinates}

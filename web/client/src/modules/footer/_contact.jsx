@@ -9,7 +9,7 @@ const T = styled(Typography)(({ theme }) => ({
 }))
 
 export default () => {
-  const { TECHNICAL_CONTACT } = useContext(configContext)
+  const { REACT_APP_TECHNICAL_CONTACT } = useContext(configContext)
 
   return (
     <Grid container spacing={2}>
@@ -18,7 +18,7 @@ export default () => {
       </Grid>
       <Grid item xs={12}>
         <T variant="body1">Model enquiries</T>
-        <T variant="body2">{TECHNICAL_CONTACT.replace('@', ' [ at ] ')}</T>
+        <T variant="body2">{REACT_APP_TECHNICAL_CONTACT.replace('@', ' [ at ] ')}</T>
       </Grid>
       <Grid item xs={12}>
         <T variant="body1">Bugs / technical support</T>

@@ -5,8 +5,8 @@ import { FileMultiple as FilesIcon } from '../../../../components/icons'
 import Tooltip from '@mui/material/Tooltip'
 
 const mnemosyne = {
-  1: 'https://mnemosyne.saeon.ac.za/somisana/algoa-bay-forecast',
-  2: 'https://mnemosyne.saeon.ac.za/somisana/false-bay-forecast',
+  1: 'https://mnemosyne.saeon.ac.za/somisana/algoa-bay',
+  2: 'https://mnemosyne.saeon.ac.za/somisana/false-bay',
 }
 
 export const ToggleData = () => {
