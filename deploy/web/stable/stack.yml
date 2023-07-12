@@ -1,8 +1,8 @@
 version: '3.9'
 
 networks:
-  somisana_stable_2:
-    name: somisana_stable_2
+  somisana_stable:
+    name: somisana_stable
     driver: overlay
     attachable: true
 
@@ -41,10 +41,9 @@ services:
       PG_USERNAME: $PG_USERNAME
       PG_PASSWORD: $PG_PASSWORD
     ports:
-      # - 7008:3000
-      - 6007:3000
+      - 7008:3000
     networks:
-      - somisana_stable_2
+      - somisana_stable
 
   pg_tileserv:
     image: pramsey/pg_tileserv:20230210
@@ -69,7 +68,6 @@ services:
     environment:
       DATABASE_URL: $PG_DATABASE_URL
     ports:
-      # - 7009:7800
-      - 6009:7800
+      - 7009:7800
     networks:
-      - somisana_stable_2
+      - somisana_stable
