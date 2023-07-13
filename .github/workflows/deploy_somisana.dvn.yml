@@ -6,7 +6,7 @@ on:
 env:
   BRANCH_REF: next
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_web_stable
+  IMAGE_NAME: ${{ github.repository }}_web_next
   SOMISANA_CONTACT_EMAIL: ${{ vars.SOMISANA_CONTACT_EMAIL}}
   HOSTNAME: https://somisana.dvn
 
@@ -115,4 +115,4 @@ jobs:
             echo "PG_USERNAME=${{ secrets.PG_USERNAME_NEXT }}" >> /home/runner/somisana/deploy/web/next/stack.env
             echo "PG_PASSWORD=${{ secrets.PG_PASSWORD_NEXT }}" >> /home/runner/somisana/deploy/web/next/stack.env
             echo "PG_DATABASE_URL=postgres://${{ secrets.PG_USERNAME_NEXT }}:${{ secrets.PG_PASSWORD_NEXT }}@${{ secrets.PG_HOST_NEXT }}:${{ secrets.PG_PORT_NEXT }}/${{ secrets.PG_DB_NEXT }}" >> /home/runner/somisana/deploy/web/next/stack.env
-            sudo /opt/deploy-docker-stack.sh /home/runner/somisana/deploy/web/next/stack.yml /home/runner/somisana/deploy/web/next/stack.env somisana_stable
+            sudo /opt/deploy-docker-stack.sh /home/runner/somisana/deploy/web/next/stack.yml /home/runner/somisana/deploy/web/next/stack.env somisana_next
