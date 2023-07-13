@@ -119,7 +119,6 @@ api
             }
           }
         })
-
         .routes(),
       '/graphql'
     )

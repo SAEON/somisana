@@ -28,12 +28,13 @@
     "react-draggable": "^4.4.5",
     "react-markdown": "^8.0.7",
     "react-router-dom": "^6.14.1",
-    "react-scripts": "5.0.1",
-    "twgl.js": "^5.3.1",
+    "react-scripts": "^5.0.1",
+    "twgl.js": "^5.4.0",
     "web-vitals": "^3.4.0"
   },
   "scripts": {
     "start": "npm run copy && PORT=3001 react-scripts start",
+    "bundle": "npm run build && npm run copy-build-to-api",
     "build": "npm run copy && NODE_OPTIONS=--max_old_space_size=8192 react-scripts build",
     "copy-build-to-api": "ncp build ../api/client",
     "test": "react-scripts test",
@@ -55,9 +56,7 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      ">1%"
     ],
     "development": [
       "last 1 chrome version",
