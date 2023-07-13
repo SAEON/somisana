@@ -29,6 +29,7 @@ services:
           memory: 100M
     environment:
       ALLOWED_ORIGINS: https://somisana.dvn
+      ODP_SSO_CLIENT_SECRET: $ODP_SSO_CLIENT_SECRET
       MONGO_HOST: $MONGO_HOST
       MONGO_DB: $MONGO_DB
       MONGO_USERNAME: $MONGO_USERNAME

@@ -7,3 +7,4 @@ node_modules
 .client
 node.importmap
 .env
+api/client
