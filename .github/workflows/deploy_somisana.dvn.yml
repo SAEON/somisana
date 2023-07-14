@@ -58,7 +58,6 @@ jobs:
           build-args: |
             TZ=utc
             NODE_ENV=production
-            DEPLOYMENT_ENV=production
             REACT_APP_ESRI_API_KEY=${{ secrets.ESRI_API_KEY }}
             REACT_APP_HOSTNAME=${{ env.HOSTNAME }}
             REACT_APP_TECHNICAL_CONTACT=zd.smith@saeon.nrf.ac.za
