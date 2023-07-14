@@ -25,7 +25,6 @@ files = 'src/**/*.@(js|json|geojson|cjs|mjs|graphql)'
 
 [[task]]
 name = 'reset'
-deps = ['clear-cache', 'clear-jspm-cache']
 run = """
 rm -rf node_modules
 find . \
@@ -36,20 +35,4 @@ find . \
       -name package-lock.json \
       -type f \
       -delete
-"""
-
-[[task]]
-name = 'clear-cache'
-run = '''
-rimraf node.importmap
-rimraf .client
-rimraf .ssr
-'''
-
-[[task]]
-name = 'clear-jspm-cache'
-engine = 'node'
-run = """
-import { clearCache } from '@jspm/generator';
-clearCache();
 """
