@@ -27,8 +27,6 @@ import {
   home as homeRoute,
   oauthAuthenticationCallback as oauthAuthenticationCallbackRoute,
 } from './http/index.js'
-import mount from 'koa-mount'
-import serve from 'koa-static'
 import send from 'koa-send'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -53,14 +51,16 @@ api
   .use(
     include(
       koaCompress({
-        filter: contentType => contentType.toLowerCase() === 'application/json',
-        threshold: 2048,
+        filter: contentType => {
+          // Compress all contentTypes unless something doesn't work
+          return true
+        },
+        threshold: 8192, // 8KB
         gzip: compressionConfig,
         deflate: compressionConfig,
-        br: false,
+        br: false, // This is incredibly slow for some reason
       }),
-      '/http',
-      '/graphql'
+      '/'
     )
   )
   .use(koaBody())
@@ -105,6 +105,9 @@ api
             // If root path, serve index.html
             if (requestPath === '/') {
               requestPath = '/index.html'
+            } else {
+              // Set cache control for 12 hours for all files except index.html
+              ctx.set('Cache-Control', 'public, max-age=43200')
             }
 
             // Try to send a static file
@@ -119,6 +122,7 @@ api
             }
           }
         })
+
         .routes(),
       '/graphql'
     )
