@@ -118,7 +118,7 @@ api
               await send(ctx, 'index.html', { root: clientDirPath })
             } catch (err) {
               console.error(err)
-              ctx.body = 'Error 404: File not found' // or other error handling you prefer
+              ctx.body = 'Error 404: File not found'
             }
           }
         })
