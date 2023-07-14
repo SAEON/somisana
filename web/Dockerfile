@@ -18,7 +18,7 @@ RUN echo "REACT_APP_TECHNICAL_CONTACT=$REACT_APP_TECHNICAL_CONTACT" >> .env
 RUN echo "REACT_APP_TILESERV_BASE_URL=$REACT_APP_TILESERV_BASE_URL" >> .env
 
 COPY client .
-RUN npm ci --omit=dev
+RUN npm ci --force --omit=dev
 RUN npm run build
 
 
@@ -76,7 +76,7 @@ ENV TZ=$TZ
 WORKDIR /app
 COPY api .
 COPY --from=client /client/build /app/client
-RUN npm ci --omit=dev
+RUN npm ci --force --omit=dev
 
 EXPOSE 3000
 
