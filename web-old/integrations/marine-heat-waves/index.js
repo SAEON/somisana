@@ -1,1 +1,0 @@
-export default async () => console.log('marine heat waves')

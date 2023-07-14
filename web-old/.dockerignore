@@ -1,9 +1,0 @@
-.github
-.git
-.husky
-.venv
-__pycache__
-node_modules
-.client
-node.importmap
-.env
