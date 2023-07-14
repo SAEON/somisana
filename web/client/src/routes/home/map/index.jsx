@@ -1,37 +1,17 @@
-import { gql, useQuery } from '@apollo/client'
-import { Linear as Loading } from '../../../components/loading'
-import Provider from './_context'
-import Models from './_models'
-import MPAs from './_mpas'
+import Div from '../../../components/div'
+import MapProvider from './_context'
+import MarineProtectedAreasLayer from './layers/marine-protected-areas'
+import DomainsLayer from './layers/domains'
 
-export default () => {
-  const { loading, error, data } = useQuery(
-    gql`
-      query models {
-        models {
-          id
-          _id
-          title
-          envelope
-        }
-      }
-    `
-  )
-
-  if (loading) {
-    return <Loading />
-  }
-
-  if (error) {
-    throw error
-  }
-
+export default ({ container }) => {
   return (
-    <>
-      <Provider>
-        <Models models={data.models} />
-        <MPAs />
-      </Provider>
-    </>
+    container && (
+      <Div>
+        <MapProvider container={container}>
+          <MarineProtectedAreasLayer />
+          <DomainsLayer />
+        </MapProvider>
+      </Div>
+    )
   )
 }

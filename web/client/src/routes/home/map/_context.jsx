@@ -1,71 +1,40 @@
-import { createContext, useContext, useRef, useEffect, useMemo } from 'react'
+import { createContext, useContext, useMemo, useEffect, useState } from 'react'
 import { context as configContext } from '../../../modules/config'
-import Div from '../../../components/div'
-import Map from '@arcgis/core/Map'
-import SceneView from '@arcgis/core/views/SceneView'
-import esriConfig from '@arcgis/core/config'
-import ExaggeratedElevationLayer from './_exaggerated-elevation-layer'
+import maplibre from 'maplibre-gl'
 
-export const context = createContext({})
+export const context = createContext()
 
-export default ({ children }) => {
-  const { REACT_APP_ESRI_API_KEY, ESRI_BASEMAP } = useContext(configContext)
-  const ref = useRef(null)
-
-  esriConfig.apiKey = REACT_APP_ESRI_API_KEY
+export default ({ container, children }) => {
+  const [loaded, setLoaded] = useState(false)
+  const { REACT_APP_ESRI_API_KEY } = useContext(configContext)
+  const basemapEnum = 'ArcGIS:Oceans'
 
   const map = useMemo(
     () =>
-      new Map({
-        ground: {
-          layers: [new ExaggeratedElevationLayer({ exaggeration: 10 })],
-        },
-        basemap: ESRI_BASEMAP,
-        layers: [],
+      new maplibre.Map({
+        container,
+        style: `https://basemaps-api.arcgis.com/arcgis/rest/services/styles/${basemapEnum}?type=style&token=${REACT_APP_ESRI_API_KEY}`,
+        zoom: 5,
+        center: [24, -33],
+        attributionControl: false,
+        antialias: true,
       }),
-    [ESRI_BASEMAP]
+    [REACT_APP_ESRI_API_KEY, container]
   )
-
-  const view = useMemo(
-    () =>
-      new SceneView({
-        map,
-        qualityProfile: 'high',
-        viewingMode: 'global',
-        camera: {
-          position: { x: 31, y: -46, z: 1600000 },
-          heading: -20,
-          tilt: 45,
-        },
-        spatialReference: {
-          wkid: 3857,
-        },
-      }),
-    [map]
-  )
-
   useEffect(() => {
-    view.container = ref.current
+    map.addControl(new maplibre.AttributionControl({ compact: false }))
+  }, [map])
+
+  map.on('load', () => {
+    setLoaded(true)
   })
 
-  window.esri = {
-    map,
-    view,
+  if (!loaded) {
+    return null
   }
 
-  return (
-    <context.Provider value={{ map, view }}>
-      <Div
-        ref={ref}
-        sx={{
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
-        }}
-      />
-      {children}
-    </context.Provider>
-  )
+  // For debugging
+  window.map = map
+
+  return <context.Provider value={{ map }}>{children}</context.Provider>
 }

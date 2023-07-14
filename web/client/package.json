@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.17",
-    "@arcgis/core": "^4.27.6",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -33,13 +32,12 @@
     "web-vitals": "^3.4.0"
   },
   "scripts": {
-    "start": "npm run copy && PORT=3001 react-scripts start",
+    "start": "PORT=3001 react-scripts start",
     "bundle": "npm run build && npm run copy-build-to-api",
-    "build": "npm run copy && NODE_OPTIONS=--max_old_space_size=8192 react-scripts build",
+    "build": "react-scripts build",
     "copy-build-to-api": "ncp build ../api/client",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "copy": "ncp ./node_modules/@arcgis/core/assets ./public/assets"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

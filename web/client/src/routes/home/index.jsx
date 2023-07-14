@@ -1,28 +1,39 @@
-import { useState, useEffect, lazy, Suspense } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { Linear as Loading } from '../../components/loading'
-import Box from '@mui/material/Box'
+import Div from '../../components/div'
+import { Typography, alpha } from '@mui/material'
 
 const Map = lazy(() => import('./map'))
 
 export default () => {
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+  const [ref, setRef] = useState(null)
 
   return (
-    <Box
+    <Div
+      ref={el => setRef(el)}
       sx={{
         height: theme => `calc(100vh - ${theme.spacing(6)})`,
         position: 'relative',
       }}
     >
-      {isClient && (
-        <Suspense fallback={<Loading />}>
-          <Map />
-        </Suspense>
-      )}
-    </Box>
+      <Typography
+        sx={{
+          position: 'absolute',
+          backgroundColor: theme => alpha(theme.palette.common.black, 0.75),
+          zIndex: 1,
+          top: 0,
+          left: 0,
+          padding: theme => theme.spacing(1),
+          margin: theme => theme.spacing(1),
+          boxShadow: theme => theme.shadows[9]
+        }}
+      >
+        Welcome to the SAEON sustainable ocean modelling program<br />Click regions of interest for high
+        quality forecast and nowcast data
+      </Typography>
+      <Suspense fallback={<Loading />}>
+        <Map container={ref} />
+      </Suspense>
+    </Div>
   )
 }

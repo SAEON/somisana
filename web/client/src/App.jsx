@@ -22,9 +22,6 @@ import I18nProvider from './modules/i18n'
 import RouteSwitcher from './modules/layout/route-switcher'
 import SiteSettingsProvider from './modules/site-settings'
 import c from 'cookie'
-import esriConfig from '@arcgis/core/config.js'
-
-esriConfig.assetsPath = './assets'
 
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache({}),
