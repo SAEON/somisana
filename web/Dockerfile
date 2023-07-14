@@ -1,5 +1,5 @@
 # CLIENT
-FROM node:20.4.0-alpine as client
+FROM node:20.4.0 as client
 
 ARG NODE_ENV=production
 ARG REACT_APP_API_ADDRESS
@@ -8,7 +8,7 @@ ARG REACT_APP_HOSTNAME
 ARG REACT_APP_TECHNICAL_CONTACT
 ARG REACT_APP_TILESERV_BASE_URL
 
-WORKDIR /somisana-client
+WORKDIR /client
 
 RUN echo "NODE_ENV=$NODE_ENV" > .env
 RUN echo "REACT_APP_API_ADDRESS=$REACT_APP_API_ADDRESS" >> .env
@@ -23,7 +23,7 @@ RUN npm run build
 
 
 # API
-FROM node:20.4.0-alpine
+FROM node:20.4.0
 
 ARG ALLOWED_ORIGINS
 ARG DEPLOYMENT_ENV
@@ -75,7 +75,7 @@ ENV TZ=$TZ
 
 WORKDIR /app
 COPY api .
-COPY --from=client /somisana-client/build /app/client
+COPY --from=client /client/build /app/client
 RUN npm ci --omit=dev
 
 EXPOSE 3000
