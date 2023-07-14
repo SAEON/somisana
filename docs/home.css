@@ -36,17 +36,14 @@
   padding-right: var(--dl-space-space-tripleunit);
   flex-direction: row;
   padding-bottom: var(--dl-space-space-doubleunit);
-  justify-content: space-between;
+  justify-content: center;
 }
 .home-logo {
+  border: 2px dashed rgba(120, 120, 120, 0.4);
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: space-between;
-}
-.home-egagasini-logo {
-  width: 50px;
-  object-fit: cover;
 }
 .home-link {
   display: contents;
@@ -56,9 +53,52 @@
   text-align: center;
   font-weight: 700;
   margin-right: var(--dl-space-space-tenunits);
+  padding-left: var(--dl-space-space-unit);
+  padding-right: var(--dl-space-space-unit);
   text-transform: capitalize;
   text-decoration: none;
   background-color: rgb(217, 217, 217);
+}
+.home-navbar-container1 {
+  top: 0;
+  width: 100%;
+  height: 82px;
+  display: flex;
+  z-index: 100;
+  position: sticky;
+  align-items: center;
+  border-color: rgba(0, 0, 0, 0.34);
+  border-width: 1px;
+  flex-direction: row;
+  justify-content: center;
+  background-color: var(--dl-color-gray-white);
+  border-top-width: 0px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 1px;
+}
+.home-navbar1 {
+  width: 1556px;
+  display: flex;
+  position: relative;
+  max-width: var(--dl-size-size-maxcontent);
+  align-items: center;
+  padding-top: var(--dl-space-space-doubleunit);
+  padding-left: var(--dl-space-space-tripleunit);
+  padding-right: var(--dl-space-space-tripleunit);
+  flex-direction: row;
+  padding-bottom: var(--dl-space-space-doubleunit);
+  justify-content: space-between;
+}
+.home-logo1 {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.home-egagasini-logo {
+  width: 50px;
+  object-fit: cover;
 }
 .home-people-link {
   font-size: 18px;
@@ -638,15 +678,20 @@
   object-fit: cover;
 }
 @media(max-width: 1600px) {
+  .home-navbar-container {
+    height: 30px;
+  }
   .home-text {
-    color: rgb(253, 3, 3);
+    color: rgb(5, 148, 255);
+    font-size: 14px;
     align-self: center;
     text-align: center;
     font-weight: 700;
     margin-left: var(--dl-space-space-fiveunits);
     margin-right: var(--dl-space-space-fiveunits);
     text-transform: capitalize;
-    background-color: rgb(217, 217, 217);
+    text-decoration: none;
+    background-color: rgb(255, 255, 255);
   }
   .home-text03 {
     text-transform: uppercase;
@@ -705,10 +750,15 @@
 }
 @media(max-width: 1200px) {
   .home-text {
+    color: rgb(5, 148, 255);
     font-size: 14px;
     text-align: center;
+    font-weight: 700;
     margin-left: var(--dl-space-space-doubleunit);
     margin-right: var(--dl-space-space-doubleunit);
+    text-transform: capitalize;
+    text-decoration: none;
+    background-color: rgb(255, 255, 255);
   }
 }
 @media(max-width: 991px) {
@@ -742,11 +792,14 @@
 }
 @media(max-width: 767px) {
   .home-text {
-    color: rgb(253, 3, 3);
-    font-size: 14px;
+    color: rgb(3, 137, 253);
+    font-size: 12px;
     text-align: center;
     font-weight: 700;
+    margin-left: 0px;
+    margin-right: 0px;
     text-transform: capitalize;
+    text-decoration: none;
     background-color: rgb(217, 217, 217);
   }
   .home-people-link {
@@ -777,6 +830,7 @@
     text-align: center;
   }
   .home-secondary-text {
+    color: var(--dl-color-gray-500);
     text-align: center;
   }
   .home-container3 {
@@ -836,15 +890,16 @@
 }
 @media(max-width: 479px) {
   .home-text {
-    color: rgb(253, 3, 3);
-    font-size: 11px;
-    align-self: center;
+    color: rgb(0, 145, 255);
+    font-size: 8px;
+    align-self: flex-start;
     text-align: center;
     font-weight: 700;
     margin-left: 0px;
     margin-right: 0px;
     text-transform: capitalize;
-    background-color: rgb(217, 217, 217);
+    text-decoration: none;
+    background-color: inherit;
   }
   .home-people-link {
     display: none;
