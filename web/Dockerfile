@@ -1,5 +1,5 @@
 # CLIENT
-FROM node:20.4.0 as client
+FROM node:20.3.1 as client
 
 ARG NODE_ENV=production
 ARG REACT_APP_API_ADDRESS
@@ -23,7 +23,7 @@ RUN npm run build
 
 
 # API
-FROM node:20.4.0
+FROM node:20.3.1
 
 ARG ALLOWED_ORIGINS
 ARG DEPLOYMENT_ENV
