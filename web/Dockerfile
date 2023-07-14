@@ -18,7 +18,7 @@ RUN echo "REACT_APP_TECHNICAL_CONTACT=$REACT_APP_TECHNICAL_CONTACT" >> .env
 RUN echo "REACT_APP_TILESERV_BASE_URL=$REACT_APP_TILESERV_BASE_URL" >> .env
 
 COPY client .
-RUN npm install -g chomp@0.2.17 & npm ci --omit=dev
+RUN npm ci --omit=dev
 RUN npm run build
 
 
