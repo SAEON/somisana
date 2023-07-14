@@ -1,5 +1,0 @@
-export const PG_HOST = process.env.PG_HOST || 'localhost'
-export const PG_PORT = process.env.PG_PORT || '5432'
-export const PG_DB = process.env.PG_DB || 'somisana_local'
-export const PG_USERNAME = process.env.PG_USERNAME || 'admin'
-export const PG_PASSWORD = process.env.PG_PASSWORD || 'password'
