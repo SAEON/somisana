@@ -1,4 +1,4 @@
-name: Deploy somisana.ac.za
+name: Deploy somisana.dvn
 
 on:
   workflow_dispatch:
@@ -8,13 +8,13 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}_web_stable
   SOMISANA_CONTACT_EMAIL: ${{ vars.SOMISANA_CONTACT_EMAIL}}
-  HOSTNAME: https://somisana.ac.za
+  HOSTNAME: https://somisana.dvn
 
 jobs:
   build:
     env:
       SHA: sha-${{ github.sha }}
-    runs-on: ubuntu-latest
+    runs-on: saeon
     steps:
       - name: Get image name lowercase
         id: 'lowercase'
@@ -62,7 +62,7 @@ jobs:
             REACT_APP_ESRI_API_KEY=${{ secrets.ESRI_API_KEY }}
             REACT_APP_HOSTNAME=${{ env.HOSTNAME }}
             REACT_APP_TECHNICAL_CONTACT=zd.smith@saeon.nrf.ac.za
-            REACT_APP_TILESERV_BASE_URL=https://maps.somisana.ac.za
+            REACT_APP_TILESERV_BASE_URL=https://maps.somisana.dvn
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
