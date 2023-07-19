@@ -238,7 +238,6 @@
   padding-top: var(--dl-space-space-tenunits);
   flex-direction: row;
   justify-content: space-between;
-  background-image: linear-gradient(90deg, rgb(194, 229, 156) 82.00%,rgb(4, 174, 202) 100.00%);
 }
 .home-service-card {
   width: 49%;
@@ -246,7 +245,7 @@
   display: flex;
   min-height: 500px;
   align-items: center;
-  margin-left: var(--dl-space-space-unit);
+  margin-left: 0px;
   margin-bottom: var(--dl-space-space-fourunits);
   flex-direction: column;
   justify-content: flex-start;
@@ -302,7 +301,7 @@
   align-self: center;
   min-height: 500px;
   align-items: center;
-  margin-right: var(--dl-space-space-unit);
+  margin-right: 0px;
   padding-left: var(--dl-space-space-doubleunit);
   margin-bottom: var(--dl-space-space-fourunits);
   padding-right: var(--dl-space-space-doubleunit);
@@ -352,7 +351,7 @@
   display: flex;
   min-height: 500px;
   align-items: center;
-  margin-left: var(--dl-space-space-unit);
+  margin-left: 0px;
   margin-bottom: var(--dl-space-space-fourunits);
   flex-direction: column;
   justify-content: flex-start;
@@ -578,12 +577,16 @@
   border-left-width: 0px;
   border-right-width: 0px;
 }
+.home-link4 {
+  display: contents;
+}
 .home-name-and-position {
   width: 100%;
   display: flex;
   align-items: flex-start;
   flex-direction: column;
   justify-content: flex-start;
+  text-decoration: none;
 }
 .home-name {
   font-style: normal;
@@ -631,12 +634,16 @@
   border-left-width: 0px;
   border-right-width: 0px;
 }
+.home-link5 {
+  display: contents;
+}
 .home-name-and-position1 {
   width: 100%;
   display: flex;
   align-items: flex-start;
   flex-direction: column;
   justify-content: flex-start;
+  text-decoration: none;
 }
 .home-name1 {
   font-style: normal;
@@ -687,12 +694,16 @@
   border-left-width: 0px;
   border-right-width: 0px;
 }
+.home-link6 {
+  display: contents;
+}
 .home-name-and-position2 {
-  width: 100%;
+  width: 554px;
   display: flex;
   align-items: flex-start;
   flex-direction: column;
   justify-content: flex-start;
+  text-decoration: none;
 }
 .home-name2 {
   font-style: normal;
@@ -723,7 +734,7 @@
   align-self: stretch;
   align-items: flex-start;
   border-color: var(--dl-color-gray-700);
-  border-width: 1px;
+  border-width: 0px;
   flex-direction: column;
   justify-content: flex-start;
   border-left-width: 0px;
@@ -842,7 +853,7 @@
   }
   .home-service-card {
     min-height: 450px;
-    margin-left: var(--dl-space-space-unit);
+    margin-left: 0px;
   }
   .home-text35 {
     color: var(--dl-color-gray-black);
@@ -855,7 +866,7 @@
   }
   .home-service-card1 {
     min-height: 450px;
-    margin-right: var(--dl-space-space-unit);
+    margin-right: 0px;
   }
   .home-text40 {
     font-size: 30px;
@@ -914,7 +925,7 @@
     font-weight: 600;
   }
   .home-name-and-position {
-    width: 358px;
+    width: 100%;
   }
   .home-name {
     font-style: normal;
@@ -931,11 +942,9 @@
     color: var(--dl-color-gray-black);
   }
   .home-name-and-position1 {
-    width: 358px;
+    width: 460px;
   }
   .home-name1 {
-    font-style: normal;
-    font-weight: 700;
     text-transform: capitalize;
   }
   .home-position1 {
@@ -945,7 +954,7 @@
     color: var(--dl-color-gray-black);
   }
   .home-name-and-position2 {
-    width: 358px;
+    width: 100%;
   }
   .home-name2 {
     font-style: normal;
@@ -975,6 +984,9 @@
   }
 }
 @media(max-width: 1200px) {
+  .home-navbar-container {
+    height: 40px;
+  }
   .home-text {
     color: rgb(5, 148, 255);
     font-size: 14px;
@@ -986,10 +998,35 @@
     text-decoration: none;
     background-color: rgb(255, 255, 255);
   }
+  .home-name-and-position {
+    width: 327px;
+  }
+  .home-name {
+    font-style: normal;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+  .home-name1 {
+    text-transform: capitalize;
+  }
+  .home-name2 {
+    font-style: normal;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
 }
 @media(max-width: 991px) {
+  .home-navbar-container {
+    height: 40px;
+  }
   .home-text {
+    color: rgb(5, 148, 255);
+    font-size: 12px;
     text-align: center;
+    font-weight: 700;
+    text-transform: capitalize;
+    text-decoration: none;
+    background-color: rgb(255, 255, 255);
   }
   .home-about-us {
     max-width: 100%;
@@ -1020,6 +1057,17 @@
   }
   .home-feature-card {
     align-self: center;
+  }
+  .home-name {
+    font-style: normal;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+  .home-name1 {
+    text-transform: capitalize;
+  }
+  .home-name2 {
+    text-transform: capitalize;
   }
   .home-locations-container {
     flex-wrap: wrap;
@@ -1154,6 +1202,9 @@
   }
 }
 @media(max-width: 479px) {
+  .home-navbar-container {
+    height: 45px;
+  }
   .home-text {
     color: rgb(5, 148, 255);
     font-size: 8px;
