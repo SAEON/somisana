@@ -76,8 +76,10 @@ async def download_file(semaphore, file, domain, oisst_cache, reset_cache, chown
                     os.rename(temp_file_path, file_path)
                 except Exception as e:
                     # Delete the temporary file in case of error
-                    os.remove(temp_file_path)
-                    raise e
+                    try:
+                        os.remove(temp_file_path)
+                    except:
+                        log('Failed to delete temp file... This shouldn\'t error')
 
     if chown:
         subprocess.call(["chown", chown, file_path])
