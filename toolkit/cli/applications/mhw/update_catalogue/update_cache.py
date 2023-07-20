@@ -17,7 +17,6 @@ def validate_nc_file(file):
     log(f"Validating {file}")
     try:
         with xr.open_dataset(file) as ds:
-            
             dimensions = {
                 "time": len(ds["time"]),
                 "lon": len(ds["lon"]),
@@ -42,9 +41,10 @@ async def download_file(semaphore, file, domain, oisst_cache, reset_cache, chown
         ".nc", "_{domain}.nc".format(domain="".join(str(v) for v in domain))
     )
     file_path = os.path.join(oisst_cache, filename)
+    temp_file_path = f"{file_path}.temp"  # Temporary file
+
     if not reset_cache:
         if os.path.isfile(file_path):
-            # TODO check the file is valid otherwise overwrite it
             print("Cache hit", file_path)
             return
 
@@ -63,14 +63,22 @@ async def download_file(semaphore, file, domain, oisst_cache, reset_cache, chown
                     "north": north,
                 },
             ) as response:
-                async with aiofiles.open(file_path, mode="wb") as f:
-                    while True:
-                        chunk = await response.content.read(1024)
-                        if not chunk:
-                            break
-                        await f.write(chunk)
-                # Check the NetCDF file is valid, otherwise delete
-                validate_nc_file(file_path)
+                try:
+                    async with aiofiles.open(temp_file_path, mode="wb") as f:
+                        while True:
+                            chunk = await response.content.read(1024)
+                            if not chunk:
+                                break
+                            await f.write(chunk)
+                    # Check the NetCDF file is valid, otherwise delete
+                    validate_nc_file(temp_file_path)
+                    # If the file is valid, rename it to the final file path
+                    os.rename(temp_file_path, file_path)
+                except Exception as e:
+                    # Delete the temporary file in case of error
+                    os.remove(temp_file_path)
+                    raise e
+
     if chown:
         subprocess.call(["chown", chown, file_path])
     subprocess.call(["chmod", "775", file_path])
