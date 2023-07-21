@@ -8,8 +8,8 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mdi/js": "^7.2.96",
-    "@mui/material": "^5.14.0",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@mui/material": "^5.14.1",
+    "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "cookie": "^0.5.0",
@@ -26,9 +26,9 @@
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.5",
     "react-markdown": "^8.0.7",
-    "react-router-dom": "^6.14.1",
+    "react-router-dom": "^6.14.2",
     "react-scripts": "^5.0.1",
-    "twgl.js": "^5.4.0",
+    "twgl.js": "^5.4.1",
     "web-vitals": "^3.4.0"
   },
   "scripts": {
