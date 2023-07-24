@@ -253,6 +253,17 @@ jobs:
                   --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ inputs.MODEL_RUN_DATE }}-tier2.nc \
                   --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ inputs.MODEL_RUN_DATE }}-tier3.nc \
                   --spacing 0.02
+      - name: Zarrify Tier 3 output
+        continue-on-error: true
+        run: >-
+          docker run \
+            --rm \
+            -v $WORKDIR:/tmp/somisana/current \
+            ${{ inputs.TOOLKIT_IMAGE }} \
+              zarrify \
+                --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ inputs.MODEL_RUN_DATE }}-tier3.nc \
+                --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ inputs.MODEL_RUN_DATE }}-tier3.zarr
+                  
 
   # Archive output
   archive-data:
@@ -342,6 +353,22 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             -T ${{ env.WORKDIR}}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.kerchunk.json \
             https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.kerchunk.json;
+      - name: Upload tier 3 Zarr output to Mnemosyne
+        continue-on-error: true
+        run: |
+          base_dir=${{ env.WORKDIR}}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.zarr
+          find "$base_dir" -type f -exec sh -c '
+              f="$1"
+              base="$2"
+              url=https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.zarr/${f#$base/}
+              curl \
+              --progress-bar \
+              --keepalive-time 1200 \
+              -X PUT \
+              -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+              --create-dirs \
+              -T "$f" \
+              $url' sh {} "$base_dir" \;
 
   # Load raster data into postgis using raster2pgsql
   load-postgis:
