@@ -362,7 +362,7 @@ jobs:
               base="$2"
               url=https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.zarr/${f#$base/}
               curl \
-              --progress-bar \
+              --silent \
               --keepalive-time 1200 \
               -X PUT \
               -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
