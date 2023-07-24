@@ -12,7 +12,6 @@ export default () => {
     <Tooltip placement="left-start" title="Toggle currents">
       <Span>
         <IconButton
-          disabled
           onClick={() =>
             setShowCurrents(b => {
               globalThis.dispatchEvent(

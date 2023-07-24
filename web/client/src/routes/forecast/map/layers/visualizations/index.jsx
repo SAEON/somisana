@@ -22,7 +22,7 @@ export default () => {
   return (
     <Suspense fallback={<Loading />}>
       <TemperatureSalinity data={gql.data.data} grid={grid} />
-      <Currents data={gql.data.data} grid={grid} />
+      <Currents grid={grid} />
     </Suspense>
   )
 }

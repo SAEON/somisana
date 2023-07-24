@@ -9,9 +9,9 @@ export default ({ container }) => {
     container && (
       <Div>
         <MapProvider container={container}>
-          {/* <MarineProtectedAreasLayer /> */}
+          <MarineProtectedAreasLayer />
           <WMSLayer />
-          {/* <DomainsLayer /> */}
+          <DomainsLayer />
         </MapProvider>
       </Div>
     )

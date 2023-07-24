@@ -248,7 +248,7 @@ def regrid_tier3(args):
                     {
                         "long_name": "water depth from free surface",
                         "units": "meter",
-                        "postive": "down",
+                        "positive": "down",
                         "standard_name": "depth",
                     },
                 ),
