@@ -58,14 +58,19 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
       source: 'domains',
       'source-layer': 'public.models',
       paint: {
-        'fill-outline-color': 'transparent',
+        'fill-outline-color': theme.palette.common.black,
         'fill-color': [
           'case',
           ['boolean', ['feature-state', 'hovered'], false],
-          theme.palette.primary.main,
-          theme.palette.primary.dark,
+          theme.palette.common.black,
+          'transparent',
         ],
-        'fill-opacity': 0.5,
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'hovered'], false],
+          0.5,
+          1,
+        ],
       },
     })
 
@@ -115,8 +120,7 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
   }, [
     map,
     REACT_APP_TILESERV_BASE_URL,
-    theme.palette.primary.dark,
-    theme.palette.primary.main,
+    theme.palette.common.black,
     click,
     mouseenter,
     mouseleave,
