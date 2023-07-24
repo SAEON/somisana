@@ -197,7 +197,8 @@
     "XDAP",
     "xzvf",
     "Zarr",
-    "zarrify"
+    "zarrify",
+    "Zarrifying"
   ],
   "python.analysis.extraPaths": ["./toolkit"],
   "svg.preview.background": "white",
