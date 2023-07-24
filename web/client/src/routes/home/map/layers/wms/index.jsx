@@ -2,6 +2,8 @@ import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_context'
 import { useTheme } from '@mui/material/styles'
 
+// https://nrt.cmems-du.eu/thredds/wms/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1D-m?request=GetCapabilities&service=WMS
+
 const Render = ({ map }) => {
   const theme = useTheme()
 
