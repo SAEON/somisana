@@ -348,7 +348,7 @@ jobs:
         run: |
           curl \
             --silent \
-            --keepalive-time 1200 \
+            --keepalive-time 2400 \
             -X PUT \
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -H "Content-Type: application/octet-stream" \
@@ -364,7 +364,7 @@ jobs:
               url=https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.zarr/${f#$base/}
               curl \
               --silent \
-              --keepalive-time 1200 \
+              --keepalive-time 2400 \
               -X PUT \
               -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
               --create-dirs \
