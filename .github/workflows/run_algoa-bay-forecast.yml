@@ -197,10 +197,11 @@ jobs:
   # interpolate data to constant vertical levels (tier 2),
   # and interpolate data to a constant horizontal grid (tier 3)
   post-processing:
-    needs: [croco, workdir]
+    needs: [croco, workdir, envs]
     runs-on: somisana
     env:
       WORKDIR: ${{ needs.workdir.outputs.WORKDIR }}
+      MODEL_RUN_YEAR_MONTH: ${{ needs.envs.outputs.MODEL_RUN_YEAR_MONTH }}
     steps:
       - name: Check out source code
         uses: actions/checkout@main
@@ -253,6 +254,17 @@ jobs:
                   --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ inputs.MODEL_RUN_DATE }}-tier2.nc \
                   --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ inputs.MODEL_RUN_DATE }}-tier3.nc \
                   --spacing 0.02
+      - name: Kerchunk NetCDF tier 3 output
+        continue-on-error: true
+        run: |
+          docker run \
+            --rm \
+            -v $WORKDIR:/tmp/somisana/current \
+            ${{ inputs.TOOLKIT_IMAGE }} \
+              kerchunk \
+                run \
+                  --inputs https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.nc \
+                  --output /tmp/somisana/current/croco/forecast/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.kerchunk.json
       - name: Zarrify Tier 3 output
         continue-on-error: true
         run: >-
@@ -331,17 +343,6 @@ jobs:
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -T ${{ env.WORKDIR }}/croco/forecast/algoa-bay-forecast-${{ inputs.MODEL_RUN_DATE }}-tier3.nc \
             https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.nc;
-      - name: Kerchunk NetCDF tier 3 output
-        continue-on-error: true
-        run: |
-          docker run \
-            --rm \
-            -v $WORKDIR:/tmp/somisana/current \
-            ${{ inputs.TOOLKIT_IMAGE }} \
-              kerchunk \
-                run \
-                  --inputs https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.nc \
-                  --output /tmp/somisana/current/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.kerchunk.json
       - name: Upload Kerchunked tier 3 output to Mnemosyne
         continue-on-error: true
         run: |
@@ -351,12 +352,12 @@ jobs:
             -X PUT \
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -H "Content-Type: application/octet-stream" \
-            -T ${{ env.WORKDIR}}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.kerchunk.json \
+            -T ${{ env.WORKDIR}}/croco/forecast/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.kerchunk.json \
             https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.kerchunk.json;
       - name: Upload tier 3 Zarr output to Mnemosyne
         continue-on-error: true
         run: |
-          base_dir=${{ env.WORKDIR}}/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.zarr
+          base_dir=${{ env.WORKDIR}}/croco/forecast/${{ inputs.MODEL_RUN_DATE }}-hourly-avg-t3.zarr
           find "$base_dir" -type f -exec sh -c '
               f="$1"
               base="$2"
