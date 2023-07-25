@@ -149,7 +149,7 @@ def regrid_tier3(args):
                         dtype=float,
                     )
                 )
-            
+
             # Stack the depth dimension and append to the time list
             temp_out_time.append(da.stack(temp_out_depth, axis=0))
             salt_out_time.append(da.stack(salt_out_depth, axis=0))
@@ -255,20 +255,35 @@ def regrid_tier3(args):
             },
         )
 
+        # Explicitly set chunk sizes of some dimensions
+        chunksizes = {
+            "time": 24,
+            "depth": 1,
+        }
+
+        # For data_vars, set chunk sizes for each dimension
+        # This is either the override specified in "chunksizes"
+        # or the length of the dimension
+        default_chunksizes = {dim: len(data_out[dim]) for dim in data_out.dims}
+
+        encoding = {
+            var: {
+                "dtype": "float32", 
+                "chunksizes": [chunksizes.get(dim, default_chunksizes[dim]) for dim in data_out[var].dims]
+            }
+            for var in data_out.data_vars
+        }
+
+        # Adjust for non-chunked variables
+        encoding["time"] = {"dtype": "i4"}
+        encoding['latitude'] = {"dtype": "float32"}
+        encoding['longitude'] = {"dtype": "float32"}
+        encoding['depth'] = {"dtype": "float32"}
+
         log("Generating NetCDF data")
         write_op = data_out.to_netcdf(
             output,
-            encoding={
-                "zeta": {"dtype": "float32"},
-                "temp": {"dtype": "float32"},
-                "salt": {"dtype": "float32"},
-                "u": {"dtype": "float32"},
-                "v": {"dtype": "float32"},
-                "depth": {"dtype": "float32"},
-                "longitude": {"dtype": "float32"},
-                "latitude": {"dtype": "float32"},
-                "time": {"dtype": "i4"},
-            },
+            encoding=encoding,
             mode="w",
             compute=False,
         )

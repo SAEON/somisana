@@ -27,6 +27,7 @@
     "cartopy",
     "ccrs",
     "chompfile",
+    "chunksizes",
     "Cividis",
     "cleanup",
     "clim",
