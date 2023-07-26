@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react'
-import { context as mapContext } from '../../_context'
+import { context as mapContext } from '../../_map-context'
 
-const regions = ['sw-cape','algoa-bay']
+const regions = ['sw-cape', 'algoa-bay']
 
 const Render = ({ map }) => {
   // Add source, layer, and event handlers
@@ -20,27 +20,13 @@ const Render = ({ map }) => {
       type: 'raster',
       source: 'wms',
       paint: {
-        'raster-opacity': 0.5,
+        'raster-opacity': 0.35,
       },
     })
 
-    regions.forEach(async region => {
-      const url = `https://mnemosyne.somisana.ac.za/somisana/${region}/5-day-forecast`
-      const latestMonth = (await fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'Application/json'
-        }
-      }).then(res => res.json())).filter(({isFile}) => !isFile).sort(({entry: a}, {entry: b}) => {
-        // TODO
-        return 1
-      })
-      console.log(latestMonth)
-    })
-
     return () => {
-      // map.removeLayer('wms')
-      // map.removeSource('wms')
+      map.removeLayer('wms')
+      map.removeSource('wms')
     }
   }, [map])
 }

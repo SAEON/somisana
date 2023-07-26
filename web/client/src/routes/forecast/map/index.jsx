@@ -1,4 +1,3 @@
-import 'maplibre-gl/dist/maplibre-gl.css'
 import { useEffect, useState, useContext } from 'react'
 import MapProvider from './_context'
 import CoordinatesLayer from './layers/coordinates'

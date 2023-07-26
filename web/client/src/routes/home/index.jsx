@@ -10,30 +10,38 @@ export default () => {
 
   return (
     <Div
-      ref={el => setRef(el)}
       sx={{
+        display: 'flex',
+        flexDirection: 'column',
         height: theme => `calc(100vh - ${theme.spacing(6)})`,
         position: 'relative',
       }}
     >
-      <Typography
+      <Div
         sx={{
-          position: 'absolute',
-          backgroundColor: theme => alpha(theme.palette.common.black, 0.75),
-          zIndex: 1,
-          top: 0,
-          left: 0,
-          padding: theme => theme.spacing(1),
-          margin: theme => theme.spacing(1),
-          boxShadow: theme => theme.shadows[9]
+          backgroundColor: theme => theme.palette.background.paper,
+          padding: theme => theme.spacing(1)
         }}
       >
-        Welcome to the SAEON sustainable ocean modelling program<br />Click regions of interest for high
-        quality forecast and nowcast data
-      </Typography>
-      <Suspense fallback={<Loading />}>
-        <Map container={ref} />
-      </Suspense>
+        <Typography variant="h5" variantMapping={{h5: 'h2'}} sx={{ display: 'block', textAlign: 'center' }}>
+          Sustainable Ocean Modelling Initiative: A South African Approach
+        </Typography>
+      </Div>
+      <Div ref={el => setRef(el)} sx={{ display: 'flex', flex: 1 }}>
+        <Suspense fallback={<Loading />}>
+          <Map container={ref} />
+        </Suspense>
+      </Div>
+      <Div
+        sx={{
+          backgroundColor: theme => theme.palette.background.paper,
+          padding: theme => theme.spacing(1),
+        }}
+      >
+        <Typography variant="overline" variantMapping={{overline: 'h3'}} sx={{ display: 'block', textAlign: 'center' }}>
+          High-resolution South African EEZ ocean data
+        </Typography>
+      </Div>
     </Div>
   )
 }

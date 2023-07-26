@@ -31,7 +31,7 @@ export default [
 {
     to: '/',
     path: '*',
-    label: 'SOMISANA',
+    label: 'SOMISANA Tools',
     Icon: Home,
     includeInNavMenu: true,
     includeInFooter: true,

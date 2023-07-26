@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react'
-import { context as mapContext } from '../../_context'
+import { context as mapContext } from '../../_map-context'
 import { context as configContext } from '../../../../../modules/config'
 import { useTheme } from '@mui/material/styles'
 
@@ -21,17 +21,8 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
       source: 'mpas',
       'source-layer': 'public.mpas',
       paint: {
-        'fill-outline-color': 'transparent',
-        'fill-color': [
-          'case',
-          [
-            'any',
-            ['==', ['feature-state', 'hover'], true],
-            ['==', ['feature-state', 'clicked'], true],
-          ],
-          theme.palette.primary.main,
-          theme.palette.grey[100],
-        ],
+        'fill-outline-color': theme.palette.common.white,
+        'fill-color': theme.palette.common.black,
         'fill-opacity': 0.5,
       },
     })
@@ -40,7 +31,7 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
       map.removeLayer('mpas')
       map.removeSource('mpas')
     }
-  }, [map, REACT_APP_TILESERV_BASE_URL, theme.palette.grey, theme.palette.primary.main])
+  }, [map, REACT_APP_TILESERV_BASE_URL, theme.palette.common.black, theme.palette.common.white])
 }
 
 export default () => {

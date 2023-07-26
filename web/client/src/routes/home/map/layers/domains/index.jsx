@@ -1,5 +1,5 @@
 import { useContext, useEffect, useCallback } from 'react'
-import { context as mapContext } from '../../_context'
+import { context as mapContext } from '../../_map-context'
 import { context as configContext } from '../../../../../modules/config'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
@@ -46,6 +46,7 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
   // Add source, layer, and event handlers
   useEffect(() => {
     map.addSource('domains', {
+      id: 'domains',
       type: 'vector',
       tiles: [`${REACT_APP_TILESERV_BASE_URL}/public.models/{z}/{x}/{y}.pbf`],
       url: `${REACT_APP_TILESERV_BASE_URL}/public.models.json`,
@@ -101,7 +102,7 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
             ],
             {
               linear: false,
-              padding: 250,
+              padding: 1000,
               curve: 1,
               speed: 1,
             }

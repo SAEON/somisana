@@ -12,7 +12,7 @@ const resolveRegion = {
   2: 'sw-cape',
 }
 
-const Render = ({ modelid, map, showCurrents, run, timeStep, depth: _depth, data }) => {
+const Render = ({ modelid, map, showCurrents, run, timeStep, depth: _depth }) => {
   const t0 = useMemo(
     () => (run?.step1_timestamp ? new Date(run.step1_timestamp) : 'Missing timestep'),
     [run?.step1_timestamp]

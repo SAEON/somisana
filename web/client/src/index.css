@@ -31,3 +31,7 @@ body,
   box-sizing: border-box;
   border: 2px solid red !important;
 }
+
+.maplibregl-ctrl-attrib-inner {
+  color: black !important;
+}

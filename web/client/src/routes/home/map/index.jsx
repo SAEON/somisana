@@ -1,7 +1,8 @@
 import Div from '../../../components/div'
-import MapProvider from './_context'
+import MapProvider from './_map-context'
+import SaeonModels from './_saeon-models'
 import MarineProtectedAreasLayer from './layers/marine-protected-areas'
-import WMSLayer from './layers/wms'
+import CmemsWMSLayer from './layers/cmems-wms'
 import DomainsLayer from './layers/domains'
 
 export default ({ container }) => {
@@ -10,8 +11,9 @@ export default ({ container }) => {
       <Div>
         <MapProvider container={container}>
           <MarineProtectedAreasLayer />
-          <WMSLayer />
+          <CmemsWMSLayer />
           <DomainsLayer />
+          <SaeonModels />
         </MapProvider>
       </Div>
     )

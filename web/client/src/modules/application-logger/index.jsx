@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { gql, useApolloClient } from '@apollo/client'
 import logger from '../../logger'
 import logToGql from '../../logger/log-to-graphql'
@@ -9,7 +8,7 @@ export default ({ children }) => {
   const { link } = useApolloClient()
 
   // Clint only
-  useEffect(() => {
+  
     configureLogger(() => ({
       overwrites: {
         gql: logToGql({
@@ -20,9 +19,7 @@ export default ({ children }) => {
             }
           `,
         }),
-      },
-    }))
-  }, [link])
+      }}))
 
   return children
 }

@@ -7,13 +7,13 @@ const ConfigProvider = props => {
   const [config, setConfig] = useState(_config)
 
   if (config.NODE_ENV !== 'production') {
-    const ignore: string[] = []
+    const ignore = []
     console.info(
       'Client configuration',
       Object.fromEntries(
         Object.entries(config)
           .filter(([field]) => !ignore.includes(field))
-          .map(([field, value]: [string, any]) => [
+          .map(([field, value]) => [
             field,
             typeof value === 'function' ? value.toString() : value,
           ])
