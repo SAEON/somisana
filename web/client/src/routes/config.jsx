@@ -7,10 +7,12 @@ import {
   License,
   Map,
   Link,
-} from  '../components/icons'
+  FileMultiple,
+  Server,
+} from '../components/icons'
 import { gql, useQuery } from '@apollo/client'
 import Div from '../components/div'
-import { Navigate } from "react-router-dom";
+import { Navigate } from 'react-router-dom'
 
 const PrivacyPolicyPage = lazy(() => import('./privacy-policy'))
 const HomePage = lazy(() => import('./home'))
@@ -28,7 +30,7 @@ export const dictionary = {
 }
 
 export default [
-{
+  {
     to: '/',
     path: '*',
     label: 'SOMISANA Tools',
@@ -41,11 +43,10 @@ export default [
       </Suspense>
     ),
   },
-  
 
   {
-    to: '/region/:id',
-    path: '/region/:id',
+    to: '/regions/:id',
+    path: '/regions/:id',
     label: 'Model',
     BreadcrumbsLabel: ({ pathname }) => {
       const { error, loading, data } = useQuery(
@@ -84,11 +85,11 @@ export default [
     ),
   },
 
-{
-    to: '/region',
-    path: '/region',
+  {
+    to: '/regions',
+    path: '/regions',
     Icon: Map,
-    label: 'Region',
+    label: 'Regions',
     includeInNavMenu: false,
     includeInFooter: false,
     element: props => <Navigate to="/" />,
@@ -111,11 +112,29 @@ export default [
 
   {
     to: '/no-route', // Hack - the to property is still required
+    label: 'High resolution NetCDF data',
+    Icon: FileMultiple,
+    href: 'https://mnemosyne.somisana.ac.za/somisana',
+    includeInNavMenu: true,
+    includeInFooter: true,
+  },
+
+  {
+    to: '/no-route', // Hack - the to property is still required
+    label: 'TDS Server',
+    Icon: Server,
+    href: 'https://thredds.somisana.ac.za/thredds/catalog/data/somisana/catalog.html',
+    includeInNavMenu: true,
+    includeInFooter: true,
+  },
+
+  {
+    to: '/no-route', // Hack - the to property is still required
     group: 'source code',
     label: 'Source code',
     Icon: Github,
     href: 'https://github.com/SAEON/somisana',
-    includeInNavMenu: false,
+    includeInNavMenu: true,
     includeInFooter: true,
   },
   {

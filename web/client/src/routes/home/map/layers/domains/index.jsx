@@ -38,7 +38,7 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
       e['bubble'] = 'no'
       const { features } = e
       const { id } = features[0]
-      navigate(`/region/${id}`)
+      navigate(`/regions/${id}`)
     },
     [navigate]
   )

@@ -22,7 +22,6 @@ const Render = ({ map, model }) => {
     [model]
   )
 
-
   const VIZ_ID = `saeon-wms-${run.modelid}`
 
   const yyyyMMdd = useMemo(() => format(new Date(run.run_date), 'yyyyMMdd'), [run.run_date])
@@ -34,6 +33,8 @@ const Render = ({ map, model }) => {
   const minMax = '10,25'
   const timeStep = 120
   const thresholds = 240
+
+  // const LEGEND_URL = `https://thredds.somisana.ac.za/thredds/wms/data/somisana/algoa-bay/5-day-forecast/202307/20230726-hourly-avg-t3.nc?REQUEST=GetLegendGraphic&LAYERS=temp&STYLES=${style}&COLORSCALERANGE=${minMax}&transparent=true&FORMAT=image/png`
 
   const t0 = useMemo(
     () => (run?.step1_timestamp ? new Date(run.step1_timestamp) : 'Missing timestep'),
@@ -57,7 +58,7 @@ const Render = ({ map, model }) => {
 
   const url = useMemo(
     () =>
-      `https://thredds.somisana.ac.za${path}?${WMS_PARAMS}&LAYERS=${layer}&STYLES=${style}&elevation=${depth}&time=${time}&COLORSCALERANGE=${minMax}&NUMCOLORBANDS=${thresholds}`,
+      `https://thredds.somisana.ac.za${path}?${WMS_PARAMS}&LAYERS=${layer}&STYLES=${style}&elevation=${depth}&time=${time}&COLORSCALERANGE=${minMax}&NUMCOLORBANDS=${thresholds}&transparent=true&FORMAT=image/png`,
     [path, layer, style, depth, time, minMax, thresholds]
   )
 
@@ -82,7 +83,7 @@ const Render = ({ map, model }) => {
     map.moveLayer(VIZ_ID)
     if (map.getLayer('domains')) map.moveLayer('domains')
     if (map.getLayer('mpas')) map.moveLayer('mpas')
-    
+
     return () => {
       removeLayer()
     }

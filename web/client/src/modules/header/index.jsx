@@ -24,7 +24,10 @@ const Header = ({ children, routes = [], ...props }) => {
         >
           <Toolbar
             disableGutters
-            sx={{ padding: theme => `0 ${theme.spacing(1)}` }}
+            sx={{
+              padding: theme => `0 ${theme.spacing(1)}`,
+              paddingRight: theme => theme.spacing(0.5),
+            }}
             variant="dense"
             {...props}
           >

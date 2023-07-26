@@ -23,6 +23,7 @@ import {
   mdiInformation,
   mdiInformationVariant,
   mdiLayers,
+  mdiServer,
   mdiLayersTriple,
   mdiLicense,
   mdiLink,
@@ -51,6 +52,12 @@ export { default as EgagasiniGraphic } from './egagasini-graphic'
 export const Refresh = styled(props => (
   <SvgIcon {...props}>
     <Path d={mdiRefresh} />
+  </SvgIcon>
+))({})
+
+export const Server = styled(props => (
+  <SvgIcon {...props}>
+    <Path d={mdiServer} />
   </SvgIcon>
 ))({})
 
