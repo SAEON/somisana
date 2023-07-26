@@ -59,20 +59,35 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
       'source-layer': 'public.models',
       paint: {
         'fill-outline-color': theme.palette.common.black,
-        'fill-color': [
-          'case',
-          ['boolean', ['feature-state', 'hovered'], false],
-          theme.palette.common.black,
-          'transparent',
-        ],
+        'fill-color': theme.palette.common.black,
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hovered'], false],
           0.5,
-          1,
+          0.1,
         ],
       },
     })
+
+    map.addLayer({
+      id: 'domains-outline',
+      type: 'fill',
+      source: 'domains',
+      'source-layer': 'public.models',
+      paint: {
+        'fill-outline-color': theme.palette.common.black,
+        'fill-color': 'transparent',
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'hovered'], false],
+          0.5,
+          0.5,
+        ],
+      },
+    })
+
+    map.moveLayer('domains')
+    map.moveLayer('domains-outline')
 
     map.on('click', 'domains', click)
     map.on('mouseenter', 'domains', mouseenter)
@@ -115,6 +130,7 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
       map.off('mouseenter', 'domains', mouseenter)
       map.off('mouseleave', 'domains', mouseleave)
       map.removeLayer('domains')
+      map.removeLayer('domains-outline')
       map.removeSource('domains')
     }
   }, [

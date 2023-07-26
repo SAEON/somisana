@@ -40,13 +40,13 @@ const Render = ({ modelid, map, showCurrents, run, timeStep, depth: _depth }) =>
   const url = useMemo(
     () =>
       `https://thredds.somisana.ac.za${path}?${WMS_PARAMS}&LAYERS=${layer}&STYLES=${style}&elevation=${depth}&time=${time}`,
-    [path, WMS_PARAMS, layer, style, depth, time]
+    [path, layer, style, depth, time]
   )
 
   const removeLayer = useCallback(() => {
     if (map.getLayer(VIZ_ID)) map.removeLayer(VIZ_ID)
     if (map.getSource(VIZ_ID)) map.removeSource(VIZ_ID)
-  }, [map, VIZ_ID])
+  }, [map])
 
   useEffect(() => {
     if (showCurrents) {
@@ -70,7 +70,7 @@ const Render = ({ modelid, map, showCurrents, run, timeStep, depth: _depth }) =>
     return () => {
       removeLayer()
     }
-  }, [map, showCurrents, url, VIZ_ID])
+  }, [map, showCurrents, url, removeLayer])
 
   return null
 }

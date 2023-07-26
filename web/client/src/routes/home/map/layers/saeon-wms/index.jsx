@@ -4,6 +4,9 @@ import { format, add } from 'date-fns'
 
 const WMS_PARAMS = `REQUEST=GetMap&VERSION=1.3.0&BBOX={bbox-epsg-3857}&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&FORMAT=image/png&TRANSPARENT=true`
 
+export const minMax = '8,28.5'
+export const thresholds = 240
+
 const resolveRegion = {
   1: 'algoa-bay',
   2: 'sw-cape',
@@ -28,11 +31,9 @@ const Render = ({ map, model }) => {
   const yyyyMM = useMemo(() => format(new Date(run.run_date), 'yyyyMM'), [run.run_date])
   const region = resolveRegion[run.modelid]
   const layer = `temp`
-  const style = `raster/psu-magma`
+  const style = `raster/x-Rainbow`
   const depth = 0
-  const minMax = '10,25'
   const timeStep = 120
-  const thresholds = 240
 
   // const LEGEND_URL = `https://thredds.somisana.ac.za/thredds/wms/data/somisana/algoa-bay/5-day-forecast/202307/20230726-hourly-avg-t3.nc?REQUEST=GetLegendGraphic&LAYERS=temp&STYLES=${style}&COLORSCALERANGE=${minMax}&transparent=true&FORMAT=image/png`
 
@@ -59,7 +60,7 @@ const Render = ({ map, model }) => {
   const url = useMemo(
     () =>
       `https://thredds.somisana.ac.za${path}?${WMS_PARAMS}&LAYERS=${layer}&STYLES=${style}&elevation=${depth}&time=${time}&COLORSCALERANGE=${minMax}&NUMCOLORBANDS=${thresholds}&transparent=true&FORMAT=image/png`,
-    [path, layer, style, depth, time, minMax, thresholds]
+    [path, layer, style, depth, time]
   )
 
   const removeLayer = useCallback(() => {
@@ -78,11 +79,15 @@ const Render = ({ map, model }) => {
       id: VIZ_ID,
       type: 'raster',
       source: VIZ_ID,
+      paint: {
+        'raster-opacity': 1,
+      },
     })
 
     map.moveLayer(VIZ_ID)
-    if (map.getLayer('domains')) map.moveLayer('domains')
     if (map.getLayer('mpas')) map.moveLayer('mpas')
+    if (map.getLayer('domains')) map.moveLayer('domains')
+    if (map.getLayer('domains')) map.moveLayer('domains-outline')
 
     return () => {
       removeLayer()
