@@ -86,8 +86,6 @@ export default ({ grid }) => {
     thresholds,
   } = useContext(pageContext)
 
-  console.log(grid)
-
   return (
     <Render
       modelid={id}
