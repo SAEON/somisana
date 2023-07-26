@@ -58,7 +58,7 @@ const Render = ({ map, model }) => {
   const url = useMemo(
     () =>
       `https://thredds.somisana.ac.za${path}?${WMS_PARAMS}&LAYERS=${layer}&STYLES=${style}&elevation=${depth}&time=${time}&COLORSCALERANGE=${minMax}&NUMCOLORBANDS=${thresholds}`,
-    [path, WMS_PARAMS, layer, style, depth, time, minMax, thresholds]
+    [path, layer, style, depth, time, minMax, thresholds]
   )
 
   const removeLayer = useCallback(() => {
@@ -86,7 +86,7 @@ const Render = ({ map, model }) => {
     return () => {
       removeLayer()
     }
-  }, [map, url, VIZ_ID])
+  }, [map, url, VIZ_ID, removeLayer])
 }
 
 export default ({ model }) => {

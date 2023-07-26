@@ -1,8 +1,6 @@
 import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_map-context'
 
-const regions = ['sw-cape', 'algoa-bay']
-
 const Render = ({ map }) => {
   // Add source, layer, and event handlers
   useEffect(() => {
