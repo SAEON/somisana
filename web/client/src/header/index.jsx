@@ -1,5 +1,6 @@
 import Header from '../modules/header'
 import Img from '../components/img'
+import { alpha } from '@mui/material'
 
 export default props => {
   return (
@@ -9,7 +10,6 @@ export default props => {
           height: 40,
           display: 'flex',
           padding: theme => theme.spacing(0.5),
-          background: theme => theme.palette.common.white,
         }}
         src="/saeon-logo.png"
       ></Img>

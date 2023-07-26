@@ -3,13 +3,13 @@ import { context as mapContext } from '../../_map-context'
 import Img from '../../../../../components/img'
 import Div from '../../../../../components/div'
 import Span from '../../../../../components/span'
-import { Tooltip, Paper, Divider, Typography } from '@mui/material'
+import { Tooltip, Paper, Divider, Typography, Link } from '@mui/material'
 
 const PALETTE = 'ncview'
 
 const STYLE = `boxfill/${PALETTE}`
 
-// const SERVICE_URL = `https://nrt.cmems-du.eu/thredds/wms/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1D-m?request=GetCapabilities&service=WMS`
+const SERVICE_URL = `https://nrt.cmems-du.eu/thredds/wms/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1D-m?request=GetCapabilities&service=WMS`
 
 const TILE_URL = `https://nrt.cmems-du.eu/thredds/wms/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1D-m?REQUEST=GetMap&VERSION=1.3.0&LAYERS=thetao&STYLES=${STYLE}&BBOX={bbox-epsg-3857}&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&FORMAT=image/png&transparent=true`
 
@@ -109,9 +109,14 @@ const Render = ({ map }) => {
       />
       <Typography
         variant="overline"
+        component={Link}
+        href={SERVICE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
         sx={{
           display: 'block',
           textAlign: 'center',
+          color: theme => theme.palette.common.white,
           marginBottom: theme => theme.spacing(1),
         }}
       >
