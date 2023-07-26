@@ -198,7 +198,7 @@ jobs:
                   --workdir /tmp/somisana/current \
                   --download-date ${{ env.MODEL_RUN_DATE }} \
                   --domain 11,36,-39,-25
-
+  
   # now do the model specific steps 
   # currently this is done by calling different model reusable workflows in series
   # In future we should make a generic model reusable workflow which takes the model name as an input
@@ -223,4 +223,48 @@ jobs:
       TOOLKIT_IMAGE: ${{ needs.toolkit.outputs.image }}:sha-${{ github.sha }}
       EEZ_DATA_DIR: ${{ needs.envs.outputs.EEZ_DATA_DIR }}
     secrets: inherit
+
+  # archive the global data
+  # I'm doing this after the models run for a reason, albeit a bad one!
+  # 
+  # We download hundreds of grb files for the GFS data right now
+  # and in a pre-processing step to run the croco models, all the GFS data
+  # is written to a netcdf file before interpolating to the croco grid
+  # So I'm just using this file generated during the algoa-bay run  to archive the GFS data for now
+  # (this netcdf file is also used as the wind input for opendrift runs for now)
+  # And so the archiving has to come after the models run
+  #
+  # We should work around this hack in future!
+  # possibly when we move away from matlab and have to re-write the pre-processing steps 
+  # 
+  archive-global-data:
+    needs: [envs,toolkit,download-global-data]
+    runs-on: somisana
+    env:
+      EEZ_DATA_DIR: ${{ needs.envs.outputs.EEZ_DATA_DIR }}
+      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+    steps:
+      - name: Archive the mercator data
+        continue-on-error: false
+        run: |
+           curl \
+            --silent \
+            --keepalive-time 2400 \
+            -X PUT \
+            -H "Content-Type: application/octet-stream" \
+            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+            -T ${{ env.EEZ_DATA_DIR }}/mercator_${{ env.MODEL_RUN_DATE }}.nc \
+            https://mnemosyne.somisana.ac.za/somisana/global-data/${{ env.MODEL_RUN_DATE }}/{{ env.MODEL_RUN_DATE }}_mercator.nc;  
+      - name: Archive GFS data
+        continue-on-error: false
+        run: |
+           curl \
+            --silent \
+            --keepalive-time 2400 \
+            -X PUT \
+            -H "Content-Type: application/octet-stream" \
+            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+            -T /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH_REF }}/${{ env.MODEL_RUN_DATE }}/croco/forcing/GFS_${{ env.MODEL_RUN_DATE }}.nc \
+            https://mnemosyne.somisana.ac.za/somisana/global-data/${{ env.MODEL_RUN_DATE }}/{{ env.MODEL_RUN_DATE }}_gfs.nc;  
 
