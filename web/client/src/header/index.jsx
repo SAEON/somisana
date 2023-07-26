@@ -1,6 +1,5 @@
 import Header from '../modules/header'
 import Img from '../components/img'
-import { alpha } from '@mui/material'
 
 export default props => {
   return (
