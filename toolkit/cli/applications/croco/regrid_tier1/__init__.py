@@ -16,23 +16,19 @@ def regrid_tier1(args):
     grid = os.path.abspath(args.grid)
     input = os.path.abspath(args.input)
     output = os.path.abspath(args.output)
+    run_date = args.run_date
 
     log("Running CROCO output regridding (tier1)")
     log("CONFIG::id", id)
     log("CONFIG::input", input)
     log("CONFIG::grid", grid)
     log("CONFIG::output", output)
+    log("CONFIG::run_date", run_date)
 
     # Ensure the directory for the specified output exists
     os.makedirs(os.path.dirname(output), exist_ok=True)
 
     time_steps = post.get_time(input, REFERENCE_DATE)
-
-    # Get the run_date from the CROCO output NetCDF file
-    run_date = time_steps[int(len(time_steps) / 2) - 1].strftime(
-        "%Y%m%d"
-    )  # TODO: rather make this an input - what if in future the hindcast and forecast durations aren't equal
-    log("CONFIG::run_date", run_date)
 
     log("Extracting the model output variables we need")
     with xr.open_dataset(input) as ds:
