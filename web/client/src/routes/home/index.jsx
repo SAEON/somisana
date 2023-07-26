@@ -68,12 +68,20 @@ export default () => {
         }}
       >
         <Div sx={{ display: 'flex', flexDirection: 'row' }}>
-          <Img sx={{height: 30, marginRight: theme => theme.spacing(1)}} src="/ocims-200h.png"></Img>
+          <Img
+            sx={{ display: 'flex', height: 30, marginRight: theme => theme.spacing(1) }}
+            src="/ocims-200h.png"
+          ></Img>
           <Button
             rel={'noopener noreferrer'}
             target={'_blank'}
             size="small"
             href="https://www.ocims.gov.za/"
+            sx={theme => ({
+              [theme.breakpoints.down('sm')]: {
+                display: 'none',
+              },
+            })}
           >
             ocims.gov.za
           </Button>
@@ -82,7 +90,12 @@ export default () => {
             target={'_blank'}
             size="small"
             href="https://saeon.ac.za"
-            sx={{ marginLeft: theme => theme.spacing(1) }}
+            sx={theme => ({
+              marginLeft: theme.spacing(1),
+              [theme.breakpoints.down('md')]: {
+                display: 'none',
+              },
+            })}
           >
             saeon.ac.za
           </Button>

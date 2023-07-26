@@ -46,7 +46,6 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
   // Add source, layer, and event handlers
   useEffect(() => {
     map.addSource('domains', {
-      id: 'domains',
       type: 'vector',
       tiles: [`${REACT_APP_TILESERV_BASE_URL}/public.models/{z}/{x}/{y}.pbf`],
       url: `${REACT_APP_TILESERV_BASE_URL}/public.models.json`,

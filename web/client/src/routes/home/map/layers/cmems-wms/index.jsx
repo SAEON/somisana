@@ -2,6 +2,7 @@ import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_map-context'
 import Img from '../../../../../components/img'
 import Div from '../../../../../components/div'
+import Span from '../../../../../components/span'
 import { Tooltip, Paper, Divider, Typography } from '@mui/material'
 
 const PALETTE = 'ncview'
@@ -32,8 +33,8 @@ const Render = ({ map }) => {
     })
 
     return () => {
-      map.removeLayer('wms')
-      map.removeSource('wms')
+      if (map.getLayer('wms')) map.removeLayer('wms')
+      if (map.getSource('wms')) map.removeSource('wms')
     }
   }, [map])
 
@@ -80,6 +81,7 @@ const Render = ({ map }) => {
         sx={{ marginTop: theme => theme.spacing(2), marginBottom: theme => theme.spacing(1) }}
       />
       <Tooltip placement="left-end" title="Select a region by clicking on the bounding box">
+        <Span>
         <Typography
           variant="overline"
           sx={{
@@ -100,6 +102,7 @@ const Render = ({ map }) => {
         >
           Select..
         </Typography>
+        </Span>
       </Tooltip>
       <Divider
         sx={{ marginTop: theme => theme.spacing(2), marginBottom: theme => theme.spacing(1) }}
