@@ -9,6 +9,7 @@ import {
   Link,
   FileMultiple,
   Server,
+  Api
 } from '../components/icons'
 import { gql, useQuery } from '@apollo/client'
 import Div from '../components/div'
@@ -115,6 +116,15 @@ export default [
     label: 'High resolution NetCDF data',
     Icon: FileMultiple,
     href: 'https://mnemosyne.somisana.ac.za/somisana',
+    includeInNavMenu: true,
+    includeInFooter: true,
+  },
+
+  {
+    to: '/no-route', // Hack - the to property is still required
+    label: 'API Documentation',
+    Icon: Api,
+    href: 'https://docs.somisana.ac.za',
     includeInNavMenu: true,
     includeInFooter: true,
   },
