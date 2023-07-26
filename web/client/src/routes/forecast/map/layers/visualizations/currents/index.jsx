@@ -37,11 +37,10 @@ const Render = ({ modelid, map, showCurrents, run, timeStep, depth: _depth, data
   const layer = `u:v-group`
   const style = `sized_arrows`
   const depth = useMemo(() => Math.abs(_depth), [_depth])
-  const minMax = '0,1'
   const url = useMemo(
     () =>
-      `https://thredds.somisana.ac.za${path}?${WMS_PARAMS}&LAYERS=${layer}&STYLES=${style}&elevation=${depth}&time=${time}&COLORSCALERANGE=${minMax}`,
-    [path, WMS_PARAMS, layer, style, depth, time, minMax]
+      `https://thredds.somisana.ac.za${path}?${WMS_PARAMS}&LAYERS=${layer}&STYLES=${style}&elevation=${depth}&time=${time}`,
+    [path, WMS_PARAMS, layer, style, depth, time]
   )
 
   const removeLayer = useCallback(() => {

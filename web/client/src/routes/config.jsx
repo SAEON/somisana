@@ -5,6 +5,7 @@ import {
   Home,
   Github,
   License,
+  Map,
   Link,
 } from  '../components/icons'
 import { gql, useQuery } from '@apollo/client'
@@ -43,8 +44,8 @@ export default [
   
 
   {
-    to: '/explore/:id',
-    path: '/explore/:id',
+    to: '/region/:id',
+    path: '/region/:id',
     label: 'Model',
     BreadcrumbsLabel: ({ pathname }) => {
       const { error, loading, data } = useQuery(
@@ -84,9 +85,10 @@ export default [
   },
 
 {
-    to: '/explore',
-    path: '/explore',
-    label: 'Explore',
+    to: '/region',
+    path: '/region',
+    Icon: Map,
+    label: 'Region',
     includeInNavMenu: false,
     includeInFooter: false,
     element: props => <Navigate to="/" />,
