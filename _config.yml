@@ -3,6 +3,6 @@ plugins:
   - jekyll-remote-theme
 
 title: SOMISANA API
-description: Sustainable Ocean Modelling initiative API docs 
+description: South African Sustainable Ocean Modelling initiative API
 
 show_downloads: true

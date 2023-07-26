@@ -1,8 +1,11 @@
 # SOMISANA API
 Documentation and source code for SAEON's Sustainable Ocean modelling Initiative (SOMISANA)
 
+<!-- To update the table of contents, Install Node.js ^16 and run "npx doctoc README.md"-->
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Contents**
 
 - [Local development](#local-development)
 - [Deployment](#deployment)
@@ -16,6 +19,8 @@ Documentation and source code for SAEON's Sustainable Ocean modelling Initiative
   - [Web application](#web-application)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
 
 # Local development
 
