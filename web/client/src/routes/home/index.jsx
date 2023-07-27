@@ -104,13 +104,13 @@ export default () => {
             target={'_blank'}
             size="small"
             href="https://somisana.ac.za"
-            sx={{
+            sx={theme => ({
               marginRight: 'auto',
-              marginLeft: theme => theme.spacing(1),
+              marginLeft: theme.spacing(1),
               [theme.breakpoints.down('md')]: {
                 display: 'none',
               },
-            }}
+            })}
           >
             somisana.ac.za
           </Button>
@@ -126,12 +126,12 @@ export default () => {
             rel={'noopener noreferrer'}
             target={'_blank'}
             size="small"
-            sx={{
-              marginLeft: theme => theme.spacing(1),
+            sx={theme => ({
+              marginLeft: theme.spacing(1),
               [theme.breakpoints.down('md')]: {
                 display: 'none',
               },
-            }}
+            })}
             href="https://thredds.somisana.ac.za/thredds/catalog/data/somisana/catalog.html"
           >
             TDS Server
