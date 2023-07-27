@@ -113,7 +113,7 @@ export default [
 
   {
     to: '/no-route', // Hack - the to property is still required
-    label: 'High resolution NetCDF data',
+    label: 'High-resolution data',
     Icon: FileMultiple,
     href: 'https://mnemosyne.somisana.ac.za/somisana',
     includeInNavMenu: true,
