@@ -19,7 +19,7 @@
 
 ## Start the API
 ```sh
-# Install Node.js (v20.3.1)
+# Install Node.js (v20.5.0)
 
 # Install chomp (wait for output, can take a while)
 npm install -g chomp && chomp --version
@@ -59,21 +59,5 @@ docker run \
   pramsey/pg_tileserv:latest
 ```
 
-## Start a local `pg_featureserv` server
-
-Assuming you have a PostGIS server running as a docker container with the name `postgis` on a network called `postgis`:
-
-```sh
-docker run \
-  -dt \
-  --restart always \
-  --name pg_featureserv \
-  -p 9000:9000 \
-  --net postgis \
-  -e DATABASE_URL=postgres://admin:password@postgis:5432/somisana_local \
-  -e PGFS_PAGING_LIMITDEFAULT=50000 \
-  -e PGFS_PAGING_LIMITMAX=50000 \
-  pramsey/pg_featureserv:latest
-```
 # Usage reports
 Usage reports are accessible as MongoDB views that are registered with the database on API startup
