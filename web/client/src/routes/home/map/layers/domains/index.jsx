@@ -116,9 +116,9 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
             ],
             {
               linear: false,
-              padding: 1000,
+              padding: 250,
               curve: 1,
-              speed: 1,
+              speed: 0.5,
             }
           )
         }

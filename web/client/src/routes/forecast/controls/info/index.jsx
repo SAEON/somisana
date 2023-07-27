@@ -6,11 +6,17 @@ import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import Typography from '@mui/material/Typography'
-import Paper, { PaperProps } from '@mui/material/Paper'
+import Paper from '@mui/material/Paper'
 import Draggable from 'react-draggable'
 import Tooltip from '@mui/material/Tooltip'
+import { Link } from '@mui/material'
 
-const PaperComponent = (props: PaperProps) => (
+const idToRegion = {
+  1: 'algoa-bay',
+  2: 'sw-cape'
+}
+
+const PaperComponent = props => (
   <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
     <Paper {...props} />
   </Draggable>
@@ -35,7 +41,7 @@ const showFields = Object.fromEntries(
 export default () => {
   const [open, setOpen] = useState(false)
   const {
-    model: { title, description, ...model },
+    model: { title, description, _id: id, ...model },
   } = useContext(modelContext)
 
   return (
@@ -74,6 +80,15 @@ export default () => {
         </DialogTitle>
         <DialogContent dividers>
           <Typography gutterBottom>{description}</Typography>
+          <Typography
+            component={Link}
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`https://mnemosyne.somisana.ac.za/somisana/${idToRegion[id]}/5-day-forecast`}
+            gutterBottom
+          >
+            Validation report
+          </Typography>
           <pre>
             {Object.entries(showFields)
               .map(([field, render]) => {

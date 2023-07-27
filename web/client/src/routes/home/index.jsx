@@ -119,6 +119,11 @@ export default () => {
             target={'_blank'}
             size="small"
             href="https://mnemosyne.somisana.ac.za/somisana"
+            sx={theme => ({
+              [theme.breakpoints.down('md')]: {
+                marginLeft: 'auto'
+              },
+            })}
           >
             High-resolution data
           </Button>
