@@ -11,10 +11,7 @@ import Draggable from 'react-draggable'
 import Tooltip from '@mui/material/Tooltip'
 import { Link } from '@mui/material'
 
-const idToRegion = {
-  1: 'algoa-bay',
-  2: 'sw-cape'
-}
+import resolveRegion from '../../../../lib/resolve-region'
 
 const PaperComponent = props => (
   <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
@@ -84,7 +81,7 @@ export default () => {
             component={Link}
             target="_blank"
             rel="noopener noreferrer"
-            href={`https://mnemosyne.somisana.ac.za/somisana/${idToRegion[id]}/5-day-forecast`}
+            href={`https://mnemosyne.somisana.ac.za/somisana/${resolveRegion[id]}/5-day-forecast`}
             gutterBottom
           >
             Validation report

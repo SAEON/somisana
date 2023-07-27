@@ -2,15 +2,11 @@ import { useCallback, useContext, useEffect, useMemo } from 'react'
 import { context as mapContext } from '../../../_context'
 import { context as pageContext } from '../../../../_context'
 import { format, add } from 'date-fns'
+import resolveRegion from '../../../../../../lib/resolve-region'
 
 const WMS_PARAMS = `REQUEST=GetMap&VERSION=1.3.0&BBOX={bbox-epsg-3857}&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&FORMAT=image/png&TRANSPARENT=true`
 
 const VIZ_ID = 'current-vectors'
-
-const resolveRegion = {
-  1: 'algoa-bay',
-  2: 'sw-cape',
-}
 
 const Render = ({ modelid, map, showCurrents, run, timeStep, depth: _depth }) => {
   const t0 = useMemo(
