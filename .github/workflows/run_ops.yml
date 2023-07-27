@@ -238,7 +238,7 @@ jobs:
   # possibly when we move away from matlab and have to re-write the pre-processing steps 
   # 
   archive-global-data:
-    needs: [envs,toolkit,download-global-data]
+    needs: [envs,toolkit,download-global-data,call_run_algoa-bay-forecast]
     runs-on: somisana
     env:
       EEZ_DATA_DIR: ${{ needs.envs.outputs.EEZ_DATA_DIR }}
@@ -255,7 +255,7 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -T ${{ env.EEZ_DATA_DIR }}/mercator_${{ env.MODEL_RUN_DATE }}.nc \
-            https://mnemosyne.somisana.ac.za/somisana/global-data/${{ env.MODEL_RUN_DATE }}/{{ env.MODEL_RUN_DATE }}_mercator.nc;  
+            https://mnemosyne.somisana.ac.za/somisana/global-data/${{ env.MODEL_RUN_DATE }}/${{ env.MODEL_RUN_DATE }}_mercator.nc;  
       - name: Archive GFS data
         continue-on-error: false
         run: |
@@ -266,5 +266,5 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -T /home/runner/somisana/algoa-bay-forecast/${{ env.BRANCH_REF }}/${{ env.MODEL_RUN_DATE }}/croco/forcing/GFS_${{ env.MODEL_RUN_DATE }}.nc \
-            https://mnemosyne.somisana.ac.za/somisana/global-data/${{ env.MODEL_RUN_DATE }}/{{ env.MODEL_RUN_DATE }}_gfs.nc;  
+            https://mnemosyne.somisana.ac.za/somisana/global-data/${{ env.MODEL_RUN_DATE }}/${{ env.MODEL_RUN_DATE }}_gfs.nc;  
 
