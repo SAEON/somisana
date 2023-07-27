@@ -6,11 +6,14 @@ import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import Typography from '@mui/material/Typography'
-import Paper, { PaperProps } from '@mui/material/Paper'
+import Paper from '@mui/material/Paper'
 import Draggable from 'react-draggable'
 import Tooltip from '@mui/material/Tooltip'
+import { Link } from '@mui/material'
 
-const PaperComponent = (props: PaperProps) => (
+import resolveRegion from '../../../../lib/resolve-region'
+
+const PaperComponent = props => (
   <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
     <Paper {...props} />
   </Draggable>
@@ -35,7 +38,7 @@ const showFields = Object.fromEntries(
 export default () => {
   const [open, setOpen] = useState(false)
   const {
-    model: { title, description, ...model },
+    model: { title, description, _id: id, ...model },
   } = useContext(modelContext)
 
   return (
@@ -74,6 +77,15 @@ export default () => {
         </DialogTitle>
         <DialogContent dividers>
           <Typography gutterBottom>{description}</Typography>
+          <Typography
+            component={Link}
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`https://mnemosyne.somisana.ac.za/somisana/${resolveRegion[id]}/5-day-forecast`}
+            gutterBottom
+          >
+            Validation report
+          </Typography>
           <pre>
             {Object.entries(showFields)
               .map(([field, render]) => {

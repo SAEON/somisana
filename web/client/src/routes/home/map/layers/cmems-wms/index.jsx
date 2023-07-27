@@ -46,10 +46,12 @@ const Render = ({ map }) => {
           position: 'absolute',
           top: 0,
           right: 0,
+          fontStyle: 'italic',
+          fontSize: '0.7rem',
           paddingTop: theme => theme.spacing(0.5),
           paddingBottom: theme => theme.spacing(0.5),
-          paddingLeft: theme => theme.spacing(2),
-          paddingRight: theme => theme.spacing(2),
+          paddingLeft: theme => theme.spacing(1),
+          paddingRight: theme => theme.spacing(1),
           backgroundColor: theme => alpha(theme.palette.background.paper, 0.75),
         }}
       >
@@ -58,6 +60,9 @@ const Render = ({ map }) => {
           target="_blank"
           rel="noopener noreferrer"
           variant="body2"
+          sx={{
+            fontSize: '0.7rem',
+          }}
           href="https://data.marine.copernicus.eu/product/GLOBAL_ANALYSISFORECAST_PHY_001_024/description"
         >
           GLOBAL_ANALYSISFORECAST_PHY_001_024

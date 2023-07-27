@@ -104,7 +104,13 @@ export default () => {
             target={'_blank'}
             size="small"
             href="https://somisana.ac.za"
-            sx={{ marginRight: 'auto', marginLeft: theme => theme.spacing(1) }}
+            sx={theme => ({
+              marginRight: 'auto',
+              marginLeft: theme.spacing(1),
+              [theme.breakpoints.down('md')]: {
+                display: 'none',
+              },
+            })}
           >
             somisana.ac.za
           </Button>
@@ -113,14 +119,24 @@ export default () => {
             target={'_blank'}
             size="small"
             href="https://mnemosyne.somisana.ac.za/somisana"
+            sx={theme => ({
+              [theme.breakpoints.down('md')]: {
+                marginLeft: 'auto'
+              },
+            })}
           >
-            Raw NetCDF Data
+            High-resolution data
           </Button>
           <Button
             rel={'noopener noreferrer'}
             target={'_blank'}
             size="small"
-            sx={{ marginLeft: theme => theme.spacing(1) }}
+            sx={theme => ({
+              marginLeft: theme.spacing(1),
+              [theme.breakpoints.down('md')]: {
+                display: 'none',
+              },
+            })}
             href="https://thredds.somisana.ac.za/thredds/catalog/data/somisana/catalog.html"
           >
             TDS Server

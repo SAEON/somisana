@@ -63,7 +63,7 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hovered'], false],
-          0.5,
+          0.2,
           0.1,
         ],
       },
@@ -92,38 +92,6 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
     map.on('click', 'domains', click)
     map.on('mouseenter', 'domains', mouseenter)
     map.on('mouseleave', 'domains', mouseleave)
-
-    map.on('sourcedata', function (e) {
-      if (e.sourceId === 'domains' && e.dataType === 'source' && map.isSourceLoaded('domains')) {
-        if (map.getLayer('domains')) {
-          const features = map.queryRenderedFeatures({ layers: ['domains'] })
-          const bounds = features.reduce(
-            (a, f) => {
-              const { min_y, min_x, max_y, max_x } = f.properties
-              a.min_y = a.min_y ? Math.min(a.min_y, min_y) : min_y
-              a.min_x = a.min_x ? Math.min(a.min_x, min_x) : min_x
-              a.max_x = a.max_x ? Math.max(a.max_x, max_x) : max_x
-              a.max_y = a.max_y ? Math.max(a.max_y, max_y) : max_y
-              return a
-            },
-            { min_y: null, min_x: null, max_y: null, max_x: null }
-          )
-
-          map.fitBounds(
-            [
-              [bounds.min_x, bounds.min_y],
-              [bounds.max_x, bounds.max_y],
-            ],
-            {
-              linear: false,
-              padding: 1000,
-              curve: 1,
-              speed: 1,
-            }
-          )
-        }
-      }
-    })
 
     return () => {
       map.on('click', 'domains', click)

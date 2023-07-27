@@ -2,7 +2,7 @@ import { gql, useQuery } from '@apollo/client'
 import { Linear as Loading } from '../../../components/loading'
 import SaeonWmsLayer from './layers/saeon-wms'
 
-export default ({ modelid = undefined, children }) => {
+export default ({ modelid = undefined }) => {
   const id = modelid || new URL(window.location.href).searchParams.get('id')
 
   const { loading, error, data } = useQuery(

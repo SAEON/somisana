@@ -41,7 +41,7 @@ const P = memo(({ children, container, model }) => {
           linear: false,
           padding: 64,
           curve: 1,
-          speed: 1,
+          speed: 0.5,
         }
       )
     })

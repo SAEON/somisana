@@ -88,6 +88,7 @@ const Render = ({ map, model }) => {
     if (map.getLayer('mpas')) map.moveLayer('mpas')
     if (map.getLayer('domains')) map.moveLayer('domains')
     if (map.getLayer('domains')) map.moveLayer('domains-outline')
+    if (map.getLayer('coordinates')) map.moveLayer('coordinates')
 
     return () => {
       removeLayer()
