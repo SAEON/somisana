@@ -283,17 +283,9 @@ jobs:
       - name: Load $PATH
         run: |
           source ~/.bashrc
-      - name: Archive raw CROCO output (hindcast / forecast)
+      - name: Archive raw CROCO output (hindcast / forecast) - child grid only
         continue-on-error: false
         run: |
-          curl \
-            --silent \
-            --keepalive-time 2400 \
-            -X PUT \
-            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-            -H "Content-Type: application/octet-stream" \
-            -T ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ inputs.MODEL_RUN_DATE }}.nc \
-            https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}_hourly_avg.nc;
           curl \
             --silent \
             --keepalive-time 2400 \
@@ -301,8 +293,8 @@ jobs:
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -H "Content-Type: application/octet-stream" \
             -T ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ inputs.MODEL_RUN_DATE }}.nc.1 \
-            https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}_hourly_avg.nc.1;
-      - name: Archive truncated CROCO output (forecast)
+            https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}_hourly_avg.nc;
+      - name: Archive truncated CROCO output (forecast) - child grid only
         continue-on-error: false
         run: |
           curl \
@@ -311,16 +303,8 @@ jobs:
             -X PUT \
             -H "Content-Type: application/octet-stream" \
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-            -T ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ inputs.MODEL_RUN_DATE }}-archive.nc \
-            https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}_hourly_avg_fcst.nc;
-          curl \
-            --silent \
-            --keepalive-time 2400 \
-            -X PUT \
-            -H "Content-Type: application/octet-stream" \
-            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -T ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ inputs.MODEL_RUN_DATE }}-archive.nc.1 \
-            https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}_hourly_avg_fcst.nc.1;
+            https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}_hourly_avg_fcst.nc;
       - name: Archive tier 1 output
         continue-on-error: false
         run: |
