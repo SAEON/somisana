@@ -35,7 +35,7 @@ const Render = ({ map, model }) => {
   const depth = 0
   const timeStep = 120
 
-  // const LEGEND_URL = `https://thredds.somisana.ac.za/thredds/wms/data/somisana/algoa-bay/5-day-forecast/202307/20230726-hourly-avg-t3.nc?REQUEST=GetLegendGraphic&LAYERS=temp&STYLES=${style}&COLORSCALERANGE=${minMax}&transparent=true&FORMAT=image/png`
+  // const LEGEND_URL = `https://thredds.somisana.ac.za/thredds/wms/data/somisana/algoa-bay/5-day-forecast/202307/20230726_hourly_avg_t3.nc?REQUEST=GetLegendGraphic&LAYERS=temp&STYLES=${style}&COLORSCALERANGE=${minMax}&transparent=true&FORMAT=image/png`
 
   const t0 = useMemo(
     () => (run?.step1_timestamp ? new Date(run.step1_timestamp) : 'Missing timestep'),
@@ -53,7 +53,7 @@ const Render = ({ map, model }) => {
 
   const path = useMemo(
     () =>
-      `/thredds/wms/data/somisana/${region}/5-day-forecast/${yyyyMM}/${yyyyMMdd}-hourly-avg-t3.nc`,
+      `/thredds/wms/data/somisana/${region}/5-day-forecast/${yyyyMM}/${yyyyMMdd}_hourly_avg_t3.nc`,
     [region, yyyyMM, yyyyMMdd]
   )
 
