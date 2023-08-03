@@ -27,7 +27,7 @@ const Render = ({ modelid, map, showCurrents, run, timeStep, depth: _depth }) =>
   const yyyyMM = useMemo(() => format(new Date(run.run_date), 'yyyyMM'), [run.run_date])
   const path = useMemo(
     () =>
-      `/thredds/wms/data/somisana/${region}/5-day-forecast/${yyyyMM}/${yyyyMMdd}-hourly-avg-t3.nc`,
+      `/thredds/wms/data/somisana/${region}/5-day-forecast/${yyyyMM}/${yyyyMMdd}_hourly_avg_t3.nc`,
     [region, yyyyMM, yyyyMMdd]
   )
   const layer = `u:v-group`
