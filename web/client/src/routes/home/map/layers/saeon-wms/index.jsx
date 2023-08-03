@@ -33,7 +33,7 @@ const Render = ({ map, model }) => {
   const layer = `temp`
   const style = `raster/x-Rainbow`
   const depth = 0
-  const timeStep = 120
+  const timeStep = 144
 
   // const LEGEND_URL = `https://thredds.somisana.ac.za/thredds/wms/data/somisana/algoa-bay/5-day-forecast/202307/20230726_hourly_avg_t3.nc?REQUEST=GetLegendGraphic&LAYERS=temp&STYLES=${style}&COLORSCALERANGE=${minMax}&transparent=true&FORMAT=image/png`
 
