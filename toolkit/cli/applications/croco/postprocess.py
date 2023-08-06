@@ -102,6 +102,49 @@ def v2rho(v):
         
     return v_rho
 
+def psi2rho(var_psi):
+    
+    Num_dims=len(var_psi.shape)
+    if Num_dims==2:
+    
+        [M,L]=var_psi.shape
+
+        var_rho=np.zeros((M+1,L+1))
+        
+        var_rho[1:M, 1:L] = 0.25 * (var_psi[:-1, 1:] + var_psi[1:, 1:] + var_psi[:-1, :-1] + var_psi[1:, :-1])
+        
+        var_rho[:, 0] = var_rho[:, 1]
+        var_rho[:, L] = var_rho[:, L - 1]
+        var_rho[0, :] = var_rho[1, :]
+        var_rho[M, :] = var_rho[M - 1,:]
+        
+    elif Num_dims==3:
+    
+        [T_D,M,L]=var_psi.shape
+
+        var_rho=np.zeros((T_D,M+1,L+1))
+        
+        var_rho[:, 1:M, 1:L] = 0.25 * (var_psi[:, :-1, 1:] + var_psi[:, 1:, 1:] + var_psi[:, :-1, :-1] + var_psi[:, 1:, :-1])
+        
+        var_rho[:, :, 0] = var_rho[:, :, 1]
+        var_rho[:, :, L] = var_rho[:, :, L - 1]
+        var_rho[:, 0, :] = var_rho[:, 1, :]
+        var_rho[:, M, :] = var_rho[:, M - 1,:]
+    
+    else: # Num_dims==4:
+    
+        [T,D,M,L]=var_psi.shape
+
+        var_rho=np.zeros((T,D,M+1,L+1))
+        
+        var_rho[:, :, 1:M, 1:L] = 0.25 * (var_psi[:, :, :-1, 1:] + var_psi[:, :, 1:, 1:] + var_psi[:, :, :-1, :-1] + var_psi[:, :, 1:, :-1])
+        
+        var_rho[:, :, :, 0] = var_rho[:, :, :, 1]
+        var_rho[:, :, :, L] = var_rho[:, :, :, L - 1]
+        var_rho[:, :, 0, :] = var_rho[:, :, 1, :]
+        var_rho[:, :, M, :] = var_rho[:, :, M - 1,:]
+    
+    return var_rho
 
 def csf(sc, theta_s, theta_b):
     """
@@ -121,7 +164,6 @@ def csf(sc, theta_s, theta_b):
         Cs = csrf
 
     return Cs
-
 
 def z_levels(h, zeta, theta_s, theta_b, hc, N, type, vtransform):
     """
@@ -469,50 +511,6 @@ def get_vort(fname,tstep=None,level=None):
     vort=psi2rho(vort)
     
     return vort
-
-def psi2rho(var_psi):
-    
-    Num_dims=len(var_psi.shape)
-    if Num_dims==2:
-    
-        [M,L]=var_psi.shape
-
-        var_rho=np.zeros((M+1,L+1))
-        
-        var_rho[1:M, 1:L] = 0.25 * (var_psi[:-1, 1:] + var_psi[1:, 1:] + var_psi[:-1, :-1] + var_psi[1:, :-1])
-        
-        var_rho[:, 0] = var_rho[:, 1]
-        var_rho[:, L] = var_rho[:, L - 1]
-        var_rho[0, :] = var_rho[1, :]
-        var_rho[M, :] = var_rho[M - 1,:]
-        
-    elif Num_dims==3:
-    
-        [T_D,M,L]=var_psi.shape
-
-        var_rho=np.zeros((T_D,M+1,L+1))
-        
-        var_rho[:, 1:M, 1:L] = 0.25 * (var_psi[:, :-1, 1:] + var_psi[:, 1:, 1:] + var_psi[:, :-1, :-1] + var_psi[:, 1:, :-1])
-        
-        var_rho[:, :, 0] = var_rho[:, :, 1]
-        var_rho[:, :, L] = var_rho[:, :, L - 1]
-        var_rho[:, 0, :] = var_rho[:, 1, :]
-        var_rho[:, M, :] = var_rho[:, M - 1,:]
-    
-    else: # Num_dims==4:
-    
-        [T,D,M,L]=var_psi.shape
-
-        var_rho=np.zeros((T,D,M+1,L+1))
-        
-        var_rho[:, :, 1:M, 1:L] = 0.25 * (var_psi[:, :, :-1, 1:] + var_psi[:, :, 1:, 1:] + var_psi[:, :, :-1, :-1] + var_psi[:, :, 1:, :-1])
-        
-        var_rho[:, :, :, 0] = var_rho[:, :, :, 1]
-        var_rho[:, :, :, L] = var_rho[:, :, :, L - 1]
-        var_rho[:, :, 0, :] = var_rho[:, :, 1, :]
-        var_rho[:, :, M, :] = var_rho[:, :, M - 1,:]
-    
-    return var_rho
 
 def get_boundary(fname):
         '''
