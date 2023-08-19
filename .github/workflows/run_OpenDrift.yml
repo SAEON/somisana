@@ -1,1 +1,35 @@
+name: Run OpenDrift
 
+on:
+  workflow_dispatch:
+
+# Many of the env variables reference the current branch,
+# which is set dynamically in the branch-ref job below
+# So the env variables are mostly set in the envs job below the branch-ref job
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  # Dynamically set the branch ref to the currently executing branch
+  branch-ref:
+    runs-on: ubuntu-latest
+    outputs:
+      value: ${{ steps.BRANCH_REF.outputs.value }}
+    steps:
+      - name: Set the BRANCH_REF
+        id: BRANCH_REF
+        run: |
+          echo "value=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+
+  # Set the environment variables using the current branch reference
+  envs:
+    needs: [branch-ref]
+    runs-on: ubuntu-latest
+    outputs:
+      BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
+      OPENDRIFT_IMAGE: ${{ steps.ENVS.outputs.OPENDRIFT_IMAGE }}
+    steps:
+      - name: Set envs
+        id: ENVS
+        run: |
+          echo "OPENDRIFT_IMAGE=${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
