@@ -102,6 +102,49 @@ def v2rho(v):
         
     return v_rho
 
+def psi2rho(var_psi):
+    
+    Num_dims=len(var_psi.shape)
+    if Num_dims==2:
+    
+        [M,L]=var_psi.shape
+
+        var_rho=np.zeros((M+1,L+1))
+        
+        var_rho[1:M, 1:L] = 0.25 * (var_psi[:-1, 1:] + var_psi[1:, 1:] + var_psi[:-1, :-1] + var_psi[1:, :-1])
+        
+        var_rho[:, 0] = var_rho[:, 1]
+        var_rho[:, L] = var_rho[:, L - 1]
+        var_rho[0, :] = var_rho[1, :]
+        var_rho[M, :] = var_rho[M - 1,:]
+        
+    elif Num_dims==3:
+    
+        [T_D,M,L]=var_psi.shape
+
+        var_rho=np.zeros((T_D,M+1,L+1))
+        
+        var_rho[:, 1:M, 1:L] = 0.25 * (var_psi[:, :-1, 1:] + var_psi[:, 1:, 1:] + var_psi[:, :-1, :-1] + var_psi[:, 1:, :-1])
+        
+        var_rho[:, :, 0] = var_rho[:, :, 1]
+        var_rho[:, :, L] = var_rho[:, :, L - 1]
+        var_rho[:, 0, :] = var_rho[:, 1, :]
+        var_rho[:, M, :] = var_rho[:, M - 1,:]
+    
+    else: # Num_dims==4:
+    
+        [T,D,M,L]=var_psi.shape
+
+        var_rho=np.zeros((T,D,M+1,L+1))
+        
+        var_rho[:, :, 1:M, 1:L] = 0.25 * (var_psi[:, :, :-1, 1:] + var_psi[:, :, 1:, 1:] + var_psi[:, :, :-1, :-1] + var_psi[:, :, 1:, :-1])
+        
+        var_rho[:, :, :, 0] = var_rho[:, :, :, 1]
+        var_rho[:, :, :, L] = var_rho[:, :, :, L - 1]
+        var_rho[:, :, 0, :] = var_rho[:, :, 1, :]
+        var_rho[:, :, M, :] = var_rho[:, :, M - 1,:]
+    
+    return var_rho
 
 def csf(sc, theta_s, theta_b):
     """
@@ -121,7 +164,6 @@ def csf(sc, theta_s, theta_b):
         Cs = csrf
 
     return Cs
-
 
 def z_levels(h, zeta, theta_s, theta_b, hc, N, type, vtransform):
     """
@@ -426,7 +468,49 @@ def get_uv(fname,tstep=None,level=None):
     # Return east / north vector vector components instead of x / y components
     return u_out,v_out
 
-
+def get_vort(fname,tstep=None,level=None):
+    '''
+    extract the relative vorticity from a CROCO output file:
+    dv/dx - du/dy
+    
+    fname = CROCO output file
+    tstep = time step index to extract 
+            integer starting at zero
+            If None, then all time-steps are extracted
+    level = vertical level to extract
+            If >= 0 then a sigma level is extracted 
+            If <0 then a z level in meters is extracted
+            If None, then all sigma levels are extracted    '''
+    
+    # start by getting u and v
+    # and we'll leave them on their native grids for this calc
+    # (i.e. intentionally not regridding to the rho grid)
+    u=get_var(fname,'u',tstep,level)
+    v=get_var(fname,'v',tstep,level)
+    pm=get_var(fname, 'pm') # 1/dx on the rho grid
+    pn=get_var(fname, 'pn') # 1/dy on the rho grid
+    
+    # this code was taken largely from croco_tools-v1.1/croco_pyvisu/derived_variables.py
+    #
+    # interpolate pm from rho grid onto psi grid
+    dxm1 = 0.25 * (pm[:-1, 1:] + pm[1:, 1:] + pm[:-1, :-1] + pm[1:, :-1]) 
+    # Compute d(v)/d(xi) on the psi grid
+    # (this should work regardless of whether v is 4D, 3D or 2D)
+    dvdxi = np.diff(v, n=1, axis=-1) * dxm1 # axis = -1 will always be the xi dimension
+    
+    # interpolate pn from rho grid onto psi grid
+    dym1 = 0.25 * (pn[:-1, 1:] + pn[1:, 1:] + pn[:-1, :-1] + pn[1:, :-1]) 
+    # Compute d(u)/d(eta) on the psi grid
+    # (this should work regardless of whether v is 4D, 3D or 2D)
+    dudeta = np.diff(u, n=1, axis=-2) * dym1 # axis = -2 will always be the eta dimension
+    
+    # Vortivity on the psi grid
+    vort=dvdxi-dudeta
+    
+    # regrid to be on the rho grid
+    vort=psi2rho(vort)
+    
+    return vort
 
 def get_boundary(fname):
         '''

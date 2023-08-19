@@ -9,7 +9,6 @@ export default props => {
           height: 40,
           display: 'flex',
           padding: theme => theme.spacing(0.5),
-          background: theme => theme.palette.common.white,
         }}
         src="/saeon-logo.png"
       ></Img>

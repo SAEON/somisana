@@ -2,15 +2,11 @@ import { useCallback, useContext, useEffect, useMemo } from 'react'
 import { context as mapContext } from '../../../_context'
 import { context as pageContext } from '../../../../_context'
 import { format, add } from 'date-fns'
+import resolveRegion from '../../../../../../lib/resolve-region'
 
 const WMS_PARAMS = `REQUEST=GetMap&VERSION=1.3.0&BBOX={bbox-epsg-3857}&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&FORMAT=image/png&TRANSPARENT=true`
 
 const VIZ_ID = 'current-vectors'
-
-const resolveRegion = {
-  1: 'algoa-bay',
-  2: 'sw-cape',
-}
 
 const Render = ({ modelid, map, showCurrents, run, timeStep, depth: _depth }) => {
   const t0 = useMemo(
@@ -31,7 +27,7 @@ const Render = ({ modelid, map, showCurrents, run, timeStep, depth: _depth }) =>
   const yyyyMM = useMemo(() => format(new Date(run.run_date), 'yyyyMM'), [run.run_date])
   const path = useMemo(
     () =>
-      `/thredds/wms/data/somisana/${region}/5-day-forecast/${yyyyMM}/${yyyyMMdd}-hourly-avg-t3.nc`,
+      `/thredds/wms/data/somisana/${region}/5-day-forecast/${yyyyMM}/${yyyyMMdd}_hourly_avg_t3.nc`,
     [region, yyyyMM, yyyyMMdd]
   )
   const layer = `u:v-group`
@@ -40,13 +36,13 @@ const Render = ({ modelid, map, showCurrents, run, timeStep, depth: _depth }) =>
   const url = useMemo(
     () =>
       `https://thredds.somisana.ac.za${path}?${WMS_PARAMS}&LAYERS=${layer}&STYLES=${style}&elevation=${depth}&time=${time}`,
-    [path, WMS_PARAMS, layer, style, depth, time]
+    [path, layer, style, depth, time]
   )
 
   const removeLayer = useCallback(() => {
     if (map.getLayer(VIZ_ID)) map.removeLayer(VIZ_ID)
     if (map.getSource(VIZ_ID)) map.removeSource(VIZ_ID)
-  }, [map, VIZ_ID])
+  }, [map])
 
   useEffect(() => {
     if (showCurrents) {
@@ -70,7 +66,7 @@ const Render = ({ modelid, map, showCurrents, run, timeStep, depth: _depth }) =>
     return () => {
       removeLayer()
     }
-  }, [map, showCurrents, url, VIZ_ID])
+  }, [map, showCurrents, url, removeLayer])
 
   return null
 }
@@ -85,8 +81,6 @@ export default ({ grid }) => {
     depth,
     thresholds,
   } = useContext(pageContext)
-
-  console.log(grid)
 
   return (
     <Render

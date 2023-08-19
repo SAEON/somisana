@@ -14,7 +14,6 @@ import LogAppRender from './modules/application-logger/app-render'
 import InteractionLogger from './modules/application-logger/interaction-logger'
 import { BrowserRouter as Router } from 'react-router-dom'
 import Background from './modules/background'
-import Div from './components/div'
 import Header from './header'
 import Footer from './modules/footer'
 import routes from './routes/config'
@@ -65,9 +64,7 @@ function App() {
                             <LogAppRender>
                               <InteractionLogger>
                                 <Router>
-                                  <Header routes={routes}>
-                                    <Div sx={{ display: 'flex', alignItems: 'center' }} />
-                                  </Header>
+                                  <Header routes={routes} />
                                   <RouteSwitcher routes={routes} />
                                   <Footer routes={routes} />
                                 </Router>

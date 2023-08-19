@@ -46,7 +46,6 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
   // Add source, layer, and event handlers
   useEffect(() => {
     map.addSource('domains', {
-      id: 'domains',
       type: 'vector',
       tiles: [`${REACT_APP_TILESERV_BASE_URL}/public.models/{z}/{x}/{y}.pbf`],
       url: `${REACT_APP_TILESERV_BASE_URL}/public.models.json`,
@@ -60,62 +59,46 @@ const Render = ({ map, REACT_APP_TILESERV_BASE_URL }) => {
       'source-layer': 'public.models',
       paint: {
         'fill-outline-color': theme.palette.common.black,
-        'fill-color': [
-          'case',
-          ['boolean', ['feature-state', 'hovered'], false],
-          theme.palette.common.black,
-          'transparent',
-        ],
+        'fill-color': theme.palette.common.black,
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hovered'], false],
-          0.5,
-          1,
+          0.2,
+          0.1,
         ],
       },
     })
 
+    map.addLayer({
+      id: 'domains-outline',
+      type: 'fill',
+      source: 'domains',
+      'source-layer': 'public.models',
+      paint: {
+        'fill-outline-color': theme.palette.common.black,
+        'fill-color': 'transparent',
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'hovered'], false],
+          0.5,
+          0.5,
+        ],
+      },
+    })
+
+    map.moveLayer('domains')
+    map.moveLayer('domains-outline')
+
     map.on('click', 'domains', click)
     map.on('mouseenter', 'domains', mouseenter)
     map.on('mouseleave', 'domains', mouseleave)
-
-    map.on('sourcedata', function (e) {
-      if (e.sourceId === 'domains' && e.dataType === 'source' && map.isSourceLoaded('domains')) {
-        if (map.getLayer('domains')) {
-          const features = map.queryRenderedFeatures({ layers: ['domains'] })
-          const bounds = features.reduce(
-            (a, f) => {
-              const { min_y, min_x, max_y, max_x } = f.properties
-              a.min_y = a.min_y ? Math.min(a.min_y, min_y) : min_y
-              a.min_x = a.min_x ? Math.min(a.min_x, min_x) : min_x
-              a.max_x = a.max_x ? Math.max(a.max_x, max_x) : max_x
-              a.max_y = a.max_y ? Math.max(a.max_y, max_y) : max_y
-              return a
-            },
-            { min_y: null, min_x: null, max_y: null, max_x: null }
-          )
-
-          map.fitBounds(
-            [
-              [bounds.min_x, bounds.min_y],
-              [bounds.max_x, bounds.max_y],
-            ],
-            {
-              linear: false,
-              padding: 1000,
-              curve: 1,
-              speed: 1,
-            }
-          )
-        }
-      }
-    })
 
     return () => {
       map.on('click', 'domains', click)
       map.off('mouseenter', 'domains', mouseenter)
       map.off('mouseleave', 'domains', mouseleave)
       map.removeLayer('domains')
+      map.removeLayer('domains-outline')
       map.removeSource('domains')
     }
   }, [

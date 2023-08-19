@@ -1,4 +1,5 @@
 import { Link, useMatch } from 'react-router-dom'
+import {Link as MuiLink} from '@mui/material'
 import MenuItem from '@mui/material/MenuItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
@@ -10,11 +11,11 @@ export default ({ onClick, label, to, Icon, href }) => {
   return (
     <MenuItem
       dense
-      component={Link}
+      component={href ? MuiLink : Link}
       rel={href && 'noopener noreferrer'}
       target={href && '_blank'}
       onClick={onClick}
-      to={to || ''}
+      to={href ? undefined : to || ''}
       href={href}
     >
       <ListItemIcon

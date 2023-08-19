@@ -2,17 +2,18 @@ import { useContext, useEffect } from 'react'
 import { context as mapContext } from '../../_map-context'
 import Img from '../../../../../components/img'
 import Div from '../../../../../components/div'
-import { Tooltip, Paper, Divider, Typography } from '@mui/material'
+import { Tooltip, Paper, Divider, Typography, Link, alpha } from '@mui/material'
+import { minMax, thresholds } from '../saeon-wms'
 
-const PALETTE = 'ncview'
+const PALETTE = 'rainbow'
 
 const STYLE = `boxfill/${PALETTE}`
 
 const SERVICE_URL = `https://nrt.cmems-du.eu/thredds/wms/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1D-m?request=GetCapabilities&service=WMS`
 
-const TILE_URL = `https://nrt.cmems-du.eu/thredds/wms/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1D-m?REQUEST=GetMap&VERSION=1.3.0&LAYERS=thetao&STYLES=${STYLE}&BBOX={bbox-epsg-3857}&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&FORMAT=image/png&transparent=true`
+const TILE_URL = `https://nrt.cmems-du.eu/thredds/wms/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1D-m?REQUEST=GetMap&VERSION=1.3.0&LAYERS=thetao&STYLES=${STYLE}&BBOX={bbox-epsg-3857}&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&FORMAT=image/png&transparent=true&COLORSCALERANGE=${minMax}&NUMCOLORBANDS=${thresholds}`
 
-const LEGEND_URL = `https://nrt.cmems-du.eu/thredds/wms/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1D-m?REQUEST=GetLegendGraphic&LAYER=thetao&PALETTE=${PALETTE}&transparent=true&FORMAT=image/png`
+const LEGEND_URL = `https://nrt.cmems-du.eu/thredds/wms/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1D-m?REQUEST=GetLegendGraphic&LAYER=thetao&PALETTE=${PALETTE}&transparent=true&FORMAT=image/png&COLORSCALERANGE=${minMax}&NUMCOLORBANDS=${thresholds}`
 
 const Render = ({ map }) => {
   useEffect(() => {
@@ -27,102 +28,114 @@ const Render = ({ map }) => {
       type: 'raster',
       source: 'wms',
       paint: {
-        'raster-opacity': 0.35,
+        'raster-opacity': 1,
       },
     })
 
     return () => {
-      map.removeLayer('wms')
-      map.removeSource('wms')
+      if (map.getLayer('wms')) map.removeLayer('wms')
+      if (map.getSource('wms')) map.removeSource('wms')
     }
   }, [map])
 
   return (
-    <Paper
-      sx={theme => ({
-        display: 'none',
-        [theme.breakpoints.up('sm')]: {
-          opacity: 0.75,
-          position: 'absolute',
-          zIndex: 1,
-          backgroundColor: theme => theme.palette.common.black,
-          margin: theme => theme.spacing(2),
-          padding: theme => theme.spacing(2),
-          bottom: 42,
-          left: 0,
-          display: 'inherit',
-        },
-        [theme.breakpoints.up('md')]: {
-          bottom: 0,
-        },
-      })}
-    >
-      <Div
+    <>
+      <Typography
+        variant="body2"
         sx={{
-          border: theme => `1px solid ${theme.palette.common.white}`,
-          borderRadius: theme => `${theme.shape.borderRadius}px`,
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          fontStyle: 'italic',
+          fontSize: '0.7rem',
+          paddingTop: theme => theme.spacing(0.5),
+          paddingBottom: theme => theme.spacing(0.5),
+          paddingLeft: theme => theme.spacing(1),
+          paddingRight: theme => theme.spacing(1),
+          backgroundColor: theme => alpha(theme.palette.background.paper, 0.75),
         }}
       >
-        <Tooltip placement="left-end" title="Marine protected areas">
-          <Typography
-            variant="overline"
-            sx={{
-              color: theme => theme.palette.common.white,
-              display: 'block',
-              textAlign: 'center',
-            }}
-          >
-            MPAs
-          </Typography>
-        </Tooltip>
-      </Div>
-      <Divider
-        sx={{ marginTop: theme => theme.spacing(2), marginBottom: theme => theme.spacing(1) }}
-      />
-      <Tooltip placement="left-end" title="Select a region by clicking on the bounding box">
+        Each domain represents a downscaling of the CMEMS global analysis and forecast product{' '}
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="body2"
+          sx={{
+            fontSize: '0.7rem',
+          }}
+          href="https://data.marine.copernicus.eu/product/GLOBAL_ANALYSISFORECAST_PHY_001_024/description"
+        >
+          GLOBAL_ANALYSISFORECAST_PHY_001_024
+        </Link>
+      </Typography>
+      <Paper
+        sx={theme => ({
+          display: 'none',
+          [theme.breakpoints.up('sm')]: {
+            opacity: 0.75,
+            overflow: 'hidden',
+            position: 'absolute',
+            zIndex: 1,
+            backgroundColor: theme => theme.palette.common.black,
+            margin: theme => theme.spacing(2),
+            padding: theme => theme.spacing(2),
+            bottom: 42,
+            left: 0,
+            display: 'inherit',
+          },
+          [theme.breakpoints.up('md')]: {
+            bottom: 0,
+          },
+        })}
+      >
+        <Div
+          sx={{
+            border: theme => `1px solid ${theme.palette.common.white}`,
+            borderRadius: theme => `${theme.shape.borderRadius}px`,
+          }}
+        >
+          <Tooltip placement="left-end" title="Marine protected areas">
+            <Typography
+              variant="overline"
+              sx={{
+                color: theme => theme.palette.common.white,
+                display: 'block',
+                textAlign: 'center',
+              }}
+            >
+              MPAs
+            </Typography>
+          </Tooltip>
+        </Div>
+        <Divider
+          sx={{ marginTop: theme => theme.spacing(2), marginBottom: theme => theme.spacing(1) }}
+        />
+
         <Typography
           variant="overline"
+          href={SERVICE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           sx={{
-            color: theme => theme.palette.common.white,
             display: 'block',
             textAlign: 'center',
-          }}
-        >
-          RSA EEZ
-        </Typography>
-        <Typography
-          variant="caption"
-          sx={{
             color: theme => theme.palette.common.white,
-            display: 'block',
-            textAlign: 'center',
+            marginBottom: theme => theme.spacing(1),
           }}
         >
-          Select..
+          SST
         </Typography>
-      </Tooltip>
-      <Divider
-        sx={{ marginTop: theme => theme.spacing(2), marginBottom: theme => theme.spacing(1) }}
-      />
-      <Typography
-        variant="overline"
-        sx={{
-          display: 'block',
-          textAlign: 'center',
-          marginBottom: theme => theme.spacing(1),
-        }}
-      >
-        CMEMS SST
-      </Typography>
-      <Img
-        sx={{
-          maxHeight: 250,
-          margin: 'auto',
-          display: 'block',
-        }}
-        src={LEGEND_URL}
-      />
-    </Paper>
+        <Img
+          sx={{
+            maxHeight: 250,
+            margin: 'auto',
+            display: 'block',
+            marginRight: '-46px',
+          }}
+          src={LEGEND_URL}
+        />
+      </Paper>
+    </>
   )
 }
 
