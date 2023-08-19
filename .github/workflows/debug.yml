@@ -6,7 +6,7 @@ on:
 jobs:
 
   debugger:
-    runs-on: somisana
+    runs-on: self-hosted
     steps:
       - name: Debug
         run: |
