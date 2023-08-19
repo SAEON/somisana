@@ -70,13 +70,15 @@ croco_ref_time = datetime(2000,1,1)
 # the directories in which the croco files are stored
 # this is an array of dir names to allow for the inclusion of multiple croco runs
 # The order is important - preference will be given to those which appear first in the array
-croco_dirs = ['/tmp/algoa-bay/']
+# When run as a docker image we use "-v /home/runner/somisana/:/tmp/" so everything in 
+# /home/runner/somisana/ on the server is mounted to /tmp/ in the docker container running the image
+croco_dirs = ['/tmp/algoa-bay-forecast/']
 #
 # the directory where the global data downloaded for our eez are sitting
-eez_data_dir='/tmp/global-data/'
+eez_data_dir='/tmp/global_data/'
 #
 # the opendrift run directory
-run_dir = '/tmp/run/'+croco_run_date.strftime("%Y%m%d")+'/'+config_name+'/'
+run_dir = '/tmp/opendrift/'+croco_run_date.strftime("%Y%m%d")+'/'+config_name+'/'
 
 # ------------------
 # numerical settings
@@ -84,7 +86,7 @@ run_dir = '/tmp/run/'+croco_run_date.strftime("%Y%m%d")+'/'+config_name+'/'
 #
 # run duration in days
 # this should automatically have a limit based on 'croco_run_date' and 'spill_start_time'
-run_dur=8
+run_dur=4
 #
 # number of particles to release
 # generally the more the better, but there are computational limits

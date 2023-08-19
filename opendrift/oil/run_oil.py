@@ -93,7 +93,7 @@ def main():
     # by croco_tools  - it's the gfs data on it's native grid in a single nc files, rather than the hundreds
     # of grb files which get downloaded and aren't so easy to use
     #
-    filename='/tmp/algoa-bay/stable/'+yyyymmdd+'/croco/forcing/GFS_'+yyyymmdd+'.nc'
+    filename='/tmp/algoa-bay-forecast/stable/'+yyyymmdd+'/croco/forcing/GFS_'+yyyymmdd+'.nc'
     # I'm opening the file as an xarray dataset before passing to reader_netCDF_CF_generic
     # because it had trouble with the time conversion inside the reader
     # Doing it like this is a hack to get around this issue, as the time gets handled by xarray

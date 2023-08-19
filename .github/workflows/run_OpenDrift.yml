@@ -84,4 +84,40 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
 
-
+  run-opendrift:
+    needs: [build-image, envs]
+    runs-on: somisana
+    env:
+      EEZ_DATA_DIR: ${{ needs.envs.outputs.EEZ_DATA_DIR }}
+      MODEL_RUN_DATE: ${{ needs.envs.outputs.MODEL_RUN_DATE }}
+      SHA: sha-${{ github.sha }}
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+    steps:
+      - name: Clean /home/runner/somisana/opendrift/
+        run: >-
+          find \
+            /home/runner/somisana/opendrift/* \
+            -maxdepth 0 \
+            -type d \
+            -ctime +5 \
+            -exec \
+              rm \
+                -rf {} \;
+      - name: Download GFS
+        uses: nick-fields/retry@master
+        with:
+          timeout_minutes: 30 # Script is considered failed if this limit is reached
+          retry_wait_seconds: 300 # Wait 5 minutes and try again
+          max_attempts: ${{ steps.retries.outputs.RETRIES }}
+          retry_on: any
+          warning_on_retry: true
+          shell: bash
+          continue_on_error: false
+          on_retry_command: rm -f ${{ env.EEZ_DATA_DIR }}/*grb*
+          command: >-
+            docker run \
+              --rm \
+              -v /home/runner/somisana/:/tmp/ \
+              --entrypoint /bin/bash \
+              ${{ needs.build-image.outputs.image }}:${{ env.SHA }} \
+              -c "python /somisana/oil/run_oil.py"
