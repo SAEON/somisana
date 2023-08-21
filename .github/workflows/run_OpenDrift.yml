@@ -91,6 +91,7 @@ jobs:
       SHA: sha-${{ github.sha }}
     steps:
       - name: Clean /home/runner/somisana/opendrift/
+        continue-on-error: true # Allow for the case where there are no folders in directory
         run: >-
           find \
             /home/runner/somisana/opendrift/* \
