@@ -16,5 +16,5 @@ jobs:
             -X PUT \
             -H "Content-Type: application/octet-stream" \
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-            -T /home/runner/somisana/false-bay-forecast/stable/20230815/croco/forecast/hourly-avg-20230815-archive.nc.1 \
-            https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/202308/20230815_hourly_avg_fcst.nc;
+            -T /home/runner/somisana/false-bay-forecast/stable/20230814/croco/forecast/hourly-avg-20230814-archive.nc.1 \
+            https://mnemosyne.somisana.ac.za/somisana/sw-cape/5-day-forecast/202308/20230814_hourly_avg_fcst.nc;
