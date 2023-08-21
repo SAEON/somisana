@@ -6,8 +6,15 @@ on:
 jobs:
 
   debugger:
-    runs-on: self-hosted
+    runs-on: somisana
     steps:
-      - name: Debug
+      - name: Archive raw CROCO output (hindcast / forecast)
         run: |
-          echo "hello world"
+          curl \
+            --silent \
+            --keepalive-time 2400 \
+            -X PUT \
+            -H "Content-Type: application/octet-stream" \
+            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+            -T /home/runner/somisana/algoa-bay-forecast/stable/20230814/croco/forecast/hourly-avg-20230814.nc \
+            https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/202308/20230814_hourly_avg.nc;
