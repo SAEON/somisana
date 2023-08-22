@@ -35,8 +35,8 @@ radius=5
 oil_type='GENERIC INTERMEDIATE FUEL OIL 180'
 #
 # start time of spill - use local time (UTC+2)
-spill_start_time=datetime(2023,8,19,6,0,0)
-#spill_start_time=datetime.now() # change to whenever the spill should be e.g. spill_start_time=datetime(2023,8,10,5,30,0)
+spill_start_time=datetime.now() # change to whenever the spill should be 
+#spill_start_time=datetime(2023,8,19,6,0,0)
 #
 # duration of the release of oil in hours
 release_dur=6
@@ -63,8 +63,7 @@ oil_flow_rate=oil_volume/release_dur
 # by default this will use the latest run
 # but you can change it to specify a previous run by changing this e.g. croco_run_date=datetime(2023,8,10)
 # note that only runs from the last 5 days are stored for running opendrift 
-croco_run_date = datetime(2023,8,19) 
-#croco_run_date = datetime.now() 
+croco_run_date = datetime.now() 
 #
 # the reference datetime used in setting up the croco simulations (you shouldn't have to ever change this, unless we reconfigure it in the croco preprocessing)
 croco_ref_time = datetime(2000,1,1)
