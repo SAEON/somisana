@@ -62,7 +62,7 @@ async def run_cmd(c, run_date, start_date, end_date, domain, workdir):
         motuclient \
             --user {USER} \
             --pwd {PWD} \
-            --motu http://nrt.cmems-du.eu/motu-web/Motu \
+            --motu https://nrt.cmems-du.eu/motu-web/Motu \
             --service-id GLOBAL_ANALYSISFORECAST_PHY_001_024-TDS \
             --product-id {dataset} \
             --longitude-min {domain[0]} \
