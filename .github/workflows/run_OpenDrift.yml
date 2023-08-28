@@ -173,6 +173,6 @@ jobs:
             -X PUT \
             -H "Content-Type: application/octet-stream" \
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-            -T /tmp/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.nc \
+            -T /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.nc \
             https://mnemosyne.somisana.ac.za/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.nc
 
