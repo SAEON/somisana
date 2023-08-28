@@ -107,3 +107,8 @@ hz_diff = 1
 # wind drift factor
 # fraction of the 10 m wind speed used to advect surface particles
 wind_drift_factor=0.03
+
+# --------------
+# plotting info
+# --------------
+plot_extents=[24.5,28.2,-35.2,-33.0] # [lon1,lon2,lat1,lat2]

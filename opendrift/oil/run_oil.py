@@ -20,6 +20,8 @@ from opendrift.models.openoil import OpenOil
 from opendrift.readers import reader_global_landmask
 import config_oil as config
 import subprocess
+sys.path.append('/somisana/') # where the source code gets copied into the Docker image
+import plot_od,post_od
 
 def set_croco_time(reader_filename,date_ref):
     # hacky solution to correct the time, as native croco files do not contain reference time
@@ -49,22 +51,23 @@ def main():
     # 
     os.chdir(run_dir)
     
-    # initialise the openoil object
+    # -------------------------------------
+    # initialise openoil and set up readers
+    # -------------------------------------
+    #
     o = OpenOil(loglevel=50,  weathering_model='noaa')  # loglevel=50 turns off logs, loglevel=0 gives max information for debugging
-    
+    #
     # Readers
-    
-    # increasing o.max_speed from the default of 1.3 m/s due to warning messages
+    #
+    # increasing o.max_speed from the default of 1.3 m/s due to warning messages - the Agulhas is fast
     # we need to make sure we grab enough data from the readers at each time-step (read the docs for what this does)
     # (tests indicate this only works if done before adding the readers)
     o.max_speed = 5 
-    
+    # 
     # Land
-    reader_landmask = reader_global_landmask.Reader(
-                            # extent=extent
-                            )  # lonmin, latmin, lonmax, latmax
+    reader_landmask = reader_global_landmask.Reader()
     o.add_reader(reader_landmask)
-    
+    #
     # CROCO files covering the run
     # 
     # if you want to exclude currents for debugging:
@@ -77,19 +80,19 @@ def main():
         reader_croco = reader_ROMS_native.Reader(croco_dir+'stable/'+config.croco_run_date+'/croco/forecast/hourly-avg-'+config.croco_run_date+'.nc')
         reader_croco = set_croco_time(reader_croco,config.croco_ref_time)
         o.add_reader(reader_croco)
-   
+    #
     # MERCATOR currents
     filename=config.eez_data_dir+config.croco_run_date+'/stable/mercator_'+config.croco_run_date+'.nc'
     reader_mercator = reader_netCDF_CF_generic.Reader(filename)
     o.add_reader(reader_mercator)
-
+    #
     # GFS wind
     #
     # if you want to exclude wind for debugging:
     # o.set_config('environment:fallback:x_wind', 0)
     # o.set_config('environment:fallback:y_wind', 0)
     #
-    # for we've got a hack solution to using the gfs winds - we're using the intermediate file written out
+    # for now we've got a hack solution to using the gfs winds - we're using the intermediate file written out
     # by croco_tools  - it's the gfs data on it's native grid in a single nc files, rather than the hundreds
     # of grb files which get downloaded and aren't so easy to use
     #
@@ -103,22 +106,20 @@ def main():
                             standard_name_mapping={'uwnd': 'x_wind',
                                                    'vwnd': 'y_wind'},)    
     o.add_reader(reader_gfs)
-
-    # Configuration
     
+    # -------------------
     # physical processes
-    # ------------------
+    # -------------------
     #
     # land interaction
     o.set_config('general:use_auto_landmask', True) 
     o.set_config('general:coastline_action', 'stranding') 
     o.set_config('general:seafloor_action', 'lift_to_seafloor')
     #
-    # I'd prefer to use the exact wind and current...
+    # I'd prefer to use the exact wind and current...for now anyway
     o.set_config('drift:wind_uncertainty',0) 
     o.set_config('drift:current_uncertainty',0) 
     # ...but add hz diffusivity
-    # (in my mind this would have a similar effect as wind and current uncertainty above?)
     o.set_config('drift:horizontal_diffusivity', config.hz_diff) # could test sensitivity 
     o.set_config('drift:vertical_mixing', True) 
     o.set_config('vertical_mixing:timestep', 60) # seconds, higher timestep for this process
@@ -128,12 +129,15 @@ def main():
     o.set_config('wave_entrainment:entrainment_rate', 'Li et al. (2017)') # default
     o.set_config('wave_entrainment:droplet_size_distribution', 'Li et al. (2017)') # as per Rohrs et al. (2018)
     
+    # ---------------------
     # oil spill properties
-    # --------------------
+    # ---------------------
+    #
     # weathering
     o.set_config('processes:dispersion', False) # not needed as we are modelling wave entrainment explicitly (see Rohrs et al. (2018))
     o.set_config('processes:evaporation', True)
     o.set_config('processes:emulsification', True)
+    #
     # droplet sizes
     # this is only important for a subsea release, and I assume we're looking at surface releases for now
     # so I'm just specifying large initial droplets so that all particles can surface after 1 time-step
@@ -148,10 +152,10 @@ def main():
     #
     time_start = config.spill_start_time-timedelta(hours=2) # for convenience input is in local time UTC+2, so convert to model time (UTC)
     time_end = time_start+timedelta(hours=config.release_dur)
-    
+    #
     # flow rate
     o.set_config('seed:m3_per_hour', config.oil_flow_rate); 
-   
+    #
     # seed the elements
     o.seed_elements(lon=config.lon_spill, lat=config.lat_spill, z=config.z,
                     radius=config.radius, 
@@ -160,11 +164,40 @@ def main():
                     oil_type=config.oil_type,
                     wind_drift_factor=config.wind_drift_factor)
     
-    # run
-    fname = 'trajectories.nc'
+    # --------------
+    # run the model
+    # --------------
+    #
+    fname = 'trajectories.nc' # keep this generic - run info is contained in the dir name
     o.run(duration=timedelta(days=config.run_dur), time_step=timedelta(minutes=config.time_step), time_step_output=timedelta(minutes=config.time_step_output), outfile=fname) 
      
     del(o)
+    
+    # ---------------------------------
+    # do some postprocessing and plots
+    # ---------------------------------
+    #
+    # compute the oil budget
+    post_od.get_trajectories_oil_budget(config.run_dir)
+    #
+    # plot the oil budget
+    plot_od.plot_budget(config.run_dir)
+    #
+    # do the animation
+    plot_od.iteration_animate(config.run_dir,
+                      figsize=(8,4), # resize as needed to match the shape of extents below
+                      extents=config.plot_extents, #[lon1,lon2,lat1,lat2]
+                      lon_release=config.lon_spill,
+                      lat_release=config.lat_spill,
+                      time_x=0.1, # placement of time label, in axes coordinates
+                      time_y=0.9,
+                      vmin=-10,   # the z variable is animated so this is your max depth
+                      cmap='Spectral_r',#'gray_r',
+                      plot_cbar=True,
+                      cbar_loc=(0.88, 0.15, 0.01, 0.7), # [left, bottom, width, height]
+                      croco_dirs=config.croco_dirs,
+                      croco_run_date=config.croco_run_date
+                      )
 
 if __name__ == "__main__":
     

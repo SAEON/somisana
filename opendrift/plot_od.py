@@ -445,7 +445,7 @@ def iteration_animate(iteration_dir,
     # in future, the loop below could be nested in a loop on levels so file extension would be nc.level
     if croco_dirs:
         for croco_dir in croco_dirs:
-            croco_file = croco_dir+croco_run_date.strftime('%Y%m%d')+'-hourly-avg.nc'
+            croco_file = croco_dir+'stable/'+croco_run_date+'/croco/forecast/hourly-avg-'+croco_run_date+'-hourly-avg.nc'
             lon_bry,lat_bry=get_croco_boundary(croco_file)
             #repeat the first point to create a 'closed loop'
             lon_bry=np.append(lon_bry,lon_bry[0])
