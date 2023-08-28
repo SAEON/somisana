@@ -178,13 +178,13 @@ def main():
     # ---------------------------------
     #
     # compute the oil budget
-    post_od.get_trajectories_oil_budget(config.run_dir)
+    post_od.get_trajectories_oil_budget(run_dir)
     #
     # plot the oil budget
-    plot_od.plot_budget(config.run_dir)
+    plot_od.plot_budget(run_dir)
     #
     # do the animation
-    plot_od.iteration_animate(config.run_dir,
+    plot_od.iteration_animate(run_dir,
                       figsize=(8,4), # resize as needed to match the shape of extents below
                       extents=config.plot_extents, #[lon1,lon2,lat1,lat2]
                       lon_release=config.lon_spill,
