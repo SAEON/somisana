@@ -28,26 +28,60 @@ jobs:
     outputs:
       BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
       OPENDRIFT_IMAGE: ${{ steps.ENVS.outputs.OPENDRIFT_IMAGE }}
-      CONFIG_NAME: ${{ steps.config_vars.outputs.CONFIG_NAME }}
-      CROCO_RUN_DATE: ${{ steps.config_vars.outputs.CROCO_RUN_DATE }}
+      CONFIG_NAME: ${{ steps.ENVS.outputs.CONFIG_NAME }}
+      CROCO_RUN_DATE: ${{ steps.ENVS.outputs.CROCO_RUN_DATE }}
     steps:
-      - name: Set envs
-        id: ENVS
-        run: |
-          echo "OPENDRIFT_IMAGE=${{ github.repository }}_opendrift_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
       - name: Check out source code
         uses: actions/checkout@main
         with:
           ref: ${{ needs.branch-ref.outputs.value }}
-      - name: get configuration name and run date from the python config file
-        id: config_vars
+      - name: configuration name
+        id: config_name
         run: |
           # Use grep to find the line where the variable is defined
-          config_name_line=$(grep -w config_name opendrift/oil/config_oil.py)
-          croco_run_date_line=$(grep -w croco_run_date opendrift/oil/config_oil.py)
+          line=$(grep -w config_name opendrift/oil/config_oil.py)
           # Use awk to extract the value of the variable from the line (thanks chatgpt)
-          echo "CONFIG_NAME=$(echo "$config_name_line" | awk -F "=" '{print $2}' | sed -e 's/^[[:space:]]*//')" >> $GITHUB_OUTPUT
-          echo "CROCO_RUN_DATE=$(echo "$croco_run_date_line" | awk -F "=" '{print $2}' | sed -e 's/^[[:space:]]*//')" >> $GITHUB_OUTPUT
+          echo "value=$(echo "$line" | awk -F "=" '{print $2}' | sed -e 's/^[[:space:]]*//')" >> $GITHUB_OUTPUT
+      - name: run date 
+        id: run_date
+        run: |
+          # Use grep to find the line where the variable is defined
+          line=$(grep -w croco_run_date opendrift/oil/config_oil.py)
+          # Use awk to extract the value of the variable from the line (thanks chatgpt)
+          echo "value=$(echo "$line" | awk -F "=" '{print $2}' | sed -e 's/^[[:space:]]*//')" >> $GITHUB_OUTPUT
+      - name: Set envs
+        id: ENVS
+        run: |
+          echo "OPENDRIFT_IMAGE=${{ github.repository }}_opendrift_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "CONFIG_NAME=${{ steps.config_name.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "CROCO_RUN_DATE=${{ steps.run_date.outputs.value }}" >> $GITHUB_OUTPUT
+          echo "RUN_DIR=/home/runner/somisana/opendrift/${{ steps.run_date.outputs.value }}/${{ steps.config_name.outputs.value }}" >> $GITHUB_OUTPUT
+
+  setup-run-dir:
+    needs: [envs]
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
+      OPENDRIFT_IMAGE: ${{ needs.envs.outputs.OPENDRIFT_IMAGE }}
+      RUN_DIR: ${{ needs.envs.outputs.RUN_DIR }}
+    steps:
+      - name: Clean /home/runner/somisana/opendrift/
+        continue-on-error: true # Allow for the case where there are no folders in directory
+        run: >-
+          find \
+            /home/runner/somisana/opendrift/* \
+            -maxdepth 0 \
+            -type d \
+            -ctime +5 \
+            -exec \
+              rm \
+                -rf {} \;
+      - name: Create ${{ env.RUN_DIR }} directory
+        run: |
+          rm -rf ${{ env.RUN_DIR }}
+          mkdir -p ${{ env.RUN_DIR }}
+          chown -R :runners ${{ env.RUN_DIR }}
+          chmod -R 774 ${{ env.RUN_DIR }}
 
   build-image:
     needs: [envs]
@@ -107,23 +141,6 @@ jobs:
       CONFIG_NAME: ${{ needs.envs.outputs.CONFIG_NAME }}
       CROCO_RUN_DATE: ${{ needs.envs.outputs.CROCO_RUN_DATE }}
     steps:
-      - name: Clean /home/runner/somisana/opendrift/
-        continue-on-error: true # Allow for the case where there are no folders in directory
-        run: >-
-          find \
-            /home/runner/somisana/opendrift/* \
-            -maxdepth 0 \
-            -type d \
-            -ctime +5 \
-            -exec \
-              rm \
-                -rf {} \;
-      - name: Create run dir /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}
-        run: |
-          rm -rf /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}
-          mkdir -p /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}
-          chown -R :runners /home/runner/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}
-          chmod -R 774 /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}
       - name: run the model
         run: >-
           docker run \
