@@ -30,6 +30,7 @@ jobs:
       OPENDRIFT_IMAGE: ${{ steps.ENVS.outputs.OPENDRIFT_IMAGE }}
       CONFIG_NAME: ${{ steps.ENVS.outputs.CONFIG_NAME }}
       CROCO_RUN_DATE: ${{ steps.ENVS.outputs.CROCO_RUN_DATE }}
+      RUN_DIR: ${{ steps.ENVS.outputs.RUN_DIR }}
     steps:
       - name: Check out source code
         uses: actions/checkout@main
