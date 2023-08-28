@@ -9,13 +9,13 @@ from datetime import datetime
 # give a name for your configuration
 # output will be written to a directory with this name
 # which will be accessible via the somisana thredds or mnemosyne file server
-config_name = 'test_01' 
+config_name = 'test_01'
 #
 # croco run date
 # this is intentionally a string in 'yyyymmdd' format so it can also be easily read by the github workflow (needed for creating an appropriate directory on the public facing file server) 
 # note that only runs from the last 5 days are stored for running opendrift
 # the croco model is configured to produce output from 5 days before to 5 days after the run date
-croco_run_date = '20230828' 
+croco_run_date = '20230828'
 
 # -----------
 # spill info
