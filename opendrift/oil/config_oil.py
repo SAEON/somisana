@@ -1,12 +1,23 @@
+# Configuration file for running an OpenOil simulation 
+#
 from datetime import datetime
-
-# -------------------
-# configuration name
-# -------------------
+#
+# ------------------------------
+# configuration name and run dir
+# ------------------------------
 #
 # the model output will be written to a directory with this name
 # which will be accessible via the somisana thredds or mnemosyne file server
 config_name = 'test_01' 
+#
+# croco run date
+# this is intentionally a string in 'yyyymmdd' format so it can also be easily read by the github workflow (needed for creating an appropriate directory on the public facing file server) 
+# note that only runs from the last 5 days are stored for running opendrift
+# the croco model is configured to produce output from 5 days before to 5 days after the run date
+croco_run_date = '20230822' 
+#
+# the opendrift run directory
+run_dir = '/tmp/opendrift/'+croco_run_date+'/'+config_name+'/'
 
 # -----------
 # spill info
@@ -56,14 +67,7 @@ oil_flow_rate=oil_volume/release_dur
 # the directories are all under /tmp/, which refers to the directory inside the container running opendrift
 # the actual paths on the server where this is being run need to be mounted to /tmp/ when running the opendrift docker image
 #
-# you shouldn't have to change this section, apart from the croco_run_date if you want to use something 
-# other than the latest croco run, or if you want to do sensitivity tests on the forcing
-#
-# the croco run to be used 
-# by default this will use the latest run
-# but you can change it to specify a previous run by changing this e.g. croco_run_date=datetime(2023,8,10)
-# note that only runs from the last 5 days are stored for running opendrift 
-croco_run_date = datetime.now() 
+# you shouldn't have to change this section, apart from if you want to do sensitivity tests on the forcing
 #
 # the reference datetime used in setting up the croco simulations (you shouldn't have to ever change this, unless we reconfigure it in the croco preprocessing)
 croco_ref_time = datetime(2000,1,1)
@@ -77,9 +81,6 @@ croco_dirs = ['/tmp/algoa-bay-forecast/']
 #
 # the directory where the global data downloaded for our eez are sitting
 eez_data_dir='/tmp/global_data/'
-#
-# the opendrift run directory
-run_dir = '/tmp/opendrift/'+croco_run_date.strftime("%Y%m%d")+'/'+config_name+'/'
 
 # ------------------
 # numerical settings

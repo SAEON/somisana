@@ -28,11 +28,26 @@ jobs:
     outputs:
       BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
       OPENDRIFT_IMAGE: ${{ steps.ENVS.outputs.OPENDRIFT_IMAGE }}
+      CONFIG_NAME: ${{ steps.config_vars.outputs.CONFIG_NAME }}
+      CROCO_RUN_DATE: ${{ steps.config_vars.outputs.CROCO_RUN_DATE }}
     steps:
       - name: Set envs
         id: ENVS
         run: |
           echo "OPENDRIFT_IMAGE=${{ github.repository }}_opendrift_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
+      - name: Check out source code
+        uses: actions/checkout@main
+        with:
+          ref: ${{ needs.branch-ref.outputs.value }}
+      - name: get configuration name and run date from the python config file
+        id: config_vars
+        run: |
+          # Use grep to find the line where the variable is defined
+          config_name_line=$(grep -w config_name opendrift/oil/config_oil.py)
+          croco_run_date_line=$(grep -w croco_run_date opendrift/oil/config_oil.py)
+          # Use awk to extract the value of the variable from the line (thanks chatgpt)
+          echo "CONFIG_NAME=$(echo "$config_name_line" | awk -F "=" '{print $2}' | sed -e 's/^[[:space:]]*//')" >> $GITHUB_OUTPUT
+          echo "CROCO_RUN_DATE=$(echo "$croco_run_date_line" | awk -F "=" '{print $2}' | sed -e 's/^[[:space:]]*//')" >> $GITHUB_OUTPUT
 
   build-image:
     needs: [envs]
@@ -109,3 +124,29 @@ jobs:
             --entrypoint /bin/bash \
             ${{ needs.build-image.outputs.image }}:${{ env.SHA }} \
             -c "python /somisana/oil/run_oil.py"
+
+  # Archive output
+  # WE NEED TO KERCHUNK THE NETCDF HERE
+  # HERE WE NEED TO USE THE CONFIG NAME AND RUN DATE FROM ENVS TO CREATE THE DIRECTORY ON THE FILE SERVER
+  archive-data:
+    needs: [envs, run-opendrift]
+    runs-on: somisana
+    env:
+      CONFIG_NAME: ${{ needs.envs.outputs.CONFIG_NAME }}
+      CROCO_RUN_DATE: ${{ needs.envs.outputs.CROCO_RUN_DATE }}
+    steps:
+      - name: Load $PATH
+        run: |
+          source ~/.bashrc
+      - name: Archive the open-drift output
+        continue-on-error: false
+        run: |
+           curl \
+            --silent \
+            --keepalive-time 2400 \
+            -X PUT \
+            -H "Content-Type: application/octet-stream" \
+            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+            -T /tmp/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.nc \
+            https://mnemosyne.somisana.ac.za/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.nc
+

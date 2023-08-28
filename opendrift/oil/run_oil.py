@@ -65,8 +65,6 @@ def main():
     
     # CROCO files covering the run
     # 
-    yyyymmdd=config.croco_run_date.strftime('%Y%m%d')
-    #
     # if you want to exclude currents for debugging:
     #o.set_config('environment:fallback:x_sea_water_velocity', 0)
     #o.set_config('environment:fallback:y_sea_water_velocity', 0)
@@ -74,12 +72,12 @@ def main():
     # use the reader_ROMS_native reader
     # in future, the loop below could be nested in a loop on levels so file extension would be nc.level
     for croco_dir in config.croco_dirs:
-        reader_croco = reader_ROMS_native.Reader(croco_dir+'stable/'+yyyymmdd+'/croco/forecast/hourly-avg-'+yyyymmdd+'.nc')
+        reader_croco = reader_ROMS_native.Reader(croco_dir+'stable/'+config.croco_run_date+'/croco/forecast/hourly-avg-'+config.croco_run_date+'.nc')
         reader_croco = set_croco_time(reader_croco,config.croco_ref_time)
         o.add_reader(reader_croco)
    
     # MERCATOR currents
-    filename=config.eez_data_dir+yyyymmdd+'/stable/mercator_'+yyyymmdd+'.nc'
+    filename=config.eez_data_dir+config.croco_run_date+'/stable/mercator_'+config.croco_run_date+'.nc'
     reader_mercator = reader_netCDF_CF_generic.Reader(filename)
     o.add_reader(reader_mercator)
 
@@ -93,7 +91,7 @@ def main():
     # by croco_tools  - it's the gfs data on it's native grid in a single nc files, rather than the hundreds
     # of grb files which get downloaded and aren't so easy to use
     #
-    filename='/tmp/algoa-bay-forecast/stable/'+yyyymmdd+'/croco/forcing/GFS_'+yyyymmdd+'.nc'
+    filename='/tmp/algoa-bay-forecast/stable/'+config.croco_run_date+'/croco/forcing/GFS_'+config.croco_run_date+'.nc'
     # I'm opening the file as an xarray dataset before passing to reader_netCDF_CF_generic
     # because it had trouble with the time conversion inside the reader
     # Doing it like this is a hack to get around this issue, as the time gets handled by xarray
