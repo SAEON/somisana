@@ -37,12 +37,12 @@ def main():
     # set up the run directory
     # ------------------------
     #
-    # create the run directory (intentionally start fresh if it exists)
-    # (could have also done this as part of the github workflow but this works)
     run_dir = '/tmp/opendrift/'+config.croco_run_date+'/'+config.config_name+'/'
-    if os.path.exists(run_dir):
-        os.system('rm -rf '+run_dir)
-    os.makedirs(run_dir)
+    #
+    # commenting the making of the dir as it's now done as part of the github workflow, where permissions are also set
+    #if os.path.exists(run_dir):
+    #    os.system('rm -rf '+run_dir)
+    #os.makedirs(run_dir)
     #
     # copy the config.py file to the run dir so we have a record of the configuration that was used in the run
     os.system('cp -f /somisana/oil/config_oil.py '+ run_dir) # this file was baked into the docker image so we can hard code the path

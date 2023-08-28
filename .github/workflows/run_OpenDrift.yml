@@ -104,6 +104,8 @@ jobs:
     runs-on: somisana
     env:
       SHA: sha-${{ github.sha }}
+      CONFIG_NAME: ${{ needs.envs.outputs.CONFIG_NAME }}
+      CROCO_RUN_DATE: ${{ needs.envs.outputs.CROCO_RUN_DATE }}
     steps:
       - name: Clean /home/runner/somisana/opendrift/
         continue-on-error: true # Allow for the case where there are no folders in directory
@@ -116,6 +118,12 @@ jobs:
             -exec \
               rm \
                 -rf {} \;
+      - name: Create run dir /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}
+        run: |
+          rm -rf /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}
+          mkdir -p /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}
+          chown -R :runners /home/runner/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}
+          chmod -R 774 /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}
       - name: run the model
         run: >-
           docker run \
