@@ -60,7 +60,7 @@ jobs:
 
   setup-run-dir:
     needs: [envs]
-    runs-on: ubuntu-latest
+    runs-on: somisana
     env:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       OPENDRIFT_IMAGE: ${{ needs.envs.outputs.OPENDRIFT_IMAGE }}
@@ -81,7 +81,7 @@ jobs:
         run: |
           rm -rf ${{ env.RUN_DIR }}
           mkdir -p ${{ env.RUN_DIR }}
-          chown -R :runners ${{ env.RUN_DIR }}
+          chown -R :runner ${{ env.RUN_DIR }}
           chmod -R 774 ${{ env.RUN_DIR }}
 
   build-image:
