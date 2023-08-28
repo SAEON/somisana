@@ -15,7 +15,7 @@ config_name = 'test_01'
 # this is intentionally a string in 'yyyymmdd' format so it can also be easily read by the github workflow (needed for creating an appropriate directory on the public facing file server) 
 # note that only runs from the last 5 days are stored for running opendrift
 # the croco model is configured to produce output from 5 days before to 5 days after the run date
-croco_run_date = '20230822' 
+croco_run_date = '20230828' 
 
 # -----------
 # spill info
