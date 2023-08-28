@@ -27,6 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       BRANCH_REF: ${{ needs.branch-ref.outputs.value }}
+      TOOLKIT_IMAGE: ${{ steps.ENVS.outputs.TOOLKIT_IMAGE }}
       OPENDRIFT_IMAGE: ${{ steps.ENVS.outputs.OPENDRIFT_IMAGE }}
       CONFIG_NAME: ${{ steps.ENVS.outputs.CONFIG_NAME }}
       CROCO_RUN_DATE: ${{ steps.ENVS.outputs.CROCO_RUN_DATE }}
@@ -53,6 +54,7 @@ jobs:
       - name: Set envs
         id: ENVS
         run: |
+          echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
           echo "OPENDRIFT_IMAGE=${{ github.repository }}_opendrift_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
           echo "CONFIG_NAME=${{ steps.config_name.outputs.value }}" >> $GITHUB_OUTPUT
           echo "CROCO_RUN_DATE=${{ steps.run_date.outputs.value }}" >> $GITHUB_OUTPUT
@@ -152,29 +154,28 @@ jobs:
             -c "python /somisana/oil/run_oil.py"
 
   # Archive output
-  # WE NEED TO KERCHUNK THE NETCDF HERE
-  # HERE WE NEED TO USE THE CONFIG NAME AND RUN DATE FROM ENVS TO CREATE THE DIRECTORY ON THE FILE SERVER
   archive-data:
     needs: [envs, run-opendrift]
     runs-on: somisana
     env:
+      TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}
       CONFIG_NAME: ${{ needs.envs.outputs.CONFIG_NAME }}
       CROCO_RUN_DATE: ${{ needs.envs.outputs.CROCO_RUN_DATE }}
     steps:
       - name: Load $PATH
         run: |
           source ~/.bashrc
-#      - name: Archive the open-drift output
-#        continue-on-error: false
-#        run: |
-#           curl \
-#            --silent \
-#            --keepalive-time 2400 \
-#            -X PUT \
-#            -H "Content-Type: application/octet-stream" \
-#            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
-#            -T /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.nc \
-#            https://mnemosyne.somisana.ac.za/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.nc
+      - name: Kerchunk NetCDF output
+        continue-on-error: true
+        run: |
+          docker run \
+            --rm \
+            -v /home/runner/somisana/:/tmp/ \
+            ${{ env.TOOLKIT_IMAGE }} \
+              kerchunk \
+                run \
+                  --inputs /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.nc \
+                  --output /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.kerchunk.json
       - name: Archive the OpenDrift output
         continue-on-error: false
         run: |
