@@ -38,14 +38,16 @@ def main():
     # ------------------------
     #
     # create the run directory (intentionally start fresh if it exists)
-    if os.path.exists(config.run_dir):
-        os.system('rm -rf '+config.run_dir)
-    os.makedirs(config.run_dir)
+    # (could have also done this as part of the github workflow but this works)
+    run_dir = '/tmp/opendrift/'+config.croco_run_date+'/'+config.config_name+'/'
+    if os.path.exists(run_dir):
+        os.system('rm -rf '+run_dir)
+    os.makedirs(run_dir)
     #
     # copy the config.py file to the run dir so we have a record of the configuration that was used in the run
-    os.system('cp -f /somisana/oil/config_oil.py '+ config.run_dir) # this file was baked into the docker image so we can hard code the path
+    os.system('cp -f /somisana/oil/config_oil.py '+ run_dir) # this file was baked into the docker image so we can hard code the path
     # 
-    os.chdir(config.run_dir)
+    os.chdir(run_dir)
     
     # initialise the openoil object
     o = OpenOil(loglevel=50,  weathering_model='noaa')  # loglevel=50 turns off logs, loglevel=0 gives max information for debugging

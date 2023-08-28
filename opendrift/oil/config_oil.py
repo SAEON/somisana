@@ -2,11 +2,12 @@
 #
 from datetime import datetime
 #
-# ------------------------------
-# configuration name and run dir
-# ------------------------------
+# ---------------------------------------
+# configuration name and run date to use
+# ---------------------------------------
 #
-# the model output will be written to a directory with this name
+# give a name for your configuration
+# output will be written to a directory with this name
 # which will be accessible via the somisana thredds or mnemosyne file server
 config_name = 'test_01' 
 #
@@ -15,9 +16,6 @@ config_name = 'test_01'
 # note that only runs from the last 5 days are stored for running opendrift
 # the croco model is configured to produce output from 5 days before to 5 days after the run date
 croco_run_date = '20230822' 
-#
-# the opendrift run directory
-run_dir = '/tmp/opendrift/'+croco_run_date+'/'+config_name+'/'
 
 # -----------
 # spill info
