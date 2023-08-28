@@ -25,8 +25,7 @@ import cartopy
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import pandas as pd
-# sys.path.append('/home/gfearon/somisana')
-from opendrift_tools import post_od as post
+import post_od as post
 import matplotlib.path as mplPath
 
 def get_croco_boundary(fname):
