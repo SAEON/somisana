@@ -188,7 +188,7 @@ jobs:
               curl \
               --silent \
               --keepalive-time 2400 \
-              -X PUT \
+              -X POST \
               -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
               --create-dirs \
               -T "$f" \
