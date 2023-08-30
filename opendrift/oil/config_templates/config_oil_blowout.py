@@ -9,7 +9,7 @@ from datetime import datetime
 # give a name for your configuration
 # output will be written to a directory with this name
 # which will be accessible via the somisana thredds or mnemosyne file server
-config_name = 'test_algoa_spill'
+config_name = 'test_east_coast_blowout'
 #
 # croco run date
 # this is intentionally a string in 'yyyymmdd' format so it can also be easily read by the github workflow (needed for creating an appropriate directory on the public facing file server) 
@@ -22,20 +22,20 @@ croco_run_date = '20230830'
 # -----------
 #
 # coordinates of the spill (in geographical degrees)
-lon_spill=25.74
-lat_spill=-33.855 
+lon_spill=31.779959
+lat_spill=-30.539622
 #
 # depth of the release
 # For a surface release I prefer to put a small negative number like z=-0.001
 # this effectively means the weathering is applied after mixing in the first time-step
 # for a subsurface release you can also specify a distance off the seabed like z='seafloor+100' for 100m off the bottom
-z=-0.001
+z='seafloor+100'
 #
 # radius to be used in initialising the particles
 # particles will be initialised around 'lon_spill,lat_spill' using a standard deviation of 'radius'
 # this allows for some initial spreading at location of the initialised particles 
 # for a subsea blowout this could be hundereds of meters, but a surface spill it will be small, in the order of meters
-radius=5
+radius=500
 #
 # specify the oil type - important for weathering properties
 # Can choose any oil name from https://adios.orr.noaa.gov/oils/
@@ -45,10 +45,10 @@ oil_type='GENERIC INTERMEDIATE FUEL OIL 180'
 #
 # start time of spill - use local time (UTC+2)
 #spill_start_time=datetime.now() # change to whenever the spill should be 
-spill_start_time=datetime(2023,8,25,8,0,0)
+spill_start_time=datetime(2023,8,25,6,0,0)
 #
 # duration of the release of oil in hours
-release_dur=6
+release_dur=48
 #
 # volume of oil spilled in m3
 # This is not used directly in the model - it's only used here to get the oil flow rate below
@@ -86,13 +86,13 @@ eez_data_dir='/tmp/global_data/'
 #
 # run duration in days
 # this should automatically have a limit based on 'croco_run_date' and 'spill_start_time'
-run_dur=4
+run_dur=9
 #
 # number of particles to release
 # generally the more the better, but there are computational limits
 # the more particles, the smoother the result will be
 # you can calculate the volume of oil per particle upon release as oil_volume/num_part
-num_part=2000
+num_part=5000
 #
 # opendrift timestep for particle integration in minutes
 time_step=15
@@ -111,4 +111,4 @@ wind_drift_factor=0.03
 # --------------
 # plotting info
 # --------------
-plot_extents=[25.482882,26.483077,-34.198915,-33.63806] # [lon1,lon2,lat1,lat2]
+plot_extents=[16,33,-37,-29] # [lon1,lon2,lat1,lat2]

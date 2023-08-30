@@ -45,7 +45,7 @@ oil_type='GENERIC INTERMEDIATE FUEL OIL 180'
 #
 # start time of spill - use local time (UTC+2)
 #spill_start_time=datetime.now() # change to whenever the spill should be 
-spill_start_time=datetime(2023,8,25,8,0,0)
+spill_start_time=datetime(2023,8,27,2,0,0)
 #
 # duration of the release of oil in hours
 release_dur=6
