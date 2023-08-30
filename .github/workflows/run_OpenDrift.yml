@@ -54,7 +54,8 @@ jobs:
       - name: Set envs
         id: ENVS
         run: |
-          echo "TOOLKIT_IMAGE=${{ github.repository }}_toolkit_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
+          # intentionally use the latest stable toolkit image, not the branch we're running opendrift on
+          echo "TOOLKIT_IMAGE=ghcr.io/saeon/somisana_toolkit_stable:latest" >> $GITHUB_OUTPUT
           echo "OPENDRIFT_IMAGE=${{ github.repository }}_opendrift_${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT
           echo "CONFIG_NAME=${{ steps.config_name.outputs.value }}" >> $GITHUB_OUTPUT
           echo "CROCO_RUN_DATE=${{ steps.run_date.outputs.value }}" >> $GITHUB_OUTPUT
