@@ -6,9 +6,9 @@ do some plots of the raw OpenDrift output
 import os
 from datetime import datetime, timedelta
 import sys
-sys.path.append('/home/gfearon/code/somisana/')
-from opendrift_tools import plot_od,post_od
 import config_oil as config
+sys.path.append('/somisana/') # where the source code gets copied into the Docker image
+import plot_od,post_od
 
 print('computing the oil budget...')
 post_od.get_trajectories_oil_budget(config.run_dir)

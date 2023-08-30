@@ -9,21 +9,21 @@ from datetime import datetime
 # give a name for your configuration
 # output will be written to a directory with this name
 # which will be accessible via the somisana thredds or mnemosyne file server
-config_name = 'test_01'
+config_name = 'test_algoa_spill'
 #
 # croco run date
 # this is intentionally a string in 'yyyymmdd' format so it can also be easily read by the github workflow (needed for creating an appropriate directory on the public facing file server) 
 # note that only runs from the last 5 days are stored for running opendrift
 # the croco model is configured to produce output from 5 days before to 5 days after the run date
-croco_run_date = '20230828'
+croco_run_date = '20230830'
 
 # -----------
 # spill info
 # -----------
 #
 # coordinates of the spill (in geographical degrees)
-lon_spill=27.987155 # 25.74
-lat_spill=-33.300464  #-33.855
+lon_spill=25.74
+lat_spill=-33.855 
 #
 # depth of the release
 # For a surface release I prefer to put a small negative number like z=-0.001
@@ -44,8 +44,8 @@ radius=5
 oil_type='GENERIC INTERMEDIATE FUEL OIL 180'
 #
 # start time of spill - use local time (UTC+2)
-spill_start_time=datetime.now() # change to whenever the spill should be 
-#spill_start_time=datetime(2023,8,19,6,0,0)
+#spill_start_time=datetime.now() # change to whenever the spill should be 
+spill_start_time=datetime(2023,8,27,2,0,0)
 #
 # duration of the release of oil in hours
 release_dur=6
@@ -111,4 +111,4 @@ wind_drift_factor=0.03
 # --------------
 # plotting info
 # --------------
-plot_extents=[24.5,28.2,-35.2,-33.0] # [lon1,lon2,lat1,lat2]
+plot_extents=[25.482882,26.483077,-34.198915,-33.63806] # [lon1,lon2,lat1,lat2]
