@@ -41,7 +41,7 @@ radius=500
 # Can choose any oil name from https://adios.orr.noaa.gov/oils/
 # Or some Norgegain oils from https://opendrift.github.io/oil_types.html
 # Or a few other generic oil types added as part of opendrift, such as 'GENERIC INTERMEDIATE FUEL OIL 180'
-oil_type='GENERIC INTERMEDIATE FUEL OIL 180'
+oil_type='Norman Wells'
 #
 # start time of spill - use local time (UTC+2)
 #spill_start_time=datetime.now() # change to whenever the spill should be 
