@@ -119,4 +119,4 @@ time_y=0.9
 vmin=-1000   # the z variable is animated so this is your max depth
 cmap='Spectral_r' #'gray_r'
 plot_cbar=True
-cbar_loc=(0.88, 0.15, 0.01, 0.7)
+cbar_loc=(0.92, 0.15, 0.01, 0.7)
