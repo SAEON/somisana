@@ -11,15 +11,17 @@ sys.path.append('/somisana/') # where the source code gets copied into the Docke
 import plot_od,post_od
 
 def main():
+    
+    run_dir = '/tmp/opendrift/'+config.croco_run_date+'/'+config.config_name+'/'
 
     print('computing the oil budget...')
-    post_od.get_trajectories_oil_budget(config.run_dir)
+    post_od.get_trajectories_oil_budget(run_dir)
     
     print('plotting the oil budget...')
-    plot_od.plot_budget(config.run_dir)
+    plot_od.plot_budget(run_dir)
     
     print('doing the animation...')
-    plot_od.iteration_animate(config.run_dir,
+    plot_od.iteration_animate(run_dir,
                       figsize=config.figsize, # resize as needed to match the shape of extents below
                       extents=config.plot_extents, #lon1,lon2,lat1,lat2
                       lon_release=config.lon_spill,
