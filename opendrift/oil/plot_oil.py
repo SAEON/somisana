@@ -26,7 +26,7 @@ def main():
                       extents=config.plot_extents, #lon1,lon2,lat1,lat2
                       lon_release=config.lon_spill,
                       lat_release=config.lat_spill,
-                      time_x=config.time_z, # placement of time label, in axes coordinates 
+                      time_x=config.time_x, # placement of time label, in axes coordinates 
                       time_y=config.time_y,  
                       vmin=config.vmin,   # the z variable is animated so this is your max depth 
                       cmap=config.cmap, #'Spectral_r' 
