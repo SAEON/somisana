@@ -87,7 +87,7 @@ eez_data_dir = '/tmp/global_data/'
 # run duration in days
 # limit this automatically to avoid run crash at the end of the available model data
 run_dur = 10
-run_time_max = datetime.strftime(croco_run_date, '%Y%m%d')+timedelta(days=5)
+run_time_max = datetime.strptime(croco_run_date, '%Y%m%d')+timedelta(days=5)
 run_dur_max = (run_time_max - spill_start_time).total_seconds()/86400
 run_dur=np.min(run_dur,run_dur_max)
 #
