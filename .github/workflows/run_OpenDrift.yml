@@ -168,7 +168,7 @@ jobs:
   plot-oil:
     needs: [build-image, envs, run-oil]
     runs-on: somisana
-    if: always() && ${{ github.event.inputs.plotting == 'true' }}
+    if: ${{ always() && github.event.inputs.plotting == 'true' }}
     env:
       SHA: sha-${{ github.sha }}
     steps:
