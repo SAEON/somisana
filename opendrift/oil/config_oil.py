@@ -1,6 +1,7 @@
 # Configuration file for running an OpenOil simulation 
 #
 from datetime import datetime, timedelta
+import numpy as np
 #
 # ---------------------------------------
 # configuration name and run date to use
