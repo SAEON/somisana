@@ -1,7 +1,6 @@
 # Configuration file for running an OpenOil simulation 
 #
 from datetime import datetime, timedelta
-import numpy as np
 #
 # ---------------------------------------
 # configuration name and run date to use
@@ -90,7 +89,7 @@ eez_data_dir = '/tmp/global_data/'
 run_dur = 10
 run_time_max = datetime.strptime(croco_run_date, '%Y%m%d')+timedelta(days=5)
 run_dur_max = (run_time_max - spill_start_time).total_seconds()/86400
-run_dur=np.min(run_dur,run_dur_max)
+run_dur=min(run_dur,run_dur_max)
 #
 # number of particles to release
 # generally the more the better, but there are computational limits
