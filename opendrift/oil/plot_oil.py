@@ -36,7 +36,7 @@ def main():
                       cmap=config.cmap, #'Spectral_r' 
                       plot_cbar=config.plot_cbar,
                       cbar_loc=config.cbar_loc, # [left, bottom, width, height]
-                      croco_dirs=config.croco_dirs,
+                      croco_dirs=config.croco_dirs_plot,
                       croco_run_date=config.croco_run_date
                       )
    
