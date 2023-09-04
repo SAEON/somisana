@@ -75,7 +75,7 @@ jobs:
   setup-run-dir:
     needs: [envs]
     runs-on: somisana
-    if: ${{ github.event.inputs.run_model }}
+    if: ${{ github.event.inputs.run_model == 'true' }}
     env:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       OPENDRIFT_IMAGE: ${{ needs.envs.outputs.OPENDRIFT_IMAGE }}
@@ -152,7 +152,7 @@ jobs:
   run-oil:
     needs: [build-image, envs]
     runs-on: somisana
-    if: ${{ github.event.inputs.run_model }}
+    if: ${{ github.event.inputs.run_model == 'true' }}
     env:
       SHA: sha-${{ github.sha }}
     steps:
@@ -168,11 +168,11 @@ jobs:
   plot-oil:
     needs: [build-image, envs, run-oil]
     runs-on: somisana
-    if: ${{ github.event.inputs.plotting }}
+    if: ${{ github.event.inputs.plotting == 'true' }}
     env:
       SHA: sha-${{ github.sha }}
     steps:
-      - name: run the model
+      - name: do the plots
         run: >-
           docker run \
             --rm \
