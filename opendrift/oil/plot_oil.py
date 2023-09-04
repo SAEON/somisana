@@ -13,6 +13,10 @@ import plot_od,post_od
 def main():
     
     run_dir = '/tmp/opendrift/'+config.croco_run_date+'/'+config.config_name+'/'
+    
+    # copy the config.py file to the run dir so we have a record of the configuration that was used in the run
+    # (this is here as well as in the run_oil.py script in case you only do the plotting step)
+    os.system('cp -f /somisana/oil/config_oil.py '+ run_dir) # this file was baked into the docker image so we can hard code the path
 
     print('computing the oil budget...')
     post_od.get_trajectories_oil_budget(run_dir)

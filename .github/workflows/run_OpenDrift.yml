@@ -149,7 +149,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
 
-  run-opendrift:
+  run-oil:
     needs: [build-image, envs]
     runs-on: somisana
     if: ${{ github.event.inputs.run_model }}
@@ -165,8 +165,8 @@ jobs:
             ${{ needs.build-image.outputs.image }}:${{ env.SHA }} \
             -c "python /somisana/oil/run_oil.py"
 
-  plotting:
-    needs: [build-image, envs]
+  plot-oil:
+    needs: [build-image, envs, run-oil]
     runs-on: somisana
     if: ${{ github.event.inputs.plotting }}
     env:
@@ -184,7 +184,7 @@ jobs:
 
   # Archive output
   archive-data:
-    needs: [envs, run-opendrift]
+    needs: [envs, run-oil]
     runs-on: somisana
     env:
       TOOLKIT_IMAGE: ${{ needs.envs.outputs.TOOLKIT_IMAGE }}

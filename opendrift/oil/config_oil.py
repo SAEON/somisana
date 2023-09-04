@@ -1,6 +1,6 @@
 # Configuration file for running an OpenOil simulation 
 #
-from datetime import datetime
+from datetime import datetime, timedelta
 #
 # ---------------------------------------
 # configuration name and run date to use
@@ -45,7 +45,7 @@ oil_type='Norman Wells'
 #
 # start time of spill - use local time (UTC+2)
 #spill_start_time=datetime.now() # change to whenever the spill should be 
-spill_start_time=datetime(2023,9,31,6,0,0)
+spill_start_time=datetime(2023,9,1,6,0,0)
 #
 # duration of the release of oil in hours
 release_dur=48
@@ -78,16 +78,18 @@ croco_ref_time = datetime(2000,1,1)
 croco_dirs = ['/tmp/algoa-bay-forecast/']
 #
 # the directory where the global data downloaded for our eez are sitting
-eez_data_dir='/tmp/global_data/'
+eez_data_dir = '/tmp/global_data/'
 
 # ------------------
 # numerical settings
 # ------------------
 #
 # run duration in days
-# this should automatically have a limit based on 'croco_run_date' and 'spill_start_time'
-run_dur=8
-#run_dar_lim=
+# limit this automatically to avoid run crash at the end of the available model data
+run_dur = 10
+run_time_max = datetime.strftime(croco_run_date, '%Y%m%d')+timedelta(days=5)
+run_dur_max = (run_time_max - spill_start_time).total_seconds()/86400
+run_dur=np.min(run_dur,run_dur_max)
 #
 # number of particles to release
 # generally the more the better, but there are computational limits
