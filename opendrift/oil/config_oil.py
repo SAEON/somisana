@@ -15,7 +15,7 @@ config_name = 'test_east_coast_blowout'
 # this is intentionally a string in 'yyyymmdd' format so it can also be easily read by the github workflow (needed for creating an appropriate directory on the public facing file server) 
 # note that only runs from the last 5 days are stored for running opendrift
 # the croco model is configured to produce output from 5 days before to 5 days after the run date
-croco_run_date = '20230831'
+croco_run_date = '20230904'
 
 # -----------
 # spill info
@@ -45,7 +45,7 @@ oil_type='Norman Wells'
 #
 # start time of spill - use local time (UTC+2)
 #spill_start_time=datetime.now() # change to whenever the spill should be 
-spill_start_time=datetime(2023,8,26,6,0,0)
+spill_start_time=datetime(2023,9,31,6,0,0)
 #
 # duration of the release of oil in hours
 release_dur=48
@@ -86,7 +86,8 @@ eez_data_dir='/tmp/global_data/'
 #
 # run duration in days
 # this should automatically have a limit based on 'croco_run_date' and 'spill_start_time'
-run_dur=9
+run_dur=8
+#run_dar_lim=
 #
 # number of particles to release
 # generally the more the better, but there are computational limits
@@ -108,10 +109,16 @@ hz_diff = 1
 # fraction of the 10 m wind speed used to advect surface particles
 wind_drift_factor=0.03
 
+# -------------
+# grdding info
+# -------------
+#
+# placeholder for now - we can have options for gridding the output here 
+# e.g. what grid size to use, what spatial extent
+
 # --------------
 # plotting info
 # --------------
-do_plots = True
 plot_extents=[16,33,-37,-29] # [lon1,lon2,lat1,lat2]
 figsize=(8,4) # resize as needed to match the shape of extents below
 time_x=0.1 # placement of time label, in axes coordinates

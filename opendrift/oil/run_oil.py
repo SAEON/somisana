@@ -174,13 +174,6 @@ def main():
      
     del(o)
     
-    # ---------------------------------
-    # do some postprocessing and plots
-    # ---------------------------------
-    #
-    if config.do_plots:
-        plot_oil.main()
-
 if __name__ == "__main__":
     
     main()

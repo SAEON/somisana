@@ -2,6 +2,17 @@ name: Run OpenDrift
 
 on:
   workflow_dispatch:
+    inputs:
+      run_model:
+        description: 'run the model'
+        required: true
+        type: boolean
+        default: true
+      plotting:
+        description: 'do the plots'
+        required: true
+        type: boolean
+        default: true
 
 # Many of the env variables reference the current branch,
 # which is set dynamically in the branch-ref job below
@@ -64,6 +75,7 @@ jobs:
   setup-run-dir:
     needs: [envs]
     runs-on: somisana
+    if: ${{ github.event.inputs.run_model }}
     env:
       BRANCH_REF: ${{ needs.envs.outputs.BRANCH_REF }}
       OPENDRIFT_IMAGE: ${{ needs.envs.outputs.OPENDRIFT_IMAGE }}
@@ -140,10 +152,9 @@ jobs:
   run-opendrift:
     needs: [build-image, envs]
     runs-on: somisana
+    if: ${{ github.event.inputs.run_model }}
     env:
       SHA: sha-${{ github.sha }}
-      CONFIG_NAME: ${{ needs.envs.outputs.CONFIG_NAME }}
-      CROCO_RUN_DATE: ${{ needs.envs.outputs.CROCO_RUN_DATE }}
     steps:
       - name: run the model
         run: >-
@@ -153,6 +164,23 @@ jobs:
             --entrypoint /bin/bash \
             ${{ needs.build-image.outputs.image }}:${{ env.SHA }} \
             -c "python /somisana/oil/run_oil.py"
+
+  plotting:
+    needs: [build-image, envs]
+    runs-on: somisana
+    if: ${{ github.event.inputs.plotting }}
+    env:
+      SHA: sha-${{ github.sha }}
+    steps:
+      - name: run the model
+        run: >-
+          docker run \
+            --rm \
+            -v /home/runner/somisana/:/tmp/ \
+            --entrypoint /bin/bash \
+            ${{ needs.build-image.outputs.image }}:${{ env.SHA }} \
+            -c "python /somisana/oil/plot_oil.py"
+
 
   # Archive output
   archive-data:
