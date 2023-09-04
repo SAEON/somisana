@@ -204,8 +204,8 @@ jobs:
             ${{ env.TOOLKIT_IMAGE }} \
               kerchunk \
                 run \
-                  --inputs /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.nc \
-                  --output /home/runner/somisana/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.kerchunk.json
+                  --inputs /tmp/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.nc \
+                  --output /tmp/opendrift/${{ env.CROCO_RUN_DATE }}/${{ env.CONFIG_NAME }}/trajectories.kerchunk.json
       - name: Archive the OpenDrift output
         continue-on-error: false
         run: |
