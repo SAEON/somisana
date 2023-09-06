@@ -43,7 +43,7 @@ gls_history_fields:   TKE  GLS  Lscale
 primary_averages: zeta UBAR VBAR  U  V   wrtT(1:NT)
                   T    F    F     T  T   30*T
 auxiliary_averages: rho Omega W  Akv  Akt  Aks Visc3d Diff3d  HBL HBBL Bostr Wstr Ustr Vstr Shfl rsw rlw lat sen Hm HEL BIOL
-                    F   F     T  F    F    F   F      F       F   F    F     F    F    T    T    F   F   F   F   F  F   10*T
+                    F   F     T  F    F    T   F      F       F   F    F     F    F    T    T    F   F   F   F   F  F   10*T
 gls_averages:   TKE  GLS  Lscale
                 F    F    F
 
