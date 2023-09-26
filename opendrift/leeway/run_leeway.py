@@ -113,7 +113,6 @@ def main():
     # land interaction
     lw.set_config('general:use_auto_landmask', True) 
     lw.set_config('general:coastline_action', 'stranding') 
-    lw.set_config('general:seafloor_action', 'lift_to_seafloor')
     #
     lw.set_config('drift:horizontal_diffusivity', config.hz_diff) # could test sensitivity 
     
