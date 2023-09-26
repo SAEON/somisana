@@ -3,6 +3,14 @@ name: Run OpenDrift
 on:
   workflow_dispatch:
     inputs:
+      model_type:
+        description: 'The kind of model to run'
+        required: true
+        default: 'oil'
+        type: choice
+        options:
+          - oil
+          - leeway
       run_model:
         description: 'run the model'
         required: true
@@ -149,7 +157,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
 
-  run-oil:
+  run-model:
     needs: [build-image, envs]
     runs-on: somisana
     if: ${{ github.event.inputs.run_model == 'true' }}
@@ -163,10 +171,10 @@ jobs:
             -v /home/runner/somisana/:/tmp/ \
             --entrypoint /bin/bash \
             ${{ needs.build-image.outputs.image }}:${{ env.SHA }} \
-            -c "python /somisana/oil/run_oil.py"
+            -c "python /somisana/${{ github.event.inputs.model_type }}/run_${{ github.event.inputs.model_type }}.py"
 
-  plot-oil:
-    needs: [build-image, envs, run-oil]
+  plot:
+    needs: [build-image, envs, run-model]
     runs-on: somisana
     if: ${{ always() && github.event.inputs.plotting == 'true' }}
     env:
@@ -179,12 +187,12 @@ jobs:
             -v /home/runner/somisana/:/tmp/ \
             --entrypoint /bin/bash \
             ${{ needs.build-image.outputs.image }}:${{ env.SHA }} \
-            -c "python /somisana/oil/plot_oil.py"
+            -c "python /somisana/${{ github.event.inputs.model_type }}/plot_${{ github.event.inputs.model_type }}.py"
 
 
   # Archive output
   archive-data:
-    needs: [envs, run-oil]
+    needs: [envs, run-model]
     runs-on: somisana
     if: always()
     env:
