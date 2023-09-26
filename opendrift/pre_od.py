@@ -9,6 +9,7 @@ These are common to all OpenDrift applications
 import sys, os, glob
 import numpy as np
 from datetime import datetime, timedelta
+from netCDF4 import Dataset,num2date,date2num
 import xarray as xr
 from opendrift.readers import reader_netCDF_CF_generic
 from opendrift.readers import reader_ROMS_native
