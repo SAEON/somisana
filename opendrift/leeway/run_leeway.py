@@ -120,13 +120,9 @@ def main():
     # seed the model
     # ---------------
     #
-    time_start = config.spill_start_time-timedelta(hours=2) # for convenience input is in local time UTC+2, so convert to model time (UTC)
-    time_end = time_start+timedelta(hours=config.release_dur)
-    #
-    # seed the elements
     lw.seed_elements(lon=config.lon_spill, lat=config.lat_spill, 
                     radius=config.radius, 
-                    time=[time_start,time_end], 
+                    time=config.spill_start_time-timedelta(hours=2), # for convenience input is in local time UTC+2, so convert to model time (UTC) 
                     number=config.num_part,
                     object_type=config.object_type)
     
