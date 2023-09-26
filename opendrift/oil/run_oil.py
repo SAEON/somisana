@@ -58,7 +58,7 @@ def main():
     #
     o = OpenOil(loglevel=50,  weathering_model='noaa')  # loglevel=50 turns off logs, loglevel=0 gives max information for debugging
     
-    o = pred_od.add_readers(o,config)
+    o = pre_od.add_readers(o,config)
 #
 #    # Readers
 #    #
