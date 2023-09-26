@@ -86,7 +86,7 @@ time_step_output=60
 #
 # constant horizontal diffusivity (m2/s)
 # this is applied to the random walk component of the particle motion
-hz_diff = 1
+hz_diff = 0
 
 # -------------
 # grdding info
