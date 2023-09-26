@@ -173,7 +173,7 @@ jobs:
             ${{ needs.build-image.outputs.image }}:${{ env.SHA }} \
             -c "python /somisana/${{ github.event.inputs.model_type }}/run_${{ github.event.inputs.model_type }}.py"
 
-  plot:
+  do-plots:
     needs: [build-image, envs, run-model]
     runs-on: somisana
     if: ${{ always() && github.event.inputs.plotting == 'true' }}
@@ -192,7 +192,7 @@ jobs:
 
   # Archive output
   archive-data:
-    needs: [envs, run-model]
+    needs: [envs, run-model, do-plots]
     runs-on: somisana
     if: always()
     env:

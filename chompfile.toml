@@ -18,4 +18,5 @@ run = '''
   doctoc models/**/**/*.md
   doctoc docker/**/*.md
   doctoc web/**/*.md
+  doctoc opendrift/*.md
 '''
