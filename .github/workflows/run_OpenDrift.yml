@@ -60,14 +60,14 @@ jobs:
         id: config_name
         run: |
           # Use grep to find the line where the variable is defined
-          line=$(grep -m 1 -w config_name opendrift/oil/config_oil.py)
+          line=$(grep -m 1 -w config_name opendrift/${{ github.event.inputs.model_type }}/config_${{ github.event.inputs.model_type }}.py)
           # Use awk to extract the value of the variable from the line (thanks chatgpt)
           echo "value=$(echo "$line" | awk -F "=" '{print $2}' | sed -e 's/^[[:space:]]*//')" >> $GITHUB_OUTPUT
       - name: run date 
         id: run_date
         run: |
           # Use grep to find the line where the variable is defined
-          line=$(grep -m 1 -w croco_run_date opendrift/oil/config_oil.py)
+          line=$(grep -m 1 -w croco_run_date opendrift/${{ github.event.inputs.model_type }}/config_${{ github.event.inputs.model_type }}.py)
           # Use awk to extract the value of the variable from the line (thanks chatgpt)
           echo "value=$(echo "$line" | awk -F "=" '{print $2}' | sed -e 's/^[[:space:]]*//')" >> $GITHUB_OUTPUT
       - name: Set envs
