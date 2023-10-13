@@ -152,11 +152,13 @@ jobs:
         run: >-
           docker run \
             --rm \
+            --mac-address 02:42:ff:ff:ff:ff \
+            -v /opt/licenses/matlab-r2022a/license.lic:/licenses/license.lic \
             -v $(pwd)/models/algoa-bay-forecast/crocotools:/crocotools/ \
             -v $(pwd)/models/algoa-bay-forecast/lib/grd.nc:/crocotools/croco/forcing/grd.nc \
             -v ${{ env.WORKDIR }}:/tmp/somisana/current \
             -v ${{ inputs.EEZ_DATA_DIR }}:/tmp/somisana/global-data \
-            -e MLM_LICENSE_FILE=${{ secrets.MLM_LICENSE_FILE }} \
+            -e MLM_LICENSE_FILE=/licenses/license.lic \
             ${{ env.REGISTRY }}/saeon/somisana_matlab:r2022a \
               -batch "run('/crocotools/run.m')"
 
