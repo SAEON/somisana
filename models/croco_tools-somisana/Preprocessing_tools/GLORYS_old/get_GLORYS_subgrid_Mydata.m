@@ -1,4 +1,4 @@
-function [i1min,i1max,i2min,i2max,i3min,i3max,jrange,krange,lon,lat,depth]=...
+function [i1min,i1max,i2min,i2max,i3min,i3max,jrange,krange,lonT,latT,lonU,latU,lonV,latV,depth]=...
     get_GLORYS_subgrid_Mydata(glorysfile,lonmin,lonmax,latmin,latmax)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -41,8 +41,12 @@ latmax=latmax+dl;
 % Get the grid
 %
 nc=netcdf(glorysfile);
-lat=nc{'latitude'}(:);
-lon=nc{'longitude'}(:);
+latT=nc{'latT'}(:);
+lonT=nc{'lonT'}(:);
+latU=nc{'latU'}(:);
+lonU=nc{'lonU'}(:);
+latV=nc{'latV'}(:);
+lonV=nc{'lonV'}(:);
 depth=nc{'depth'}(:);
 nc(close);
 %
@@ -50,11 +54,18 @@ nc(close);
 %
 % 1 Longitude: take care of greenwitch
 %
-i1=find(lon-360>=lonmin & lon-360<=lonmax);
-i2=find(lon>=lonmin & lon<=lonmax);
-i3=find(lon+360>=lonmin & lon+360<=lonmax);
+i1=find(lonT-360>=lonmin & lonT-360<=lonmax);
+i2=find(lonT>=lonmin & lonT<=lonmax);
+i3=find(lonT+360>=lonmin & lonT+360<=lonmax);
 %
-lon=cat(1,lon(i1)-360,lon(i2),lon(i3)+360);
+lonT=cat(1,lonT(i1)-360,lonT(i2),lonT(i3)+360);
+% GGF comment - we'll just use the rho grid to get the subset indices - 
+% these indices will be fine for subsetting the u and v grids too (no need
+% to over-complicate with separate indices for the separate grids as we're 
+% only using these indices to subset roughly, so long as the subset covers
+% our croco grid)
+lonU=cat(1,lonU(i1)-360,lonU(i2),lonU(i3)+360);
+lonV=cat(1,lonV(i1)-360,lonV(i2),lonV(i3)+360);
 %
 if ~isempty(i1)
   i1min=min(i1);
@@ -80,8 +91,10 @@ end
 %
 % 2 Latitude
 %
-j=find(lat>=latmin & lat<=latmax);
-lat=lat(j);
+j=find(latT>=latmin & latT<=latmax);
+latT=latT(j);
+latU=latU(j);
+latV=latV(j);
 jmin=min(j);
 jmax=max(j);
 jrange=jmin:jmax;

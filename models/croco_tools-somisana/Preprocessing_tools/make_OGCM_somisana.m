@@ -88,7 +88,7 @@ elseif strcmp(OGCM,'BLUELINK')
   %
 elseif strcmp(OGCM,'GLORYS')
   %
-  %  DODS extraction from Bluelink is not yet implemented...
+  %  DODS extraction from GLORYS is not yet implemented...
   %  this is placeholder for if it ever is... for now using data already downloaded locally
      url = '';
   %

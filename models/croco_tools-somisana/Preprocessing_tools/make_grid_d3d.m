@@ -64,27 +64,9 @@ disp([' Title: ',CROCO_title])
 %
 
 % read the delft3d grid file
-% (note I'm reading the delft3d native grid format, not the netcdf exported
-% from delft3d as we are only need to use the lon and lat variables)
-% we use the uncut delft3d grid for generating the croco grid
-grd_d3d_uncut = wlgrid('read', grdfile_d3d_uncut);
-Lonr=grd_d3d_uncut.X;
-Latr=grd_d3d_uncut.Y;
-% invert so first dimension is latitude, then longitude, as per croco
-% convention
-Lonr=Lonr'; 
-Latr=Latr';
+[Lonr,Latr] = read_d3d_grd(grdfile_d3d);
 
-if nanmean(Lonr(:,1))>nanmean(Lonr(:,end))
-    disp('you need to run flip_grd.m function on your delft3d grid to ensure')
-    disp('the grid indices or ordered properly (as expected by this funciton')
-    return
-end
-if nanmean(Latr(1,:))>nanmean(Latr(end,:))
-    disp('you need to run flip_grd.m function on your delft3d grid to ensure')
-    disp('the grid indices or ordered properly (as expected by this funciton')
-    return
-end
+% then do the regular make_grid.m stuff
 
 [Lonu,Lonv,Lonp]=rho2uvp(Lonr); 
 [Latu,Latv,Latp]=rho2uvp(Latr);
@@ -174,97 +156,22 @@ nc{'spherical'}(:)='T';
 close(nc);
 %
 
-% get the cut grid used to define bathy and also the land mask
-grd_d3d = wlgrid('read', grdfile_d3d);
-Lonr_cut=grd_d3d.X;
-Latr_cut=grd_d3d.Y;
-Lonr_cut=Lonr_cut';
-Latr_cut=Latr_cut';
-[Mp_cut,Lp_cut]=size(Latr_cut);
-%
-% The cut grid may have entire rows and columns on the ends missing, so check
-% where the cut grid fits into the uncut grid. We assume that at least one
-% of the corners of the cut grid will cooincide with a corner of the uncut
-% grid. That way it is easy to place the cut grid inside the uncut grid.
-% Bit of a clunky way of doing it but after trying a few other options 
-% couldn't find a catch-all easy alternative
-% 
-if Lonr(1,1) == Lonr_cut(1,1) % check the southwest corner
-    j_start=1;
-    j_end=Mp_cut;
-    i_start=1;
-    i_end=Lp_cut;
-elseif Lonr(1,end) == Lonr_cut(1,end) % check the southeast corner
-    j_start=1;
-    j_end=Mp_cut;
-    i_start=Lp-Lp_cut+1;
-    i_end=Lp;
-elseif Lonr(end,end) == Lonr_cut(end,end) % check the northeast corner
-    j_start=Mp-Mp_cut+1;
-    j_end=Mp;
-    i_start=Lp-Lp_cut+1;
-    i_end=Lp;
-elseif Lonr(end,1) == Lonr_cut(end,1) % check the northwest corner
-    j_start=Mp-Mp_cut+1;
-    j_end=Mp;
-    i_start=1;
-    i_end=Lp_cut;
-else    
-    disp('oh dear, this method needs to be changed')
-    return
-end
-%
 %  Add topography
 %
 disp(' ')
 disp(' Add topography...')
 %
-if use_d3d_bathy==1
-    %
-    % we use the cut grid for this as delft3d flow bathy is usually defined
-    % on a cut grid
-    %
-    %x=grd_d3d.X;
-    %y=grd_d3d.Y;
+h=add_topo_scatter(grdname,topofile,hmin,hmax);
 
-    dep = wldep('read',depfile_d3d,grd_d3d);
-    dep=dep(1:end-1,1:end-1);
-    dep=dep';
-    dep(dep==-999)=hmin;
-    %
-    %x = x(~isnan(x));
-    %y = y(~isnan(y));
-    %dep = dep(~isnan(dep));
-    %
-    % using nearest interpolation will ensure that the exact depth values
-    % from the cut grid will be used on the cut grid
-    %h=griddata(x,y,dep,Lonr,Latr,'nearest');
-    
-    % assign depths directly from the delft3d cut grid
-    h=zeros(size(Lonr))+hmin;
-    h(j_start:j_end,i_start:i_end)=dep;
-    
-else
-    h=add_topo_scatter(grdname,topofile,hmin,hmax);
-end
 %
 % Compute the mask 
 %
-% compute the mask from delft3d grid cut grid missing values 
-maskr_cut=zeros(size(Lonr_cut))+1;
-maskr_cut(isnan(Lonr_cut))=0;
-%
-maskr=zeros(size(Lonr))+1;
-maskr(j_start:j_end,i_start:i_end)=maskr_cut;
-
-% Code below commented as we're using the delft3d cut grid as a starting
-% point
-% if exist('mask_rho.mat', 'file')
-%     maskr_str=load('mask_rho.mat');
-%     maskr=maskr_str.mask_rho;
-% else 
-%     maskr=h>0;
-% end
+if exist('mask_rho.mat', 'file')
+    maskr_str=load('mask_rho.mat');
+    maskr=maskr_str.mask_rho;
+else 
+    maskr=h>0;
+end
 maskr=process_mask(maskr);
 [masku,maskv,maskp]=uvp_mask(maskr);
 %
@@ -309,22 +216,20 @@ nc=netcdf(grdname,'write');
 h=nc{'h'}(:);
 mask_rho=nc{'mask_rho'}(:);
 
-if use_d3d_bathy~=1
-    %
-    h=smoothgrid(h,mask_rho,hmin,hmax_coast,hmax,...
-        rtarget,n_filter_deep_topo,n_filter_final);
-    %
-    %  Write it down
-    %
-    disp(' ')
-    disp(' Write it down...')
-    nc{'h'}(:)=h;
-end
+%
+h=smoothgrid(h,mask_rho,hmin,hmax_coast,hmax,...
+    rtarget,n_filter_deep_topo,n_filter_final);
+%
+%  Write it down
+%
+disp(' ')
+disp(' Write it down...')
+nc{'h'}(:)=h;
 
 close(nc);
 %
 % save the mask
-%save mask_rho.mat mask_rho
+save mask_rho.mat mask_rho
 
 % make a plot
 %

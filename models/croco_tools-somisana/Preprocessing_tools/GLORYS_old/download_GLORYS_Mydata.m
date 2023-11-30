@@ -3,7 +3,7 @@ function download_GLORYS_Mydata(Ymin,Ymax,Mmin,Mmax,lonmin,lonmax,latmin,latmax,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % script created by Giles Fearon, adapted from existing CROCOTOOLS scripts
-% Extract a subgrid from GLORYS files to get a ROMS forcing
+% Extract a subgrid from GLORYS to get a ROMS forcing
 % Store that into monthly files.
 % Take care of the Greenwitch Meridian.
 % 
@@ -76,36 +76,28 @@ for Y=Ymin:Ymax
   for M=mo_min:mo_max
     disp(['  Processing month: ',num2str(M)])
     
-    glorysfile=[path,num2str(Y),'_',num2str(M,'%02.f'),'.nc'];
+    % Get the daily timesteps for this month
+    Nt = eomday(Y,M);
+    
+    % first file in this month (for getting grid info)
+    glorys_day=datenum(Y,M,1)-datenum(1990,1,1);
+    glorysfile=[path,'algoa_',num2str(glorys_day,'%06d'),'.nc'];
     
     %
-    % Find a subset of the HYCOM grid
+    % Find a subset of the GLORYS grid
     %
-    [i1min,i1max,i2min,i2max,i3min,i3max,jrange,krange,lon,lat,depth]=...
+    [i1min,i1max,i2min,i2max,i3min,i3max,jrange,krange,lonT,latT,lonU,latU,lonV,latV,depth]=...
      get_GLORYS_subgrid_Mydata(glorysfile,lonmin,lonmax,latmin,latmax);
     %
-    % Get GLORYS time 
-    %
-    nc=netcdf(glorysfile);
-    time=nc{'time'}(:);
-    nc(close);
-    time=time/24; % hours to days
-    Nt=length(time);
-    time_origin=ncreadatt(glorysfile,'time','units');
-    time_origin=strsplit(time_origin);
-    time_origin=char(strcat(time_origin(3)," ",time_origin(4)));
-    time_origin=datenum(time_origin);
-    % Transform time to days since hycom time origin
-    time=time+time_origin;
-    % Transform it into Yorig time (i.e days since Yorig-01-01)
-    GLORYS_time=time-datenum(Yorig,1,1);
     
+    time=datenum(Y,M,1):datenum(Y,M,Nt);
+    GLORYS_time=time-datenum(Yorig,1,1);
     trange=1:Nt;
 %
 % Extract GLORYS data
 %
-    extract_GLORYS_Mydata(OGCM_dir,OGCM_prefix,glorysfile,Y,M,...
-                 lon,lat,depth,GLORYS_time,...
+    extract_GLORYS_Mydata(OGCM_dir,OGCM_prefix,path,Y,M,...
+                 lonT,latT,lonU,latU,lonV,latV,depth,GLORYS_time,...
                  trange,krange,jrange,...
                  i1min,i1max,i2min,i2max,i3min,i3max,...
                  Yorig)

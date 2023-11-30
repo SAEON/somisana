@@ -58,7 +58,15 @@ disp(['   ROMS resolution : ',num2str(dx_roms/1000,3),' km'])
 %  open the topo file
 %
 %  get lon/lat/depth arrays from scatter data
-scatterdata = csvread(toponame);
+[~,~,fileExt] = fileparts(toponame);
+if strcmpi(fileExt, '.csv')
+    % Read data using csvread if the file has a .csv extension
+    scatterdata = csvread(toponame);
+else
+    % Read data as space-separated values if the file has a different extension
+    scatterdata = dlmread(toponame, ' ');
+end
+
 % 
 %  interpolate the scatter data onto the roms grid
 %

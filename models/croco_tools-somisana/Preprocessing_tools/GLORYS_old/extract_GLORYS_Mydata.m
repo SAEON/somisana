@@ -1,5 +1,5 @@
-function extract_GLORYS_Mydata(GLORYS_dir,GLORYS_prefix,glorysfile,year,month,...
-                      lon,lat,depth,time,...
+function extract_GLORYS_Mydata(HYCOM_dir,HYCOM_prefix,path,Y,M,...
+                      lonT,latT,lonU,latU,lonV,latV,depth,time,...
                       trange,krange,jrange,...
                       i1min,i1max,i2min,i2max,i3min,i3max,...
                       Yorig)
@@ -37,103 +37,81 @@ function extract_GLORYS_Mydata(GLORYS_dir,GLORYS_prefix,glorysfile,year,month,..
 %            for the bry file
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-disp(['    Download GLORYS for ',num2str(year),...
-      ' - ',num2str(month)])
-%
-% Get the dataset attributes
-%
-disp('Get the dataset attributes')
+disp(['    Download GLORYS for ',num2str(Y),...
+      ' - ',num2str(M)])
+
+% Initialise output variables here
+% we need to first get dimensions of the raw (i.e. not subset) input grid 
+% for initialising of output arrays before subsetting
+glorys_day=datenum(Y,M,1)-datenum(1990,1,1);
+glorysfile=[path,'algoa_',num2str(glorys_day,'%06d'),'.nc'];
 nc=netcdf(glorysfile);
+NxT=length(nc{'lonT'}(:));
+NyT=length(nc{'latT'}(:));
+NxU=length(nc{'lonU'}(:));
+NyU=length(nc{'latU'}(:));
+NxV=length(nc{'lonV'}(:));
+NyV=length(nc{'latV'}(:));
+close(nc)
+Nz=length(krange);
+Nt=length(trange);
+ssh=NaN(Nt,NyT,NxT);
+u=NaN(Nt,Nz,NyU,NxU);
+v=NaN(Nt,Nz,NyV,NxV);
+temp=NaN(Nt,Nz,NyT,NxT);
+salt=NaN(Nt,Nz,NyT,NxT);
+  
+for t=1:Nt
+  
+    %
+    % Get the dataset attributes
+    %
+    %disp('Get the dataset attributes')
+    glorys_day=datenum(Y,M,t)-datenum(1990,1,1);
+    glorysfile=[path,'algoa_',num2str(glorys_day,'%06d'),'.nc'];
+    nc=netcdf(glorysfile);
+    
+    %
+    % Get SSH
+    %
+    %disp('    ...SSH')
+    %
+    ssh_t=nc{'ssh'}(:);
+    ssh_t(ssh_t>999)=NaN;
+    ssh(t,:,:)=ssh_t;
 
-%
-% Get SSH
-%
-disp('    ...SSH')
-%
-ssh=nc{'zos'}(:);
-scale = ncreadatt(glorysfile,'zos','scale_factor');
-offset = ncreadatt(glorysfile,'zos','add_offset');
-missingval = ncreadatt(glorysfile,'zos','_FillValue');
-if missingval<0
-  ssh(ssh<=(0.9*missingval))=NaN;
-else
-  ssh(ssh>=(0.9*missingval))=NaN;
+    % Get U
+    %
+    %disp('    ...U')
+    %
+    u_t=nc{'u'}(:);
+    u_t(u_t>999)=NaN;
+    u(t,:,:,:)=u_t;
+    %
+    % Get V
+    %
+    %disp('    ...V')
+    %
+    v_t=nc{'v'}(:);
+    v_t(v_t>999)=NaN;
+    v(t,:,:,:)=v_t;
+    
+    %
+    % Get TEMP
+    %
+    %disp('    ...TEMP')
+    temp_t=nc{'temp'}(:);
+    temp_t(temp_t>999)=NaN;
+    temp(t,:,:,:)=temp_t;
+    %
+    % Get SALT
+    %
+    %disp('    ...SALT')
+    salt_t=nc{'salt'}(:);
+    salt_t(salt_t>999)=NaN;
+    salt(t,:,:,:)=salt_t;
+
 end
-ssh=ssh.*scale+offset;
-ssh=double(ssh);
-
-%
-% Get TAUX
-%
-% not in the roms file
-%
-% Get TAUY
-%
-% not in the roms file
-%
-% Get U
-%
-disp('    ...U')
-
-u=nc{'uo'}(:);
-scale = ncreadatt(glorysfile,'uo','scale_factor');
-offset = ncreadatt(glorysfile,'uo','add_offset');
-missingval = ncreadatt(glorysfile,'uo','_FillValue');
-if missingval<0
-  u(u<=(0.9*missingval))=NaN;
-else
-  u(u>=(0.9*missingval))=NaN;
-end
-u=u.*scale+offset;
-u=double(u);
-
-%
-% Get V
-%
-disp('    ...V')
-v=nc{'vo'}(:);
-scale = ncreadatt(glorysfile,'vo','scale_factor');
-offset = ncreadatt(glorysfile,'vo','add_offset');
-missingval = ncreadatt(glorysfile,'vo','_FillValue');
-if missingval<0
-  v(v<=(0.9*missingval))=NaN;
-else
-  v(v>=(0.9*missingval))=NaN;
-end
-v=v.*scale+offset;
-v=double(v);
-
-%
-% Get TEMP
-%
-disp('    ...TEMP')
-temp=nc{'thetao'}(:);
-scale = ncreadatt(glorysfile,'thetao','scale_factor');
-offset = ncreadatt(glorysfile,'thetao','add_offset');
-missingval = ncreadatt(glorysfile,'thetao','_FillValue');
-if missingval<0
-  temp(temp<=(0.9*missingval))=NaN;
-else
-  temp(temp>=(0.9*missingval))=NaN;
-end
-temp=temp.*scale+offset;
-temp=double(temp);
-
-%
-% Get SALT
-%
-disp('    ...SALT')
-salt=nc{'so'}(:);
-scale = ncreadatt(glorysfile,'so','scale_factor');
-offset = ncreadatt(glorysfile,'so','add_offset');
-missingval = ncreadatt(glorysfile,'so','_FillValue');
-if missingval<0
-  salt(salt<=(0.9*missingval))=NaN;
-else
-  salt(salt>=(0.9*missingval))=NaN;
-end
-salt=salt.*scale+offset;
-salt=double(salt);
 
 %
 % Subset the data
@@ -190,8 +168,8 @@ end
 %
 % Create the GLORYS file
 %
-create_GLORYS_Mydata([GLORYS_dir,GLORYS_prefix,'Y',num2str(year),'M',num2str(month),'.cdf'],...
-            lon,lat,lon,lat,lon,lat,depth,time,...
+create_GLORYS_Mydata([HYCOM_dir,HYCOM_prefix,'Y',num2str(Y),'M',num2str(M),'.cdf'],...
+            lonT,latT,lonU,latU,lonV,latV,depth,time,...
             temp_sub,salt_sub,u_sub,v_sub,ssh_sub,[],[],Yorig)
 %
 return
