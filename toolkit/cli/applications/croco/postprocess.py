@@ -146,6 +146,44 @@ def psi2rho(var_psi):
     
     return var_rho
 
+def rho2u(var_rho):
+    """
+    regrid a variable on the rho grid to the u-grid
+    """
+    Num_dims=len(var_rho.shape)
+    if Num_dims == 2:
+        [Mp,Lp]=var_rho.shape
+        L=Lp-1
+        var_u=0.5*(var_rho[:,0:L]+var_rho[:,1:Lp]);
+    elif Num_dims == 3:
+        [T_D,Mp,Lp]=var_rho.shape
+        L=Lp-1
+        var_u=0.5*(var_rho[:,:,0:L]+var_rho[:,:,1:Lp]);
+    else: # Num_dims == 4:
+        [T,D,Mp,Lp]=var_rho.shape
+        L=Lp-1
+        var_u=0.5*(var_rho[:,:,:,0:L]+var_rho[:,:,:,1:Lp]);
+    return var_u
+
+def rho2v(var_rho):
+    """
+    regrid a variable on the rho grid to the v-grid
+    """
+    Num_dims=len(var_rho.shape)
+    if Num_dims == 2:
+        [Mp,Lp]=var_rho.shape
+        M=Mp-1
+        var_v=0.5*(var_rho[0:M,:]+var_rho[1:Mp,:]);
+    elif Num_dims == 3:
+        [T_D,Mp,Lp]=var_rho.shape
+        M=Mp-1
+        var_v=0.5*(var_rho[:,0:M,:]+var_rho[:,1:Mp,:]);
+    else: # Num_dims == 4:
+        [T,D,Mp,Lp]=var_rho.shape
+        M=Mp-1
+        var_v=0.5*(var_rho[:,:,0:M,:]+var_rho[:,:,1:Mp,:]);
+    return var_v
+
 def csf(sc, theta_s, theta_b):
     """
     Allows use of theta_b > 0 (July 2009)
@@ -334,7 +372,7 @@ def get_depths(fname,tstep=None):
         if vtransform == -1:
             raise Exception("Unexpected value for vtransform (" + vtransform + ")")
     
-        if tstep:
+        if tstep is not None:
             depth_rho = z_levels(
                 h, ssh, theta_s, theta_b, hc, N, type_coordinate, vtransform
             )
@@ -415,6 +453,10 @@ def get_var(fname,var_str,tstep=None,level=None):
                     var=var[level,::]
                 else: # level<0: # interpolate to a constant z level
                     z=get_depths(fname,tstep=tstep)
+                    if var_str == 'u':
+                        z=rho2u(z)
+                    if var_str == 'v':
+                        z=rho2v(z)
                     var=hlev(var,z,level)
         else: # get all the time-steps
             var = ds[var_str].values
@@ -450,8 +492,8 @@ def get_uv(fname,tstep=None,level=None):
             If >= 0 then a sigma level is extracted 
             If <0 then a z level in meters is extracted
             If None, then all sigma levels are extracted    '''
-    u=get_var(fname,'u',tstep,level)
-    v=get_var(fname,'v',tstep,level)
+    u=get_var(fname,'u',tstep=tstep,level=level)
+    v=get_var(fname,'v',tstep=tstep,level=level)
     u=u2rho(u)
     v=v2rho(v)
     angle=get_var(fname, 'angle') # grid angle
@@ -485,8 +527,8 @@ def get_vort(fname,tstep=None,level=None):
     # start by getting u and v
     # and we'll leave them on their native grids for this calc
     # (i.e. intentionally not regridding to the rho grid)
-    u=get_var(fname,'u',tstep,level)
-    v=get_var(fname,'v',tstep,level)
+    u=get_var(fname,'u',tstep=tstep,level=level)
+    v=get_var(fname,'v',tstep=tstep,level=level)
     pm=get_var(fname, 'pm') # 1/dx on the rho grid
     pn=get_var(fname, 'pn') # 1/dy on the rho grid
     
