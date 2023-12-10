@@ -2,8 +2,7 @@ import xarray as xr
 from lib.log import log
 import os
 from datetime import datetime
-import postprocess as post
-# import cli.applications.croco.postprocess as post
+import cli.applications.croco.postprocess as post
 import subprocess
 
 # We are hard coding the reference date here as all our CROCO output are

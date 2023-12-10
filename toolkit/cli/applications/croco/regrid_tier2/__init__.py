@@ -3,8 +3,7 @@ import numpy as np
 from lib.log import log
 import os
 from datetime import timedelta, datetime
-import postprocess as post
-# import cli.applications.croco.postprocess as post
+import cli.applications.croco.postprocess as post
 import subprocess
 
 def regrid_tier2(args):
