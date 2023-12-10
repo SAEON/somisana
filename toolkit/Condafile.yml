@@ -3,23 +3,23 @@ channels:
   - anaconda
   - conda-forge
 dependencies:
-  - python
-  - numpy
-  - xarray
-  - cython
-  - netcdf4
-  - pymongo
-  - environs
-  - requests
-  - pathlib
-  - pyyaml
-  - zarr
-  - pandas
-  - natsort
-  - matplotlib
-  - aiohttp
-  - siphon
-  - dask
+  - python=3.10.6
+  - numpy=1.24.2
+  - xarray=2023.2.0
+  - cython=0.29.33
+  - netcdf4=1.6.2
+  - pymongo=4.3.3
+  - environs=9.5.0
+  - requests=2.28.2
+  - pathlib=1.0.1
+  - pyyaml=6.0
+  - zarr=2.13.6
+  - pandas=1.5.3
+  - natsort=8.2.0
+  - matplotlib=3.6.3
+  - aiohttp=3.8.4
+  - siphon=0.9
+  - dask=2023.2.0
   - aiofiles
   - kerchunk
   - fsspec
@@ -36,4 +36,3 @@ dependencies:
       - motuclient==3.0.0
       - psycopg==3.1.8
       - psycopg-pool==3.1.6
-      - cchardet
