@@ -1,6 +1,7 @@
 import numpy as np
 from datetime import timedelta
 import xarray as xr
+import dask
 from datetime import timedelta, datetime
 from glob import glob
 
@@ -258,8 +259,6 @@ def z_levels(h, zeta, theta_s, theta_b, hc, N, type, vtransform):
             cff2 * np.tanh(theta_s * (sc + 0.5)) - 0.5
         )
 
-    z = np.empty((int(N),) + h.shape, dtype=np.float64)
-
     h[h == 0] = 1e-2
     Dcrit = 0.01
     zeta[zeta < (Dcrit - h)] = Dcrit - h[zeta < (Dcrit - h)]
@@ -292,12 +291,15 @@ def z_levels(h, zeta, theta_s, theta_b, hc, N, type, vtransform):
             z0 = cff[k] + cff1[k] * h
             z[k, :, :] = z0 + zeta * (1.0 + z0 * hinv)
 
-    return z.squeeze()
-
+    return z
 
 def hlev(var, z, depth):
     """
     this extracts a horizontal slice
+    
+    (TODO: DEFINITELY SCOPE TO IMPROVE EFFICIENCY
+     AT THE MOMENT WE LOOP THROUGH ALL eta,xi INDICES 
+     AND INTERPOLATE ON EACH - YIKES!)
 
     var = 3D extracted variable of interest (assuming mask is already nan - use get_var() method in this file)
     z = depths (in m) of sigma levels, also 3D array (use get_depths() method in this file)
@@ -322,7 +324,6 @@ def hlev(var, z, depth):
     vnew[np.isnan(levs)]=np.nan
     
     # looping through every horizontal grid point makes this slow
-    # TODO: understand how the matlab croco_tools function does this without a loop
     for m in np.arange(Mp):
         for l in np.arange(Lp):
             
@@ -361,7 +362,7 @@ def get_ds(fname,var_str=''):
                         'hc', 'angle', 'h', 'f', 'pn', 'pm',
                         'Vtransform','theta_s','theta_b',
                         'lon_rho', 'lat_rho', 'mask_rho',
-                        'lon_u', 'lat_u', 'lon_v', 'lat_v','VertCoordType']
+                        'lon_u', 'lat_u', 'lon_v', 'lat_v']
         if var_str in static_vars:
             # no need for open_mfdataset, which can be slow
             # this is here just in case you want to use get_var() and not
@@ -377,9 +378,13 @@ def get_ds(fname,var_str=''):
                 ds = ds.drop_vars(dropvars)
                 return ds
             ds = xr.open_mfdataset(fname,
-                chunks={'time': 1}, compat='override', decode_times=False,
+                # chunks={'time': 1000}, # limited tests show using chunks can be slower 
+                compat='override', 
+                decode_times=False,
                 preprocess=drop_non_essential_vars_pop,
-                data_vars='minimal', coords='minimal', parallel=True
+                data_vars='minimal', 
+                coords='minimal', 
+                # parallel=True # can actually slow it down in some limited tests!
                 )
     else:
         ds = xr.open_dataset(fname, decode_times=False)
@@ -390,6 +395,7 @@ def get_depths(ds):
         extract the depth levels (in metres, negative downward) of the sigma levels in a CROCO file(s)
         ds = xarray dataset object read in from CROCO output file(s)
         see get_var()
+        the time dimension must be in the ds, even if it is length 1
     '''
     
     ssh=ds.zeta.values
@@ -410,7 +416,7 @@ def get_depths(ds):
     T,M,L = np.shape(ssh)
     depth_rho = np.zeros((T,N,M,L))
     for x in np.arange(T):
-        depth_rho[x, ::] = z_levels(
+        depth_rho[x, :, :, :] = z_levels(
             h, ssh[x, :, :], theta_s, theta_b, hc, N, type_coordinate, vtransform
         )
     
@@ -423,6 +429,12 @@ def find_nearest_time_indx(dt,dts):
     returns corresponding indices
 
     '''
+    
+    # dts needs to be list, even if it's a single datetime
+    # so the enumerate() loop below will always work
+    if isinstance(dts, datetime):
+        dts = [dts]
+    
     indx_out = np.zeros_like(dts)
     for t, dts_t in enumerate(dts):
         indx_out[t] = np.argmin(np.abs(np.array(dt)-dts_t))
@@ -433,7 +445,7 @@ def get_time(fname,ref_date,time_lims=None):
     ''' 
         fname = CROCO output file (or file pattern to use when opening with open_mfdataset())
         ref_date = reference date for the croco run as a datetime object
-        time_lims = a list of two datetimes i.e. [dt1,dt2], which define the range of times to extract
+        time_lims = optional list of two datetimes i.e. [dt1,dt2], which define the range of times to extract
     '''
     ds = get_ds(fname)
     
@@ -446,7 +458,7 @@ def get_time(fname,ref_date,time_lims=None):
     
     if time_lims is not None:
         indx_lims = find_nearest_time_indx(time_dt,time_lims)
-        indx = slice(indx_lims[0],indx_lims[1]+1) # +1 to make indices inclusive
+        indx = slice(indx_lims[0],indx_lims[-1]+1) # +1 to make indices inclusive
         time_dt = time_dt[indx]
     
     ds.close()
@@ -514,6 +526,9 @@ def get_var(fname,var_str,
     # Prepare indices for slicing in ds.isel() below
     # ----------------------------------------------
     #
+    # for each of the input dimensions we check the format of the input 
+    # and construct the appropriate slice to extract
+    #
     # check if tstep input is instance of datetime, 
     # in which case convert it/them into the correct time index/indices
     if isinstance(np.atleast_1d(tstep)[0],datetime):
@@ -525,24 +540,28 @@ def get_var(fname,var_str,
         
     # get the time indices for input to ds.isel()
     if not isinstance(tstep,slice):
-        if len(np.atleast_1d(tstep))==1:
+        if isinstance(tstep,int):
+            # make sure tstep is a list, even if it's a single integer
             # this is a hack to make sure we keep the time dimension 
             # after the ds.isel() step below, even though it's a single index
-            tstep = [tstep] 
-        else:
-            tstep = slice(tstep[0],tstep[1]+1) # +1 to make indices inclusive
+            # https://stackoverflow.com/questions/52190344/how-do-i-preserve-dimension-values-in-xarray-when-using-isel
+            tstep = [tstep]  
+        elif len(tstep)==2:
+            # convert the start and end limits into a slice
+            tstep = slice(tstep[0],tstep[1]+1) # +1 to make indices inclusive         
     
     # as per time, make sure we keep the eta/xi dimensions after the ds.isel() step below
     # this greatly simplifies further functions for depth interpolation 
     # as we know the number of dimensions, even if some of them are single length
+    # https://stackoverflow.com/questions/52190344/how-do-i-preserve-dimension-values-in-xarray-when-using-isel
     if not isinstance(eta,slice):
         eta = [eta]
     if not isinstance(xi,slice):
         xi = [xi]
     
-    # it gets a bit convoluted for the vertical levels
-    # we define a variable 'level_for_isel' which is as it sounds -
-    # the indices used to slice ds for the s_rho (depth) dimension
+    # it gets a bit convoluted for the vertical levels 
+    # as we have the option of a constant z level which needs interpolation...
+    # start by defining variable 'level_for_isel' which is as it sounds
     if not isinstance(level,slice):
         # so level is a single number
         if level >= 0:
@@ -554,7 +573,7 @@ def get_var(fname,var_str,
             # we'll need to do vertical interpolations later so we'll need to initially extract all the sigma levels
             level_for_isel = slice(None)
     else:
-        level_for_isel = level
+        level_for_isel = level # the full slice by definition of the logic
     
     # -----------------
     # Extract the data
@@ -563,6 +582,7 @@ def get_var(fname,var_str,
     ds = get_ds(fname,var_str)
     ds = ds.isel(time=tstep, 
                        s_rho=level_for_isel,
+                       s_w=level_for_isel,
                        eta_rho=eta,
                        xi_rho=xi,
                        xi_u=xi,
@@ -576,6 +596,7 @@ def get_var(fname,var_str,
     # ---------------------------
     #
     if len(var.shape)==4 and not isinstance(level,slice):
+        print('doing vertical interpolations')
         # given the above checks in the code, here we should be dealing with a 3D variable 
         # and we want a hz slice at a constant depth level
         z=get_depths(ds)
@@ -588,7 +609,7 @@ def get_var(fname,var_str,
         var_out=np.zeros((T,M,L))
         for t in np.arange(T):
             var_out[t,:,:]=hlev(var[t,::], z[t,::], level)
-            var=hlev(var,z,level)
+        var=var_out
     
     # --------
     # Masking
@@ -599,7 +620,7 @@ def get_var(fname,var_str,
         mask=1
     # it looks like numpy is clever enough to use the 2D mask on a 3D or 4D variable
     # that's useful!
-    var=var*mask
+    var=var.squeeze()*mask
     
     return var
 
@@ -615,7 +636,8 @@ def get_uv(fname,
     
     subsetting in space not perimitted for this as the data are assumed 
     to be on the u,v grids... I guess we could check the size of u,v and 
-    skip the regridding steps? Cross that bridge when we get there
+    skip the regridding steps? Or maybe rather a separate get_ts_uv() function
+    Cross that bridge when we get there
     '''
     
     u=get_var(fname,'u',tstep=tstep,level=level,ref_date=ref_date)
