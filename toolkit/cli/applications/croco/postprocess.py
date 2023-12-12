@@ -346,9 +346,10 @@ def hlev(var, z, depth):
 
     return vnew
 
-def get_croco_ds(fname,var_str=''):
+def get_ds(fname,var_str=''):
     '''
-    allow use of single file or multiple files
+    flexible method to get the xarray dataset for either a
+    single or multiple CROCO files 
     '''
     # print('Opening dataset: ' + fname)
     if ('*' in fname) or ('?' in fname) or ('[' in fname):
@@ -356,20 +357,30 @@ def get_croco_ds(fname,var_str=''):
         # our essential vars are the 'var_str' (obviously) plus some others 
         # we need for things like vertical interp, rotating vectors, computing vorticity etc
         # all the lon* lat* and mar* variables are automatically included in the drop_non_essential_vars_pop sub-function
-        essential_vars=[var_str,'time', 's_rho', 's_w', 'Cs_r', 'Cs_w', 
-                        'hc', 'angle', 'h', 'f', 'pn', 'pm', 'zeta',
-                        'Vtransform','theta_s','theta_b']
-        def drop_non_essential_vars_pop(ds):
-            dropvars = [v for v in ds.variables if v not in
-                        essential_vars
-                        and v[0:3] not in ['lon', 'lat', 'mas']]
-            ds = ds.drop_vars(dropvars)
-            return ds
-        ds = xr.open_mfdataset(fname,
-            chunks={'time': 1}, compat='override', decode_times=False,
-            preprocess=drop_non_essential_vars_pop,
-            data_vars='minimal', coords='minimal'
-            )
+        static_vars=['s_rho', 's_w', 'sc_r', 'sc_w', 'Cs_r', 'Cs_w', 
+                        'hc', 'angle', 'h', 'f', 'pn', 'pm',
+                        'Vtransform','theta_s','theta_b',
+                        'lon_rho', 'lat_rho', 'mask_rho',
+                        'lon_u', 'lat_u', 'lon_v', 'lat_v','VertCoordType']
+        if var_str in static_vars:
+            # no need for open_mfdataset, which can be slow
+            # this is here just in case you want to use get_var() and not
+            # have to change fname just to read a static variable
+            fname=glob(fname)[0]
+            ds = xr.open_dataset(fname, decode_times=False)
+        else:
+            # let's use open_mfdataset, but drop non-essential vars
+            essential_vars=static_vars+[var_str,'time', 'zeta']
+            def drop_non_essential_vars_pop(ds):
+                dropvars = [v for v in ds.variables if v not in
+                            essential_vars]
+                ds = ds.drop_vars(dropvars)
+                return ds
+            ds = xr.open_mfdataset(fname,
+                chunks={'time': 1}, compat='override', decode_times=False,
+                preprocess=drop_non_essential_vars_pop,
+                data_vars='minimal', coords='minimal', parallel=True
+                )
     else:
         ds = xr.open_dataset(fname, decode_times=False)
     return ds
@@ -381,9 +392,8 @@ def get_depths(ds):
         see get_var()
     '''
     
-    # get the surface and bottom levels
     ssh=ds.zeta.values
-    h = ds.zeta.values
+    h = ds.h.values
     
     # get the variables used to calculate the sigma levels
     # CROCO uses these params to determine how to deform the vertical grid
@@ -393,10 +403,8 @@ def get_depths(ds):
     hc = ds.hc.values
     N = np.shape(ds.s_rho)[0]
     type_coordinate = "rho"
-    vtransform = (
-        2 if ds.VertCoordType == "NEW" else 1 if ds.VertCoordType == "OLD" else -1
-    )
-    if vtransform == -1:
+    vtransform = ds.Vtransform.values
+    if not vtransform == 1 and not vtransform == 2:
         raise Exception("Unexpected value for vtransform (" + vtransform + ")")
 
     T,M,L = np.shape(ssh)
@@ -407,14 +415,27 @@ def get_depths(ds):
         )
     
     return depth_rho
-    
+
+def find_nearest_time_indx(dt,dts):
+    '''
+    dt : array of datetimes
+    dts : list of datetimes for which we want to return the nearest indices
+    returns corresponding indices
+
+    '''
+    indx_out = np.zeros_like(dts)
+    for t, dts_t in enumerate(dts):
+        indx_out[t] = np.argmin(np.abs(np.array(dt)-dts_t))
+
+    return indx_out.astype(int)
+
 def get_time(fname,ref_date,time_lims=None):
     ''' 
         fname = CROCO output file (or file pattern to use when opening with open_mfdataset())
         ref_date = reference date for the croco run as a datetime object
         time_lims = a list of two datetimes i.e. [dt1,dt2], which define the range of times to extract
     '''
-    ds = get_croco_ds(fname)
+    ds = get_ds(fname)
     
     time = ds.time.values
 
@@ -424,13 +445,7 @@ def get_time(fname,ref_date,time_lims=None):
         time_dt.append(date_now)
     
     if time_lims is not None:
-        # this is the same logic as used in get_var()
-        # so a little bit of repeated code, but I'd prefer that 
-        # to allow for efficiency of get_var() when you don't want to read time 
-        indx_lims = np.zeros_like(time_lims)
-        for indx, time_dt_indx in enumerate(time_lims):
-            indx_lims[indx] = np.argmin(np.abs(np.array(time_dt)-time_dt_indx))
-        indx_lims=indx_lims.astype(int)
+        indx_lims = find_nearest_time_indx(time_dt,time_lims)
         indx = slice(indx_lims[0],indx_lims[1]+1) # +1 to make indices inclusive
         time_dt = time_dt[indx]
     
@@ -444,7 +459,7 @@ def get_lonlatmask(fname,type='r'):
     if ('*' in fname) or ('?' in fname) or ('[' in fname):
         fname=glob(fname)[0]
     
-    ds = get_croco_ds(fname)
+    ds = get_ds(fname)
     
     lon = ds.lon_rho.values 
     lat = ds.lat_rho.values 
@@ -478,7 +493,7 @@ def get_var(fname,var_str,
             ref_date=None):
     '''
         extract a variable from a CROCO file
-        fname = CROCO output file (or file pattern to use when opening with open_mfdataset())
+        fname = CROCO output file name (or file pattern to be used with open_mfdataset())
         var_str = variable name (string) in the CROCO output file(s)
         tstep = time step indices to extract 
                 it can be a single integer (starting at zero) or datetime
@@ -488,9 +503,9 @@ def get_var(fname,var_str,
                 If >= 0 then a sigma level is extracted 
                 If <0 then a z level in meters is extracted
                 If slice(None), then all sigma levels are extracted
-        eta = index of the eta axis
+        eta = index/indices of the eta axis
               If slice(None), then all indices are extracted
-        xi = index of the eta axis
+        xi = index/indices of the eta axis
               If slice(None), then all indices are extracted
         ref_date = reference datetime used in croco runs
     '''
@@ -500,20 +515,14 @@ def get_var(fname,var_str,
     # ----------------------------------------------
     #
     # check if tstep input is instance of datetime, 
-    # in which case convert it/them into the correct time indices
+    # in which case convert it/them into the correct time index/indices
     if isinstance(np.atleast_1d(tstep)[0],datetime):
         if ref_date is None:
             print('ref_date is not defined - using default of 2000-01-01')
             ref_date=datetime(2000,1,1)
         time_croco = get_time(fname,ref_date)
-        # below using the same logic as used in get_time() to get the time indices
-        # but here I want to keep the indx_lims and not the subsetted datetime array 
-        # so we need a little bit of repeated code
-        indx_lims = np.zeros_like(tstep)
-        for indx, dtime in enumerate(tstep):
-            indx_lims[indx] = np.argmin(np.abs(np.array(time_croco)-dtime))
-        tstep=indx_lims.astype(int)
-    
+        tstep = find_nearest_time_indx(time_croco,tstep)
+        
     # get the time indices for input to ds.isel()
     if not isinstance(tstep,slice):
         if len(np.atleast_1d(tstep))==1:
@@ -526,15 +535,15 @@ def get_var(fname,var_str,
     # as per time, make sure we keep the eta/xi dimensions after the ds.isel() step below
     # this greatly simplifies further functions for depth interpolation 
     # as we know the number of dimensions, even if some of them are single length
-    if len(np.atleast_1d(eta))==1:
+    if not isinstance(eta,slice):
         eta = [eta]
-    if len(np.atleast_1d(xi))==1:
+    if not isinstance(xi,slice):
         xi = [xi]
     
-    # it get's a bit convoluted for the vertical levels
+    # it gets a bit convoluted for the vertical levels
     # we define a variable 'level_for_isel' which is as it sounds -
     # the indices used to slice ds for the s_rho (depth) dimension
-    if len(np.atleast_1d(level))==1:
+    if not isinstance(level,slice):
         # so level is a single number
         if level >= 0:
             # I'm intentionally not putting 'level' in [] as per the other single indices above
@@ -551,7 +560,7 @@ def get_var(fname,var_str,
     # Extract the data
     # -----------------
     #
-    ds = get_croco_ds(fname,var_str)
+    ds = get_ds(fname,var_str)
     ds = ds.isel(time=tstep, 
                        s_rho=level_for_isel,
                        eta_rho=eta,
@@ -567,7 +576,7 @@ def get_var(fname,var_str,
     # ---------------------------
     #
     if len(var.shape)==4 and not isinstance(level,slice):
-        # given the checks in the code here we should be dealing with a 3D variable 
+        # given the above checks in the code, here we should be dealing with a 3D variable 
         # and we want a hz slice at a constant depth level
         z=get_depths(ds)
         # if needed, get z onto the u/v grid to line up with the variable
@@ -581,39 +590,36 @@ def get_var(fname,var_str,
             var_out[t,:,:]=hlev(var[t,::], z[t,::], level)
             var=hlev(var,z,level)
     
-    lon,lat,mask=get_lonlatmask(fname,var_str) # var_str will define the mask type (u,v, or rho)
-    
+    # --------
+    # Masking
+    # --------
+    if isinstance(eta,slice) and isinstance(xi,slice):
+        _,_,mask=get_lonlatmask(fname,var_str) # var_str will define the mask type (u,v, or rho)
+    else:
+        mask=1
     # it looks like numpy is clever enough to use the 2D mask on a 3D or 4D variable
     # that's useful!
-    var=np.squeeze(var)*mask
+    var=var*mask
     
     return var
 
 def get_uv(fname,
            tstep=slice(None),
            level=slice(None),
-           eta=slice(None),
-           xi=slice(None),
            ref_date=None):
     '''
     extract u and v components from a CROCO output file(s), regrid onto the 
     rho grid and rotate from grid-aligned to east-north components
     
-    fname = CROCO output file
-    tstep = time step indices to extract 
-            it can be a single integer (starting at zero) or datetime
-            or two values in a list e.g. [dt1,dt2], in which case the range between the two is extracted
-            If slice(None), then all time-steps are extracted
-    level = vertical level to extract
-            If >= 0 then a sigma level is extracted 
-            If <0 then a z level in meters is extracted
-            If slice(None), then all sigma levels are extracted
-    eta = index of the eta axis
-          If slice(None), then all indices are extracted
-    xi = index of the eta axis
-          If slice(None), then all indices are extracted    '''
-    u=get_var(fname,'u',tstep=tstep,level=level,eta=eta,xi=xi,ref_date=ref_date)
-    v=get_var(fname,'v',tstep=tstep,level=level,eta=eta,xi=xi,ref_date=ref_date)
+    see get_var() for a description of the inputs   
+    
+    subsetting in space not perimitted for this as the data are assumed 
+    to be on the u,v grids... I guess we could check the size of u,v and 
+    skip the regridding steps? Cross that bridge when we get there
+    '''
+    
+    u=get_var(fname,'u',tstep=tstep,level=level,ref_date=ref_date)
+    v=get_var(fname,'v',tstep=tstep,level=level,ref_date=ref_date)
     u=u2rho(u)
     v=v2rho(v)
     angle=get_var(fname, 'angle') # grid angle
@@ -630,25 +636,25 @@ def get_uv(fname,
     # Return east / north vector vector components instead of x / y components
     return u_out,v_out
 
-def get_vort(fname,tstep=None,level=None):
+def get_vort(fname,
+             tstep=slice(None),
+             level=slice(None),
+             ref_date=None):
     '''
     extract the relative vorticity from a CROCO output file:
     dv/dx - du/dy
     
-    fname = CROCO output file
-    tstep = time step index to extract 
-            integer starting at zero
-            If None, then all time-steps are extracted
-    level = vertical level to extract
-            If >= 0 then a sigma level is extracted 
-            If <0 then a z level in meters is extracted
-            If None, then all sigma levels are extracted    '''
+    see get_var() for a description of the inputs   
+    
+    subsetting in space not perimitted for this. makes no sense for a single
+    point, and doing it on a subset of the domain is a proper edge case
+    '''
     
     # start by getting u and v
     # and we'll leave them on their native grids for this calc
     # (i.e. intentionally not regridding to the rho grid)
-    u=get_var(fname,'u',tstep=tstep,level=level)
-    v=get_var(fname,'v',tstep=tstep,level=level)
+    u=get_var(fname,'u',tstep=tstep,level=level,ref_date=ref_date)
+    v=get_var(fname,'v',tstep=tstep,level=level,ref_date=ref_date)
     pm=get_var(fname, 'pm') # 1/dx on the rho grid
     pn=get_var(fname, 'pn') # 1/dy on the rho grid
     
