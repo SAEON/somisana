@@ -3,7 +3,7 @@ channels:
   - anaconda
   - conda-forge
 dependencies:
-  - python
+  - python=3.10.6
   - numpy
   - xarray
   - cython
@@ -33,7 +33,7 @@ dependencies:
   - pytest
   - pip
   - pip:
-      - motuclient==3.0.0
       - psycopg==3.1.8
       - psycopg-pool==3.1.6
       - cchardet
+      - copernicus-marine-client>=0.10.0<0.11.0

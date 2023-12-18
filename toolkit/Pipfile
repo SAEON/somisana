@@ -27,10 +27,10 @@ h5py = "*"
 asyncpg = "*"
 pydap = "*"
 lxml = "*"
-motuclient = "*"
 pytest = "*"
 scipy = "*"
 psutil = "*"
+copernicus-marine-client = "*"
 
 [dev-packages]
 
