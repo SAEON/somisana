@@ -210,11 +210,23 @@ Then activate the environment
 conda activate somisana
 ```
 
-If `Condafile.yml` is updated with new required dependences you can update your environment like this 
+If `Condafile.yml` is updated with new packages you can update your environment like this 
 
 ```sh
 conda env update -f Condafile.yml --prune
 ```
+
+If you are using a conda environment but need to include <some-new-package> in the environment used in the toolkit docker image (which has the pipenv environment baked in), then you'll need to update the `Pipfile` and the `Pipfile.lock`. To do this you can do 
+
+```sh
+rm -rf .venv
+python -m venv .venv
+source .venv/bin/activate
+pipenv install 
+pipenv install <some-new-package>
+```
+
+You should see <some-new-package> added to the `Pipfile` and the `Pipfile.lock` should have been updated too. Just push these changes to the repo and <some-new-package> will be available in the toolkit image.
 
 ### Pyenv
 
