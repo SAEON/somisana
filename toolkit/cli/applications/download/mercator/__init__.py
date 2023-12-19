@@ -59,23 +59,21 @@ async def run_cmd(c, run_date, start_date, end_date, domain, workdir):
     c["fname"] = fname
 
     runcommand = f"""
-        motuclient \
-            --user {USER} \
-            --pwd {PWD} \
-            --motu https://nrt.cmems-du.eu/motu-web/Motu \
-            --service-id GLOBAL_ANALYSISFORECAST_PHY_001_024-TDS \
-            --product-id {dataset} \
-            --longitude-min {domain[0]} \
-            --longitude-max {domain[1]} \
-            --latitude-min {domain[2]} \
-            --latitude-max {domain[3]} \
-            --date-min "{start_date.strftime("%Y-%m-%d")}" \
-            --date-max "{end_date.strftime("%Y-%m-%d")}" \
-            --depth-min {DEPTH_RANGE[0]} \
-            --depth-max {DEPTH_RANGE[1]} \
+        copernicus-marine subset -i {dataset} \
+            --force-download \
+            --username {USER} \
+            --password {PWD} \
+            -x {domain[0]} \
+            -X {domain[1]} \
+            -y {domain[2]} \
+            -Y {domain[3]} \
+            -t "{start_date.strftime("%Y-%m-%d")}" \
+            -T "{end_date.strftime("%Y-%m-%d")}" \
+            -z {DEPTH_RANGE[0]} \
+            -Z {DEPTH_RANGE[1]} \
             {variables} \
-            --out-dir {os.path.normpath(workdir)} \
-            --out-name {fname}"""
+            -o {os.path.normpath(workdir)} \
+            -f {fname}"""
 
     log(" ".join(runcommand.split()))
     f = os.path.normpath(os.path.join(workdir, fname))
