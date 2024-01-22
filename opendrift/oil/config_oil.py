@@ -9,13 +9,13 @@ from datetime import datetime, timedelta
 # give a name for your configuration
 # output will be written to a directory with this name
 # which will be accessible via the somisana thredds or mnemosyne file server
-config_name = 'st_francis_35tonnes_20240109_000000'
+config_name = 'test'
 #
 # croco run date
 # this is intentionally a string in 'yyyymmdd' format so it can also be easily read by the github workflow (needed for creating an appropriate directory on the public facing file server) 
 # note that only runs from the last 5 days are stored for running opendrift
 # the croco model is configured to produce output from 5 days before to 5 days after the run date
-croco_run_date = '20240108'
+croco_run_date = '20240122'
 
 # -----------
 # spill info
@@ -23,7 +23,7 @@ croco_run_date = '20240108'
 #
 # coordinates of the spill (in geographical degrees)
 lon_spill=24.872667
-lat_spill=-34.197
+lat_spill=-34.3
 #
 # depth of the release
 # For a surface release I prefer to put a small negative number like z=-0.001
@@ -45,10 +45,10 @@ oil_type='GENERIC DIESEL'
 #
 # start time of spill - use local time (UTC+2)
 #spill_start_time=datetime.now() # change to whenever the spill should be 
-spill_start_time=datetime(2024,1,9,0,0,0)
+spill_start_time=datetime(2024,1,21,21,0,0)
 #
 # duration of the release of oil in hours
-release_dur=1
+release_dur=3
 #
 # volume of oil spilled in m3
 # This is not used directly in the model - it's only used here to get the oil flow rate below
@@ -122,7 +122,7 @@ wind_drift_factor=0.03
 # --------------
 # plotting info
 # --------------
-plot_extents=[23.5,26,-34.8,-33.6] # [lon1,lon2,lat1,lat2]
+plot_extents=[23.5,26,-35,-33.6] # [lon1,lon2,lat1,lat2]
 figsize=(8,4) # resize as needed to match the shape of extents below
 time_x=0.1 # placement of time label, in axes coordinates
 time_y=0.9
