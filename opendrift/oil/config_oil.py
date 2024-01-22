@@ -122,12 +122,12 @@ wind_drift_factor=0.03
 # --------------
 # plotting info
 # --------------
-plot_extents=[23.5,26,-35,-33.6] # [lon1,lon2,lat1,lat2]
+plot_extents=[23,26,-35,-33.6] # [lon1,lon2,lat1,lat2]
 figsize=(8,4) # resize as needed to match the shape of extents below
 time_x=0.1 # placement of time label, in axes coordinates
 time_y=0.9
 vmin=-50   # the z variable is animated so this is your max depth
 cmap='Spectral_r' #'Spectral_r' 
 plot_cbar=True #True
-cbar_loc=(0.92, 0.15, 0.01, 0.7)
+cbar_loc=(0.9, 0.15, 0.01, 0.7)
 croco_dirs_plot=None # croco_dirs
