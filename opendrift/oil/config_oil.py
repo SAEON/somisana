@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 # give a name for your configuration
 # output will be written to a directory with this name
 # which will be accessible via the somisana thredds or mnemosyne file server
-config_name = 'test'
+config_name = 'Jenny's test'
 #
 # croco run date
 # this is intentionally a string in 'yyyymmdd' format so it can also be easily read by the github workflow (needed for creating an appropriate directory on the public facing file server) 
@@ -22,8 +22,8 @@ croco_run_date = '20240122'
 # -----------
 #
 # coordinates of the spill (in geographical degrees)
-lon_spill=24.872667
-lat_spill=-34.3
+lon_spill=26.43
+lat_spill=-33.8
 #
 # depth of the release
 # For a surface release I prefer to put a small negative number like z=-0.001
@@ -48,7 +48,7 @@ oil_type='GENERIC DIESEL'
 spill_start_time=datetime(2024,1,21,21,0,0)
 #
 # duration of the release of oil in hours
-release_dur=3
+release_dur=10
 #
 # volume of oil spilled in m3
 # This is not used directly in the model - it's only used here to get the oil flow rate below
