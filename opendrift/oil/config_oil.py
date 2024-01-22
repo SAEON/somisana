@@ -122,7 +122,7 @@ wind_drift_factor=0.03
 # --------------
 # plotting info
 # --------------
-plot_extents=[23,26,-35,-33.6] # [lon1,lon2,lat1,lat2]
+plot_extents=[25,27.5,-35,-33.6] # [lon1,lon2,lat1,lat2]
 figsize=(8,4) # resize as needed to match the shape of extents below
 time_x=0.1 # placement of time label, in axes coordinates
 time_y=0.9
