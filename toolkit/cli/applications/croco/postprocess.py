@@ -1,3 +1,13 @@
+'''
+The latest croco postprocess.py code now resides at git@github.com:SAEON/somisana-croco.git
+The separate somisana-croco repo is where new development on somisana's croco processing will take place
+I could include that repo as a submodule here, but that's probably over-kill 
+as the operational toolkit's functionality is pretty limited, and I want to avoid breaking
+the operational toolkit when we make further developments on the somisana-croco repo
+So I'm just going to leave this file here (if it ain't broke don't fix it!), 
+and may just over-write it from time to time with the latest stuff from the other repo 
+'''
+
 import numpy as np
 from datetime import timedelta
 import xarray as xr
