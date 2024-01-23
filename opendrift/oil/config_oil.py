@@ -9,21 +9,21 @@ from datetime import datetime, timedelta
 # give a name for your configuration
 # output will be written to a directory with this name
 # which will be accessible via the somisana thredds or mnemosyne file server
-config_name = 'st_francis_35tonnes_20240109_000000'
+config_name = 'Nkululeko_Test_Run'
 #
 # croco run date
 # this is intentionally a string in 'yyyymmdd' format so it can also be easily read by the github workflow (needed for creating an appropriate directory on the public facing file server) 
 # note that only runs from the last 5 days are stored for running opendrift
 # the croco model is configured to produce output from 5 days before to 5 days after the run date
-croco_run_date = '20240108'
+croco_run_date = '20240123'
 
 # -----------
 # spill info
 # -----------
 #
 # coordinates of the spill (in geographical degrees)
-lon_spill=24.872667
-lat_spill=-34.197
+lon_spill=26.823
+lat_spill=-33.94400
 #
 # depth of the release
 # For a surface release I prefer to put a small negative number like z=-0.001
@@ -41,14 +41,14 @@ radius=5
 # Can choose any oil name from https://adios.orr.noaa.gov/oils/
 # Or some Norgegain oils from https://opendrift.github.io/oil_types.html
 # Or a few other generic oil types added as part of opendrift, such as 'GENERIC INTERMEDIATE FUEL OIL 180'
-oil_type='GENERIC DIESEL'
+oil_type='IFO-180LS 2014'
 #
 # start time of spill - use local time (UTC+2)
 #spill_start_time=datetime.now() # change to whenever the spill should be 
-spill_start_time=datetime(2024,1,9,0,0,0)
+spill_start_time=datetime(2024,1,20,10,30,0)
 #
 # duration of the release of oil in hours
-release_dur=1
+release_dur=4
 #
 # volume of oil spilled in m3
 # This is not used directly in the model - it's only used here to get the oil flow rate below
@@ -122,12 +122,12 @@ wind_drift_factor=0.03
 # --------------
 # plotting info
 # --------------
-plot_extents=[23.5,26,-34.8,-33.6] # [lon1,lon2,lat1,lat2]
+plot_extents=[25,28.0,-35,-32.0] # [lon1,lon2,lat1,lat2]
 figsize=(8,4) # resize as needed to match the shape of extents below
 time_x=0.1 # placement of time label, in axes coordinates
 time_y=0.9
 vmin=-50   # the z variable is animated so this is your max depth
 cmap='Spectral_r' #'Spectral_r' 
 plot_cbar=True #True
-cbar_loc=(0.92, 0.15, 0.01, 0.7)
+cbar_loc=(0.9, 0.15, 0.01, 0.7)
 croco_dirs_plot=None # croco_dirs
