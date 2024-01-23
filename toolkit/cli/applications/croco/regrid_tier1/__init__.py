@@ -53,7 +53,7 @@ def regrid_tier1(args):
 
     # get the depth levels of the sigma layers
     log("Computing depth of sigma levels")
-    depth = post.get_depths(input)
+    depth = post.get_depths(post.get_ds(input)) # get_depths now takes an xarray dataset as input
 
     # Create new xarray dataset with selected variables
     log("Generating dataset")
