@@ -1,3 +1,6 @@
 [submodule "external-projects/croco_tools"]
 	path = external-projects/croco_tools
 	url = git@github.com:SAEON/croco_tools.git
+[submodule "croco/somisana-croco"]
+	path = croco/somisana-croco
+	url = git@github.com:SAEON/somisana-croco.git
