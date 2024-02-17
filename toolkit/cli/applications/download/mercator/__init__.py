@@ -59,7 +59,7 @@ async def run_cmd(c, run_date, start_date, end_date, domain, workdir):
     c["fname"] = fname
 
     runcommand = f"""
-        copernicus-marine subset -i {dataset} \
+        copernicusmarine subset -i {dataset} \
             --force-download \
             --username {USER} \
             --password {PWD} \
