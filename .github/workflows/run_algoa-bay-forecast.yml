@@ -265,7 +265,20 @@ jobs:
               zarrify \
                 --input /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ inputs.MODEL_RUN_DATE }}-tier3.nc \
                 --output /tmp/somisana/current/croco/forecast/algoa-bay-forecast-${{ inputs.MODEL_RUN_DATE }}-tier3.zarr
-                  
+      - name: testing timeseries extraction
+        continue-on-error: true
+        run: >-
+          docker run \
+            --rm \
+            -v $WORKDIR:/tmp/somisana/current \
+            ghcr.io/saeon/somisana-croco_cli_main:sha-e0ea8ff5bce025cfe0726470f55f0a70bb98c420 \
+              get_ts_multivar \
+                --fname /tmp/somisana/current/croco/forecast/hourly-avg-${{ inputs.MODEL_RUN_DATE }}.nc \
+                --fname_out /tmp/somisana/current/croco/forecast/hourly-avg-${{ inputs.MODEL_RUN_DATE }}-stcroix.nc \
+                --lon 25.75143 \
+                --lat -33.82751 \
+                --depths 0,-10,-20,-50,-100,-200,-500,-1000,-99999 \
+                --ref_date "2000-01-01 00:00:00"
 
   # Archive output
   archive-data:
@@ -300,6 +313,17 @@ jobs:
             -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
             -T ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ inputs.MODEL_RUN_DATE }}-archive.nc \
             https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}_hourly_avg_fcst.nc;
+      - name: Archive time-series CROCO output for St Croix
+        continue-on-error: true
+        run: |
+          curl \
+            --silent \
+            --keepalive-time 2400 \
+            -X PUT \
+            -H "Content-Type: application/octet-stream" \
+            -H "Authorization: ${{ secrets.MNEMOSYNE_TOKEN }}" \
+            -T ${{ env.WORKDIR }}/croco/forecast/hourly-avg-${{ inputs.MODEL_RUN_DATE }}-stcroix.nc \
+            https://mnemosyne.somisana.ac.za/somisana/algoa-bay/5-day-forecast/${{ env.MODEL_RUN_YEAR_MONTH }}/${{ inputs.MODEL_RUN_DATE }}_hourly_avg_stcroix.nc;
       - name: Archive tier 1 output
         continue-on-error: false
         run: |
