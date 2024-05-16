@@ -143,28 +143,28 @@ def download(run_date, hdays, fdays, domain, workdir):
         encoding = {
             "zos": {
                 "dtype": "float32",
-                "scale_factor": 0.000305185094475746,
+                "scale_factor": 1.0,
                 "add_offset": 0.0,
             },
             "so": {
                 "dtype": "float32",
-                "add_offset": -0.00152592547237873,
-                "scale_factor": 0.00152592547237873,
+                "scale_factor": 1.0,
+                "add_offset": 0.0,
             },
             "uo": {
                 "dtype": "float32",
-                "scale_factor": 0.000610370188951492,
+                "scale_factor": 1.0,
                 "add_offset": 0.0,
             },
             "vo": {
                 "dtype": "float32",
-                "scale_factor": 0.000610370188951492,
+                "scale_factor": 1.0,
                 "add_offset": 0.0,
             },
             "thetao": {
                 "dtype": "float32",
-                "scale_factor": 0.000732444226741791,
-                "add_offset": 21.0,
+                "scale_factor": 1.0,
+                "add_offset": 0.0,
             },
         }
         with xr.merge(datasets) as ds:
