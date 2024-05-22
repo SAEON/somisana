@@ -421,7 +421,7 @@
             ],
             "index": "pypi",
             "markers": "python_version < '3.13' and python_version >= '3.9'",
-            "version": "==1.2.1"
+            "version": "==1.2.2"
         },
         "cycler": {
             "hashes": [
