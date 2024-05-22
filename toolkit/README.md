@@ -216,18 +216,6 @@ If `Condafile.yml` is updated with new packages you can update your environment 
 conda env update -f Condafile.yml --prune
 ```
 
-If you are using a conda environment but need to include <some-new-package> in the environment used in the toolkit docker image (which has the pipenv environment baked in), then you'll need to update the `Pipfile` and the `Pipfile.lock`. To do this you can do 
-
-```sh
-rm -rf .venv
-python -m venv .venv
-source .venv/bin/activate
-pipenv install 
-pipenv install <some-new-package>
-```
-
-You should see <some-new-package> added to the `Pipfile` and the `Pipfile.lock` should have been updated too. Just push these changes to the repo and <some-new-package> will be available in the toolkit image.
-
 ### Pyenv
 
 Pipenv is a wrapper over the regular pip package manager, but with a slightly better mechanism for locking dependencies of referenced libraries (I believe). Dependencies are managed via the `Pipfile` and the `Pipfile.lock`
@@ -247,6 +235,26 @@ cd toolkit
 mkdir .venv # This is optional, and will force pipenv to create a venv directory locally
 pipenv install
 ```
+
+If you need to include <some-new-package> in the environment used in the toolkit docker image (which has the pipenv environment baked in), then you'll need to update the `Pipfile` and the `Pipfile.lock`. To do this you can do 
+
+```sh
+rm -rf .venv
+python -m venv .venv
+source .venv/bin/activate
+pipenv install 
+pipenv install <some-new-package>
+```
+
+You should see <some-new-package> added to the `Pipfile` and the `Pipfile.lock` should have been updated too. Just push these changes to the repo and <some-new-package> will be available in the toolkit image.
+
+If you just need to update a package (e.g. if the copernicusmarine toolbox gets updated)
+
+```sh
+pipenv update copernicusmarine # or whatever package you want to update
+```
+
+Then you'll see the version updated in `Pipfile.lock`, which you can then push to the remote repo, and it'll get used in the next building of the toolkit docker image
 
 ## Run the CLI from source
 
