@@ -148,8 +148,9 @@ jobs:
           source ~/.bashrc
           nvm use 19.6.0
       - name: Create ${{ env.EEZ_DATA_DIR }} directory 
+        continue-on-error: true
         run: |
-          rm -rf ${{ env.EEZ_DATA_DIR }} 
+          # rm -rf ${{ env.EEZ_DATA_DIR }} # not sure why we need this... just commenting for now due to issues with nomads, and our code doesn't pick up when randomly don't get downloaded with status code 404. So just re-running the job manually until I have time to fix it properly. And we need the previously downloaded files, otherwise it fails again
           mkdir -p ${{ env.EEZ_DATA_DIR }} 
           chown -R :runners ${{ env.EEZ_DATA_DIR }} 
           chmod -R 774 ${{ env.EEZ_DATA_DIR }} 
