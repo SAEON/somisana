@@ -26,6 +26,9 @@ def validate_download_or_remove(fileout):
             "WARNING:", fileout, "< 1kB (flagged as invalid)", open(fileout, "r").read()
         )
         os.remove(fileout)
+        return False
+    else:
+        return True
 
 
 def set_params(_params, dt, i):
@@ -40,22 +43,30 @@ def set_params(_params, dt, i):
 async def download_file(semaphore, fname, workdir, params):
     fileout = os.path.join(workdir, fname)
     if not os.path.isfile(fileout):
-        async with semaphore:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, params=params) as response:
-                    if response.status == 200:
-                        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        print(f"[{now}] Downloading {fileout}")
-                        async with aiofiles.open(fileout, mode="wb") as f:
-                            async for chunk in response.content.iter_chunked(1024):
-                                if chunk:
-                                    await f.write(chunk)
-                        validate_download_or_remove(fileout)
-                    else:
-                        print(f"Request failed with status code {response.status}")
+        max_retries = 3
+        delay = 60
+        download_success = False
+        for attempt in range(1,max_retries):
+            async with semaphore:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, params=params) as response:
+                        if response.status == 200:
+                            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            print(f"[{now}] Downloading {fileout} (attempt {attempt}/{max_retries})")
+                            async with aiofiles.open(fileout, mode="wb") as f:
+                                async for chunk in response.content.iter_chunked(1024):
+                                    if chunk:
+                                        await f.write(chunk)
+                            download_success = validate_download_or_remove(fileout)
+                        else:
+                            print(f"Request failed with status code {response.status}")
+            if download_success:
+                return
+            else:
+                print(f"Retrying download in {delay} seconds...")
+                await asyncio.sleep(delay)
     else:
         print("File already exists", fileout)
-
 
 def get_latest_available_dt(dt):
     latest_available_date = datetime(dt.year, dt.month, dt.day, 18, 0, 0)
