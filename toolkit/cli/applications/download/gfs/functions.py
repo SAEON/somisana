@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import urllib.request
 import aiofiles
 import aiohttp
+import asyncio
 
 url = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25_1hr.pl"
 
@@ -46,7 +47,7 @@ async def download_file(semaphore, fname, workdir, params):
         max_retries = 3
         delay = 60
         download_success = False
-        for attempt in range(1,max_retries):
+        for attempt in range(max_retries):
             async with semaphore:
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, params=params) as response:
