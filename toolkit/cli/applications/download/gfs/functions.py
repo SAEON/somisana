@@ -44,10 +44,10 @@ def set_params(_params, dt, i):
 async def download_file(semaphore, fname, workdir, params):
     fileout = os.path.join(workdir, fname)
     if not os.path.isfile(fileout):
-        max_retries = 3
+        max_retries = 5
         delay = 60
         download_success = False
-        for attempt in range(max_retries):
+        for attempt in range(1,max_retries+1):
             async with semaphore:
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, params=params) as response:
@@ -60,11 +60,11 @@ async def download_file(semaphore, fname, workdir, params):
                                         await f.write(chunk)
                             download_success = validate_download_or_remove(fileout)
                         else:
-                            print(f"Request failed with status code {response.status}")
+                            print(f"Request for {fileout} failed with status code {response.status}")
             if download_success:
                 return
             else:
-                print(f"Retrying download in {delay} seconds...")
+                print(f"Retrying {fileout} download in {delay} seconds...")
                 await asyncio.sleep(delay)
     else:
         print("File already exists", fileout)
