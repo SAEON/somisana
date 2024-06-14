@@ -22,8 +22,8 @@ croco_run_date = '20240614'
 # -----------
 #
 # coordinates of the spill (in geographical degrees)
-lon_spill=27.987155
-lat_spill=-33.300464
+lon_spill=25.8
+lat_spill=-33.9
 #
 # depth of the release
 # For a surface release I prefer to put a small negative number like z=-0.001
