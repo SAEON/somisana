@@ -6,7 +6,7 @@ import aiofiles
 import aiohttp
 import asyncio
 
-url = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25_1hr.pl"
+url = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25.pl"
 
 
 def yyyymmdd(dt):
@@ -80,9 +80,9 @@ def get_latest_available_dt(dt):
             exit(1)
 
         dataset_url = (
-            "https://nomads.ncep.noaa.gov/dods/gfs_0p25_1hr/gfs"
+            "https://nomads.ncep.noaa.gov/dods/gfs_0p25/gfs"
             + yyyymmdd(latest_available_date)
-            + "/gfs_0p25_1hr_"
+            + "/gfs_0p25_"
             + latest_available_date.strftime("%H")
             + "z"
         )
