@@ -15,7 +15,7 @@ config_name = 'Giles_Test_Run'
 # this is intentionally a string in 'yyyymmdd' format so it can also be easily read by the github workflow (needed for creating an appropriate directory on the public facing file server) 
 # note that only runs from the last 5 days are stored for running opendrift
 # the croco model is configured to produce output from 5 days before to 5 days after the run date
-croco_run_date = '20240614'
+croco_run_date = '20240707'
 
 # -----------
 # spill info
@@ -45,7 +45,7 @@ oil_type='GENERIC INTERMEDIATE FUEL OIL 180'
 #
 # start time of spill - use local time (UTC+2)
 #spill_start_time=datetime.now() # change to whenever the spill should be 
-spill_start_time=datetime(2024,6,12,10,0,0)
+spill_start_time=datetime(2024,7,7,10,0,0)
 #
 # duration of the release of oil in hours
 release_dur=3
