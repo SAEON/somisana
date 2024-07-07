@@ -171,7 +171,7 @@ jobs:
             -v /home/runner/somisana/:/tmp/ \
             --entrypoint /bin/bash \
             ${{ needs.build-image.outputs.image }}:${{ env.SHA }} \
-            -c "python /somisana/${{ github.event.inputs.model_type }}/run_${{ github.event.inputs.model_type }}.py"
+            -c "/opt/conda/bin/python /somisana/${{ github.event.inputs.model_type }}/run_${{ github.event.inputs.model_type }}.py"
 
   do-plots:
     needs: [build-image, envs, run-model]
@@ -187,7 +187,7 @@ jobs:
             -v /home/runner/somisana/:/tmp/ \
             --entrypoint /bin/bash \
             ${{ needs.build-image.outputs.image }}:${{ env.SHA }} \
-            -c "python /somisana/${{ github.event.inputs.model_type }}/plot_${{ github.event.inputs.model_type }}.py"
+            -c "/opt/conda/bin/python /somisana/${{ github.event.inputs.model_type }}/plot_${{ github.event.inputs.model_type }}.py"
 
 
   # Archive output
