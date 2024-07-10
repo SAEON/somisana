@@ -110,6 +110,9 @@ hz_diff = 1
 # wind drift factor
 # fraction of the 10 m wind speed used to advect surface particles
 wind_drift_factor=0.03
+#
+# coastline interaction - 'stranding' or 'previous'
+coastline_action='previous'
 
 # -------------
 # grdding info

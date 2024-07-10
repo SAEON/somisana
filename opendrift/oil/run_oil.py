@@ -56,7 +56,7 @@ def main():
     #
     # land interaction
     o.set_config('general:use_auto_landmask', True) 
-    o.set_config('general:coastline_action', 'stranding') 
+    o.set_config('general:coastline_action', config.coastline_action) 
     o.set_config('general:seafloor_action', 'lift_to_seafloor')
     #
     # I'd prefer to use the exact wind and current...for now anyway
