@@ -1,4 +1,4 @@
-FROM ghcr.io/saeon/opendrift:v1.11.0
+FROM ghcr.io/saeon/opendrift_v1.11.0
 
 # FROM opendrift/opendrift:latest
 
