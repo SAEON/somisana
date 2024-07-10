@@ -270,10 +270,22 @@ def iteration_plot_grid(iteration_dir,
     
     plt.savefig(filename_gridded+'.jpg',dpi=500,bbox_inches = 'tight')
     
-def plot_generic(ax, extents):
-    # generic stuff applicable to all plots
+def plot_generic(ax, extents, lscale='h'):
+    '''
+    generic stuff applicable to all 2D plots
+    extents = [lon_min, lon_max, lat_min, lat_max]
+    lscale = resolution of land feature ('c', 'l', 'i', 'h', 'f', 'auto')
+    '''
+    lon_min=extents[0]
+    lon_max=extents[1]
+    lat_min=extents[2]
+    lat_max=extents[3]
     ax.set_extent(extents)
-    ax.add_feature(cfeature.LAND, zorder=0, edgecolor='black')
+
+    # using opendrifts landmask plotting routine...
+    reader_global_landmask.plot_land(ax, lon_min, lat_min, lon_max,
+                                                 lat_max, False, lscale = lscale)
+
     gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
                       linewidth=1, color='dimgrey', alpha=0.5, linestyle=':')
     gl.right_labels = False
