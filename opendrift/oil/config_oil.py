@@ -9,21 +9,21 @@ from datetime import datetime, timedelta
 # give a name for your configuration
 # output will be written to a directory with this name
 # which will be accessible via the somisana thredds or mnemosyne file server
-config_name = 'Giles_Test_Run'
+config_name = 'Ultra_Galaxy_Run01'
 #
 # croco run date
 # this is intentionally a string in 'yyyymmdd' format so it can also be easily read by the github workflow (needed for creating an appropriate directory on the public facing file server) 
 # note that only runs from the last 5 days are stored for running opendrift
 # the croco model is configured to produce output from 5 days before to 5 days after the run date
-croco_run_date = '20240709'
+croco_run_date = '20240710'
 
 # -----------
 # spill info
 # -----------
 #
 # coordinates of the spill (in geographical degrees)
-lon_spill=25.8
-lat_spill=-33.9
+lon_spill=18.06551944
+lat_spill=-31.52979167
 #
 # depth of the release
 # For a surface release I prefer to put a small negative number like z=-0.001
@@ -45,7 +45,7 @@ oil_type='GENERIC INTERMEDIATE FUEL OIL 180'
 #
 # start time of spill - use local time (UTC+2)
 #spill_start_time=datetime.now() # change to whenever the spill should be 
-spill_start_time=datetime(2024,7,7,10,0,0)
+spill_start_time=datetime(2024,7,11,6,0,0)
 #
 # duration of the release of oil in hours
 release_dur=3
@@ -53,8 +53,7 @@ release_dur=3
 # volume of oil spilled in m3
 # This is not used directly in the model - it's only used here to get the oil flow rate below
 # so you can also specify the 'oil_flow_rate' directly and comment 'oil_volume' if that is convenient 
-oil_volume=41.71633
-# (35 tonnes, using density of 839 kg/m3 for generic diesel)
+oil_volume=750
 #
 # oil flow rate in m3/hr
 oil_flow_rate=oil_volume/release_dur
@@ -122,8 +121,8 @@ wind_drift_factor=0.03
 # --------------
 # plotting info
 # --------------
-plot_extents=[25.5,26.5,-34.2,-33.6] # [lon1,lon2,lat1,lat2]
-figsize=(8,4) # resize as needed to match the shape of extents below
+plot_extents=[17.2,18.3,-32.9,-31.2] # [lon1,lon2,lat1,lat2]
+figsize=(4,6) # resize as needed to match the shape of extents below
 time_x=0.1 # placement of time label, in axes coordinates
 time_y=0.9
 vmin=-50   # the z variable is animated so this is your max depth
