@@ -124,7 +124,7 @@ coastline_action='previous'
 # --------------
 # plotting info
 # --------------
-plot_extents=[17.2,18.4,-32.9,-31.2] # [lon1,lon2,lat1,lat2]
+plot_extents=[17.7,18.4,-32.25,-31.25] # [lon1,lon2,lat1,lat2]
 figsize=(4,6) # resize as needed to match the shape of extents below
 time_x=0.1 # placement of time label, in axes coordinates
 time_y=0.9
