@@ -124,12 +124,12 @@ coastline_action='previous'
 # --------------
 # plotting info
 # --------------
-plot_extents=[17.2,18.3,-32.9,-31.2] # [lon1,lon2,lat1,lat2]
+plot_extents=[17.2,18.4,-32.9,-31.2] # [lon1,lon2,lat1,lat2]
 figsize=(4,6) # resize as needed to match the shape of extents below
 time_x=0.1 # placement of time label, in axes coordinates
 time_y=0.9
-vmin=-50   # the z variable is animated so this is your max depth
-cmap='Spectral_r' #'Spectral_r' 
-plot_cbar=True #True
+vmin=-99999   # the z variable is animated so this is your max depth
+cmap='Greys' #'Spectral_r' 
+plot_cbar=False #True
 cbar_loc=(0.9, 0.15, 0.01, 0.7)
 croco_dirs_plot=None # croco_dirs
