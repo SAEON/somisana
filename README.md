@@ -1,6 +1,8 @@
 # SOMISANA API
 Documentation and source code for SAEON's Sustainable Ocean modelling Initiative (SOMISANA)
 
+While this code continues to be deployed on SAEON's infrastructure operationally, development is fairly stagnant due to a complete re-design of how the models are implemented. The operational workflow for running CROCO been superseded by the new [somisana-croco](https://github.com/SAEON/somisana-croco) repo, while the operational workflow for running OpenDrift has been superseded by the new [somisana-opendrift](https://github.com/SAEON/somisana-opendrift) repo. These new repos are currently operational on dedicated insfrastructure as part of DFFE's Marine Information Management System (MIMS). The new repos only run the models - nothing website related - so we will need to move the web-related code to a separate web-centric repo, which looks for the latest model outputs on MIMS. Just as soon as we can get a web designer to do this!
+
 <!-- To update the table of contents, Install Node.js ^16 and run "npx doctoc README.md"-->
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -19,8 +21,6 @@ Documentation and source code for SAEON's Sustainable Ocean modelling Initiative
   - [Web application](#web-application)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-The workflow for running the models is currently being re-designed [here](https://github.com/SAEON/somisana-croco), and this new repo will be used for running models operationally on MIMS instratructure. So this repo is fairly stagnant at the moment, but operational models continue to run from this repo on SAEON infrastructure. The new repo only runs the models - nothing website related - so we will need to move the web-related code to a separate web-centric repo, which looks for the latest model outputs on MIMS. Just as soon as we can get a web designer to do this!
 
 # Local development
 
