@@ -79,7 +79,7 @@ This server runs GitHub Actions pipelines on a self-hosted actions runner - it e
 
 Most storage requirements are in the form of SAMBA mounts that can be mounted to multiple locations
 
-- Data archive: 5TB? (must be backed up. TODO - @giles to calculate)
+- Data archive: depends on how far back you want to archive the forecasts (currently we have a 1 Tb storage mount)
 - PostgreSQL: 500GB (does not have to be backed up, but should be mounted if possible)
 - MongoDB: 100GB
 
