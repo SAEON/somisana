@@ -30,7 +30,7 @@ Please install Node.js, then in the root of the repo, run the following commands
 npm install -g chomp
 chomp init
 ```
-
+ 
 Look in the `chompfile.toml` file to see available scripts, and feel free to add your own! The pre-commit hook is defined in [.husky/pre-commit](/.husky/pre-commit). This is just a shell script and can easily be extended.
 
 # Deployment
