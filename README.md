@@ -30,7 +30,7 @@ Please install Node.js, then in the root of the repo, run the following commands
 npm install -g chomp
 chomp init
 ```
-
+ 
 Look in the `chompfile.toml` file to see available scripts, and feel free to add your own! The pre-commit hook is defined in [.husky/pre-commit](/.husky/pre-commit). This is just a shell script and can easily be extended.
 
 # Deployment
@@ -79,7 +79,7 @@ This server runs GitHub Actions pipelines on a self-hosted actions runner - it e
 
 Most storage requirements are in the form of SAMBA mounts that can be mounted to multiple locations
 
-- Data archive: 5TB? (must be backed up. TODO - @giles to calculate)
+- Data archive: depends on how far back you want to archive the forecasts (currently we have a 1 Tb storage mount)
 - PostgreSQL: 500GB (does not have to be backed up, but should be mounted if possible)
 - MongoDB: 100GB
 

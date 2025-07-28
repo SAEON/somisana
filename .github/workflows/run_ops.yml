@@ -52,7 +52,7 @@ jobs:
           echo "MODEL_RUN_DATE=${{ steps.run_date.outputs.yyyymmdd }}" >> $GITHUB_OUTPUT
           echo "EEZ_DATA_DIR=/home/runner/somisana/global_data/${{ steps.run_date.outputs.yyyymmdd }}/${{ needs.branch-ref.outputs.value }}" >> $GITHUB_OUTPUT # Think it would have been better to have $BRANCH_REF after somisana i.e. somisana/$BRANCH_REF but doing it this way to be consistent with how the model run directories were set up. Maybe we can change it later...
 
-  # The SOMISANA toolkit is a suite of scripts to facilitate
+  # The SOMISANA toolkit is a suite of scripts to facilitate 
   # running SOMISANA models - for example the Algoa Bay Forecast.
   # In the context of a testing environment, where updates to these
   # scripts is part of the development workflow, the toolkit needs
@@ -109,7 +109,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   # Download environmental data used for model boundaries and surface forcing.
-  # This job is retried if it fails, since the failure can be due to upstream errors
   # These downloads are used to create forcing files that are fed as input to the CROCO model
   # => marine.copernicus.eu: This is ocean data that forms the lateral boundaries of our model run
   # => ncei.noaa.gov: This is atmospheric data used to create surface boundary conditions for our model run
